@@ -34,12 +34,16 @@ public class IncidentAPI extends HttpServlet {
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken";
     
+    
     public enum IncidentAPIEndpoints{
         /**
          *
          */
         NEW_INCIDENT("NEW_INCIDENT", "incidentTitle|incidentDetail"),
-        CONFIRM_INCIDENT("CONFIRM_INCIDENT", "incidentId"),
+        CONFIRM_INCIDENT("CONFIRM_INCIDENT", "incidentId|note"),
+        CLOSE_INCIDENT("CLOSE_INCIDENT", "incidentId|note"),
+        REOPEN_INCIDENT("REOPEN_INCIDENT", "incidentId|note"),
+        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", "incidentId|note"),
         ;
         private IncidentAPIEndpoints(String sname, String smandatoryParams){
             name=sname;
@@ -55,13 +59,15 @@ public class IncidentAPI extends HttpServlet {
             return new String[]{this.name, this.mandatoryParams};
         }        
         private final String name;
-        private final String mandatoryParams;        
+        private final String mandatoryParams;   
     }
     
     public enum ParamsList{
         INCIDENT_ID("incidentId"),
         INCIDENT_TITLE("incidentTitle"),
-        INCIDENT_DETAIL("incidentDetail")
+        INCIDENT_DETAIL("incidentDetail"),
+        NOTE("note"),
+        NEW_STATUS("newStatus"),
         ;
         private ParamsList(String requestName){
             this.requestName=requestName;
@@ -160,6 +166,11 @@ public class IncidentAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }
+            Integer incId=null;
+            String incIdStr=request.getParameter(ParamsList.INCIDENT_ID.getParamName());
+            if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
+            String note=request.getParameter(ParamsList.NOTE.getParamName());
+            String newStatus=request.getParameter(ParamsList.NEW_STATUS.getParamName());
             switch (endPoint){
                 case NEW_INCIDENT:
                     //firstN=request.getAttribute("firstName").toString();
@@ -167,11 +178,21 @@ public class IncidentAPI extends HttpServlet {
                             request.getParameter(ParamsList.INCIDENT_DETAIL.getParamName()), "");
                     break;
                 case CONFIRM_INCIDENT:
-                    Integer incId=null;
-                    String incIdStr=request.getParameter(ParamsList.INCIDENT_ID.getParamName());
-                    if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
-                    actionDiagnoses = AppIncident.confirmIncident(token, incId);
+                    AppIncident inc=new AppIncident(incId);
+                    actionDiagnoses = inc.confirmIncident(token, incId, note);
                     break;
+                case ADD_NOTE_INCIDENT:
+                    inc=new AppIncident(incId);
+                    actionDiagnoses = inc.addNoteIncident(token, incId, note, newStatus);
+                    break;                    
+                case CLOSE_INCIDENT:
+                    inc=new AppIncident(incId);
+                    actionDiagnoses = inc.closeIncident(token, incId, note);
+                    break;                    
+                case REOPEN_INCIDENT:
+                    inc=new AppIncident(incId);
+                    actionDiagnoses = inc.reopenIncident(token, incId, note);
+                    break;                    
             }    
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
 //                Rdbms.rollbackWithSavePoint();

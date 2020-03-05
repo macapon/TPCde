@@ -22,7 +22,7 @@ import lbplanet.utilities.LPSession;
  */
 public class AppIncidentAudit {
     public static Object[] IncidentAuditAdd(String schemaPrefix, Token token, String action, String tableName, Integer incidentId, String tableId,
-                        Object[] auditlog, Integer parentAuditId) {
+                        Object[] auditlog, Integer parentAuditId, String note) {
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
@@ -36,6 +36,10 @@ public class AppIncidentAudit {
                 fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PROCEDURE_VERSION.getName());
                 fieldValues = LPArray.addValueToArray1D(fieldValues, procedureInfo[0][1]);        
             }        
+        }
+        if (note!=null){
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_NOTE.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, note);
         }
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_ACTION_NAME.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, action);
@@ -53,7 +57,7 @@ public class AppIncidentAudit {
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsAppAudit.Incident.FLD_PERSON.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, token.getPersonName());
         if (token.getAppSessionId()!=null){
-            Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
+            Object[] appSession = LPSession.addAppSession( Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
     //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
@@ -82,7 +86,7 @@ public class AppIncidentAudit {
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
 
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsAppAudit.Incident.TBL.getName(), 
+        return Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP_AUDIT, TblsAppAudit.Incident.TBL.getName(), 
                 fieldNames, fieldValues);
     }    
     

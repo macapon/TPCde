@@ -17,6 +17,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPMath;
 import databases.Rdbms;
 import databases.TblsApp;
+import databases.TblsAppAudit;
 import databases.TblsCnfg;
 import databases.Token;
 import databases.TblsData;
@@ -91,6 +92,9 @@ public class TestingServer extends HttpServlet {
 //            out.println("Fran "+m.getByIndexFran(1));
 
         String tblCreateScript2=TblsApp.Incident.createTableScript(new String[]{""});
+        //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+
+        tblCreateScript2=TblsAppAudit.Session.createTableScript("", new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
             String schemaPrefix="genoma-1";

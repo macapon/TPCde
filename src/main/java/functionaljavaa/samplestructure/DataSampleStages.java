@@ -188,9 +188,10 @@ Object[][] firstStageData=new Object[0][0];
              functionName="sampleStage"+currStage+moveDirection+"Checker";
              engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval(new FileReader(fileName));              
-          } catch (FileNotFoundException ex2) {
+          } catch (FileNotFoundException ex2) {              
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
-          return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", "Error: "+ex2.getMessage()+ "(tried two paths: "+LOD_JAVASCRIPT_FORMULA+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA+") "};          
+          return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", "Error: "+ex2.getMessage()
+                  +"(tried two paths: "+LOD_JAVASCRIPT_FORMULA.replace("schemaPrefix", schemaPrefix)+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace("schemaPrefix", schemaPrefix)+") "};          
           }
         }
         Invocable invocable = (Invocable) engine;

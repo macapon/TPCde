@@ -7,6 +7,7 @@ package lbplanet.utilities;
 
 import databases.Rdbms;
 import databases.TblsApp;
+import databases.TblsAppAudit;
 import databases.TblsDataAudit;
 import java.time.LocalDateTime;
 import java.util.Date;
@@ -83,6 +84,24 @@ public class LPSession {
         }
         return LPArray.array2dTo1d(recordFieldsBySessionId);
     }
+
+    public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert){
+        String tableName = TblsAppAudit.Session.TBL.getName();        
+        
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP_AUDIT, tableName, 
+                new String[]{TblsAppAudit.Session.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, fieldsNamesToInsert);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString())){
+            Object[] appSession = getAppSession(appSessionId, fieldsNamesToInsert);
+            if (!LPArray.valueInArray(fieldsNamesToInsert, TblsAppAudit.Session.FLD_SESSION_ID.getName())){
+                fieldsNamesToInsert = LPArray.addValueToArray1D(fieldsNamesToInsert, TblsAppAudit.Session.FLD_SESSION_ID.getName());
+                appSession = LPArray.addValueToArray1D(appSession, appSessionId);
+            }
+            return Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP_AUDIT, tableName, fieldsNamesToInsert, appSession);
+        }
+        return LPArray.array2dTo1d(recordFieldsBySessionId);
+    }
+
+    
     
     
 }
