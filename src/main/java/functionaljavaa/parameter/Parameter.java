@@ -62,26 +62,32 @@ public class Parameter {
 
     /**
      *
-     * @param configFile
      * @param parameterName
-     * @param language
      * @return
      */
+    public static String getParameterBundleAppFile(String parameterName) {
+        return getParameterBundleInAppFile("parameter.config.app", parameterName);
+    }
+
     public static String getParameterBundleInConfigFile(String configFile, String parameterName, String language) {
+        return getParameterBundleInAppFile("parameter.config." + configFile + "_" + language, parameterName);
+    }
+
+    private static String getParameterBundleInAppFile(String fileUrl, String parameterName) {
         try {
-            ResourceBundle prop = ResourceBundle.getBundle("parameter.config." + configFile + "_" + language);
+            ResourceBundle prop = ResourceBundle.getBundle(fileUrl);
             if (!prop.containsKey(parameterName)) {
-                LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, parameterName);
+                LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, parameterName);
                 return "";
             } else {
                 return prop.getString(parameterName);
             }
         } catch (Exception e) {
-            LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, parameterName);
+            LPPlatform.saveParameterPropertyInDbErrorLog("", fileUrl, parameterName);
             return e.getMessage();
         }
     }
-
+    
     /**
      *
      * @param configFile

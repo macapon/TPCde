@@ -10,7 +10,7 @@ import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.Token;
 import functionaljavaa.audit.AppIncidentAudit;
-import static functionaljavaa.parameter.Parameter.getParameterBundle;
+import static functionaljavaa.parameter.Parameter.getParameterBundleAppFile;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
@@ -28,7 +28,7 @@ public class AppIncident {
     private enum IncidentStatuses{
         LOGGED, CONFIRMED, INPROGRESS, WAIT_USER_CONFIRMATION, CLOSED
     }
-    enum IncidentAuditEvents{NEW_INCIDENT_CREATED, CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT};
+    enum IncidentAuditEvents{NEW_INCIDENT_CREATED, CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT};
     
     enum IncidentAPIErrorMessages{
         AAA_FILE_NAME("errorTrapping"),
@@ -77,6 +77,10 @@ public class AppIncident {
         
         String[] updFieldName=new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName(), TblsApp.Incident.FLD_DATE_CONFIRMED.getName(), TblsApp.Incident.FLD_PERSON_CONFIRMED.getName()};
         Object[] updFieldValue=new Object[]{IncidentStatuses.CONFIRMED.toString(), currentStatus, LPDate.getCurrentTimeStamp(), token.getPersonName()};
+
+        updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName()});
+        updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
+        
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
@@ -91,8 +95,12 @@ public class AppIncident {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
 
-        String[] updFieldName=new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName(), TblsApp.Incident.FLD_DATE_CONFIRMED.getName(), TblsApp.Incident.FLD_PERSON_CONFIRMED.getName()};
+        String[] updFieldName=new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName(), TblsApp.Incident.FLD_PERSON_RESOLUTION.getName()};
         Object[] updFieldValue=new Object[]{IncidentStatuses.CLOSED.toString(), currentStatus, LPDate.getCurrentTimeStamp(), token.getPersonName()};
+
+        updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName()});
+        updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()});
+        
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
@@ -108,12 +116,16 @@ public class AppIncident {
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
         String previousStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS_PREVIOUS.getName())].toString();
 
-        String[] updFieldName=new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName(), TblsApp.Incident.FLD_DATE_CONFIRMED.getName(), TblsApp.Incident.FLD_PERSON_CONFIRMED.getName()};
-        Object[] updFieldValue=new Object[]{previousStatus, currentStatus, LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        String[] updFieldName=new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName()};
+        Object[] updFieldValue=new Object[]{previousStatus, currentStatus};
+
+        updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName(), TblsApp.Incident.FLD_PERSON_RESOLUTION.getName()});
+        updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), null, null});
+        
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
-            AppIncidentAudit.IncidentAuditAdd("", token, IncidentAuditEvents.CLOSED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, incidentId.toString(),  
+            AppIncidentAudit.IncidentAuditAdd("", token, IncidentAuditEvents.REOPENED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, incidentId.toString(),  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, note);
         }
         return diagnostic;    
@@ -123,19 +135,23 @@ public class AppIncident {
         Object[] isActive=isIncidentActive(incidentId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isActive[0].toString())) return isActive;
         
-        String addNoteAvailableStatuses=getParameterBundle("app", "", "", "incidentsAddNoteAvailableStatuses", ""); 
-        
-        
-        
+        String addNoteAvailableStatuses=getParameterBundleAppFile("incidentsAddNoteAvailableStatuses"); 
+        if ( (newStatus!=null) && (newStatus.length()>0) && (!addNoteAvailableStatuses.contains("ALL") || (!addNoteAvailableStatuses.contains(newStatus))) )
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "status <*1*> not allowed as new status through Add Note Incident", new Object[]{newStatus});
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
         String previousStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS_PREVIOUS.getName())].toString();
 
-        String[] updFieldName=new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName(), TblsApp.Incident.FLD_DATE_CONFIRMED.getName(), TblsApp.Incident.FLD_PERSON_CONFIRMED.getName()};
-        Object[] updFieldValue=new Object[]{previousStatus, currentStatus, LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName()};
+        Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()};
+        if ( (newStatus!=null) && (newStatus.length()>0) ){
+            updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_STATUS_PREVIOUS.getName()});
+            updFieldValue=LPArray.addValueToArray1D(updFieldValue, new String[]{newStatus, currentStatus});
+        }
+
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){            
-            AppIncidentAudit.IncidentAuditAdd("", token, IncidentAuditEvents.CLOSED_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, incidentId.toString(),  
+            AppIncidentAudit.IncidentAuditAdd("", token, IncidentAuditEvents.ADD_NOTE_INCIDENT.toString(), TblsAppAudit.Incident.TBL.getName(), incidentId, incidentId.toString(),  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null, note);
         }
         return diagnostic;    
