@@ -12,13 +12,10 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.instruments.incubator.ConfigIncubator;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.math.BigDecimal;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -35,36 +32,40 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class EnvMonIncubationAPI extends HttpServlet {
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_INCUBATION_ACTIVATE="EM_INCUBATION_ACTIVATE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_INCUBATION_DEACTIVATE="EM_INCUBATION_DEACTIVATE";
-   
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_INCUBATION_ADD_TEMP_READING="EM_INCUBATION_ADD_TEMP_READING";   
-  
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATION_ACTIVATE="incubatorName";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATION_DEACTIVATE="incubatorName";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATION_ADD_TEMP_READING="temperature";
+    
+    public enum EnvMonIncubationAPIEndpoints{
+        /**
+         *
+         */
+        EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubatorName", "", "incubator_activate_success"),
+        EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubatorName", "", "incubator_deactivate_success"),
+        EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubatorName|temperature", "", "incubator_add_temp_reading_success"),
+        ;
+        private EnvMonIncubationAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }    
   
   /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -75,7 +76,6 @@ public class EnvMonIncubationAPI extends HttpServlet {
    * @throws IOException if an I/O error occurs
    */
   protected void processRequest(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
-        Object[] diagnostic=new Object[0];
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 
@@ -152,55 +152,62 @@ public class EnvMonIncubationAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return ;                           
             }     
+            EnvMonIncubationAPIEndpoints endPoint = null;
+            Object[] actionDiagnoses = null;
+            try{
+                endPoint = EnvMonIncubationAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }           
+            Object[] messageDynamicData=new Object[]{};
+            RelatedObjects rObj=RelatedObjects.getInstance();
+            
             String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
             Rdbms.setTransactionId(schemaConfigName);        
-            switch (actionName.toUpperCase()){
-                case API_ENDPOINT_EM_INCUBATION_ACTIVATE:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_INCUBATION_ACTIVATE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+            switch (endPoint){
+                case EM_INCUBATION_ACTIVATE:
                     String instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
-                    diagnostic=ConfigIncubator.activateIncubator(schemaPrefix, instrName, token.getPersonName());
+                    actionDiagnoses=ConfigIncubator.activateIncubator(schemaPrefix, instrName, token.getPersonName());
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    messageDynamicData=new Object[]{instrName};
                     break;
-                case API_ENDPOINT_EM_INCUBATION_DEACTIVATE:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_INCUBATION_DEACTIVATE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+                case EM_INCUBATION_DEACTIVATE:
                     instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
-                    diagnostic=ConfigIncubator.deactivateIncubator(schemaPrefix, instrName, token.getPersonName());
+                    actionDiagnoses=ConfigIncubator.deactivateIncubator(schemaPrefix, instrName, token.getPersonName());
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    messageDynamicData=new Object[]{instrName};
                     break;
-                case API_ENDPOINT_EM_INCUBATION_ADD_TEMP_READING:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_INCUBATION_ADD_TEMP_READING.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+                case EM_INCUBATION_ADD_TEMP_READING:
                     instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
                     String temperature=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE);                  
-                    diagnostic=DataIncubatorNoteBook.newTemperatureReading(schemaPrefix, instrName, token.getPersonName(), new BigDecimal(temperature));                    
+                    actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(schemaPrefix, instrName, token.getPersonName(), new BigDecimal(temperature));                    
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
+                    messageDynamicData=new Object[]{temperature, instrName};
                     break;                    
                 default:      
                     Rdbms.closeRdbms(); 
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd.forward(request,response);  
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(diagnostic);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                rObj.killInstance();
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                
             }                
         }catch(Exception e){      
             Rdbms.closeRdbms();                   

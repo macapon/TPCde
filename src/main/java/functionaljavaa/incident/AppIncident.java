@@ -11,6 +11,7 @@ import databases.TblsAppAudit;
 import databases.Token;
 import functionaljavaa.audit.AppIncidentAudit;
 import static functionaljavaa.parameter.Parameter.getParameterBundleAppFile;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
@@ -25,7 +26,7 @@ public class AppIncident {
     Object[] fieldValues=new Object[0];
     Boolean fieldValuesCorrect=false;
    
-    private enum IncidentStatuses{
+    public enum IncidentStatuses{
         LOGGED, CONFIRMED, INPROGRESS, WAIT_USER_CONFIRMATION, CLOSED
     }
     enum IncidentAuditEvents{NEW_INCIDENT_CREATED, CONFIRMED_INCIDENT, CLOSED_INCIDENT, REOPENED_INCIDENT, ADD_NOTE_INCIDENT};
@@ -54,10 +55,10 @@ public class AppIncident {
     }
     
     public static Object[] newIncident(Token token, String incTitle, String incDetail, String sessionInfo){ 
-        String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_CREATION.getName(), TblsApp.Incident.FLD_TITLE.getName(), TblsApp.Incident.FLD_DETAIL.getName(),
+        String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_CREATION.getName(), TblsApp.Incident.FLD_PERSON_CREATION.getName(), TblsApp.Incident.FLD_TITLE.getName(), TblsApp.Incident.FLD_DETAIL.getName(),
                 TblsApp.Incident.FLD_USER_NAME.getName(), TblsApp.Incident.FLD_USER_ROLE.getName(), TblsApp.Incident.FLD_PERSON_NAME.getName(),
                 TblsApp.Incident.FLD_STATUS.getName(), TblsApp.Incident.FLD_SESSION_INFO.getName()};
-        Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), incTitle, incDetail,
+        Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), incTitle, incDetail,
                 token.getUserName(), token.getUserRole(), token.getPersonName(), 
                 IncidentStatuses.LOGGED.toString(), sessionInfo};
         Object[] diagnostic=Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), 
@@ -120,7 +121,7 @@ public class AppIncident {
         Object[] updFieldValue=new Object[]{previousStatus, currentStatus};
 
         updFieldName=LPArray.addValueToArray1D(updFieldName, new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName(), TblsApp.Incident.FLD_DATE_RESOLUTION.getName(), TblsApp.Incident.FLD_PERSON_RESOLUTION.getName()});
-        updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), null, null});
+        updFieldValue=LPArray.addValueToArray1D(updFieldValue, new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName(), "null>>>DATETIME", "null>>>STRING"});
         
         Object[] diagnostic=Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), 
             updFieldName, updFieldValue, new String[]{TblsApp.Incident.FLD_ID.getName()}, new Object[]{incidentId});

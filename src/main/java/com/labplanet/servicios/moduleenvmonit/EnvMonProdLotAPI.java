@@ -11,12 +11,9 @@ import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramProductionLot;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -33,36 +30,39 @@ import org.json.simple.JSONObject;
  * @author Administrator
  */
 public class EnvMonProdLotAPI extends HttpServlet {
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_NEW_PRODUCTION_LOT="EM_NEW_PRODUCTION_LOT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_ACTIVATE_PRODUCTION_LOT="EM_ACTIVATE_PRODUCTION_LOT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_DEACTIVATE_PRODUCTION_LOT="EM_DEACTIVATE_PRODUCTION_LOT";
-  
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_NEW_PRODUCTION_LOT="lotName";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_ACTIVATE_PRODUCTION_LOT="lotName";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_DEACTIVATE_PRODUCTION_LOT="lotName";
+    public enum EnvMonProdLotAPIEndpoints{
+        /**
+         *
+         */
+        EM_NEW_PRODUCTION_LOT("EM_NEW_PRODUCTION_LOT", "lotName", "fieldName|fieldValue", "productionLot_newLotCreated_success"),
+        EM_ACTIVATE_PRODUCTION_LOT("EM_ACTIVATE_PRODUCTION_LOT", "lotName", "", "productionLot_activate_success"),
+        EM_DEACTIVATE_PRODUCTION_LOT("EM_DEACTIVATE_PRODUCTION_LOT", "lotName|temperature", "", "productionLot_deactivate_success"),
+        ;
+        private EnvMonProdLotAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }    
   
   /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -98,6 +98,8 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 return;                             
         }
         mandatoryParams = null;                        
+        Object[] messageDynamicData=new Object[]{};
+        RelatedObjects rObj=RelatedObjects.getInstance();
 
         Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
@@ -156,38 +158,45 @@ public class EnvMonProdLotAPI extends HttpServlet {
             }     
             String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
-            Rdbms.setTransactionId(schemaConfigName);        
-            switch (actionName.toUpperCase()){
-                case API_ENDPOINT_EM_NEW_PRODUCTION_LOT:
-                  areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_NEW_PRODUCTION_LOT.split("\\|"));
-                  if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                      LPFrontEnd.servletReturnResponseError(request, response, 
-                              LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                      return;                  
-                  }                     
-                  String lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);                  
-                  String fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME);                  
-                  String fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE);  
-                  String[] fieldNameArr=new String[0];
-                  if (fieldName!=null && fieldName.length()>0) fieldNameArr=fieldName.split("\\|");
-                  Object[] fieldValueArr=new Object[0];
-                  if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                  diagnostic=DataProgramProductionLot.newProgramProductionLot(schemaPrefix, lotName, fieldNameArr, fieldValueArr, 
+            Rdbms.setTransactionId(schemaConfigName);      
+            EnvMonProdLotAPIEndpoints endPoint = null;
+            Object[] actionDiagnoses = null;
+            try{
+                endPoint = EnvMonProdLotAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }            
+            switch (endPoint){
+                case EM_NEW_PRODUCTION_LOT:
+                    String lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);                  
+                    String fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME);                  
+                    String fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE);  
+                    String[] fieldNameArr=new String[0];
+                    if (fieldName!=null && fieldName.length()>0) fieldNameArr=fieldName.split("\\|");
+                    Object[] fieldValueArr=new Object[0];
+                    if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
+                    diagnostic=DataProgramProductionLot.newProgramProductionLot(schemaPrefix, lotName, fieldNameArr, fieldValueArr, 
                           token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
-                  break;
-                case API_ENDPOINT_EM_ACTIVATE_PRODUCTION_LOT:
-                case API_ENDPOINT_EM_DEACTIVATE_PRODUCTION_LOT:
-                  areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_ACTIVATE_PRODUCTION_LOT.split("\\|"));
-                  if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                      LPFrontEnd.servletReturnResponseError(request, response, 
-                              LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                      return;                  
-                  }                     
-                  lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);    
-                  if (actionName.equalsIgnoreCase(API_ENDPOINT_EM_ACTIVATE_PRODUCTION_LOT))             
-                      diagnostic=DataProgramProductionLot.activateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
-                  else 
-                      diagnostic=DataProgramProductionLot.deactivateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
+                    messageDynamicData=new Object[]{lotName};
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    break;
+                case EM_ACTIVATE_PRODUCTION_LOT:
+                    lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);  
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    messageDynamicData=new Object[]{lotName};
+                    diagnostic=DataProgramProductionLot.activateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
+                case EM_DEACTIVATE_PRODUCTION_LOT:
+                    lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);    
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    messageDynamicData=new Object[]{lotName};
+                    diagnostic=DataProgramProductionLot.deactivateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
                   break;
                 default:      
                     Rdbms.closeRdbms(); 
@@ -201,8 +210,9 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(diagnostic);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                rObj.killInstance();
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);         
             }                
         }catch(Exception e){      
             Rdbms.closeRdbms();                   

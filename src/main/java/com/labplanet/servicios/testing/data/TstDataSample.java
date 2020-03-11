@@ -11,6 +11,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
@@ -39,6 +40,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPHttp;
 
 /**
  *
@@ -106,6 +108,8 @@ public class TstDataSample extends HttpServlet {
         DataSampleAnalysisResult smpAnaRes = new functionaljavaa.samplestructure.DataSampleAnalysisResult(moduleSmpAnaRes);   
         Integer appSessionId = null;
         
+        String language = LPFrontEnd.setLanguage(request);
+        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
@@ -148,10 +152,22 @@ public class TstDataSample extends HttpServlet {
                     actionName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+3]);
                 
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, schemaPrefix, userName, userRole, actionName}));
-
+                SampleAPIEndpoints endPoint = null;
+                try{
+                    endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                }catch(Exception e){
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                    return;                   
+                }
+                Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                    LPFrontEnd.servletReturnResponseError(request, response,
+                            LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                    return;
+                }
                 Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(schemaPrefix, userRole, actionName);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
-                    if (SampleAPIParams.API_ENDPOINT_GETSAMPLEINFO.equalsIgnoreCase(actionName)){                
+                    if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
                             dataSample2D[0][0] = actionEnabledForRole[0];
                             dataSample2D[0][1] = actionEnabledForRole[1]; dataSample2D[0][2] = actionEnabledForRole[2]; 
                             dataSample2D[0][3] = actionEnabledForRole[3]; dataSample2D[0][4] = actionEnabledForRole[4]; 
@@ -161,8 +177,8 @@ public class TstDataSample extends HttpServlet {
                             dataSample[3] = actionEnabledForRole[3]; dataSample[4] = actionEnabledForRole[4]; dataSample[5] = actionEnabledForRole[5]; 
                     }                      
                 }else{                
-                    switch (actionName.toUpperCase()){
-                        case SampleAPIParams.API_ENDPOINT_LOGSAMPLE:                            
+                    switch (endPoint){
+                        case LOGSAMPLE:                            
                             String sampleTemplate=null;
                             Integer sampleTemplateVersion=null;
                             String[] sampleTemplateInfo = new String[0];
@@ -181,7 +197,7 @@ public class TstDataSample extends HttpServlet {
                                     sampleTemplate+", "+sampleTemplateVersion.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValue)}));                              
                             dataSample = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldName, fieldValue, null);
                             break;
-                        case SampleAPIParams.API_ENDPOINT_RECEIVESAMPLE:  
+                        case RECEIVESAMPLE:  
                             Integer sampleId = null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -189,7 +205,7 @@ public class TstDataSample extends HttpServlet {
                                 new Object[]{"sampleId, receiver", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
                             dataSample = smp.sampleReception(schemaPrefix, token, sampleId);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_CHANGESAMPLINGDATE:
+                        case CHANGESAMPLINGDATE:
                             sampleId = null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -201,7 +217,7 @@ public class TstDataSample extends HttpServlet {
                                     LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+LPNulls.replaceNull(newDate).toString()}));                              
                             dataSample = smp.changeSamplingDate(schemaPrefix, token, sampleId, newDate);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_SAMPLINGCOMMENTADD:
+                        case SAMPLINGCOMMENTADD:
                             sampleId = null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -212,7 +228,7 @@ public class TstDataSample extends HttpServlet {
                                 new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+comment}));                              
                             dataSample = smp.sampleReceptionCommentAdd(schemaPrefix, token, sampleId, comment);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_SAMPLINGCOMMENTREMOVE:
+                        case SAMPLINGCOMMENTREMOVE:
                             sampleId = null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -220,7 +236,7 @@ public class TstDataSample extends HttpServlet {
                                 new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
                             dataSample = smp.sampleReceptionCommentRemove(schemaPrefix, token, sampleId);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_INCUBATIONSTART:
+                        case INCUBATIONSTART:
                             sampleId = null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -230,7 +246,7 @@ public class TstDataSample extends HttpServlet {
                             BigDecimal tempReading=null;
                             dataSample = DataSampleIncubation.setSampleStartIncubationDateTime(schemaPrefix, token, sampleId, 1, incubName, tempReading);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_INCUBATIONEND:
+                        case INCUBATIONEND:
                             sampleId = null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -240,7 +256,7 @@ public class TstDataSample extends HttpServlet {
                             tempReading=null;
                             dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(schemaPrefix, token, sampleId, 1, incubName, tempReading);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_SAMPLEANALYSISADD:
+                        case SAMPLEANALYSISADD:
                             sampleId=null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -256,7 +272,7 @@ public class TstDataSample extends HttpServlet {
                                     LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueObjArr)}));                              
                             dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldName, fieldValueObjArr, null);
                             break;              
-                        case SampleAPIParams.API_ENDPOINT_ENTERRESULT:
+                        case ENTERRESULT:
                             Integer resultId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -267,7 +283,7 @@ public class TstDataSample extends HttpServlet {
                                 new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));                              
                             dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
                             break;  
-                        case SampleAPIParams.API_ENDPOINT_REVIEWRESULT:
+                        case REVIEWRESULT:
                             Integer objectId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -282,7 +298,7 @@ public class TstDataSample extends HttpServlet {
                             if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId=objectId;}
                             dataSample = smpAnaRes.sampleResultReview(schemaPrefix, token, sampleId, testId, resultId);
                             break;                                     
-                        case SampleAPIParams.API_ENDPOINT_CANCELRESULT:
+                        case CANCELRESULT:
                             objectId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -297,7 +313,7 @@ public class TstDataSample extends HttpServlet {
                             if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
                             dataSample = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, sampleId, testId, resultId);
                             break;                            
-                        case SampleAPIParams.API_ENDPOINT_UNCANCELRESULT: 
+                        case UNCANCELRESULT: 
                             objectId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -313,7 +329,7 @@ public class TstDataSample extends HttpServlet {
                             if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
                             dataSample = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, sampleId, testId, resultId, smp);
                             break;       
-                        case SampleAPIParams.API_ENDPOINT_TESTASSIGNMENT: 
+                        case TESTASSIGNMENT: 
                             testId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 testId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -324,7 +340,7 @@ public class TstDataSample extends HttpServlet {
                                 new Object[]{"testId, userName, newAnalyst", testId.toString()+", "+userName+", "+newAnalyst}));                              
                             dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
                             break;   
-                        case SampleAPIParams.API_ENDPOINT_GETSAMPLEINFO:                            
+                        case GETSAMPLEINFO:                            
                             String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);                     
                             sampleId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
@@ -336,7 +352,7 @@ public class TstDataSample extends HttpServlet {
                             dataSample2D = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
                                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToGet);
                             break;
-                        case SampleAPIParams.API_ENDPOINT_ENTERRESULT_LOD:
+                        case ENTERRESULT_LOD:
                              Integer firstParameter=null;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 firstParameter=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -351,7 +367,7 @@ public class TstDataSample extends HttpServlet {
                                 dataSample=LPArray.addValueToArray1D(dataSample, result);
 
                             break;
-                        case SampleAPIParams.API_ENDPOINT_COC_STARTCHANGE:
+                        case COC_STARTCHANGE:
                             String custodianCandidate=null;
                             sampleId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
@@ -365,7 +381,7 @@ public class TstDataSample extends HttpServlet {
                             dataSample = coc.cocStartChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, 
                                     custodianCandidate, token);
                             break;
-                        case SampleAPIParams.API_ENDPOINT_COC_CONFIRMCHANGE:
+                        case COC_CONFIRMCHANGE:
                             sampleId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -377,7 +393,7 @@ public class TstDataSample extends HttpServlet {
                             coc =  new ChangeOfCustody();
                             dataSample = coc.cocConfirmedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, comment);
                             break;
-                        case SampleAPIParams.API_ENDPOINT_COC_ABORTCHANGE:
+                        case COC_ABORTCHANGE:
                             sampleId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -389,7 +405,7 @@ public class TstDataSample extends HttpServlet {
                             coc =  new ChangeOfCustody();
                             dataSample = coc.cocAbortedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, comment);
                             break;
-                        case SampleAPIParams.API_ENDPOINT_RESULT_CHANGE_UOM:
+                        case RESULT_CHANGE_UOM:
                             resultId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 resultId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -400,7 +416,7 @@ public class TstDataSample extends HttpServlet {
                                 new Object[]{"resultId, newUOM", resultId.toString()+", "+newUOM}));                                  
                             dataSample = smpAnaRes.sarChangeUom(schemaPrefix, token, resultId, newUOM, smp);
                             break;
-                        case SampleAPIParams.API_ENDPOINT_LOGALIQUOT:
+                        case LOGALIQUOT:
                             sampleId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -418,7 +434,7 @@ public class TstDataSample extends HttpServlet {
                                     // sampleTemplate, sampleTemplateVersion, 
                                     fieldName, fieldValueObjArr);
                             break;                     
-                        case SampleAPIParams.API_ENDPOINT_LOGSUBALIQUOT:
+                        case LOGSUBALIQUOT:
                             Integer aliquotId = 0;
                             if (lineNumCols>=numEvaluationArguments+4)                
                                 aliquotId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
@@ -443,7 +459,7 @@ public class TstDataSample extends HttpServlet {
                             break;
                     }        
                 }                
-                if (SampleAPIParams.API_ENDPOINT_GETSAMPLEINFO.equalsIgnoreCase(actionName))  dataSample = LPArray.array2dTo1d(dataSample2D);
+                if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName))  dataSample = LPArray.array2dTo1d(dataSample2D);
 
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(dataSample)));                     

@@ -93,6 +93,8 @@ public class LPPlatform {
      *
      */
     public static final String CONFIG_FILES_API_ERRORTRAPING = "api-platform";
+    public static final String CONFIG_FILES_API_SUCCESSMESSAGE = "apiSuccessMsg-";
+    
     
     /**
      *

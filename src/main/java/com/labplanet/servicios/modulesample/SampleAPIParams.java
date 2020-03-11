@@ -7,7 +7,6 @@ package com.labplanet.servicios.modulesample;
 
 import lbplanet.utilities.LPFrontEnd;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import functionaljavaa.audit.SampleAudit;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -31,276 +30,70 @@ public class SampleAPIParams extends HttpServlet {
      */
     public static final String SERVLET_FRONTEND_URL="/frontend/SampleAPIfrontEnd";
     
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_ENTERRESULT = "ENTERRESULT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_UNREVIEWRESULT = "UNREVIEWRESULT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_INCUBATIONEND = "INCUBATIONEND";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_INCUBATIONSTART = "INCUBATIONSTART";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_INCUBATION2END = "INCUBATION2END";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_INCUBATION2START = "INCUBATION2START";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLINGCOMMENTREMOVE = "SAMPLINGCOMMENTREMOVE";
-
-    /**
-     * 
-     */
-    public static final String API_ENDPOINT_LOGSAMPLE = "LOGSAMPLE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_UNCANCELRESULT = "UNCANCELRESULT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_TESTASSIGNMENT = "ESTASSIGNMENT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_COC_ABORTCHANGE = "COC_ABORTCHANGE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLINGCOMMENTADD = "SAMPLINGCOMMENTADD";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLEANALYSISADD = "SAMPLEANALYSISADD";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_COC_STARTCHANGE = "COC_STARTCHANGE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_CHANGESAMPLINGDATE = "CHANGESAMPLINGDATE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SETAMPLINGDATE = "SETSAMPLINGDATE";
+    public enum SampleAPIEndpoints{
+        /**
+         *
+         */
+        LOGSAMPLE("LOGSAMPLE", "sampleTemplate|sampleTemplateVersion", "", "sampleLogged_success"),
+        RECEIVESAMPLE("RECEIVESAMPLE", "sampleId", "", "sampleReceived_success"),
+        SETSAMPLINGDATE("SETSAMPLINGDATE", "sampleId", "", "setSamplingDate_success"),
+        CHANGESAMPLINGDATE("CHANGESAMPLINGDATE", "sampleId|newDate", "", "changeSamplingDate_success"),
+        SAMPLINGCOMMENTADD("SAMPLINGCOMMENTADD", "sampleId|sampleComment", "", "samplingCommentAdd_success"),
+        SAMPLINGCOMMENTREMOVE("SAMPLINGCOMMENTREMOVE", "sampleId", "", "samplingCommentRemove_success"),
+        INCUBATIONSTART("INCUBATIONSTART", "sampleId", "", "incubationStart_success"),
+        INCUBATIONEND("INCUBATIONEND", "sampleId", "", "incubationEnd_success"),
+        INCUBATION2START("INCUBATION2START", "sampleId", "", "incubation2Start_success"),
+        INCUBATION2END("INCUBATION2END", "sampleId", "", "incubation2End_success"),
+        SAMPLEANALYSISADD("SAMPLEANALYSISADD", "sampleId|fieldName|fieldValue", "", "sampleAnalysisAdd_success"),
+        TESTASSIGNMENT("TESTASSIGNMENT", "testId|newAnalyst", "", "testAssignment_success"),
+        ENTERRESULT("ENTERRESULT", "resultId|rawValueResult", "", "enterResult_success"),
+        ENTERRESULT_LOD("ENTERRESULT_LOD", "incidentId|note", "", "enterResultLOD_success"),
+        RESULT_CHANGE_UOM("RESULT_CHANGE_UOM", "incidentId|note", "", "resultChangeUOM_success"),
+        REVIEWRESULT("REVIEWRESULT", "objectId|objectLevel", "", "reviewResult_success"),
+        UNREVIEWRESULT("UNREVIEWRESULT", "objectId|objectLevel", "", "unreviewResult_success"),
+        CANCELRESULT("CANCELRESULT", "objectId|objectLevel", "", "cancelResult_success"),
+        UNCANCELRESULT("UNCANCELRESULT", "objectId|objectLevel", "", "uncancelResult_success"),
+        COC_ABORTCHANGE("COC_ABORTCHANGE", "sampleId|cancelChangeComment", "", "cocAbortChange_success"),
+        COC_STARTCHANGE("COC_STARTCHANGE", "sampleId|custodianCandidate", "", "cocStartChange_success"),
+        COC_CONFIRMCHANGE("COC_CONFIRMCHANGE", "sampleId|confirmChangeComment", "", "cocConfirmChange_success"),
+        GETSAMPLEINFO("GETSAMPLEINFO", "sampleId|sampleFieldToRetrieve", "", "getSampleInfo_success"),
+        TOKEN_VALIDATE_ESIGN_PHRASE("TOKEN_VALIDATE_ESIGN_PHRASE", "myToken|esignPhraseToCheck", "", "tokenValidateEsignPhrase_success"),
+        LOGALIQUOT("LOGALIQUOT", "sampleId", "", "logAliquot_success"),
+        LOGSUBALIQUOT("LOGSUBALIQUOT", "aliquotId", "", "logSubAliquot_success"),
+        SAMPLESTAGE_MOVETONEXT("SAMPLESTAGE_MOVETONEXT", "sampleId", "", "sampleStage_moveToNext_success"),
+        SAMPLESTAGE_MOVETOPREVIOUS("SAMPLESTAGE_MOVETOPREVIOUS", "sampleId", "", "sampleStage_moveToPrevious_success"),
+        SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED("SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED", "auditId", "", "sampleAudit_setAuditIdReviewed_success"),
+        ;      
+        private SampleAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }
     
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_RECEIVESAMPLE = "RECEIVESAMPLE";
+    
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_LOGSUBALIQUOT = "LOGSUBALIQUOT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_LOGALIQUOT = "LOGALIQUOT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_CANCELRESULT = "CANCELRESULT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_COC_CONFIRMCHANGE = "COC_CONFIRMCHANGE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_REVIEWRESULT = "REVIEWRESULT";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GETSAMPLEINFO = "GETSAMPLEINFO";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_ENTERRESULT_LOD = "ENTERRESULT_LOD";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_RESULT_CHANGE_UOM = "RESULT_CHANGE_UOM";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLESTAGE_MOVE_TO_NEXT = "SAMPLESTAGE_MOVETONEXT"; //SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETONEXT.toString();
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLESTAGE_MOVE_TO_PREVIOUS = "SAMPLESTAGE_MOVETOPREVIOUS"; //SampleAudit.SampleAuditEvents.SAMPLESTAGE_MOVETOPREVIOUS.toString();
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED= "SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED";
-        
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET = "actionName|finalToken|schemaPrefix";
 
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_ESIGN_PHRASE = "myToken|esignPhraseToCheck";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_LOGSAMPLE="sampleTemplate|sampleTemplateVersion";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_RECEIVESAMPLE="sampleId";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_SETSAMPLINGDATE="sampleId";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CHANGESAMPLINGDATE="sampleId|newDate";      
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_SAMPLINGCOMMENTADD="sampleId|sampleComment";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_SAMPLINGCOMMENTREMOVE="sampleId";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATIONSTART="sampleId";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATIONEND="sampleId";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_SAMPLEANALYSISADD="sampleId|fieldName|fieldValue";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_ENTERRESULT="resultId|rawValueResult"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_REVIEWRESULT="objectId|objectLevel"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CANCELRESULT="objectId|objectLevel"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_UNREVIEWRESULT="objectId|objectLevel"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_UNCANCELRESULT="objectId|objectLevel"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_TESTASSIGNMENT="testId|newAnalyst"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_GETSAMPLEINFO="sampleId|sampleFieldToRetrieve"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_COC_STARTCHANGE="sampleId|custodianCandidate"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_COC_CONFIRMCHANGE="sampleId|confirmChangeComment"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_COC_ABORTCHANGE="sampleId|cancelChangeComment"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_LOGALIQUOT="sampleId"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_LOGSUBALIQUOT="aliquotId"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_MOVE_TO_NEXT="sampleId";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_MOVE_TO_PREVIOUS="sampleId";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_SET_AUDIT_ID_REVIEWED="auditId";
-    
     /**
      *
      */
@@ -390,7 +183,10 @@ public class SampleAPIParams extends HttpServlet {
      *
      */
     public static final String MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_CHANGEOFCUSTODY_USERS_LIST="user_name|person_name"; 
-        
+
+    
+    
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *

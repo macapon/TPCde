@@ -1117,8 +1117,9 @@ if (1==1)return;
         return null;
     }
         
-    private static void buildPreparedStatement(Object [] valoStrings, PreparedStatement prepsta) throws SQLException{
-        Integer indexval = 1;
+    private static void buildPreparedStatement(Object [] valoStrings, PreparedStatement prepsta){
+        try {
+        Integer indexval = 1;        
         for(Integer numi=0;numi<valoStrings.length;numi++){
             Object obj = valoStrings[numi];
             String clase=">>>";
@@ -1126,41 +1127,47 @@ if (1==1)return;
                clase = obj.getClass().toString();
             }
             obj = LPNulls.replaceNull(obj);
-            String[] split = obj.toString().split(">>>");
-            if ( (obj.toString().toLowerCase().contains("null")) || (split.length>1) ) {                
-                clase = split[1];
-                switch(clase.toUpperCase()){
-                    case "INTEGER":
-                        clase = "class java.lang.Integer";
-                        prepsta.setNull(indexval, Types.INTEGER);
-                        break;
-                    case "BIGDECIMAL":
-                        clase = "class java.math.BigDecimal";
-                        prepsta.setNull(indexval, Types.NUMERIC);
-                        break;                        
-                    case "DATE":
-                        clase = "class java.sql.Date";
-                        prepsta.setNull(indexval, Types.DATE);
-                        break;
-                    case "TIME":
-                        clase = "class java.sql.Timestamp";
-                        prepsta.setNull(indexval, Types.TIMESTAMP_WITH_TIMEZONE);
-                        break;
-                    case "STRING":
-                        clase = "class Ljava.lang.String";
-                        prepsta.setNull(indexval, Types.VARCHAR);
-                        break;
-                    case "BOOLEAN":
-                        clase = "class java.lang.Boolean";
-                        prepsta.setNull(indexval, Types.BOOLEAN);
-                        break;
-                    case "FLOAT":
-                        clase = "class java.lang.Float";
-                        prepsta.setNull(indexval, Types.FLOAT);
-                        break;                        
-                    default:
-                        break;
-                }
+            //String[] split = obj.toString().split("\\|");
+            //if (split.length==1) 
+            String[]    split = obj.toString().split(">>>");
+            if ( (obj.toString().toLowerCase().contains("null")) || (split.length>1) ) {                                
+                    clase = split[1];
+                    switch(clase.toUpperCase()){
+                        case "INTEGER":
+                            clase = "class java.lang.Integer";
+                            prepsta.setNull(indexval, Types.INTEGER);
+                            break;
+                        case "BIGDECIMAL":
+                            clase = "class java.math.BigDecimal";
+                            prepsta.setNull(indexval, Types.NUMERIC);
+                            break;
+                        case "DATE":
+                            clase = "class java.sql.Date";
+                            prepsta.setNull(indexval, Types.DATE);
+                            break;
+                        case "DATETIME":
+                            clase = "class java.time.LocalDateTime";
+                            prepsta.setNull(indexval, Types.TIME_WITH_TIMEZONE);
+                            break;
+                        case "TIME":
+                            clase = "class java.sql.Timestamp";
+                            prepsta.setNull(indexval, Types.TIMESTAMP_WITH_TIMEZONE);
+                            break;
+                        case "STRING":
+                            clase = "class Ljava.lang.String";
+                            prepsta.setNull(indexval, Types.VARCHAR);
+                            break;
+                        case "BOOLEAN":
+                            clase = "class java.lang.Boolean";
+                            prepsta.setNull(indexval, Types.BOOLEAN);
+                            break;
+                        case "FLOAT":
+                            clase = "class java.lang.Float";
+                            prepsta.setNull(indexval, Types.FLOAT);
+                            break;
+                        default:
+                            break;
+                    }
             }else{
                 switch(clase){
                     case "class java.lang.Long":                           
@@ -1217,6 +1224,9 @@ if (1==1)return;
                indexval++;
            }
         }     
+        } catch (SQLException ex) {
+            Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
     
     /**

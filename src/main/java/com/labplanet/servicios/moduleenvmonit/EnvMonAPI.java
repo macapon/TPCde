@@ -17,11 +17,11 @@ import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
 import java.time.LocalDateTime;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -36,6 +36,44 @@ import org.json.simple.JSONObject;
  */
 public class EnvMonAPI extends HttpServlet {    
 
+    public enum EnvMonAPIEndpoints{
+        /**
+         *
+         */
+        CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programName|programCorrectiveActionId", "", "programCompleteCorrectiveAction_success"),
+        EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_create_success"),
+        EM_BATCH_ASSIGN_INCUB("EM_BATCH_ASSIGN_INCUB", "incubatorName|batchName", "", "incubatorBatch_assignIncubator_success"),
+        EM_BATCH_UPDATE_INFO("EM_BATCH_UPDATE_INFO", "batchName|fieldName|fieldValue", "", "incubatorBatch_updateInfo_success"),
+        EM_BATCH_INCUB_START("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationStart_success"),
+        EM_BATCH_INCUB_END("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationEnd_success"),
+        EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "", "", "programScheduler_logScheduledSamples"),
+        ;
+        private EnvMonAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }
+    
     /**
      *
      */
@@ -44,7 +82,6 @@ public class EnvMonAPI extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_CORRECTIVE_ACTION_COMPLETE="programName|programCorrectiveActionId";
     
     /**
      *
@@ -130,14 +167,6 @@ public class EnvMonAPI extends HttpServlet {
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
         }        
-        if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                       LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-               return;                   
-            }     
-        }
         
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
              (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
@@ -152,6 +181,20 @@ public class EnvMonAPI extends HttpServlet {
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         //Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
+        EnvMonAPIEndpoints endPoint = null;
+        Object[] actionDiagnoses = null;
+        try{
+            endPoint = EnvMonAPIEndpoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            return;                   
+        }
+        areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            LPFrontEnd.servletReturnResponseError(request, response,
+                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+            return;
+        }
         try (PrintWriter out = response.getWriter()) {
 
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
@@ -169,30 +212,20 @@ public class EnvMonAPI extends HttpServlet {
             DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();           
             DataProgramSample prgSmp = new DataProgramSample();     
             DataSample smp = new DataSample(prgSmpAna);    
-            DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(prgSmpAnaRes);               
-            Object[] actionDiagnoses = null;
-            
-            switch (actionName.toUpperCase()){
-                case "CORRECTIVE_ACTION_COMPLETE":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_CORRECTIVE_ACTION_COMPLETE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+            DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(prgSmpAnaRes);                           
+            String batchName = "";
+            String incubationName = "";
+            RelatedObjects rObj=RelatedObjects.getInstance();   
+            Object[] messageDynamicData=new Object[]{};
+            switch (endPoint){
+                case CORRECTIVE_ACTION_COMPLETE:
                     String programName=request.getParameter(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME);
                     Integer correctiveActionId = Integer.valueOf(request.getParameter(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID));                                  
                     
                     actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(schemaPrefix, token, correctiveActionId);
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_CREATE:                    
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_INCUB_CREATE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
-                    String batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
+                case EM_BATCH_INCUB_CREATE:    
+                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
                     String batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     String batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
                     String fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);                                        
@@ -202,59 +235,47 @@ public class EnvMonAPI extends HttpServlet {
                     if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     actionDiagnoses= DataBatchIncubator.createBatch(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), fieldNames, fieldValues);
+                    batchName=actionDiagnoses[actionDiagnoses.length-1].toString();
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    messageDynamicData=new Object[]{batchName};
                     break;                    
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_ASSIGN_INCUB:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_ASSIGN_INCUB.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_ASSIGN_INCUB: 
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    String incubationName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
+                    incubationName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    messageDynamicData=new Object[]{incubationName, batchName};
                     actionDiagnoses=DataBatchIncubator.batchAssignIncubator(schemaPrefix, token, batchName, incubationName);
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_UPDATE_INFO:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_UPDATE_INFO.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_UPDATE_INFO: 
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     fieldName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME);
                     String[] fieldsName = fieldName.split("\\|");
                     fieldValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE);
                     Object[] fieldsValue= LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     actionDiagnoses=DataBatchIncubator.batchUpdateInfo(schemaPrefix, token, batchName, fieldsName, fieldsValue);
+                    messageDynamicData=new Object[]{incubationName, batchName};
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_START:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_INCUB_START.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_INCUB_START:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);                    
                     String incubName=null;
                     actionDiagnoses=DataBatchIncubator.batchStarted(schemaPrefix, token, batchName, incubName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion));
+                    messageDynamicData=new Object[]{incubationName, batchName};
                     break;                    
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_END:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_INCUB_END.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_INCUB_END:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);                    
                     incubName=null;
                     actionDiagnoses=DataBatchIncubator.batchEnded(schemaPrefix, token, batchName, incubName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion));
+                    messageDynamicData=new Object[]{incubationName, batchName};
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_LOGSAMPLE_SCHEDULER:
+                case EM_LOGSAMPLE_SCHEDULER:
                     String dateStartStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DATE_START);      
                     LocalDateTime dateStart=null;
                     if (dateStartStr!=null) dateStart=LPDate.dateStringFormatToLocalDateTime(dateStartStr);
@@ -265,6 +286,7 @@ public class EnvMonAPI extends HttpServlet {
                     programName=null;
                     if (programNameStr!=null) programName=programNameStr;
                     actionDiagnoses=prgSmp.logProgramSampleScheduled(schemaPrefix, token, programName, dateStart, dateEnd);
+                    messageDynamicData=new Object[]{};
                     break;
                 default:    
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
@@ -277,7 +299,10 @@ public class EnvMonAPI extends HttpServlet {
 //                    con.setAutoCommit(true);}                
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(actionDiagnoses);
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                rObj.killInstance();
+                //LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                
+                //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(actionDiagnoses);
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   

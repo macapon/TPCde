@@ -10,33 +10,59 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
+import databases.TblsData;
 import databases.Token;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.sop.UserSop;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 /**
  *
  * @author Administrator
  */
 public class SopUserAPI extends HttpServlet {
 
+    public enum SopUserAPIEndpoints{
+        /**
+         *
+         */
+        SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "sopName", "", "appSop_markAsCompleted_success"),
+        ;
+        private SopUserAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }
     /**
      *
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_SOP_MARK_AS_COMPLETED="sopName";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -50,18 +76,17 @@ public class SopUserAPI extends HttpServlet {
         response=LPHttp.responsePreparation(response);
 
         String language = LPFrontEnd.setLanguage(request); 
-        
 
-            String[] mandatoryParams = new String[]{""};
-            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;          
-            }                 
-            String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);  
-            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
+        String[] mandatoryParams = new String[]{""};
+        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+            LPFrontEnd.servletReturnResponseError(request, response, 
+                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+            return;          
+        }                 
+        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);  
+        String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
@@ -70,8 +95,7 @@ public class SopUserAPI extends HttpServlet {
                 return;                                
         }
         mandatoryParams = null;                        
-
-         Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
+        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
@@ -94,43 +118,56 @@ public class SopUserAPI extends HttpServlet {
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
-        
- /*       Connection con = Rdbms.createTransactionWithSavePoint();    
+
+            SopUserAPIEndpoints endPoint = null;
+            Object[] actionDiagnoses = null;
+            try{
+                endPoint = SopUserAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }        
+            Object[] messageDynamicData=new Object[]{};
+/*       Connection con = Rdbms.createTransactionWithSavePoint();    
         try {
             con.rollback();
             con.setAutoCommit(true);    
         } catch (SQLException ex) {
             Logger.getLogger(SopUserAPI.class.getName()).log(Level.SEVERE, null, ex);
         }        
-*/        
+*/
+        RelatedObjects rObj=RelatedObjects.getInstance();
         Object[] userSopDiagnositc=new Object[0];
         try (PrintWriter out = response.getWriter()) {        
-            switch (actionName.toUpperCase()){
-            case "SOP_MARK_AS_COMPLETED":    
-                areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_SOP_MARK_AS_COMPLETED.split("\\|"));
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                    LPFrontEnd.servletReturnResponseError(request, response, 
-                            LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                    return;                  
-                }   
+            switch (endPoint){
+            case SOP_MARK_AS_COMPLETED:
                 String sopName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME);
                 String userName = token.getUserName();
                 userSopDiagnositc=UserSop.userSopMarkedAsCompletedByUser(schemaPrefix, userName, sopName);
+                messageDynamicData=new Object[]{sopName};
+                rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
                 break;
-
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                                          
             }
-
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnositc[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, userSopDiagnositc);   
-            }else{
-                LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, userSopDiagnositc);
+            }else{                
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                rObj.killInstance();
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);     
+                
             }                 
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_EXCEPTION_RAISED, new Object[]{e.getMessage(), this.getServletName()}, language);                   

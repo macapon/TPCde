@@ -1,5 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+    <context-param>
+        <param-name>jsfiles</param-name>
+        <param-value>/classes/JavaScript</param-value>
+    </context-param>
     <servlet>
         <servlet-name>DBActions</servlet-name>
         <servlet-class>com.labplanet.servicios.testing.platform.DBActions</servlet-class>
@@ -88,6 +92,10 @@
     <servlet>
         <servlet-name>SampleAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.modulesample.SampleAPI</servlet-class>
+        <context-param>
+            <param-name>jsfiles</param-name>
+            <param-value>/WEB-INF/classes/JavaScript</param-value>
+        </context-param>
     </servlet>
     <servlet>
         <servlet-name>SampleAPIfrontend</servlet-name>
@@ -203,6 +211,10 @@
     <servlet>
         <servlet-name>IncidentAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.IncidentAPI</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>IncidentAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.IncidentAPIfrontend</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
@@ -406,6 +418,10 @@
     <servlet-mapping>
         <servlet-name>IncidentAPI</servlet-name>
         <url-pattern>/app/IncidentAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>IncidentAPIfrontend</servlet-name>
+        <url-pattern>/frontend/IncidentAPIfrontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

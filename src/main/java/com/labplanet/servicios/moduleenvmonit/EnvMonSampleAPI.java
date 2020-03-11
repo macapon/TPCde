@@ -15,17 +15,13 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
-import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample.logProgramSamplerSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -44,6 +40,44 @@ public class EnvMonSampleAPI extends HttpServlet {
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
     
+    public enum EnvMonSampleAPIEndpoints{
+        /**
+         *
+         */
+        LOGSAMPLE("LOGSAMPLE", "sampleTemplate|sampleTemplateVersion|programName|locationName", "", "sampleLogged_success"),
+        ENTERRESULT("ENTERRESULT", "resultId|rawValueResult", "", "enterResult_success"),
+        ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "sampleId|microorganismName", "", "MigroorganismAdded_success"),
+        EM_BATCH_INCUB_ADD_SMP("EM_BATCH_INCUB_ADD_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId", "", "batchIncubator_sampleAdded_success"),
+        EM_BATCH_INCUB_MOVE_SMP("EM_BATCH_INCUB_MOVE_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId|positionRow|positionCol", "", "batchIncubator_sampleMoved_success"),
+        EM_BATCH_INCUB_REMOVE_SMP("EM_BATCH_INCUB_REMOVE_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId", "", "batchIncubator_sampleRemoved_success"),
+        GETSAMPLEINFO2("*****", "", "", ""),
+        ;      
+        private EnvMonSampleAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }
+
     /**
      *
      */
@@ -181,15 +215,25 @@ public class EnvMonSampleAPI extends HttpServlet {
             DataSample smp = new DataSample(prgSmpAna);    
             DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(prgSmpAnaRes);               
             Object[] dataSample = null;
-            
-            switch (actionName.toUpperCase()){
-                case SampleAPIParams.API_ENDPOINT_LOGSAMPLE:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_LOGSAMPLE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+
+            EnvMonSampleAPIEndpoints endPoint = null;
+            Object[] actionDiagnoses = null;
+            try{
+                endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }    
+            Object[] messageDynamicData=new Object[]{};
+            RelatedObjects rObj=RelatedObjects.getInstance();
+            switch (endPoint){
+                case LOGSAMPLE:
                     String sampleTemplate=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE);
                     String sampleTemplateVersionStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION);                                  
 
@@ -216,43 +260,31 @@ public class EnvMonSampleAPI extends HttpServlet {
                         dataSample = prgSmp.logProgramSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, locationName);
                     }
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
+                    messageDynamicData=new Object[]{dataSample[dataSample.length-1]};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), dataSample[dataSample.length-1]);                            
                     break;
-                case SampleAPIParams.API_ENDPOINT_ENTERRESULT:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_ENTERRESULT.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case ENTERRESULT:
                     Integer resultId = 0;
                     String rawValueResult = "";
                     String resultIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID);
                     resultId = Integer.parseInt(resultIdStr);       
                     rawValueResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT);
                     dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
+                    messageDynamicData=new Object[]{""};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), "");                            
                     break;             
-                case EnvMonitAPIParams.API_ENDPOINT_ADD_SAMPLE_MICROORGANISM:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_ADD_SAMPLE_MICROORGANISM.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case ADD_SAMPLE_MICROORGANISM:
                     String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     Integer sampleId = Integer.parseInt(sampleIdStr);       
                     String microorganismName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME);  
-                    String[] microorganismNameArr=microorganismName.split("\\|"); 
+                    String[] microorganismNameArr=microorganismName.split("\\|");                     
                     for (String orgName: microorganismNameArr){
                       dataSample = DataProgramSample.addSampleMicroorganism(schemaPrefix, token, sampleId, orgName);
                     }
+                    messageDynamicData=new Object[]{microorganismName.replace("\\|", ", "), sampleId};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);                                                
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_ADD_SMP:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_INCUB_ADD_SMP.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_INCUB_ADD_SMP:
                     String batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
                     String batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     String batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
@@ -270,14 +302,11 @@ public class EnvMonSampleAPI extends HttpServlet {
                     
                     dataSample=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
                             , Integer.valueOf(sampleIdStr), positionRow, positionCol, positionOverride);
+                    messageDynamicData=new Object[]{sampleIdStr, batchName};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_MOVE_SMP:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_INCUB_MOVE_SMP.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_INCUB_MOVE_SMP:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
                     batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
@@ -290,23 +319,25 @@ public class EnvMonSampleAPI extends HttpServlet {
                     
                     dataSample=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
                             , Integer.valueOf(sampleIdStr), Integer.valueOf(positionRowStr), Integer.valueOf(positionColStr), positionOverride);
+                    messageDynamicData=new Object[]{sampleIdStr, batchName};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
                     break;
-                case EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_REMOVE_SMP:
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_BATCH_INCUB_REMOVE_SMP.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                                                              
+                case EM_BATCH_INCUB_REMOVE_SMP:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
                     batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
                     sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     dataSample=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), Integer.valueOf(sampleIdStr));
+                    messageDynamicData=new Object[]{sampleIdStr, batchName};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
                     break;
-                case "GETSAMPLEINFO2":
+                case GETSAMPLEINFO2:
                     RequestDispatcher rd3 = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-                    rd3.forward(request,response);         
+                    rd3.forward(request,response);  
+                    //messageDynamicData=new Object[]{sampleId};
+                    //rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleId));                    
                     return;
                 default:    
                     Rdbms.closeRdbms(); 
@@ -321,8 +352,9 @@ public class EnvMonSampleAPI extends HttpServlet {
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                rObj.killInstance();
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }            
         }catch(Exception e){   
  /*           try {

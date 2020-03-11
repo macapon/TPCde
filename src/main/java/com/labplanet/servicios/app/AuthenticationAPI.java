@@ -11,10 +11,12 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPSession;
 import com.auth0.jwt.exceptions.JWTCreationException;
+import static com.sun.tools.doclint.Entity.prop;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.Token;
 import databases.TblsApp.Users;
+import functionaljavaa.parameter.Parameter;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -23,11 +25,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import functionaljavaa.user.UserAndRolesViews;
+import static functionaljavaa.user.UserAndRolesViews.BUNDLE_PARAMETER_CREDENTIALS_USER_IS_CASESENSITIVE;
 import static functionaljavaa.user.UserAndRolesViews.setUserDefaultTabsOnLogin;
 import static functionaljavaa.user.UserAndRolesViews.setUserNewEsign;
 import static functionaljavaa.user.UserAndRolesViews.setUserNewPassword;
 import functionaljavaa.user.UserProfile;
 import java.util.Date;
+import java.util.ResourceBundle;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 /**
@@ -60,6 +64,7 @@ public class AuthenticationAPI extends HttpServlet {
                 return;          
             }                        
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+            ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
 
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);                                    
             switch (actionName.toUpperCase()){
@@ -70,8 +75,11 @@ public class AuthenticationAPI extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                                    
                     }     
-                    String dbUserName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_USERNAME);                   
-                    String dbUserPassword = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD);  
+                    String dbUserName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_USERNAME);   
+                    String userIsCaseSensitive = prop.getString(BUNDLE_PARAMETER_CREDENTIALS_USER_IS_CASESENSITIVE);
+                    if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
+                    
+                    String dbUserPassword = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD);                      
                     String personName = UserAndRolesViews.getPersonByUser(dbUserName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personName)){               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_PERSON_NOT_FOUND, null, language);              

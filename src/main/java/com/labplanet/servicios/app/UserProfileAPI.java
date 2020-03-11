@@ -14,6 +14,7 @@ import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsApp.Users;
 import databases.Token;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
@@ -24,22 +25,50 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import org.json.simple.JSONObject;
 
 /**
  *
  * @author Administrator
  */
 public class UserProfileAPI extends HttpServlet {
-
+    
+    public enum UserProfileAPIEndpoints{
+        /**
+         *
+         */
+        UPDATE_ESIGN("UPDATE_ESIGN", "incidentTitle|incidentDetail", "", "incidentNewIncident_success"),
+        ;
+        private UserProfileAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }
     /**
      *
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET = "actionName|finalToken";
     
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_USER_UPDATE_ESIGN="UPDATE_ESIGN";
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -102,9 +131,25 @@ public class UserProfileAPI extends HttpServlet {
             Logger.getLogger(EnvMonAPI.class.getName()).log(Level.SEVERE, null, ex);
         }        
 */           
+            UserProfileAPIEndpoints endPoint = null;
+            Object[] actionDiagnoses = null;
+            try{
+                endPoint = UserProfileAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            } 
             Object[] userActionDiagnostic = new Object[]{LPPlatform.LAB_FALSE};
-            switch (actionName.toUpperCase()){
-                case API_ENDPOINT_USER_UPDATE_ESIGN: 
+            Object[] messageDynamicData=new Object[]{};
+            RelatedObjects rObj=RelatedObjects.getInstance();
+            switch (endPoint){
+                case UPDATE_ESIGN: 
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, new String[]{"newEsignPhrase"});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -114,7 +159,8 @@ public class UserProfileAPI extends HttpServlet {
                     String newEsignPhrase = request.getParameter("newEsignPhrase"); 
                     userActionDiagnostic = Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
                             new String[]{Users.FLD_ESIGN.getName()}, new Object[]{newEsignPhrase}, new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()});
-                    
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    messageDynamicData=new Object[]{token.getUserName()};
                     break;
                 default:
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
@@ -127,7 +173,10 @@ public class UserProfileAPI extends HttpServlet {
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, userActionDiagnostic);   
             }else{
-                LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, userActionDiagnostic);
+                rObj.killInstance();
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg); 
+                
             }                             
         } finally {
             // release database resources

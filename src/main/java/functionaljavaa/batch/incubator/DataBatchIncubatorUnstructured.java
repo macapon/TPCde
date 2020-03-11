@@ -5,6 +5,7 @@
  */
 package functionaljavaa.batch.incubator;
 
+import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
@@ -129,7 +130,7 @@ public class DataBatchIncubatorUnstructured {
             }else{
                 DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_START, sampleId);                
+                    smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);                
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation started", null);
@@ -159,7 +160,7 @@ public class DataBatchIncubatorUnstructured {
             }else{
                 DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    autoDiagn=smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonitAPIParams.API_ENDPOINT_EM_BATCH_INCUB_END, sampleId);                                                
+                    autoDiagn=smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);                                                
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation ended", null);

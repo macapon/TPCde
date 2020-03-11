@@ -24,22 +24,19 @@ import org.json.simple.JSONObject;
  * @author Administrator
  */
 public class LPFrontEnd {
+
+    public enum ResponseTags{
+        DIAGNOTIC("diagnostic"), CATEGORY("category"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
+        private ResponseTags(String labelName){
+            this.labelName=labelName;            
+        }    
+        public String getLabelName(){
+            return this.labelName;
+        }           
+        private final String labelName;
+    };
+
     private LPFrontEnd(){    throw new IllegalStateException("Utility class");}    
-
-    /**
-     *
-     */
-    public static final String PROPERTY_NAME = "error_code";
-
-    /**
-     *
-     */
-    public static final String PROPERTY_VALUE = "error_value";
-    
-    /**
-     *
-     */
-    public static final String RESPONSE_JSON_TAG_DIAGNOSTIC= "diagnostic"; 
 
     /**
      *
@@ -121,9 +118,10 @@ public class LPFrontEnd {
      */
     public static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(RESPONSE_JSON_TAG_DIAGNOSTIC, lpFalseStructure[0]);
-        errJsObj.put(PROPERTY_VALUE+"_es", lpFalseStructure[lpFalseStructure.length-1]);
-        errJsObj.put(PROPERTY_VALUE+"_en", lpFalseStructure[lpFalseStructure.length-1]);
+        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), lpFalseStructure[0]);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
     }
 
@@ -134,12 +132,39 @@ public class LPFrontEnd {
      */
     public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(RESPONSE_JSON_TAG_DIAGNOSTIC, lpTrueStructure[0]);
-        errJsObj.put(PROPERTY_VALUE+"_es", lpTrueStructure[lpTrueStructure.length-1]);
-        errJsObj.put(PROPERTY_VALUE+"_en", lpTrueStructure[lpTrueStructure.length-1]);
+        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), lpTrueStructure[0]);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpTrueStructure[lpTrueStructure.length-1]);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpTrueStructure[lpTrueStructure.length-1]);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
         return errJsObj;
     }    
 
+    /**
+     *
+     * @param apiName
+     * @param msgCode
+     * @param msgDynamicValues
+     * @return
+     */
+    public static JSONObject responseJSONDiagnosticLPTrue(String apiName, String msgCode, Object[] msgDynamicValues, JSONArray relatedObjects){
+        String errorTextEn = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
+        String errorTextEs = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "es");
+        if (msgCode!=null){
+            for (int iVarValue=1; iVarValue<=msgDynamicValues.length; iVarValue++){
+                errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
+                errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", msgDynamicValues[iVarValue-1].toString());
+            }        
+        }        
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_TRUE);
+        errJsObj.put(ResponseTags.CATEGORY.getLabelName(), apiName.toUpperCase().replace("API", ""));
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+        errJsObj.put(ResponseTags.RELATED_OBJECTS.getLabelName(), relatedObjects);        
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
+        return errJsObj;
+    }    
+    
     /**
      *
      * @param errorPropertyName
@@ -148,22 +173,27 @@ public class LPFrontEnd {
      */
     public static JSONObject responseJSONError(String errorPropertyName, Object[] errorPropertyValue){
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(PROPERTY_NAME, errorPropertyName);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName(), errorPropertyName);
         String errorTextEn = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_ERRORTRAPING, null, errorPropertyName, null);
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
                 errorTextEn = errorTextEn.replace("<*"+iVarValue+"*>", errorPropertyValue[iVarValue-1].toString());
             }        
         }
-        errJsObj.put(PROPERTY_VALUE+"_en", errorTextEn);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
         String errorTextEs = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_ERRORTRAPING, null, errorPropertyName, "es");
         if (errorPropertyValue!=null){
             for (int iVarValue=1; iVarValue<=errorPropertyValue.length; iVarValue++){
                 errorTextEs = errorTextEs.replace("<*"+iVarValue+"*>", errorPropertyValue[iVarValue-1].toString());
             }         
         }
-        errJsObj.put(PROPERTY_VALUE+"_es", errorTextEs);
-        errJsObj.put(RESPONSE_JSON_TAG_DIAGNOSTIC, LPPlatform.LAB_FALSE);        
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_FALSE); 
+        
+//        errJsObj.put("category", apiName.toUpperCase().replace("API", ""));
+//        errJsObj.put("", relatedObjects);        
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
+        
         return errJsObj;
     }
     /**

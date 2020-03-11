@@ -524,7 +524,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
               String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
               
               Object[][] programCorrectiveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), ProgramCorrectiveAction.TBL.getName(), 
-                      new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()}, 
+                      new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                       new String[]{programName, statusClosed}, 
                       programFldNameArray, programFldSortArray);
               if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCorrectiveAction[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());

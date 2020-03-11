@@ -52,7 +52,7 @@ Object[][] firstStageData=new Object[0][0];
      */
     
     
-    public static final String LOD_JAVASCRIPT_FORMULA="/JavaScript/"+"schemaPrefix-sample-stage.js";
+    public static final String LOD_JAVASCRIPT_FORMULA="schemaPrefix-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"schemaPrefix-sample-stage.js";
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"schemaPrefix-sample-stage.js";
     
     public static final String BUSINESS_RULE_SAMPLE_STAGE_MODE="sampleStagesMode";
@@ -173,6 +173,7 @@ Object[][] firstStageData=new Object[0][0];
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
         String fileName = LOD_JAVASCRIPT_FORMULA.replace("schemaPrefix", schemaPrefix);
+        fileName=schemaPrefix+"-sample-stage.js"; //"/procedure/"+
         String functionName="sampleStage"+currStage+moveDirection+"Checker";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
@@ -191,7 +192,7 @@ Object[][] firstStageData=new Object[0][0];
           } catch (FileNotFoundException ex2) {              
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
           return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", "Error: "+ex2.getMessage()
-                  +"(tried two paths: "+LOD_JAVASCRIPT_FORMULA.replace("schemaPrefix", schemaPrefix)+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace("schemaPrefix", schemaPrefix)+") "};          
+                  +"(tried two paths: "+"/app/" + schemaPrefix + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace("schemaPrefix", schemaPrefix)+") "};          
           }
         }
         Invocable invocable = (Invocable) engine;

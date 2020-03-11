@@ -25,21 +25,42 @@ import org.json.simple.JSONObject;
  * @author Administrator
  */
 public class AppHeaderAPI extends HttpServlet {
-
-    /**
-     *
-     */
-    public static final String ENDPOINT_NAME_GETAPPHEADER="GETAPPHEADER";
-    
     /**
      *
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken";
-    
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE="first_name|last_name|photo";
+    public enum IncidentAPIEndpoints{
+        /**
+         *
+         */
+        GETAPPHEADER("GETAPPHEADER", "", "", ""),
+        ;
+        private IncidentAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }    
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -68,8 +89,21 @@ public class AppHeaderAPI extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
 
             JSONObject personInfoJsonObj = new JSONObject();
-            switch (actionName.toUpperCase()){
-                case ENDPOINT_NAME_GETAPPHEADER:          
+            IncidentAPIEndpoints endPoint = null;
+            try{
+                endPoint = IncidentAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }            
+            switch (endPoint){
+                case GETAPPHEADER:          
                     String personFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME);
                     String[] personFieldsNameArr = new String[0];
                     if ( personFieldsName==null || personFieldsName.length()==0){

@@ -28,7 +28,41 @@ import javax.servlet.http.HttpServletResponse;
  * @author Administrator
  */
 public class BatchAPI extends HttpServlet {
-    
+    public enum BatchAPIEndpoints{
+        /**
+         *
+         */
+        CREATE_BATCH_ARRAY("CREATEBATCHARRAY", "incidentTitle|incidentDetail", "", "incidentNewIncident_success"),
+        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "incidentId|note", "", "incidentConfirmIncident_success"),
+        CLOSE_INCIDENT("CLOSE_INCIDENT", "incidentId|note", "", "incidentClosedIncident_success"),
+        REOPEN_INCIDENT("REOPEN_INCIDENT", "incidentId|note", "", "incidentReopenIncident_success"),
+        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", "incidentId|note", "", "incidentAddNoteToIncident_success"),
+        ;
+        private BatchAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            
+        } 
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;       
+    }    
     /**
      *
      */

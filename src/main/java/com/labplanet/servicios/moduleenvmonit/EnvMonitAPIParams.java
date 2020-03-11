@@ -220,22 +220,15 @@ public class EnvMonitAPIParams extends HttpServlet {
     /**
      *
      */
-    public static final String API_ENDPOINT_EM_BATCH_INCUB_START      = "EM_BATCH_INCUB_START";
+
 
     /**
      *
      */
-    public static final String API_ENDPOINT_EM_BATCH_INCUB_END        = "EM_BATCH_INCUB_END"; 
 
     /**
      *
      */
-    public static final String API_ENDPOINT_EM_BATCH_ASSIGN_INCUB     = "EM_BATCH_ASSIGN_INCUB"; 
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_EM_BATCH_UPDATE_INFO     = "EM_BATCH_UPDATE_INFO"; 
 
     public static final String API_ENDPOINT_EM_LOGSAMPLE_SCHEDULER   = "EM_LOG_SAMPLE_SCHEDULER";
     /**
@@ -347,11 +340,6 @@ public class EnvMonitAPIParams extends HttpServlet {
      *
      */
     public static final String MANDATORY_PARAMS_LOGSUBALIQUOT="aliquotId"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_ADD_SAMPLE_MICROORGANISM="sampleId|microorganismName"; 
     
     /**
      *
@@ -361,33 +349,8 @@ public class EnvMonitAPIParams extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_BATCH_ASSIGN_INCUB="incubatorName|batchName"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_BATCH_INCUB_ADD_SMP="batchName|batchTemplateId|batchTemplateVersion|sampleId";  
-    public static final String MANDATORY_PARAMS_BATCH_INCUB_MOVE_SMP="batchName|batchTemplateId|batchTemplateVersion|sampleId|positionRow|positionCol";  
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_BATCH_INCUB_REMOVE_SMP="batchName|batchTemplateId|batchTemplateVersion|sampleId"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_BATCH_INCUB_START="batchName|batchTemplateId|batchTemplateVersion"; 
-
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_BATCH_INCUB_END="batchName|batchTemplateId|batchTemplateVersion"; 
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_BATCH_UPDATE_INFO="batchName|fieldName|fieldValue"; 
+    
     
     /**
      *

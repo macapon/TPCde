@@ -12,6 +12,7 @@ import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
+import static java.lang.System.out;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -40,8 +41,10 @@ public class TesterFromUploadFile extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)           throws ServletException, IOException {
         response = LPTestingOutFormat.responsePreparation(response);        
-        try (PrintWriter out = response.getWriter()) {
-            String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
+        //try (PrintWriter out = response.getWriter()) {
+        try{
+            //String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
+            String saveDirectory="http://51.75.202.142/testingRepository/"; //TESTING_FILES_PATH;
             MultipartRequest mReq = new MultipartRequest(request, saveDirectory);
             String filename="";
             Enumeration files = mReq.getFileNames();
