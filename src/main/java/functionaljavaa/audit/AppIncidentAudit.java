@@ -22,7 +22,7 @@ import lbplanet.utilities.LPSession;
  */
 public class AppIncidentAudit {
     public static Object[] IncidentAuditAdd(String schemaPrefix, Token token, String action, String tableName, Integer incidentId, String tableId,
-                        Object[] auditlog, Integer parentAuditId, String note) {
+                        Object[] auditlog, Integer parentAuditId, String note, String status) {
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 

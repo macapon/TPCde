@@ -43,8 +43,8 @@ public class TesterFromUploadFile extends HttpServlet {
         response = LPTestingOutFormat.responsePreparation(response);        
         //try (PrintWriter out = response.getWriter()) {
         try{
-            //String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
-            String saveDirectory="http://51.75.202.142/testingRepository/"; //TESTING_FILES_PATH;
+            String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
+            //String saveDirectory="http://51.75.202.142/testingRepository/"; //TESTING_FILES_PATH;
             MultipartRequest mReq = new MultipartRequest(request, saveDirectory);
             String filename="";
             Enumeration files = mReq.getFileNames();
