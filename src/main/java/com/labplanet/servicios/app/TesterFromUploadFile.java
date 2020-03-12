@@ -7,7 +7,6 @@ package com.labplanet.servicios.app;
 
 import com.oreilly.servlet.MultipartRequest;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
-import static functionaljavaa.testingscripts.LPTestingOutFormat.TESTING_FILES_PATH;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
