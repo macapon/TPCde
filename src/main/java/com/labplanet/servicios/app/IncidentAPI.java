@@ -11,7 +11,6 @@ import databases.Token;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -20,10 +19,6 @@ import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import org.apache.http.HttpEntity;
-import org.apache.http.HttpEntityEnclosingRequest;
-import org.apache.http.util.EntityUtils;
-import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
 /**

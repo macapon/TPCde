@@ -11,7 +11,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPSession;
 import com.auth0.jwt.exceptions.JWTCreationException;
-import static com.sun.tools.doclint.Entity.prop;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.Token;
