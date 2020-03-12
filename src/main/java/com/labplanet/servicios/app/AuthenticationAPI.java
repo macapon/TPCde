@@ -57,13 +57,6 @@ public class AuthenticationAPI extends HttpServlet {
         
         try (PrintWriter out = response.getWriter()) {            
             
-/*           Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
-           if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;          
-            }                        
-*/            
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
 
