@@ -11,7 +11,6 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
 import databases.Rdbms;
-import databases.TblsCnfg;
 import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.user.UserProfile;

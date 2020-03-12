@@ -5,7 +5,6 @@
  */
 package functionaljavaa.modulegenoma;
 
-import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import databases.Rdbms;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
@@ -30,7 +29,7 @@ public class GenomaUtilities {
         if (familyIndividuals.length() > 0) {
             familyIndividuals = familyIndividuals + "|";
         }
-        familyIndividuals = familyIndividuals + newObjectId.toString();
+        familyIndividuals = familyIndividuals + newObjectId;
         String[] updFieldName = new String[]{unstructuredFieldName};
         Object[] updFieldValue = new Object[]{familyIndividuals};
         Object[] updateFamilyIndividuals = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, schemaType), tableName, 
@@ -50,11 +49,11 @@ public class GenomaUtilities {
             return LPArray.array2dTo1d(sampleInfo);
         }
         String familyIndividuals = LPNulls.replaceNull(sampleInfo[0][0]).toString();
-        Integer samplePosic = familyIndividuals.indexOf(newObjectId.toString());
+        Integer samplePosic = familyIndividuals.indexOf(newObjectId);
         if (samplePosic == -1) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, objectTableName+" <*1*> not found in "+tableName+" <*2*> for procedure <*3*>.", new Object[]{newObjectId, Arrays.toString(tableKeyFieldValue), schemaPrefix});
         }
-        String samplePosicInfo = familyIndividuals.substring(samplePosic, samplePosic + newObjectInfoToStore.toString().length());
+        String samplePosicInfo = familyIndividuals.substring(samplePosic, samplePosic + newObjectInfoToStore.length());
         String[] samplePosicInfoArr = samplePosicInfo.split("\\*");
         if (samplePosicInfoArr.length != 1) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " removeObjectToUnstructuredField cannot parse the info for the "+tableName+" <*1*> when there are more than 1 pieces of info. Family individual info is <*2*> for procedure <*3*>.", new Object[]{samplePosicInfo, familyIndividuals, schemaPrefix});

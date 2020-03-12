@@ -5,7 +5,6 @@
  */
 package functionaljavaa.moduleenvironmentalmonitoring;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.TblsData;

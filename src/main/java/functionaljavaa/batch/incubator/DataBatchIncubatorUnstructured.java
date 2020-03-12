@@ -6,7 +6,6 @@
 package functionaljavaa.batch.incubator;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
-import com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.Token;

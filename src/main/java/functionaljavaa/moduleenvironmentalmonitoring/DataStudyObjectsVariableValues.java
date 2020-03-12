@@ -5,11 +5,9 @@
  */
 package functionaljavaa.moduleenvironmentalmonitoring;
 
-import com.labplanet.servicios.modulegenoma.TblsGenomaConfig;
 import com.labplanet.servicios.modulegenoma.TblsGenomaData;
 import databases.Rdbms;
 import databases.Token;
-import static functionaljavaa.modulegenoma.GenomaConfigVariablesQueries.getVariableSetVariablesId;
 import static functionaljavaa.modulegenoma.GenomaConfigVariablesQueries.getVariableSetVariablesProperties;
 import functionaljavaa.modulegenoma.GenomaDataAudit;
 import static functionaljavaa.modulegenoma.GenomaDataStudy.isStudyOpenToChanges;

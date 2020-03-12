@@ -21,10 +21,7 @@ public class GenomaBusinessRules {
         String propertyEntryName = tableName+"_activeOnCreation";        
         String propertyEntryValue = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), propertyEntryName);        
         if (propertyEntryValue.length()==0) return false;
-        if ( ("YES".equalsIgnoreCase(propertyEntryValue)) || ("SI".equalsIgnoreCase(propertyEntryValue)) )
-            return true;                  
-        
-        return false;
+        return ("YES".equalsIgnoreCase(propertyEntryValue)) || ("SI".equalsIgnoreCase(propertyEntryValue));
     }
 
     public static Object[] specialFieldsInUpdateArray(String schemaPrefix, String schemaSuffix, String tableName, String[] fieldsToCheck){

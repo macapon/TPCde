@@ -5,7 +5,6 @@
  */
 package functionaljavaa.samplestructure;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPParadigm;
 import databases.Rdbms;

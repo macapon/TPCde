@@ -6,12 +6,9 @@
 package functionaljavaa.modulegenoma;
 
 import com.labplanet.servicios.modulegenoma.TblsGenomaConfig;
-import static functionaljavaa.modulegenoma.GenomaDataStudyFamily.isStudyFamilyOpenToChanges;
 import static functionaljavaa.modulegenoma.GenomaUtilities.addObjectToUnstructuredField;
 import static functionaljavaa.modulegenoma.GenomaUtilities.removeObjectToUnstructuredField;
 import databases.Token;
-import functionaljavaa.modulegenoma.GenomaDataAudit;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -24,7 +21,7 @@ public static Object[] variableSetAddVariable(String schemaPrefix, Token token, 
     
     Object[] updateFamilyIndividuals=addObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
-            TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), variableName.toString(), variableName.toString());  
+            TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
         return updateFamilyIndividuals;
     }
@@ -39,7 +36,7 @@ public static Object[] variableSetRemoveVariable(String schemaPrefix, Token toke
     
     Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_CONFIG, TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, 
-            TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), TblsGenomaConfig.Variables.TBL.getName(), variableName.toString(), variableName.toString());  
+            TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName(), TblsGenomaConfig.Variables.TBL.getName(), variableName, variableName);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
         return updateFamilyIndividuals;
     }
