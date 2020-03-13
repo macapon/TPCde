@@ -37,7 +37,6 @@ public class TablesDeployment extends HttpServlet {
             
             String schemaNamePrefix="genoma-1";
             String tblCreateScript = "";
-            /* TODO output your page here. You may use following sample code. */
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
