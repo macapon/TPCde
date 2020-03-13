@@ -16,12 +16,12 @@ public interface DataSampleAnalysisResultStrategy {
     /**
      *
      */
-    String sampleActionWhenUponControlModeEnablingStatuses="ENABLE";
+    String SAMPLEACTIONWHENUPONCONTROLMODEENABLINGSTATUSES="ENABLE";
 
     /**
      *
      */
-    String sampleActionWhenUponOOSModeEnablingStatuses="ENABLE";
+    String SAMPLEACTIONWHENUPONOOSMODEENABLINGSTATUSES="ENABLE";
 
     /**
      *

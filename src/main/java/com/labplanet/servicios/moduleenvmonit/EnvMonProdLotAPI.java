@@ -192,12 +192,13 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     messageDynamicData=new Object[]{lotName};
                     diagnostic=DataProgramProductionLot.activateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
+                    break;
                 case EM_DEACTIVATE_PRODUCTION_LOT:
                     lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     messageDynamicData=new Object[]{lotName};
                     diagnostic=DataProgramProductionLot.deactivateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
-                  break;
+                    break;
                 default:      
                     Rdbms.closeRdbms(); 
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);

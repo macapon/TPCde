@@ -30,7 +30,7 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
     @Override
   public Object[] sarControlAction(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
       String sampleActionWhenUponControlMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", "sampleActionWhenUponControlMode", null);
-      if (LPArray.valuePosicInArray(sampleActionWhenUponControlModeEnablingStatuses.split("\\|"), sampleActionWhenUponControlMode)==-1)
+      if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONCONTROLMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenUponControlMode)==-1)
           return new Object[0];
       return DataProgramCorrectiveAction.createNew(schemaPrefix, token, resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
   }
@@ -49,7 +49,7 @@ public class DataProgramSampleAnalysisResult implements DataSampleAnalysisResult
     @Override
   public Object[] sarOOSAction(String schemaPrefix, Token token, Integer resultId, String[] sampleFieldName, Object[] sampleFieldValue, String[] sarFieldName, Object[] sarFieldValue) {
       String sampleActionWhenOOSMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", "sampleActionWhenOOSMode", null);
-      if (LPArray.valuePosicInArray(sampleActionWhenUponOOSModeEnablingStatuses.split("\\|"), sampleActionWhenOOSMode)==-1)
+      if (LPArray.valuePosicInArray(SAMPLEACTIONWHENUPONOOSMODEENABLINGSTATUSES.split("\\|"), sampleActionWhenOOSMode)==-1)
           return new Object[0];
       return DataProgramCorrectiveAction.createNew(schemaPrefix, token, resultId, sampleFieldName, sampleFieldValue,sarFieldName, sarFieldValue);
   }

@@ -206,6 +206,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     }
                     jObjMainObject.put("stages", jArrMainObj);                    
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    return;
                 case API_ENDPOINT_GET_BATCH_REPORT:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_GET_BATCH_REPORT.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){

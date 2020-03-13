@@ -11,7 +11,6 @@ import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.batch.incubator.DataBatchIncubatorStructured;
-import static functionaljavaa.batch.incubator.DataBatchIncubatorStructured.batchContentSeparatorStructuredBatch;
 import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.ServletException;
@@ -26,6 +25,7 @@ import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import static functionaljavaa.batch.incubator.DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
 
 /**
  *
@@ -101,9 +101,9 @@ public class ProjectAPIFrontend extends HttpServlet {
                 }else if (DataBatchIncubator.BatchIncubatorType.STRUCTURED.toString().equalsIgnoreCase(currBatch[1].toString())){
                     Integer totalRows=(Integer)currBatch[8];
                     Integer totalCols=(Integer)currBatch[9];
-                    String[] rowsName=currBatch[12].toString().split(DataBatchIncubatorStructured.batchContentSeparatorStructuredBatch);
-                    String[] colsName=currBatch[13].toString().split(DataBatchIncubatorStructured.batchContentSeparatorStructuredBatch);
-                    String[] batchContent1D=currBatch[14].toString().split(batchContentSeparatorStructuredBatch);
+                    String[] rowsName=currBatch[12].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+                    String[] colsName=currBatch[13].toString().split(DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+                    String[] batchContent1D=currBatch[14].toString().split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
                     String[][] batchContent2D=LPArray.array1dTo2d(batchContent1D, totalCols);
                     
                     JSONArray jbatchSamplesArr = new JSONArray();
