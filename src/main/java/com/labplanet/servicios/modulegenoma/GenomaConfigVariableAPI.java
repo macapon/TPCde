@@ -6,16 +6,11 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.modulegenoma.GenomaStudyAPI.GenomaStudyAPIParamsList;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.modulegenoma.GenomaConfigVariables;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -32,11 +27,11 @@ import org.json.simple.JSONObject;
  */
 public class GenomaConfigVariableAPI extends HttpServlet {
 
-    public static enum  GenomaVariableAPIParamsList{
+    public enum  GenomaVariableAPIParamsList{
         variableSetName, variableName, fieldsValues, userName, userRole}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
             
-    public static enum  GenomaVariableAPIEndPoints{
+    public enum  GenomaVariableAPIEndPoints{
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
           VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName"), VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),

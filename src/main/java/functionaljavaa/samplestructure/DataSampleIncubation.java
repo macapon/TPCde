@@ -44,7 +44,7 @@ public class DataSampleIncubation {
     enum SampleIncubationLevel{
         DATE, INCUBATOR};
     enum SampleIncubationMoment{ START, END;
-        private static Set<String> _values = new HashSet<>();
+        private static final Set<String> _values = new HashSet<>();
         // O(n) - runs once
         static{
             for (SampleIncubationMoment choice : SampleIncubationMoment.values()) {
@@ -57,7 +57,7 @@ public class DataSampleIncubation {
     }
     enum SampleIncubationModes{
         SAMPLE_AND_DATE,SAMPLE_AND_INCUBATOR,;
-        private static Set<String> _values = new HashSet<>();
+        private static final Set<String> _values = new HashSet<>();
         // O(n) - runs once
         static{
             for (SampleIncubationModes choice : SampleIncubationModes.values()) {

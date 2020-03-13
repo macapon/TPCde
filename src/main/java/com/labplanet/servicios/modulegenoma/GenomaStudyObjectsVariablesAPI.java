@@ -31,11 +31,11 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
-    public static enum  GenomaStudyObjectsVariablesAPIParamsList{
+    public enum  GenomaStudyObjectsVariablesAPIParamsList{
         studyName, variableSetName, variableName, newValue, fieldsValues, userName, userRole, ownerTable, ownerId}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
             
-    public static enum  GenomaStudyObjectsVariablesAPIEndPoints{
+    public enum  GenomaStudyObjectsVariablesAPIEndPoints{
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
         ADD_VARIABLE_SET_TO_STUDY_OBJECT("ADD_VARIABLE_SET_TO_STUDY_OBJECT", "studyName|variableSetName|ownerTable|ownerId"), 

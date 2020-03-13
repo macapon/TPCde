@@ -31,44 +31,44 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        TBL("program",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("program",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_NAME("name",  LPDatabase.StringNotNull(100))
+        FLD_NAME("name",  LPDatabase.stringNotNull(100))
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_CONFIG_ID("program_config_id", LPDatabase.IntegerNotNull())
+        FLD_PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.IntegerNotNull())
+        FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_SPEC_CODE("spec_code", LPDatabase.String())
+        FLD_SPEC_CODE("spec_code", LPDatabase.string())
         ,        
 
         /**
          *
          */
-        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.Integer())        
+        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer())        
         ,
 
         /**
          *
          */
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean())
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())
         // ...
         ;
         
@@ -132,8 +132,8 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        TBL("program_location",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("program_location",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -145,16 +145,16 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.String(200))
+        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.string(200))
         ,
         /**
          *
          */
-        FLD_REQUIRES_PERSON_ANA("requires_person_ana", LPDatabase.Boolean()),
+        FLD_REQUIRES_PERSON_ANA("requires_person_ana", LPDatabase.booleanFld()),
         /**
          *
          */
-        FLD_PERSON_ANA_DEFINITION("person_ana_definition",LPDatabase.StringNotNull()),
+        FLD_PERSON_ANA_DEFINITION("person_ana_definition",LPDatabase.stringNotNull()),
         
 //        , FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.String())
         // ...
@@ -223,10 +223,10 @@ public class TblsEnvMonitData {
          */
         FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)")
         ,        
-        TBL("sample", LPDatabase.CreateSequence(FLD_SAMPLE_ID.getName())
+        TBL("sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SAMPLE_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -238,7 +238,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.Integer())
+        FLD_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer())
         ,
 
         /**
@@ -248,159 +248,159 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_STATUS("status",LPDatabase.StringNotNull())
+        FLD_STATUS("status",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.StringNotNull())
+        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_LOGGED_ON("logged_on", LPDatabase.Date())
+        FLD_LOGGED_ON("logged_on", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_LOGGED_BY("logged_by", LPDatabase.String())
+        FLD_LOGGED_BY("logged_by", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_RECEIVED_ON("received_on", LPDatabase.Date())
+        FLD_RECEIVED_ON("received_on", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_RECEIVED_BY("received_by", LPDatabase.String())
+        FLD_RECEIVED_BY("received_by", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.Real())
+        FLD_VOLUME(LPDatabase.FIELDS_NAMES_VOLUME, LPDatabase.real())
         ,
 
         /**
          *
          */
-        FLD_VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.StringNotNull())
+        FLD_VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ALIQUOTED("aliquoted", LPDatabase.Boolean(false))
+        FLD_ALIQUOTED("aliquoted", LPDatabase.booleanFld(false))
         ,
 
         /**
          *
          */
-        FLD_ALIQUOT_STATUS("aliq_status",LPDatabase.StringNotNull())
+        FLD_ALIQUOT_STATUS("aliq_status",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.Real())
+        FLD_VOLUME_FOR_ALIQ("volume_for_aliq", LPDatabase.real())
         ,
 
         /**
          *
          */
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.StringNotNull())
+        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SPEC_CODE("spec_code",LPDatabase.StringNotNull())
+        FLD_SPEC_CODE("spec_code",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.Integer())
+        FLD_SPEC_CODE_VERSION("spec_code_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.StringNotNull())
+        FLD_SPEC_VARIATION_NAME("spec_variation_name",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SPEC_EVAL("spec_eval",  LPDatabase.StringNotNull(2))
+        FLD_SPEC_EVAL("spec_eval",  LPDatabase.stringNotNull(2))
         ,
 
         /**
          *
          */
-        FLD_CUSTODIAN("custodian",  LPDatabase.StringNotNull(2))
+        FLD_CUSTODIAN("custodian",  LPDatabase.stringNotNull(2))
         ,
 
         /**
          *
          */
-        FLD_CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.StringNotNull(2))
+        FLD_CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.stringNotNull(2))
         ,
 
         /**
          *
          */
-        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.Date())
+        FLD_COC_REQUESTED_ON("coc_requested_on", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.Date())
+        FLD_COC_CONFIRMED_ON("coc_confirmed_on", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.StringNotNull(2))
+        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.stringNotNull(2))
         ,
 
         /**
          *
          */
-        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.StringNotNull(2))
+        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.stringNotNull(2))
         ,
 
         /**
          *
          */
-        FLD_PRODUCTION_LOT("production_lot",  LPDatabase.StringNotNull(2)),
+        FLD_PRODUCTION_LOT("production_lot",  LPDatabase.stringNotNull(2)),
         /**
          *
          */
-        FLD_SAMPLER_AREA("sampler_area",LPDatabase.StringNotNull()),
+        FLD_SAMPLER_AREA("sampler_area",LPDatabase.stringNotNull()),
         FLD_SAMPLING_DATE("sampling_date", dateTime())
         ,
 
         /**
          *
          */
-        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.String())
+        FLD_SAMPLING_COMMENT("sampling_comment", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.String())
+        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string())
         ,
 
-        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.String())
+        FLD_INCUBATION_BATCH("incubation_batch", LPDatabase.string())
         ,
         /**
          *
@@ -411,13 +411,13 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.Real())
+        FLD_INCUBATION_START_TEMPERATURE("incubation_start_temperature", LPDatabase.real())
         ,
 
         /**
          *
          */
-        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.Integer())
+        FLD_INCUBATION_START_TEMP_EVENT_ID("incubation_start_temp_event_id", LPDatabase.integer())
         ,
 
         /**
@@ -429,27 +429,27 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.Real())        
+        FLD_INCUBATION_END_TEMPERATURE("incubation_end_temperature", LPDatabase.real())        
         ,
 
         /**
          *
          */
-        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.Integer())
+        FLD_INCUBATION_END_TEMP_EVENT_ID("incubation_end_temp_event_id", LPDatabase.integer())
         ,        
 
         /**
          *
          */
-        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.Boolean(false))        
+        FLD_INCUBATION_PASSED("incubation_passed", LPDatabase.booleanFld(false))        
         ,
 
         /**
          *
          */
-        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.String())
+        FLD_INCUBATION2_INCUBATOR("incubation2_incubator", LPDatabase.string())
         ,
-        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.String())
+        FLD_INCUBATION2_BATCH("incubation2_batch", LPDatabase.string())
         ,
 
         /**
@@ -461,13 +461,13 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.Real())
+        FLD_INCUBATION2_START_TEMPERATURE("incubation2_start_temperature", LPDatabase.real())
         ,
 
         /**
          *
          */
-        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.Integer())
+        FLD_INCUBATION2_START_TEMP_EVENT_ID("incubation2_start_temp_event_id", LPDatabase.integer())
         ,
 
         /**
@@ -479,27 +479,27 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.Real())        
+        FLD_INCUBATION2_END_TEMPERATURE("incubation2_end_temperature", LPDatabase.real())        
         ,
 
         /**
          *
          */
-        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.Integer())
+        FLD_INCUBATION2_END_TEMP_EVENT_ID("incubation2_end_temp_event_id", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.Boolean())        
+        FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld())        
         ,
-        FLD_CURRENT_STAGE("current_stage",LPDatabase.StringNotNull())
+        FLD_CURRENT_STAGE("current_stage",LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.StringNotNull())
+        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.stringNotNull())
         
         ;
         private Sample(String dbObjName, String dbObjType){
@@ -575,11 +575,11 @@ public class TblsEnvMonitData {
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)")
         ,
-        TBL("sample_microorganism", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("sample_microorganism", LPDatabase.createSequence(FLD_ID.getName())
                 
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -589,7 +589,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.Integer())
+        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer())
         //, FLD_TEST_ID("test_id", LPDatabase.Integer())
         //, FLD_RESULT_ID("result_id", LPDatabase.Integer())    
         ,
@@ -603,19 +603,19 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_MICROORG_NAME("microorganism_name", LPDatabase.String())
+        FLD_MICROORG_NAME("microorganism_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_NOTE("note", LPDatabase.String())
+        FLD_NOTE("note", LPDatabase.string())
         ;
         private SampleMicroorganism(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -674,14 +674,14 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        TBL("production_lot",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_LOT_NAME) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("production_lot",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_LOT_NAME) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_LOT_NAME("lot_name",LPDatabase.StringNotNull())
+        FLD_LOT_NAME("lot_name",LPDatabase.stringNotNull())
         //, FLD_TEST_ID("test_id", LPDatabase.Integer())
         //, FLD_RESULT_ID("result_id", LPDatabase.Integer())    
         ,
@@ -695,7 +695,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
         ,
 
         /**
@@ -707,13 +707,13 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_CLOSED_BY("closed_by", LPDatabase.String())
+        FLD_CLOSED_BY("closed_by", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean())
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())
         ;
         private ProductionLot(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -937,10 +937,10 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)")
         ,
-        TBL("instrument_incubator_notebook", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("instrument_incubator_notebook", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -951,13 +951,13 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        FLD_NAME("name",  LPDatabase.StringNotNull(100))
+        FLD_NAME("name",  LPDatabase.stringNotNull(100))
         ,
 
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY,  LPDatabase.String(200))
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY,  LPDatabase.string(200))
         ,
 
         /**
@@ -969,13 +969,13 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        FLD_EVENT_TYPE("event_type",  LPDatabase.String(200))
+        FLD_EVENT_TYPE("event_type",  LPDatabase.string(200))
         ,
 
         /**
          *
          */
-        FLD_TEMPERATURE("temperature", LPDatabase.Real())
+        FLD_TEMPERATURE("temperature", LPDatabase.real())
         ;        
         private InstrIncubatorNoteBook(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -1038,38 +1038,38 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        TBL("incub_batch",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("incub_batch",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_NAME("name",  LPDatabase.StringNotNull(100))
+        FLD_NAME("name",  LPDatabase.stringNotNull(100))
         ,
 
         /**
          *
          */
-        FLD_INCUB_BATCH_CONFIG_ID("incub_batch_config_id", LPDatabase.IntegerNotNull())
+        FLD_INCUB_BATCH_CONFIG_ID("incub_batch_config_id", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_INCUB_BATCH_CONFIG_VERSION("incub_batch_config_version", LPDatabase.IntegerNotNull())
+        FLD_INCUB_BATCH_CONFIG_VERSION("incub_batch_config_version", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_TYPE("type", LPDatabase.String())
+        FLD_TYPE("type", LPDatabase.string())
         ,        
 
         /**
          *
          */
-        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.String())        
+        FLD_INCUBATION_INCUBATOR("incubation_incubator", LPDatabase.string())        
         ,
 
         /**
@@ -1087,18 +1087,18 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean(false))
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(false))
         ,
 
         /**
          *
          */
-        FLD_COMPLETED("completed", LPDatabase.Boolean(false)),
-        FLD_UNSTRUCT_CONTENT("unstruct_content", LPDatabase.String()),
-        FLD_STRUCT_NUM_ROWS("struct_num_rows", LPDatabase.Integer()),
-        FLD_STRUCT_NUM_COLS("struct_num_cols", LPDatabase.Integer()),
-        FLD_STRUCT_TOTAL_POSITIONS("struct_total_positions", LPDatabase.Integer()),
-        FLD_STRUCT_TOTAL_OBJECTS("struct_total_objects", LPDatabase.Integer()),
+        FLD_COMPLETED("completed", LPDatabase.booleanFld(false)),
+        FLD_UNSTRUCT_CONTENT("unstruct_content", LPDatabase.string()),
+        FLD_STRUCT_NUM_ROWS("struct_num_rows", LPDatabase.integer()),
+        FLD_STRUCT_NUM_COLS("struct_num_cols", LPDatabase.integer()),
+        FLD_STRUCT_TOTAL_POSITIONS("struct_total_positions", LPDatabase.integer()),
+        FLD_STRUCT_TOTAL_OBJECTS("struct_total_objects", LPDatabase.integer()),
         FLD_STRUCT_CONTENT("struct_content", "character varying[] COLLATE pg_catalog.\"default\""),
         FLD_STRUCT_ROWS_NAME("struct_rows_name", "character varying[] COLLATE pg_catalog.\"default\""),
         FLD_STRUCT_COLS_NAME("struct_cols_name", "character varying[] COLLATE pg_catalog.\"default\""),        
@@ -1171,7 +1171,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        TBL("pr_scheduled_locations",  LPDatabase.CreateView() +
+        TBL("pr_scheduled_locations",  LPDatabase.createView() +
                 " select  dpr.sample_config_code, dpr.sample_config_code_version, "+
                 "         cnfpcd.*, dpl.area, dpl.spec_code, dpl.spec_variation_name, dpl.spec_analysis_variation, dpl.spec_code_version, dpl.requires_person_ana, dpl.person_ana_definition "+
                 "   from #SCHEMA_CONFIG.program_calendar_date  cnfpcd"+

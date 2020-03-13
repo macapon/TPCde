@@ -122,7 +122,7 @@ public class IncidentAPI extends HttpServlet {
     
     
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);        
         

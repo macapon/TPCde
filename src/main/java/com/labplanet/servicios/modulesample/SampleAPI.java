@@ -446,9 +446,9 @@ public class SampleAPI extends HttpServlet {
                   String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
                   Object[] sampleFieldValue=new Object[]{dataSample[dataSample.length-1], sampleStage};
                   if (LPPlatform.LAB_TRUE.equalsIgnoreCase(dataSample[0].toString())){
-                    smpStage.DataSampleStagesTimingCapture(schemaPrefix, sampleId, sampleStage, 
+                    smpStage.dataSampleStagesTimingCapture(schemaPrefix, sampleId, sampleStage, 
                             DataSampleStages.SampleStageTimingCapturePhases.END.name());                                                         
-                    smpStage.DataSampleStagesTimingCapture(schemaPrefix, sampleId, dataSample[dataSample.length-1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
+                    smpStage.dataSampleStagesTimingCapture(schemaPrefix, sampleId, dataSample[dataSample.length-1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
                     dataSample=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                             sampleFieldName, 
                             sampleFieldValue,
@@ -479,7 +479,7 @@ public class SampleAPI extends HttpServlet {
             }else{
                 DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, actionName, sampleId);
+                    smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, actionName, sampleId);
                     
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();

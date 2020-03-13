@@ -9,9 +9,11 @@ import java.io.File;
  *
  * @author User
  */
-public class ClassPath {
+public final class ClassPath {
     private static ClassPath instance = null;
-    private String webInfPath, webXmlPath, configXmlPath;
+    private final String webInfPath;
+    private final String webXmlPath;
+    private final String configXmlPath;
  
     /**
      * The constructor will get the webInfPath and store it until the app close

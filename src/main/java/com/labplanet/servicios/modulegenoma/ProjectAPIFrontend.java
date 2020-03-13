@@ -88,7 +88,7 @@ public class ProjectAPIFrontend extends HttpServlet {
                     if (unstructuredContent!=null && unstructuredContent.length()>0){ 
                         String fieldsSeparator="\\*";
                         String[] fieldsTag = new String[]{"sample_id", "incubation_moment"};
-                        String[] samplesArr = unstructuredContent.toString().split("\\|");
+                        String[] samplesArr = unstructuredContent.split("\\|");
                         JSONArray jbatchSamplesArr = new JSONArray();
                         for (String currSample: samplesArr){
                             String[] currSampleArr=currSample.split(fieldsSeparator);

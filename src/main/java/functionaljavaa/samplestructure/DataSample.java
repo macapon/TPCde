@@ -5,7 +5,6 @@
  */
 package functionaljavaa.samplestructure;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPParadigm;
 import databases.Rdbms;
@@ -276,7 +275,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
             
             Integer sampleId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
-            smpStages.DataSampleStagesTimingCapture(schemaPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
+            smpStages.dataSampleStagesTimingCapture(schemaPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
             
             SampleAudit smpAudit = new SampleAudit();            
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.SAMPLE_LOGGED.toString(), TblsData.Sample.TBL.getName(), sampleId, 

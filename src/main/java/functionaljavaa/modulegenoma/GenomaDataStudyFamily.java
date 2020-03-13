@@ -268,7 +268,7 @@ public static Object[] studyFamilyAddIndividual(String schemaPrefix, Token token
     
     Object[] updateFamilyIndividuals=addObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName(), 
             new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName}, 
-            TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName(), individualId.toString(), individualId.toString());  
+            TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName(), individualId, individualId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
         return updateFamilyIndividuals;
     }
@@ -286,7 +286,7 @@ public static Object[] studyFamilyRemoveIndividual(String schemaPrefix, Token to
 
     Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName(), 
             new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName}, 
-            TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), individualId.toString(), individualId.toString());  
+            TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), individualId, individualId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
         return updateFamilyIndividuals;
     }

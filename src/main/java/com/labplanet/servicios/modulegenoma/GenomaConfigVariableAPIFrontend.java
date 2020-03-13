@@ -6,12 +6,8 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.batch.incubator.DataBatchIncubator;
-import functionaljavaa.batch.incubator.DataBatchIncubatorStructured;
-import static functionaljavaa.batch.incubator.DataBatchIncubatorStructured.batchContentSeparatorStructuredBatch;
 import functionaljavaa.modulegenoma.GenomaConfigVariablesQueries;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -19,14 +15,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 
 /**
  *
@@ -35,7 +28,7 @@ import org.json.simple.JSONObject;
 public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
-    public static enum  GenomaVariableAPIFrontEndEndPoints{
+    public enum  GenomaVariableAPIFrontEndEndPoints{
             GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName"),
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
@@ -57,7 +50,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
       String endPointMandatoryFields="";
     };
     
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 

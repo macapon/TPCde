@@ -36,10 +36,10 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        TBL("program_corrective_action", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("program_corrective_action", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        
         /**
          *
          */
@@ -48,13 +48,13 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        FLD_STATUS("status", LPDatabase.StringNotNull())
+        FLD_STATUS("status", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.StringNotNull())
+        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.stringNotNull())
         ,
 
         /**
@@ -66,91 +66,91 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_NAME("program_name", LPDatabase.String())
+        FLD_PROGRAM_NAME("program_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_LOCATION_NAME("location_name", LPDatabase.String())
+        FLD_LOCATION_NAME("location_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_AREA("area", LPDatabase.String())
+        FLD_AREA("area", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_SAMPLE_ID("sample_id", LPDatabase.Integer())
+        FLD_SAMPLE_ID("sample_id", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_TEST_ID("test_id", LPDatabase.Integer())
+        FLD_TEST_ID("test_id", LPDatabase.integer())
         ,    
 
         /**
          *
          */
-        FLD_RESULT_ID("result_id", LPDatabase.Integer())    
+        FLD_RESULT_ID("result_id", LPDatabase.integer())    
         ,    		
 
         /**
          *
          */
-        FLD_LIMIT_ID("limit_id", LPDatabase.Integer())    		
+        FLD_LIMIT_ID("limit_id", LPDatabase.integer())    		
         ,
 
         /**
          *
          */
-        FLD_ANALYSIS("analysis", LPDatabase.StringNotNull(10))
+        FLD_ANALYSIS("analysis", LPDatabase.stringNotNull(10))
         ,
 
         /**
          *
          */
-        FLD_METHOD_NAME("method_name", LPDatabase.StringNotNull(10))
+        FLD_METHOD_NAME("method_name", LPDatabase.stringNotNull(10))
         ,    		
 
         /**
          *
          */
-        FLD_METHOD_VERSION("method_version", LPDatabase.Integer())    		
+        FLD_METHOD_VERSION("method_version", LPDatabase.integer())    		
         ,
 
         /**
          *
          */
-        FLD_PARAM_NAME("param_name", LPDatabase.StringNotNull(10))
+        FLD_PARAM_NAME("param_name", LPDatabase.stringNotNull(10))
         ,        
 
         /**
          *
          */
-        FLD_SPEC_RULE_WITH_DETAIL("spec_rule_with_detail", LPDatabase.StringNotNull(10))        
+        FLD_SPEC_RULE_WITH_DETAIL("spec_rule_with_detail", LPDatabase.stringNotNull(10))        
         ,
 
         /**
          *
          */
-        FLD_SPEC_EVAL("spec_eval", LPDatabase.StringNotNull(10))
+        FLD_SPEC_EVAL("spec_eval", LPDatabase.stringNotNull(10))
         ,
 
         /**
          *
          */
-        FLD_SPEC_EVAL_DETAIL("spec_eval_detail", LPDatabase.StringNotNull())
+        FLD_SPEC_EVAL_DETAIL("spec_eval_detail", LPDatabase.stringNotNull())
         ;
         private ProgramCorrectiveAction(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -229,15 +229,15 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        TBL("incubator_temp_reading_violations", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("incubator_temp_reading_violations", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
 
         /**
          *
          */
-        FLD_INCUBATOR("incubator", LPDatabase.String()),        
+        FLD_INCUBATOR("incubator", LPDatabase.string()),        
 
         /**
          *
@@ -247,7 +247,7 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
 
         /**
          *
@@ -262,17 +262,17 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        FLD_REASON("reason", LPDatabase.String()),
+        FLD_REASON("reason", LPDatabase.string()),
 
         /**
          *
          */
-        FLD_STAGE_CURRENT("current_stage", LPDatabase.StringNotNull()),
+        FLD_STAGE_CURRENT("current_stage", LPDatabase.stringNotNull()),
 
         /**
          *
          */
-        FLD_STAGE_PREVIOUS("stage_previous", LPDatabase.String()),
+        FLD_STAGE_PREVIOUS("stage_previous", LPDatabase.string()),
         ;
         private IncubatorTempReadingViolations(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -352,25 +352,25 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        TBL("sample_stage_timing_capture", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("sample_stage_timing_capture", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
 
         /**
          *
          */
-        FLD_SAMPLE_ID("sample_id", LPDatabase.Integer()),
+        FLD_SAMPLE_ID("sample_id", LPDatabase.integer()),
 
         /**
          *
          */
-        FLD_STAGE_CURRENT("current_stage", LPDatabase.StringNotNull()),
+        FLD_STAGE_CURRENT("current_stage", LPDatabase.stringNotNull()),
 
         /**
          *
          */
-        FLD_STAGE_PREVIOUS("stage_previous", LPDatabase.String()),
+        FLD_STAGE_PREVIOUS("stage_previous", LPDatabase.string()),
 
         /**
          *
@@ -380,7 +380,7 @@ public class TblsEnvMonitProcedure {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
 
         /**
          *

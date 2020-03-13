@@ -29,7 +29,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure.ProgramCorrectiveAction;
 import databases.TblsCnfg;
-import functionaljavaa.materialspec.specFrontEndUtilities;
+import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPJson;
 /**
@@ -475,10 +475,10 @@ public class EnvMonAPIfrontend extends HttpServlet {
                     Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CONFIG_VERSION.getName());                    
                     JSONObject specDefinition = new JSONObject();
                     if (!(specCode==null || specCode=="" || specConfigVersion==null || specConfigVersion.toString()=="")){
-                      JSONObject specInfo=specFrontEndUtilities.configSpecInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
+                      JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
                               null, null);
                       specDefinition.put(TblsCnfg.Spec.TBL.getName(), specInfo);
-                      JSONArray specLimitsInfo=specFrontEndUtilities.configSpecLimitsInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
+                      JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
                               null, new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
                               TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
                       specDefinition.put(TblsCnfg.SpecLimits.TBL.getName(), specLimitsInfo);

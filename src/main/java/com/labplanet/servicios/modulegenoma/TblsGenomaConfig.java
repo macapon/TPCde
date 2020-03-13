@@ -22,16 +22,16 @@ import lbplanet.utilities.LPPlatform;
  */
 public class TblsGenomaConfig {
     public enum Variables{
-        TBL("variables",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+        TBL("variables",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),
-        FLD_NAME("name",  LPDatabase.StringNotNull(100)),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
-        FLD_ACTIVE("active", LPDatabase.Boolean()),
-        FLD_TYPE("type", LPDatabase.String()),
-        FLD_REQUIRED("required", LPDatabase.String()),
-        FLD_ALLOWED_VALUES("allowed_values", LPDatabase.String()),
+        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_TYPE("type", LPDatabase.string()),
+        FLD_REQUIRED("required", LPDatabase.string()),
+        FLD_ALLOWED_VALUES("allowed_values", LPDatabase.string()),
         FLD_CREATED_ON("created_on", dateTime()),
-        FLD_CREATED_BY("created_by", LPDatabase.String()),
+        FLD_CREATED_BY("created_by", LPDatabase.string()),
         FLD_STARTED_ON("started_on", dateTime()),
         FLD_ENDED_ON("ended_on", dateTime()),        
         ;
@@ -90,14 +90,14 @@ public class TblsGenomaConfig {
     }
 
     public enum VariablesSet{
-        TBL("variables_set",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+        TBL("variables_set",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;"),
-        FLD_NAME("name",  LPDatabase.StringNotNull(100)),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
-        FLD_ACTIVE("active", LPDatabase.Boolean()),
-        FLD_VARIABLES_LIST("variables_list", LPDatabase.String()),
+        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_VARIABLES_LIST("variables_list", LPDatabase.string()),
         FLD_CREATED_ON("created_on", dateTime()),
-        FLD_CREATED_BY("created_by", LPDatabase.String()),
+        FLD_CREATED_BY("created_by", LPDatabase.string()),
         FLD_STARTED_ON("started_on", dateTime()),
         FLD_ENDED_ON("ended_on", dateTime()),        
         ;

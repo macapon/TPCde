@@ -13,7 +13,6 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.net.URL;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -139,7 +138,7 @@ Object[][] firstStageData=new Object[0][0];
         return new Object[]{LPPlatform.LAB_TRUE, previousStageFromPull};
     }
 
-    public Object[] DataSampleActionAutoMoveToNext(String schemaPrefix, Token token, String actionName, Integer sampleId) {
+    public Object[] dataSampleActionAutoMoveToNext(String schemaPrefix, Token token, String actionName, Integer sampleId) {
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
@@ -150,7 +149,7 @@ Object[][] firstStageData=new Object[0][0];
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The action <*1*> is not declared as to perform auto move to next in procedure <*2*>", new Object[]{actionName, schemaPrefix});        
         Object[] moveDiagn=moveToNextStage(schemaPrefix, sampleId, sampleCurrStage,null);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
-            DataSampleStagesTimingCapture(schemaPrefix, sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
+            dataSampleStagesTimingCapture(schemaPrefix, sampleId, sampleCurrStage, SampleStageTimingCapturePhases.END.toString()); 
             String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
@@ -159,7 +158,7 @@ Object[][] firstStageData=new Object[0][0];
                     sampleFieldValue,
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
                     String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getUserName());               
-                DataSampleStagesTimingCapture(schemaPrefix, sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());                         
+                dataSampleStagesTimingCapture(schemaPrefix, sampleId, moveDiagn[moveDiagn.length-1].toString(), SampleStageTimingCapturePhases.START.toString());                         
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(schemaPrefix, actionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);        
             }
@@ -211,7 +210,7 @@ Object[][] firstStageData=new Object[0][0];
       }
     }
 
-    public Object[] DataSampleStagesTimingCapture(String schemaPrefix, Integer sampleId, String currStage, String phase) {
+    public Object[] dataSampleStagesTimingCapture(String schemaPrefix, Integer sampleId, String currStage, String phase) {
         if (!this.isSampleStagesTimingCaptureEnable)
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, schemaPrefix});
         if (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages)))

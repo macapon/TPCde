@@ -180,7 +180,7 @@ public class DataSampleAnalysisResult {
      * @return
      * @throws IllegalArgumentException
      */
-    public Object[] sampleAnalysisResultEntry(String schemaPrefix, Token token, Integer resultId, Object resultValue, DataSample dataSample) {
+    public Object[] sampleAnalysisResultEntry(String schemaPrefix, Token token, Integer resultId, Object resultValue, DataSample dataSample) {        
         String actionName = "Insert";
         String[] sampleFieldName=new String[0];
         Object[] sampleFieldValue=new Object[0];
@@ -196,7 +196,7 @@ public class DataSampleAnalysisResult {
         Boolean specMinControlStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_minStrictControlWhenNotSpecified"));
         Boolean specMaxControlStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_maxStrictControlWhenNotSpecified"));
         Boolean specMaxSpecStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_maxStrictSpecWhenNotSpecified"));
-        dataSample.mandatoryFields = dataSample.labIntChecker.getTableMandatoryFields(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), actionName);
+        mandatoryFields = dataSample.labIntChecker.getTableMandatoryFields(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), actionName);
         String[] fieldsName = new String[0];
         Object[] fieldsValue = new Object[0];
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName());

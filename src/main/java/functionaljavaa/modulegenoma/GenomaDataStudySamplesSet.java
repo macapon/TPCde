@@ -10,8 +10,6 @@ import static functionaljavaa.modulegenoma.GenomaUtilities.*;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.modulegenoma.GenomaDataAudit;
-import functionaljavaa.modulegenoma.GenomaDataStudy;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -269,7 +267,7 @@ public static Object[] studySamplesSetAddSample(String schemaPrefix, Token token
     
     Object[] updateSamplesSetSamples=addObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName}, 
-            TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName(), sampleId.toString(), sampleId.toString());  
+            TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName(), sampleId, sampleId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
         return updateSamplesSetSamples;
     }
@@ -287,7 +285,7 @@ public static Object[] studySamplesSetRemoveSample(String schemaPrefix, Token to
 
     Object[] updateSamplesSetSamples=removeObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudySamplesSet.TBL.getName(), 
             new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName(), TblsGenomaData.StudySamplesSet.FLD_NAME.getName()}, new Object[]{studyName, sampleSetName}, 
-            TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId.toString(), sampleId.toString());  
+            TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName(), TblsGenomaData.StudyIndividualSample.TBL.getName(), sampleId, sampleId);  
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateSamplesSetSamples[0].toString())) {
         return updateSamplesSetSamples;
     }

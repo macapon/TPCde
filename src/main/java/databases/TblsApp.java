@@ -29,9 +29,9 @@ public class TblsApp {
          *
          */
         FLD_SESSION_ID("session_id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_session_id_seq'::regclass)")
-        ,        TBL("app_session", LPDatabase.CreateSequence(FLD_SESSION_ID.getName())
+        ,        TBL("app_session", LPDatabase.createSequence(FLD_SESSION_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SESSION_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_SESSION_ID) )" +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_SESSION_ID) )" +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
@@ -43,19 +43,19 @@ public class TblsApp {
         /**
          *
          */
-        FLD_DATE_STARTED("date_started", LPDatabase.Date())
+        FLD_DATE_STARTED("date_started", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_PERSON("person", LPDatabase.String())
+        FLD_PERSON("person", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.String());
+        FLD_ROLE_NAME("role_name", LPDatabase.string());
         
         private AppSession(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -117,26 +117,26 @@ public class TblsApp {
         /**
          *
          */
-        TBL("user_process",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_USER_NAME, #FLD_PROC_NAME) ) "+
-                LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("user_process",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_USER_NAME, #FLD_PROC_NAME) ) "+
+                LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_USER_NAME("user_name", LPDatabase.StringNotNull())
+        FLD_USER_NAME("user_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROC_NAME("proc_name", LPDatabase.StringNotNull())
+        FLD_PROC_NAME("proc_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ACTIVE("active", LPDatabase.Boolean());
+        FLD_ACTIVE("active", LPDatabase.booleanFld());
         private UserProcess(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
             this.dbObjTypePostgres=dbObjType;
@@ -197,42 +197,42 @@ public class TblsApp {
         /**
          *
          */
-        TBL("users",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_USER_NAME) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
+        TBL("users",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_USER_NAME) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
         ,
 
         /**
          *
          */
-        FLD_USER_NAME("user_name", LPDatabase.String())
+        FLD_USER_NAME("user_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_EMAIL("email", LPDatabase.String())
+        FLD_EMAIL("email", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ESIGN("e_sign", LPDatabase.String())
+        FLD_ESIGN("e_sign", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PASSWORD("password", LPDatabase.String())
+        FLD_PASSWORD("password", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PERSON_NAME("person_name", LPDatabase.String()),
+        FLD_PERSON_NAME("person_name", LPDatabase.string()),
         /**
          *
          */
-        FLD_TABS_ON_LOGIN("tabs_on_login", LPDatabase.String())
+        FLD_TABS_ON_LOGIN("tabs_on_login", LPDatabase.string())
         
         
         //, FLD_PROCEDURES("procedures", "character varying[] COLLATE pg_catalog.\"default\"")
@@ -297,26 +297,26 @@ public class TblsApp {
         /**
          *
          */
-        TBL("holidays_calendar",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
+        TBL("holidays_calendar",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
         ,
 
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.String())
+        FLD_CODE("code", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ACTIVE("active", LPDatabase.Boolean())
+        FLD_ACTIVE("active", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_DESCRIPTION("description", LPDatabase.String())
+        FLD_DESCRIPTION("description", LPDatabase.string())
         //, FLD_ESIGN("e_sign", LPDatabase.String())
         //, FLD_PASSWORD("password", LPDatabase.String())
         //, FLD_PERSON_NAME("person_name", LPDatabase.String())
@@ -383,10 +383,10 @@ public class TblsApp {
          *
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("holidays_calendar_date", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("holidays_calendar_date", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS+ LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
+                + LPDatabase.POSTGRESQL_OIDS+ LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
         ,
 
         /**
@@ -397,19 +397,19 @@ public class TblsApp {
         /**
          *
          */
-        FLD_CALENDAR_CODE("calendar_code", LPDatabase.String())
+        FLD_CALENDAR_CODE("calendar_code", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_DATE("date", LPDatabase.Date())
+        FLD_DATE("date", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_DAY_NAME("day_name", LPDatabase.String())
+        FLD_DAY_NAME("day_name", LPDatabase.string())
         
         ;
         private HolidaysCalendarDate(String dbObjName, String dbObjType){
@@ -469,41 +469,41 @@ public class TblsApp {
          *
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#FLD_ID_seq'::regclass)"),
-        TBL("incident", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("incident", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS+" "+LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
+                + LPDatabase.POSTGRESQL_OIDS+" "+LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
         ,
         /**
          *
          */
         FLD_DATE_CREATION("date_creation", LPDatabase.dateTime()),
-        FLD_PERSON_CREATION("person_creation", LPDatabase.String()),
+        FLD_PERSON_CREATION("person_creation", LPDatabase.string()),
         FLD_DATE_CONFIRMED("date_confirmed", LPDatabase.dateTime()),
-        FLD_PERSON_CONFIRMED("person_confirmed", LPDatabase.String()),
+        FLD_PERSON_CONFIRMED("person_confirmed", LPDatabase.string()),
         FLD_DATE_RESOLUTION("date_resolution", LPDatabase.dateTime()),
-        FLD_PERSON_RESOLUTION("person_resolution", LPDatabase.String()),
+        FLD_PERSON_RESOLUTION("person_resolution", LPDatabase.string()),
         FLD_DATE_LAST_UPDATE("date_last_update", LPDatabase.dateTime()),
-        FLD_PERSON_LAST_UPDATE("person_last_update", LPDatabase.String()),        /**
+        FLD_PERSON_LAST_UPDATE("person_last_update", LPDatabase.string()),        /**
          *
          */
-        FLD_STATUS("status", LPDatabase.String()),        
-        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.String()),        
+        FLD_STATUS("status", LPDatabase.string()),        
+        FLD_STATUS_PREVIOUS("status_previous", LPDatabase.string()),        
         /**
          *
          */
-        FLD_USER_NAME("user_name", LPDatabase.String()),
-        FLD_PERSON_NAME("person_name", LPDatabase.String()),
+        FLD_USER_NAME("user_name", LPDatabase.string()),
+        FLD_PERSON_NAME("person_name", LPDatabase.string()),
         /**
          *
          */
-        FLD_USER_ROLE("user_role", LPDatabase.String()),
+        FLD_USER_ROLE("user_role", LPDatabase.string()),
         /**
          *
          */
-        FLD_TITLE("item_title", LPDatabase.String()),
-        FLD_DETAIL("item_detail", LPDatabase.String()),
-        FLD_SESSION_INFO("session_info", LPDatabase.String()),
+        FLD_TITLE("item_title", LPDatabase.string()),
+        FLD_DETAIL("item_detail", LPDatabase.string()),
+        FLD_SESSION_INFO("session_info", LPDatabase.string()),
         ;
         private Incident(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

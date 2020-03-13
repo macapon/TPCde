@@ -14,8 +14,8 @@ import java.time.LocalDateTime;
  * Create one new app.app_session
  * @author Administrator
  */
-public class LPSession_1 {
-    private LPSession_1(){    throw new IllegalStateException("Utility class");}    
+public class LpSession_1 {
+    private LpSession_1(){    throw new IllegalStateException("Utility class");}    
    
     /**
      *

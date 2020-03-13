@@ -17,8 +17,8 @@ import org.json.simple.JSONObject;
  *
  * @author Administrator
  */
-public class specFrontEndUtilities {
-
+public class SpecFrontEndUtilities {
+    private SpecFrontEndUtilities() {    throw new IllegalStateException("Utility class");  }
     /**
      *
      * @param schemaPrefix

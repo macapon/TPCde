@@ -35,11 +35,11 @@ import org.json.simple.JSONObject;
  */
 public class GenomaStudyAPI extends HttpServlet {
 
-    public static enum  GenomaStudyAPIParamsList{
+    public enum  GenomaStudyAPIParamsList{
         projectName, studyName, individualId, individualName, sampleId, samplesSetName, familyName, individualsList, samplesList, fieldsNames, fieldsValues, userName, userRole}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
             
-    public static enum  GenomaStudyAPIEndPoints{
+    public enum  GenomaStudyAPIEndPoints{
           STUDY_NEW("STUDY_NEW", "studyName"), STUDY_UPDATE("STUDY_UPDATE", "studyName|fieldsNames|fieldsValues"),
           STUDY_ACTIVATE("STUDY_ACTIVATE", "studyName"), STUDY_DEACTIVATE("STUDY_DEACTIVATE", "studyName"),
           STUDY_ADD_USER("STUDY_ADD_USER", "studyName|userName|userRole"), STUDY_REMOVE_USER("STUDY_REMOVE_USER", "studyName|userName|userRole"),

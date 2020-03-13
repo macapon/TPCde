@@ -5,7 +5,6 @@
  */
 package functionaljavaa.testingscripts;
 
-import java.util.Arrays;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_MESSAGE_POSIC;
