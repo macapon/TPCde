@@ -55,8 +55,7 @@ public class DBActions extends HttpServlet {
      * @throws IOException
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
-        request=LPHttp.requestPreparation(request);
-        response=LPHttp.responsePreparation(response);
+        response = LPTestingOutFormat.responsePreparation(response);     
 
         String language = LPFrontEnd.setLanguage(request); 
 
@@ -73,8 +72,7 @@ public class DBActions extends HttpServlet {
         StringBuilder fileContentBuilder = new StringBuilder();
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
                 
-        try (PrintWriter out = response.getWriter()) {
-     
+        try (PrintWriter out = response.getWriter()) {    
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
@@ -82,15 +80,15 @@ public class DBActions extends HttpServlet {
                 return;
             }            
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        
-                
+                        
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
             String table1Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"1").toString();               
             StringBuilder fileContentTable1Builder = new StringBuilder();
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
-            
-            for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
+            Integer fileLines=csvFileContent.length; 
+//fileLines=4;
+            for (Integer iLines=numHeaderLines;iLines<fileLines;iLines++){
                 tstAssertSummary.increaseTotalTests();
                 TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
                 
@@ -215,11 +213,17 @@ public class DBActions extends HttpServlet {
             }                          
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary);
-            fileContentTable1Builder.append(fileContentSummary);
-            fileContentTable1Builder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
-            out.println(fileContentTable1Builder.toString());            
-            LPTestingOutFormat.createLogFile(csvPathName, fileContentTable1Builder.toString());
+            if (numEvaluationArguments>0){
+                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
+                fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder);
+            }
+
+            //String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary);
+            //fileContentTable1Builder.append(fileContentSummary);
+            //fileContentTable1Builder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+            out.println(fileContentBuilder.toString());            
+            LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
             Rdbms.closeRdbms();
             tstAssertSummary=null; 
         }

@@ -5,6 +5,7 @@
  */
 package functionaljavaa.testingscripts;
 
+import lbplanet.utilities.LPArray;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_MESSAGE_POSIC;
@@ -68,9 +69,16 @@ public class TestingAssert {
         }else{
             tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;            
         }
-        return new Object[] {sintaxisIcon + " ("+this.evalBoolean+") ", 
-            codeIcon + "<h8>("+this.errorCode+")</h8> ", 
-            "Syntaxis:"+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]+". Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]};
+        Object[] diagnostic=new Object[] {sintaxisIcon + " ("+this.evalBoolean+") "};
+        String message="";
+        if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC) message=message+"Syntaxis:"+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]+". ";
+        if (numEvaluationArguments>=2){
+            if (diagnoses.length>TRAP_MESSAGE_CODE_POSIC) message=message+"Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". ";
+            diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.errorCode+")</h8> ");
+        }
+        if (diagnoses.length>TRAP_MESSAGE_MESSAGE_POSIC) message=message+"Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]+". ";  
+        diagnostic=LPArray.addValueToArray1D(diagnostic, message);
+        return diagnostic;
 }
     
 }

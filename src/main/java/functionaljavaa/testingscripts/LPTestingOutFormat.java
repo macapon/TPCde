@@ -299,7 +299,7 @@ public class LPTestingOutFormat {
         newFields=LPArray.addValueToArray1D(newFields, fields);
         if (numEvaluationArguments>0){
             newFields=LPArray.addValueToArray1D(newFields, "Syntaxis");
-            newFields=LPArray.addValueToArray1D(newFields, "Code");
+            if (numEvaluationArguments>1) newFields=LPArray.addValueToArray1D(newFields, "Code");
             newFields=LPArray.addValueToArray1D(newFields, "Evaluation");
         }
         return newFields;
@@ -449,25 +449,27 @@ public class LPTestingOutFormat {
      * @param tstAssert
      * @return
      */
-    public static String createSummaryTable(TestingAssertSummary tstAssert){
+    public static String createSummaryTable(TestingAssertSummary tstAssert, Integer numArguments){
         String fileContentHeaderSummary = LPTestingOutFormat.tableStart()+rowStart();
         String fileContentSummary =rowStart();
-
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total Tests");
-        fileContentSummary = fileContentSummary +rowAddField(tstAssert.getTotalTests().toString()); 
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Match "+LPTestingOutFormat.TST_ICON_MATCH);                
-        fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanMatch.toString());
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
-        fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanUndefined.toString()); 
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);                
-        fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanUnMatch.toString()); 
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Match "+LPTestingOutFormat.TST_ICON_MATCH);                
-        fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeMatch.toString()); 
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
-        fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeUndefined.toString()); 
-        fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total ErrorCode Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);       
-        fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeUnMatch.toString()); 
-
+        if (numArguments>0){
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total Tests");
+            fileContentSummary = fileContentSummary +rowAddField(tstAssert.getTotalTests().toString()); 
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Match "+LPTestingOutFormat.TST_ICON_MATCH);                
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanMatch.toString());
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanUndefined.toString()); 
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);                
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanUnMatch.toString()); 
+        }
+        if (numArguments>1){
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Match "+LPTestingOutFormat.TST_ICON_MATCH);                
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeMatch.toString()); 
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeUndefined.toString()); 
+            fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total ErrorCode Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);       
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeUnMatch.toString()); 
+        }
         fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();            
         fileContentSummary = fileContentSummary +tableEnd();        
         return fileContentSummary;        

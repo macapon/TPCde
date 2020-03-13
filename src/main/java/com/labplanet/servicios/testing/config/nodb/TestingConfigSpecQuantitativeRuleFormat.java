@@ -71,7 +71,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
 
             String table2Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"2").toString();            
             StringBuilder fileContentTable2Builder = new StringBuilder();
-            fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
+            fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
             
             for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
@@ -125,7 +125,7 @@ public class TestingConfigSpecQuantitativeRuleFormat extends HttpServlet {
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());                                                
             fileContentTable2Builder.append(LPTestingOutFormat.tableEnd());                                                
             if (numEvaluationArguments>0){
-                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary);
+                String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
                 fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder).append(fileContentTable2Builder);
             }
             fileContentBuilder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());

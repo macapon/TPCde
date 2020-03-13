@@ -24,11 +24,7 @@
     <scope>provided</scope>
 </dependency>
 
-<dependency>
-    <groupId>com.oreilly.servlet</groupId>
-    <artifactId>com.springsource.com.oreilly.servlet</artifactId>
-    <version>0.0.0.BUILD-20021105</version>
-</dependency>
+
 
 
 

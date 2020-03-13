@@ -97,7 +97,7 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
             fileContentTable1Builder.append(csvPathName);
-            fileContentBuilder.append(LPTestingOutFormat.createSummaryTable(tstAssertSummary)).append(fileContentTable1Builder)
+            fileContentBuilder.append(LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments)).append(fileContentTable1Builder)
                     .append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());

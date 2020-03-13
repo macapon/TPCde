@@ -470,7 +470,7 @@ public class TstDataSample extends HttpServlet {
             }                          
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary);
+            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
             fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder.toString());
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());     

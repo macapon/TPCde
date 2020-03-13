@@ -215,7 +215,7 @@ public class DBActions extends HttpServlet {
             }                          
             tstAssertSummary.notifyResults();
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary);
+            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
             fileContentTable1Builder.append(fileContentSummary);
             fileContentTable1Builder.append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
             out.println(fileContentTable1Builder.toString());            
