@@ -120,6 +120,8 @@ public class Rdbms {
      *
      */
     public static final String BUNDLE_PARAMETER_DBTIMEOUT="dbtimeout";
+    
+    public static final String BUNDLE_PARAMETER_SSL="false";
 
     /**
      *
@@ -197,7 +199,7 @@ public class Rdbms {
             Properties dbProps = new Properties();
             dbProps.setProperty("user", user);
             dbProps.setProperty("password", pass);
-            dbProps.setProperty("Ssl", "false");
+            dbProps.setProperty("Ssl", BUNDLE_PARAMETER_SSL);
             dbProps.setProperty("ConnectTimeout", conTimeOut.toString());                
             //dbProps.setProperty("ssl", "true");
             //dbProps.setProperty("ConnectTimeout", "conTimeOut");
@@ -288,7 +290,7 @@ public class Rdbms {
                 Properties dbProps = new Properties();
                 dbProps.setProperty("user", user);
                 dbProps.setProperty("password", pass);
-                dbProps.setProperty("Ssl", "false");
+                dbProps.setProperty("Ssl", BUNDLE_PARAMETER_SSL);
                 dbProps.setProperty("ConnectTimeout", conTimeOut.toString());   
                 dbProps.setProperty("setMaxConnections", maxConnections.toString()); 
                 dbProps.setProperty("initialConnections", initialConnections.toString());
@@ -363,7 +365,7 @@ public class Rdbms {
                 Properties dbProps = new Properties();
                 dbProps.setProperty("user", user);
                 dbProps.setProperty("password", pass);
-                dbProps.setProperty("Ssl", "false");
+                dbProps.setProperty("Ssl", BUNDLE_PARAMETER_SSL);
                 dbProps.setProperty("ConnectTimeout", conTimeOut.toString());   
                 dbProps.setProperty("setMaxConnections", maxConnections.toString()); 
                 dbProps.setProperty("initialConnections", initialConnections.toString());

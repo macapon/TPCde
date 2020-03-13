@@ -45,6 +45,7 @@ public class SampleAPI extends HttpServlet {
     
     private String propertyFileName = "";    
 
+    @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
         ServletContext context = getServletContext();
@@ -193,21 +194,21 @@ public class SampleAPI extends HttpServlet {
                     }else{
                         dataSample = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                     }
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), dataSample[dataSample.length-1]);                            
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), dataSample[dataSample.length-1]);                            
                     messageDynamicData=new Object[]{dataSample[dataSample.length-1]};
                     break;
                 case RECEIVESAMPLE:   
                     String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                             
                     sampleId = Integer.parseInt(sampleIdStr);      
                     dataSample = smp.sampleReception(schemaPrefix, token, sampleId);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;
                 case SETSAMPLINGDATE:
                     sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                                     
                     sampleId = Integer.parseInt(sampleIdStr);      
                     dataSample = smp.setSamplingDate(schemaPrefix, token, sampleId);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;
                 case CHANGESAMPLINGDATE:
@@ -215,7 +216,7 @@ public class SampleAPI extends HttpServlet {
                     sampleId = Integer.parseInt(sampleIdStr);      
                     Date newDate=Date.valueOf(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_DATE));
                     dataSample = smp.changeSamplingDate(schemaPrefix, token, sampleId, newDate);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;       
                 case SAMPLINGCOMMENTADD:
@@ -224,7 +225,7 @@ public class SampleAPI extends HttpServlet {
                     String comment=null;                    
                     comment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_COMMENT); 
                     dataSample = smp.sampleReceptionCommentAdd(schemaPrefix, token, sampleId, comment);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};                    
                     break;       
                 case SAMPLINGCOMMENTREMOVE:
@@ -232,7 +233,7 @@ public class SampleAPI extends HttpServlet {
                     sampleId = Integer.parseInt(sampleIdStr);      
                     comment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_COMMENT); 
                     dataSample = smp.sampleReceptionCommentRemove(schemaPrefix, token, sampleId);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;       
                 case INCUBATIONSTART:
@@ -244,7 +245,7 @@ public class SampleAPI extends HttpServlet {
                     String incubName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
                     BigDecimal tempReading=null;                    
                     dataSample = DataSampleIncubation.setSampleStartIncubationDateTime(schemaPrefix, token, sampleId, incubationStage, incubName, tempReading);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;       
                 case INCUBATIONEND:
@@ -256,7 +257,7 @@ public class SampleAPI extends HttpServlet {
                     incubName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
                     tempReading=null;
                     dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(schemaPrefix, token, sampleId, incubationStage, incubName, tempReading);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};                    
                     break;       
                 case SAMPLEANALYSISADD:
@@ -270,7 +271,7 @@ public class SampleAPI extends HttpServlet {
                     fieldValueArr = fieldValue.split("\\|");                        
                     fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray((String[]) fieldValueArr);
                     dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldNameArr, fieldValueArr, null); 
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};                    
                     break;              
                 case ENTERRESULT:
@@ -280,7 +281,7 @@ public class SampleAPI extends HttpServlet {
                     resultId = Integer.parseInt(resultIdStr);       
                     rawValueResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT);
                     dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;              
                 case REVIEWRESULT:
@@ -294,7 +295,7 @@ public class SampleAPI extends HttpServlet {
                     if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
                     //dataSample=smp.sampleReview(schemaPrefix, token.getPersonName(), token.getUserRole(), sampleId, Integer.parseInt(token.getAppSessionId()));
                     dataSample = smpAnaRes.sampleResultReview(schemaPrefix, token, sampleId, testId, resultId);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;                       
                 case CANCELRESULT:
@@ -307,7 +308,7 @@ public class SampleAPI extends HttpServlet {
                         if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                         if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
                         dataSample = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, sampleId, testId, resultId);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;   
                 case UNREVIEWRESULT:   // No break then will take the same logic than the next one  
@@ -321,7 +322,7 @@ public class SampleAPI extends HttpServlet {
                         if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                         if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
                         dataSample = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, sampleId, testId, resultId, smp);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;       
                 case TESTASSIGNMENT: 
@@ -329,7 +330,7 @@ public class SampleAPI extends HttpServlet {
                     testId = Integer.parseInt(objectIdStr);     
                     String newAnalyst = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST);
                     dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId}; 
                     break;                       
                 case GETSAMPLEINFO:
@@ -354,7 +355,7 @@ public class SampleAPI extends HttpServlet {
                     }else{
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleStr);
                     }                  
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     return;        
                 case COC_STARTCHANGE:
@@ -365,7 +366,7 @@ public class SampleAPI extends HttpServlet {
                     Integer appSessionId=null;
                     if (token.getAppSessionId()!=null){appSessionId=Integer.valueOf(token.getAppSessionId());}
                     dataSample = coc.cocStartChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), objectId, custodianCandidate, token);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;
                 case COC_CONFIRMCHANGE:
@@ -374,7 +375,7 @@ public class SampleAPI extends HttpServlet {
                     String confirmChangeComment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CONFIRM_CHANGE_COMMENT);                             
                     coc =  new ChangeOfCustody();
                     dataSample = coc.cocConfirmedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, confirmChangeComment);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;
                 case COC_ABORTCHANGE:
@@ -383,7 +384,7 @@ public class SampleAPI extends HttpServlet {
                     String cancelChangeComment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CANCEL_CHANGE_COMMENT);                             
                     coc =  new ChangeOfCustody();
                     dataSample = coc.cocAbortedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, cancelChangeComment);
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;                    
                 case LOGALIQUOT:
@@ -398,7 +399,7 @@ public class SampleAPI extends HttpServlet {
                     dataSample = smp.logSampleAliquot(schemaPrefix, token, sampleId, 
                                 // sampleTemplate, sampleTemplateVersion, 
                                 fieldNames, fieldValues);                                                                
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;                     
                 case LOGSUBALIQUOT:
@@ -413,7 +414,7 @@ public class SampleAPI extends HttpServlet {
                     dataSample = smp.logSampleSubAliquot(schemaPrefix, token, aliquotId, 
                                 // sampleTemplate, sampleTemplateVersion, 
                                 fieldNames, fieldValues);                                                                
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                     break;     
                 case SAMPLESTAGE_MOVETOPREVIOUS:
@@ -457,13 +458,13 @@ public class SampleAPI extends HttpServlet {
                     SampleAudit smpAudit = new SampleAudit();
                     smpAudit.sampleAuditAdd(schemaPrefix, actionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
                   }
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
                     messageDynamicData=new Object[]{sampleId};
                   break;                    
                 case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                     String auditIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_ID);
                     dataSample=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, Integer.valueOf(auditIdStr), token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditIdStr);                            
+                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditIdStr);                            
                     messageDynamicData=new Object[]{auditIdStr};
                   break;
                 default:      

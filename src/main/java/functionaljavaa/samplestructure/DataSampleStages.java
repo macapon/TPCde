@@ -5,6 +5,7 @@
  */
 package functionaljavaa.samplestructure;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.TblsData;
@@ -31,6 +32,8 @@ import lbplanet.utilities.LPPlatform;
 
 public class DataSampleStages {
 
+String LABEL_MSG_ERROR="Error:";
+    
 Boolean isSampleStagesEnable=false;
 Boolean isSampleStagesTimingCaptureEnable=false;
  String isSampleStagesTimingCaptureStages="";
@@ -171,7 +174,7 @@ Object[][] firstStageData=new Object[0][0];
         String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
-        String fileName = LOD_JAVASCRIPT_FORMULA.replace("schemaPrefix", schemaPrefix);
+        String fileName = LOD_JAVASCRIPT_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix);
         fileName=schemaPrefix+"-sample-stage.js"; //"/procedure/"+
         String functionName="sampleStage"+currStage+moveDirection+"Checker";
         ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
@@ -180,18 +183,18 @@ Object[][] firstStageData=new Object[0][0];
             engine.eval(new FileReader(fileName));
           } catch (ScriptException ex) {
             Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-            return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", "Error: "+ex.getMessage()};
+            return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", LABEL_MSG_ERROR+ex.getMessage()};
           }
         } catch (FileNotFoundException ex) {
           try{
-             fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace("schemaPrefix", schemaPrefix);
+             fileName = LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix);
              functionName="sampleStage"+currStage+moveDirection+"Checker";
              engine = new ScriptEngineManager().getEngineByName("nashorn");
             engine.eval(new FileReader(fileName));              
           } catch (FileNotFoundException ex2) {              
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
-          return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", "Error: "+ex2.getMessage()
-                  +"(tried two paths: "+"/app/" + schemaPrefix + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace("schemaPrefix", schemaPrefix)+") "};          
+          return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", LABEL_MSG_ERROR+ex2.getMessage()
+                  +"(tried two paths: "+"/app/" + schemaPrefix + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix)+") "};          
           }
         }
         Invocable invocable = (Invocable) engine;
@@ -200,13 +203,13 @@ Object[][] firstStageData=new Object[0][0];
           result = invocable.invokeFunction(functionName, sampleId, jsonarrayf);
         } catch (NoSuchMethodException ex) {
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);      
-          return new Object[]{LPPlatform.LAB_FALSE, "NoSuchMethodException", "Error: "+ex.getMessage()};
+          return new Object[]{LPPlatform.LAB_FALSE, "NoSuchMethodException", LABEL_MSG_ERROR+ex.getMessage()};
         }
         if (result.toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)) return new Object[]{LPPlatform.LAB_TRUE};
         return new Object[]{LPPlatform.LAB_FALSE, result};
       } catch (ScriptException ex) {
         Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-        return new Object[]{LPPlatform.LAB_FALSE, "ScriptException", "Error: "+ex.getMessage()};
+        return new Object[]{LPPlatform.LAB_FALSE, "ScriptException", LABEL_MSG_ERROR+ex.getMessage()};
       }
     }
 

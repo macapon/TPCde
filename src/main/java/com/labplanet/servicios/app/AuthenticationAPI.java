@@ -216,8 +216,8 @@ public class AuthenticationAPI extends HttpServlet {
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_PSSWD_TO_CHECK_INVALID, new Object[]{userToCheck}, language);              
                     }    
                     break;
-                case AuthenticationAPIParams.API_ENDPOINT_USER_CHANGE_PASSWORD:     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_USER_CHANGE_PASSWORD.split("\\|"));
+                case AuthenticationAPIParams.API_ENDPOINT_USER_CHANGE_PSSWD:     
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_USER_CHANGE_PSSWD.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);

@@ -23,7 +23,7 @@ import lbplanet.utilities.LPPlatform;
  */
 public class DataStudyObjectsVariableValues {
     
-    public enum VariableTypes{Categorical, Integer};
+    public enum VariableTypes{CATEGORICAL, INTEGER};
     
     public static Object[] addVariableSetToObject(String schemaPrefix, Token token, String studyName, String variableSetName, String ownerTable, String ownerId){
         Object[] diagn=new Object[0];
@@ -74,12 +74,12 @@ public class DataStudyObjectsVariableValues {
             new Object[]{objectVariablePropInfo.length, Arrays.toString(fieldsName), schemaPrefix});
         
         String fieldType = objectVariablePropInfo[0][2].toString();
-        if (VariableTypes.Categorical.toString().equalsIgnoreCase(fieldType)){
+        if (VariableTypes.CATEGORICAL.toString().equalsIgnoreCase(fieldType)){
             String[] allowedValuesArr = LPNulls.replaceNull(objectVariablePropInfo[0][4]).toString().split("\\|");
             if (!LPArray.valueInArray(allowedValuesArr, newValue)) 
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not one of the accepted values <*2*> for variable <*3*> in procedure <*4*>", 
                     new Object[]{newValue, Arrays.toString(allowedValuesArr), variableName, schemaPrefix});
-        }else if (VariableTypes.Integer.toString().equalsIgnoreCase(fieldType)){
+        }else if (VariableTypes.INTEGER.toString().equalsIgnoreCase(fieldType)){
             if (!LPMath.isNumeric(newValue))return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The value <*1*> is not numeric for variable <*2*> in procedure <*3*>", 
                     new Object[]{newValue, variableName, schemaPrefix});
         }else 

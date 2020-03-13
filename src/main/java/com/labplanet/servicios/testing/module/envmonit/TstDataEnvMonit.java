@@ -28,7 +28,7 @@ import javax.ws.rs.core.Response;
  * @author Administrator
  */
 public class TstDataEnvMonit extends HttpServlet {
-
+     public static final String TAG_NAME_ERROR_STATUS_CODE="ERRORMSG_ERROR_STATUS_CODE";
     /**
      *
      */
@@ -86,7 +86,7 @@ public class TstDataEnvMonit extends HttpServlet {
         
         Token token = new Token(finalToken);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(token.getUserName())){
-            errObject = LPArray.addValueToArray1D(errObject, "ERRORMSG_ERROR_STATUS_CODE"+": "+HttpServletResponse.SC_BAD_REQUEST);
+            errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
                 errObject = LPArray.addValueToArray1D(errObject, "API Error Message: The token is not valid");                    
                 Object[] errMsg =  LPFrontEnd.responseError(errObject, language, areMandatoryParamsInResponse[1].toString());
@@ -109,7 +109,7 @@ public class TstDataEnvMonit extends HttpServlet {
         
         isConnected = Rdbms.getRdbms().startRdbms(token.getUserName(), token.getUsrPw());
         if (!isConnected){
-            errObject = LPArray.addValueToArray1D(errObject, "ERRORMSG_ERROR_STATUS_CODE"+": "+HttpServletResponse.SC_BAD_REQUEST);
+            errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
             errObject = LPArray.addValueToArray1D(errObject, "API Error Message: db User Name and Password not correct, connection to the database is not possible");                    
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, "");
@@ -177,7 +177,7 @@ public class TstDataEnvMonit extends HttpServlet {
                     break;
                 default:      
                     //errObject = frontEnd.APIHandler.actionNotRecognized(errObject, actionName, response);
-            errObject = LPArray.addValueToArray1D(errObject, "ERRORMSG_ERROR_STATUS_CODE"+": "+HttpServletResponse.SC_BAD_REQUEST);
+            errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 
                     errObject = LPArray.addValueToArray1D(errObject, "API Error Message: actionName "+actionName+ " not recognized as an action by this API");                                                            
                     Object[] errMsg = LPFrontEnd.responseError(errObject, language, schemaPrefix);

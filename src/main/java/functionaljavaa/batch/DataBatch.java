@@ -17,7 +17,7 @@ import java.util.List;
  */
 public class DataBatch {
     String classVersion = "0.1";
-    
+    String tableName = "batch_java";
     /**
      *
      * @param schemaName
@@ -25,8 +25,7 @@ public class DataBatch {
      * @param batchArray
      * @return
      */
-    public String zdbCreateBatchArray( String schemaName, String transac, BatchArray batchArray){
-        String tableName = "batch_java";
+    public String zdbCreateBatchArray( String schemaName, String transac, BatchArray batchArray){        
 
         //Integer td[][]= {{4, 17, 28, 38, 43, 58, 69, 77, 83}, {4, 12, 24, 35, 48, 55, 62, 73, 87}, {11,15, 22, 36, 46, 60, 67, 80, 84}};
         List<String> singleDArray = new ArrayList<>();
@@ -51,8 +50,6 @@ public class DataBatch {
      */
     public Object[] zdbCreateBatchArray( String schemaName, BatchArray batchArray)
     {
-        String tableName = "batch_java";
-                 
         //Integer td[][]= {{4, 17, 28, 38, 43, 58, 69, 77, 83}, {4, 12, 24, 35, 48, 55, 62, 73, 87}, {11,15, 22, 36, 46, 60, 67, 80, 84}};
         List<String> singleDArray = new ArrayList<>();
         for (String[] array :batchArray.batchPosic) {         
@@ -74,7 +71,7 @@ public class DataBatch {
      * @return
      */
     public Integer zdbUpdateBatchArray( String schemaName, String batchName, String fieldName, String fieldValue) {
-        String tableName = "batch_java";
+        
         Integer pk = 0;
        
         Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(schemaName, tableName, 

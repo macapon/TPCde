@@ -29,7 +29,7 @@ public class AuthenticationAPIParams extends HttpServlet {
      */
     public static final String API_ENDPOINT_TOKEN_VALIDATE_USER_CREDENTIALS = "TOKEN_VALIDATE_USER_CREDENTIALS";
 
-    public static final String API_ENDPOINT_USER_CHANGE_PASSWORD = "USER_CHANGE_PASSWORD";
+    public static final String API_ENDPOINT_USER_CHANGE_PSSWD = "USER_CHANGE_PASSWORD";
     public static final String API_ENDPOINT_USER_CHANGE_ESIGN = "USER_CHANGE_ESIGN";
     public static final String API_ENDPOINT_SET_DEFAULT_TABS_ON_LOGIN = "SET_DEFAULT_TABS_ON_LOGIN";
     
@@ -144,7 +144,7 @@ public class AuthenticationAPIParams extends HttpServlet {
      *
      */
     public static final String MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_USER_CREDENTIALS = "myToken|userToCheck|passwordToCheck";
-    public static final String MANDATORY_PARAMS_CASE_USER_CHANGE_PASSWORD = "finalToken|newPassword";
+    public static final String MANDATORY_PARAMS_CASE_USER_CHANGE_PSSWD = "finalToken|newPassword";
     public static final String MANDATORY_PARAMS_CASE_USER_CHANGE_ESIGN = "finalToken|newEsign";
    
     /**
