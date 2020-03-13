@@ -29,45 +29,45 @@ public class TblsReqs {
         /**
          *
          */
-        TBL("procedure_info",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT user_process_pkey PRIMARY KEY (#FLD_NAME, #FLD_VERSION) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("procedure_info",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT user_process_pkey PRIMARY KEY (#FLD_NAME, #FLD_VERSION) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_NAME("name", LPDatabase.StringNotNull())
+        FLD_NAME("name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_VERSION("version", LPDatabase.IntegerNotNull())
+        FLD_VERSION("version", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.StringNotNull())
+        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull())
         // ....
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_LABEL_EN("label_en", LPDatabase.StringNotNull())
+        FLD_LABEL_EN("label_en", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_LABEL_ES("label_es", LPDatabase.StringNotNull())
+        FLD_LABEL_ES("label_es", LPDatabase.stringNotNull())
         ;
         private ProcedureInfo(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -129,38 +129,38 @@ public class TblsReqs {
         /**
          *
          */
-        TBL("procedure_roles",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_ROLE_NAME) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("procedure_roles",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_ROLE_NAME) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.StringNotNull())
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.IntegerNotNull())
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.StringNotNull())
+        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.StringNotNull())
+        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull())
         ;
         private ProcedureRoles(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -224,10 +224,10 @@ public class TblsReqs {
          */
         FLD_SOP_ID("sop_id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sop_id_seq'::regclass)")
         ,        
-        TBL("procedure_sop_meta_data", LPDatabase.CreateSequence(FLD_SOP_ID.getName())
+        TBL("procedure_sop_meta_data", LPDatabase.createSequence(FLD_SOP_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SOP_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_SOP_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_SOP_ID) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -238,67 +238,67 @@ public class TblsReqs {
         /**
          *
          */
-        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.StringNotNull())
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.IntegerNotNull())
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SOP_NAME("sop_name", LPDatabase.StringNotNull())
+        FLD_SOP_NAME("sop_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SOP_VERSION("sop_version", LPDatabase.IntegerNotNull())
+        FLD_SOP_VERSION("sop_version", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_SOP_REVISION("sop_revision", LPDatabase.IntegerNotNull())
+        FLD_SOP_REVISION("sop_revision", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_CURRENT_STATUS("current_status", LPDatabase.StringNotNull())
+        FLD_CURRENT_STATUS("current_status", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_EXPIRES("expires", LPDatabase.Boolean(false))
+        FLD_EXPIRES("expires", LPDatabase.booleanFld(false))
         ,        
 
         /**
          *
          */
-        FLD_HAS_CHILD("has_child", LPDatabase.Boolean(false))        
+        FLD_HAS_CHILD("has_child", LPDatabase.booleanFld(false))        
         ,
 
         /**
          *
          */
-        FLD_FIELD_LINK("field_link", LPDatabase.String())
+        FLD_FIELD_LINK("field_link", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.String())
+        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.string())
         // ....
         ;
         private ProcedureSopMetaData(String dbObjName, String dbObjType){
@@ -363,10 +363,10 @@ public class TblsReqs {
          */
         FLD_ID("id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
         ,        
-        TBL("procedure_user_requirements", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("procedure_user_requirements", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_ID) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_ID) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -377,25 +377,25 @@ public class TblsReqs {
         /**
          *
          */
-        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.StringNotNull())
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.IntegerNotNull())
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ORDER_NUMBER("order_number", LPDatabase.Integer())
+        FLD_ORDER_NUMBER("order_number", LPDatabase.integer())
         // ....
         ;
         private ProcedureUserRequirements(String dbObjName, String dbObjType){
@@ -458,38 +458,38 @@ public class TblsReqs {
         /**
          *
          */
-        TBL("procedure_user_role",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_USER_NAME, #FLD_ROLE_NAME) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("procedure_user_role",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_USER_NAME, #FLD_ROLE_NAME) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.StringNotNull())
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.IntegerNotNull())
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_USER_NAME("user_name", LPDatabase.StringNotNull())
+        FLD_USER_NAME("user_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.StringNotNull())
+        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull())
         // ....
         ;
         private ProcedureUserRole(String dbObjName, String dbObjType){
@@ -552,38 +552,38 @@ public class TblsReqs {
         /**
          *
          */
-        TBL("procedure_users",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_USER_NAME) ) "
-                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.CreateTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("procedure_users",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #SCHEMA_#TBL_pkey PRIMARY KEY (#FLD_PROCEDURE_NAME, #FLD_PROCEDURE_VERSION, #FLD_SCHEMA_PREFIX, #FLD_USER_NAME) ) "
+                + LPDatabase.POSTGRESQL_OIDS +  LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.StringNotNull())
+        FLD_PROCEDURE_NAME(LPDatabase.FIELDS_NAMES_PROCEDURE_NAME, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.IntegerNotNull())
+        FLD_PROCEDURE_VERSION(LPDatabase.FIELDS_NAMES_PROCEDURE_VERSION, LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.StringNotNull())
+        FLD_DESCRIPTION(FIELDS_NAMES_DESCRIPTION, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX(FIELDS_NAMES_SCHEMA_PREFIX, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_USER_NAME("user_name", LPDatabase.StringNotNull())
+        FLD_USER_NAME("user_name", LPDatabase.stringNotNull())
         ;
         private ProcedureUsers(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

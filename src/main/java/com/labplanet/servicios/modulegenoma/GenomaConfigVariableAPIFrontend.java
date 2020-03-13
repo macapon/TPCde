@@ -28,7 +28,7 @@ import org.json.simple.JSONArray;
 public class GenomaConfigVariableAPIFrontend extends HttpServlet {
     
             
-    public static enum  GenomaVariableAPIFrontEndEndPoints{
+    public enum  GenomaVariableAPIFrontEndEndPoints{
             GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName"),
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),

@@ -42,7 +42,7 @@ public class DataBatchIncubatorUnstructured {
             return updateBatchSamples;
         }
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchSamples[0].toString())) {
-            IncubBatchAudit.IncubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         }
         String batchFldName = "";
         if (incubStage == 1) {
@@ -90,7 +90,7 @@ public class DataBatchIncubatorUnstructured {
             return updateBatchSamples;
         }
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchSamples[0].toString())) {
-            IncubBatchAudit.IncubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         }
         String batchFldName = "";
         if (incubStage == 1) {
@@ -129,7 +129,7 @@ public class DataBatchIncubatorUnstructured {
             }else{
                 DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);                
+                    smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_START.getName(), sampleId);                
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation started", null);
@@ -159,7 +159,7 @@ public class DataBatchIncubatorUnstructured {
             }else{
                 DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    autoDiagn=smpStage.DataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);                                                
+                    autoDiagn=smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);                                                
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation ended", null);
@@ -197,7 +197,7 @@ public class DataBatchIncubatorUnstructured {
         }         
         Object[] createBatchDiagn = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), fldName, fldValue);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(createBatchDiagn[0].toString())) {
-            IncubBatchAudit.IncubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), bName, bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, ":"), null);
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), bName, bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, ":"), null);
         }
         return createBatchDiagn;
     }

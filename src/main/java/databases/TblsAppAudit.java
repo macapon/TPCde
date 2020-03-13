@@ -25,9 +25,9 @@ public class TblsAppAudit {
          *
          */
         FLD_AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
-        ,        TBL("incident", LPDatabase.CreateSequence(FLD_AUDIT_ID.getName())
+        ,        TBL("incident", LPDatabase.createSequence(FLD_AUDIT_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT app_session_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 
@@ -45,13 +45,13 @@ public class TblsAppAudit {
         /**
          *
          */
-        FLD_TRANSACTION_ID("transaction_id", LPDatabase.Integer())
+        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_TABLE_ID("table_id", LPDatabase.String())
+        FLD_TABLE_ID("table_id", LPDatabase.string())
         ,
 
         /**
@@ -63,49 +63,49 @@ public class TblsAppAudit {
         /**
          *
          */
-        FLD_PERSON("person", LPDatabase.String())
+        FLD_PERSON("person", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ACTION_NAME("action_name", LPDatabase.String())
+        FLD_ACTION_NAME("action_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.String())
+        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_INCIDENT_ID("incident_id", LPDatabase.Integer())
+        FLD_INCIDENT_ID("incident_id", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_USER_ROLE("user_role", LPDatabase.String())
+        FLD_USER_ROLE("user_role", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE("procedure", LPDatabase.String())
+        FLD_PROCEDURE("procedure", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.Integer())
+        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_APP_SESSION_ID("app_session_id", LPDatabase.Integer())
+        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())
         ,
 
         /**
@@ -123,13 +123,13 @@ public class TblsAppAudit {
         /**
          *
          */
-        FLD_REVIEWED("reviewed", LPDatabase.Boolean(false))
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld(false))
         ,
 
         /**
          *
          */
-        FLD_REVIEWED_BY("reviewed_by", LPDatabase.String())
+        FLD_REVIEWED_BY("reviewed_by", LPDatabase.string())
         ,
 
         /**
@@ -141,20 +141,20 @@ public class TblsAppAudit {
         /**
          *
          */
-        FLD_REVISION_NOTE("revision_note", LPDatabase.String())
+        FLD_REVISION_NOTE("revision_note", LPDatabase.string())
         ,        
 
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.Integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
         ,        
 
         /**
          *
          */
-        FLD_NOTE("note", LPDatabase.String()),
-        FLD_STATUS("status", LPDatabase.String()),
+        FLD_NOTE("note", LPDatabase.string()),
+        FLD_STATUS("status", LPDatabase.string()),
         
         ;
         private Incident(String dbObjName, String dbObjType){
@@ -224,9 +224,9 @@ public class TblsAppAudit {
          */
         FLD_SESSION_ID("session_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_session_id_seq'::regclass)")
         ,
-        TBL("session", LPDatabase.CreateSequence(FLD_SESSION_ID.getName())
+        TBL("session", LPDatabase.createSequence(FLD_SESSION_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SESSION_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT app_session_pkey1 PRIMARY KEY (#FLD_SESSION_ID) ) " +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT app_session_pkey1 PRIMARY KEY (#FLD_SESSION_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 
@@ -237,13 +237,13 @@ public class TblsAppAudit {
         /**
          *
          */
-        FLD_PERSON("person", LPDatabase.String())
+        FLD_PERSON("person", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.String())
+        FLD_ROLE_NAME("role_name", LPDatabase.string())
         ,
 
         /**
@@ -261,7 +261,7 @@ public class TblsAppAudit {
         /**
          *
          */
-        FLD_USER_SESSION_ID("user_session_id", LPDatabase.Integer())
+        FLD_USER_SESSION_ID("user_session_id", LPDatabase.integer())
         ;
         private Session(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

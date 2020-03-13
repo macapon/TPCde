@@ -27,11 +27,11 @@ import org.json.simple.JSONObject;
  */
 public class GenomaConfigVariableAPI extends HttpServlet {
 
-    public static enum  GenomaVariableAPIParamsList{
+    public enum  GenomaVariableAPIParamsList{
         variableSetName, variableName, fieldsValues, userName, userRole}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
             
-    public static enum  GenomaVariableAPIEndPoints{
+    public enum  GenomaVariableAPIEndPoints{
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
           VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName"), VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),

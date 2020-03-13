@@ -34,7 +34,7 @@ public class IncubBatchAudit {
      * @param parentAuditId when sub-record then the parent audit id
      * @return  
  */    
-    public static Object[] IncubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, String tableId,
+    public static Object[] incubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, String tableId,
                         Object[] auditlog, Integer parentAuditId) {
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};

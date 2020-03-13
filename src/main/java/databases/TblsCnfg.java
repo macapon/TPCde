@@ -18,68 +18,68 @@ public class TblsCnfg {
     /**
      *
      */
-    public static String schemaTag = "#SCHEMA";
+    public static final String  schemaTag = "#SCHEMA";
 
     /**
      *
      */
-    public static String tableTag = "#TBL";
+    public static final String tableTag = "#TBL";
 
     /**
      *
      */
-    public static String ownerTag = "#OWNER";
+    public static final String ownerTag = "#OWNER";
 
     /**
      *
      */
-    public static String tablespaceTag = "#TABLESPACE";
+    public static final String tablespaceTag = "#TABLESPACE";
 
     /**
      *
      */
-    public static String fieldsTag = "#FLDS";
+    public static final String fieldsTag = "#FLDS";
         
     /**
      *
      */
-    public static enum Analysis{
+    public enum Analysis{
 
         /**
          *
          */
-        TBL("analysis",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("analysis",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.StringNotNull())
+        FLD_CODE("code", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CONFIG_VERSION("config_version", LPDatabase.Integer())
+        FLD_CONFIG_VERSION("config_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.Date())
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())
         ,        
 
         /**
          *
          */
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean())        
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())        
         ;
         private Analysis(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -139,38 +139,38 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("analysis_method",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ANALYSIS, #FLD_METHOD_NAME, #FLD_METHOD_VERSION) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("analysis_method",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ANALYSIS, #FLD_METHOD_NAME, #FLD_METHOD_VERSION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_ANALYSIS("analysis", LPDatabase.StringNotNull())
+        FLD_ANALYSIS("analysis", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.StringNotNull())
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.Integer())
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.Date())
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())
         ;
         private AnalysisMethod(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -230,62 +230,62 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("analysis_method_params",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PARAM_NAME, #FLD_ANALYSIS, #FLD_METHOD_NAME, #FLD_METHOD_VERSION) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("analysis_method_params",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PARAM_NAME, #FLD_ANALYSIS, #FLD_METHOD_NAME, #FLD_METHOD_VERSION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PARAM_NAME("param_name", LPDatabase.StringNotNull())
+        FLD_PARAM_NAME("param_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ANALYSIS("analysis", LPDatabase.StringNotNull())
+        FLD_ANALYSIS("analysis", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.StringNotNull())
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.stringNotNull())
          ,
 
         /**
          *
          */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.IntegerNotNull())
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_MANDATORY("mandatory", LPDatabase.Boolean())
+        FLD_MANDATORY("mandatory", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_PARAM_TYPE("param_type", LPDatabase.String())
+        FLD_PARAM_TYPE("param_type", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_NUM_REPLICAS("num_replicas", LPDatabase.Integer())
+        FLD_NUM_REPLICAS("num_replicas", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_UOM("uom", LPDatabase.String())
+        FLD_UOM("uom", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.String())
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string())
         ;
         private AnalysisMethodParams(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -345,26 +345,26 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("sample",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE, #FLD_CODE_VERSION)) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("sample",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE, #FLD_CODE_VERSION)) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.StringNotNull())
+        FLD_CODE("code", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CODE_VERSION("code_version", LPDatabase.Integer())
+        FLD_CODE_VERSION("code_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_DESCRIPTION("description", LPDatabase.String())
+        FLD_DESCRIPTION("description", LPDatabase.string())
         ,
 
         /**
@@ -376,7 +376,7 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_JSON_DEFINITION_STR("json_definition_str", LPDatabase.String())
+        FLD_JSON_DEFINITION_STR("json_definition_str", LPDatabase.string())
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -436,56 +436,56 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("sample_rules",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE, #FLD_CODE_VERSION) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("sample_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_CODE, #FLD_CODE_VERSION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.StringNotNull())
+        FLD_CODE("code", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CODE_VERSION("code_version", LPDatabase.Integer())
+        FLD_CODE_VERSION("code_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_STATUSES("statuses", LPDatabase.String())
+        FLD_STATUSES("statuses", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_DEFAULT_STATUS("default_status", LPDatabase.String())
+        FLD_DEFAULT_STATUS("default_status", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_TEST_ANALYST_REQUIRED("test_analyst_required", LPDatabase.Boolean())
+        FLD_TEST_ANALYST_REQUIRED("test_analyst_required", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_ANALYST_ASSIGNMENT_MODE("analyst_assignment_mode", LPDatabase.String())
+        FLD_ANALYST_ASSIGNMENT_MODE("analyst_assignment_mode", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_FIELD_DEFAULT_VALUES("field_default_values", LPDatabase.String())
+        FLD_FIELD_DEFAULT_VALUES("field_default_values", LPDatabase.string())
         ,        
 
         /**
          *
          */
-        FLD_AUTO_ADD_SAMPLE_ANALYSIS_LEVEL("auto_add_sample_analysis_lvl", LPDatabase.String())        
+        FLD_AUTO_ADD_SAMPLE_ANALYSIS_LEVEL("auto_add_sample_analysis_lvl", LPDatabase.string())        
         ;
         private SampleRules(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -547,10 +547,10 @@ public class TblsCnfg {
          */
         FLD_SOP_ID("sop_id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sop_id_seq'::regclass)")
         ,        
-        TBL("sop_meta_data", LPDatabase.CreateSequence(FLD_SOP_ID.getName())
+        TBL("sop_meta_data", LPDatabase.createSequence(FLD_SOP_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SOP_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SOP_ID, #FLD_SOP_VERSION, #FLD_SOP_REVISION) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_SOP_ID, #FLD_SOP_VERSION, #FLD_SOP_REVISION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -561,51 +561,51 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_SOP_NAME("sop_name", LPDatabase.StringNotNull())
+        FLD_SOP_NAME("sop_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_SOP_VERSION("sop_version", LPDatabase.Integer())
+        FLD_SOP_VERSION("sop_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_SOP_REVISION("sop_revision", LPDatabase.Integer())
+        FLD_SOP_REVISION("sop_revision", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_CURRENT_STATUS("current_status", LPDatabase.String())
+        FLD_CURRENT_STATUS("current_status", LPDatabase.string())
         
         ,
 
         /**
          *
          */
-        FLD_ADDED_BY("added_by", LPDatabase.String())
+        FLD_ADDED_BY("added_by", LPDatabase.string())
         
         ,
 
         /**
          *
          */
-        FLD_FILE_LINK("file_link", LPDatabase.String())
+        FLD_FILE_LINK("file_link", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.String())
+        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_AUTHOR("author", LPDatabase.String())
+        FLD_AUTHOR("author", LPDatabase.string())
         
 /*        , FLD_ACTIVE_DATE("active_date", "Date")
         , FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
@@ -674,26 +674,26 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("spec",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_CODE, #FLD_CONFIG_VERSION) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("spec",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_CODE, #FLD_CONFIG_VERSION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.StringNotNull())
+        FLD_CODE("code", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CONFIG_VERSION("config_version", LPDatabase.Integer())
+        FLD_CONFIG_VERSION("config_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_CATEGORY("category", LPDatabase.String())
+        FLD_CATEGORY("category", LPDatabase.string())
         ,
 
         /**
@@ -705,25 +705,25 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String())
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.Date())
+        FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_ANALYSES("analyses", LPDatabase.String())
+        FLD_ANALYSES("analyses", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_VARIATION_NAMES("variation_names", LPDatabase.String())
+        FLD_VARIATION_NAMES("variation_names", LPDatabase.string())
         ;
         private Spec(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -785,10 +785,10 @@ public class TblsCnfg {
          */
         FLD_LIMIT_ID("limit_id", "integer NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_limit_id_seq'::regclass) ")            
         ,
-        TBL("spec_limits", LPDatabase.CreateSequence(FLD_LIMIT_ID.getName())
+        TBL("spec_limits", LPDatabase.createSequence(FLD_LIMIT_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_LIMIT_ID_seq OWNER TO #OWNER;"
                 + " CREATE TABLE #SCHEMA.#TBL (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_LIMIT_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,            
 
         /**
@@ -799,67 +799,67 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.StringNotNull())
+        FLD_CODE("code", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CONFIG_VERSION("config_version", LPDatabase.IntegerNotNull())
+        FLD_CONFIG_VERSION("config_version", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_VARIATION_NAME("variation_name", LPDatabase.String())
+        FLD_VARIATION_NAME("variation_name", LPDatabase.string())
         ,            
 
         /**
          *
          */
-        FLD_ANALYSIS("analysis", LPDatabase.StringNotNull())            
+        FLD_ANALYSIS("analysis", LPDatabase.stringNotNull())            
         ,
 
         /**
          *
          */
-        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.Boolean())
+        FLD_METHOD_NAME(LPDatabase.FIELDS_NAMES_METHOD_NAME, LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.Boolean())
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_PARAMETER("parameter", LPDatabase.String())
+        FLD_PARAMETER("parameter", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_RULE_TYPE("rule_type", LPDatabase.String())
+        FLD_RULE_TYPE("rule_type", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_RULE_VARIABLES("rule_variables", LPDatabase.String())
+        FLD_RULE_VARIABLES("rule_variables", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_UOM("uom", LPDatabase.String())
+        FLD_UOM("uom", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.String())
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string())
         ;
         private SpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -922,39 +922,39 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("spec_rules",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_CODE, #FLD_CONFIG_VERSION) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"
+        TBL("spec_rules",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_CODE, #FLD_CONFIG_VERSION) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"
                 + "COMMENT ON COLUMN #SCHEMA.#TBL.#FLD_ANALYSIS_NOT_DECLARED_LEVEL IS 'OPEN|ANALYSES_SPEC_LIST|SPEC_LIMIT_DEFINITION';")
         ,
 
         /**
          *
          */
-        FLD_CODE("code", LPDatabase.StringNotNull())
+        FLD_CODE("code", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CONFIG_VERSION("config_version", LPDatabase.Integer())
+        FLD_CONFIG_VERSION("config_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_ALLOW_OTHER_ANALYSIS("allow_other_analysis", LPDatabase.Boolean())
+        FLD_ALLOW_OTHER_ANALYSIS("allow_other_analysis", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_ALLOW_MULTI_SPEC("allow_multi_spec", LPDatabase.Boolean())
+        FLD_ALLOW_MULTI_SPEC("allow_multi_spec", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_ANALYSIS_NOT_DECLARED_LEVEL("analysis_not_declared_level", LPDatabase.String())
+        FLD_ANALYSIS_NOT_DECLARED_LEVEL("analysis_not_declared_level", LPDatabase.string())
         ;
         private SpecRules(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -1018,50 +1018,50 @@ public class TblsCnfg {
         /**
          *
          */
-        TBL("units_of_measurement",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        TBL("units_of_measurement",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_NAME("name", LPDatabase.StringNotNull())
+        FLD_NAME("name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PRETTY_NAME("pretty_name", LPDatabase.StringNotNull())
+        FLD_PRETTY_NAME("pretty_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_MEASUREMENT_FAMILY("measurement_family", LPDatabase.StringNotNull())
+        FLD_MEASUREMENT_FAMILY("measurement_family", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_IS_BASE("is_base", LPDatabase.Boolean())
+        FLD_IS_BASE("is_base", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_FACTOR_VALUE("factor_value", LPDatabase.Real())
+        FLD_FACTOR_VALUE("factor_value", LPDatabase.real())
         ,
 
         /**
          *
          */
-        FLD_OFFSET_VALUE("offset_value", LPDatabase.Real())
+        FLD_OFFSET_VALUE("offset_value", LPDatabase.real())
         ,
 
         /**
          *
          */
-        FLD_DESCRIPTION("description", LPDatabase.String())
+        FLD_DESCRIPTION("description", LPDatabase.string())
         ;
         private UnitsOfMeasurement(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -1215,10 +1215,10 @@ public class TblsCnfg {
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
         ,
-        TBL("zzz_db_error_log", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("zzz_db_error_log", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -1235,37 +1235,37 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_QUERY("query", LPDatabase.StringNotNull())
+        FLD_QUERY("query", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_QUERY_PARAMETERS("query_parameters", LPDatabase.StringNotNull())
+        FLD_QUERY_PARAMETERS("query_parameters", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ERROR_MESSAGE("error_message", LPDatabase.StringNotNull())
+        FLD_ERROR_MESSAGE("error_message", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CLASS_CALLER("class_caller_info", LPDatabase.String())
+        FLD_CLASS_CALLER("class_caller_info", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_RESOLVED("resolved", LPDatabase.Boolean(false))
+        FLD_RESOLVED("resolved", LPDatabase.booleanFld(false))
         ,
 
         /**
          *
          */
-        FLD_RESOLUTION_NOTES("resolution_notes", LPDatabase.Real())
+        FLD_RESOLUTION_NOTES("resolution_notes", LPDatabase.real())
         ;
         private zzzDbErrorLog(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -1330,10 +1330,10 @@ public class TblsCnfg {
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)")
         ,        
-        TBL("zzz_properties_error", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("zzz_properties_error", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+                +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_ID) ) " +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
@@ -1350,31 +1350,31 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_FILE("query", LPDatabase.StringNotNull())
+        FLD_FILE("query", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PARAMETER_NAME("query_parameters", LPDatabase.StringNotNull())
+        FLD_PARAMETER_NAME("query_parameters", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_CLASS_CALLER("class_caller_info", LPDatabase.String())
+        FLD_CLASS_CALLER("class_caller_info", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_RESOLVED("resolved", LPDatabase.Boolean(false))
+        FLD_RESOLVED("resolved", LPDatabase.booleanFld(false))
         ,
 
         /**
          *
          */
-        FLD_RESOLUTION_NOTES("resolution_notes", LPDatabase.Real())
+        FLD_RESOLUTION_NOTES("resolution_notes", LPDatabase.real())
         ;
         private zzzPropertiesMissing(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

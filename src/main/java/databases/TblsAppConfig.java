@@ -28,38 +28,38 @@ public class TblsAppConfig {
         /**
          *
          */
-        TBL("person",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PERSON_ID) ) " +
+        TBL("person",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PERSON_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 
         /**
          *
          */
-        FLD_PERSON_ID("person_id", LPDatabase.StringNotNull())
+        FLD_PERSON_ID("person_id", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_FIRST_NAME("first_name", LPDatabase.StringNotNull())
+        FLD_FIRST_NAME("first_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_LAST_NAME("last_name", LPDatabase.StringNotNull())
+        FLD_LAST_NAME("last_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_BIRTH_DATE("birth_date", LPDatabase.Date())
+        FLD_BIRTH_DATE("birth_date", LPDatabase.date())
         ,
 
         /**
          *
          */
-        FLD_PHOTO("photo", LPDatabase.StringNotNull())
+        FLD_PHOTO("photo", LPDatabase.stringNotNull())
         ;
         private Person(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

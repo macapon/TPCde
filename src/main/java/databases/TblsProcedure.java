@@ -18,27 +18,27 @@ public class TblsProcedure {
     /**
      *
      */
-    public static String schemaTag = "#SCHEMA";
+    public static final String schemaTag = "#SCHEMA";
 
     /**
      *
      */
-    public static String tableTag = "#TBL";
+    public static final String tableTag = "#TBL";
 
     /**
      *
      */
-    public static String ownerTag = "#OWNER";
+    public static final String ownerTag = "#OWNER";
 
     /**
      *
      */
-    public static String tablespaceTag = "#TABLESPACE";
+    public static final String tablespaceTag = "#TABLESPACE";
 
     /**
      *
      */
-    public static String fieldsTag = "#FLDS";
+    public static final String fieldsTag = "#FLDS";
     
     /**
      *
@@ -48,21 +48,21 @@ public class TblsProcedure {
         /**
          *
          */
-        TBL("person_profile",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PERSON_NAME, #FLD_ROLE_NAME) )" +
+        TBL("person_profile",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_PERSON_NAME, #FLD_ROLE_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PERSON_NAME("person_name", LPDatabase.StringNotNull())
+        FLD_PERSON_NAME("person_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.StringNotNull()),
-        FLD_ACTIVE("active", LPDatabase.Boolean())
+        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld())
 /*        , FLD_ANALYSIS("analysis", LPDatabase.StringNotNull())
          , FLD_METHOD_VERSION("method_version", LPDatabase.IntegerNotNull())
         , FLD_MANDATORY("mandatory", LPDatabase.Boolean())
@@ -129,74 +129,74 @@ public class TblsProcedure {
         /**
          *
          */
-        TBL("procedure_events",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME, #FLD_ROLE_NAME) )" +
+        TBL("procedure_events",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_NAME, #FLD_ROLE_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_NAME("name", LPDatabase.StringNotNull())
+        FLD_NAME("name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.StringNotNull())
+        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_MODE("mode", LPDatabase.String())
+        FLD_MODE("mode", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_TYPE("type", LPDatabase.String())
+        FLD_TYPE("type", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_BRANCH_LEVEL("branch_level", LPDatabase.String())
+        FLD_BRANCH_LEVEL("branch_level", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_LABEL_EN("label_en", LPDatabase.String())
+        FLD_LABEL_EN("label_en", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_LABEL_ES("label_es", LPDatabase.String())
+        FLD_LABEL_ES("label_es", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ORDER_NUMBER("order_number", LPDatabase.Integer())
+        FLD_ORDER_NUMBER("order_number", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_SOP("sop", LPDatabase.String())
+        FLD_SOP("sop", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ESIGN_REQUIRED("esign_required", LPDatabase.Boolean())
+        FLD_ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld())
         ,
 
         /**
          *
          */
-        FLD_LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.String())
+        FLD_LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string())
         ;
         private ProcedureEvents(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -256,38 +256,38 @@ public class TblsProcedure {
         /**
          *
          */
-        TBL("procedure_info",  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+        TBL("procedure_info",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
                 LPDatabase.POSTGRESQL_OIDS+"  TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_NAME("name", LPDatabase.StringNotNull())
+        FLD_NAME("name", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_VERSION("version", LPDatabase.IntegerNotNull())
+        FLD_VERSION("version", LPDatabase.integerNotNull())
         ,
 
         /**
          *
          */
-        FLD_SCHEMA_PREFIX("schema_prefix", LPDatabase.StringNotNull())
+        FLD_SCHEMA_PREFIX("schema_prefix", LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_LABEL_EN("label_en", LPDatabase.String())
+        FLD_LABEL_EN("label_en", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_LABEL_ES("label_es", LPDatabase.String())
+        FLD_LABEL_ES("label_es", LPDatabase.string())
         ;
         private ProcedureInfo(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

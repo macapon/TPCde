@@ -26,11 +26,11 @@ import org.json.simple.JSONObject;
  */
 public class ProjectAPI extends HttpServlet {
     
-    public static enum  GenomaProjectAPIParamsList{
+    public enum  GenomaProjectAPIParamsList{
         projectName, fieldsNames, fieldsValues, userName, userRole}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
             
-    public static enum  GenomaProjectAPIEndPoints{
+    public enum  GenomaProjectAPIEndPoints{
           PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
           PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
           PROJECT_ADD_USER("PROJECT_ADD_USER", "projectName|userName|userRole"), PROJECT_REMOVE_USER("PROJECT_REMOVE_USER", "projectName|userName|userRole"),

@@ -24,13 +24,13 @@ public class TblsGenomaData {
     public static final String FIELDS_NAMES_STUDY="study";
 
     public enum Project{
-        TBL("project",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_NAME("name",  LPDatabase.StringNotNull(100)),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
+        TBL("project",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, LPDatabase.dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
         FLD_STARTED_ON("started_on", LPDatabase.dateTime()),
         FLD_ENDED_ON("ended_on", LPDatabase.dateTime()),        
         ;
@@ -90,14 +90,14 @@ public class TblsGenomaData {
 
     public enum ProjectUsers{
         FLD_ID("row_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_row_id_seq'::regclass)"),
-        TBL("project_users", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("project_users", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_PROJECT("project",  LPDatabase.StringNotNull(100)),
-        FLD_PERSON("person",  LPDatabase.StringNotNull(100)),
-        FLD_ROLES("roles", LPDatabase.StringNotNull()),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_PROJECT("project",  LPDatabase.stringNotNull(100)),
+        FLD_PERSON("person",  LPDatabase.stringNotNull(100)),
+        FLD_ROLES("roles", LPDatabase.stringNotNull()),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
         ;
         
@@ -155,14 +155,14 @@ public class TblsGenomaData {
     }
 
     public enum Study{
-        TBL(FIELDS_NAMES_STUDY,  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_NAME("name",  LPDatabase.StringNotNull(100)),
-        FLD_PROJECT("project",  LPDatabase.StringNotNull(100)),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
+        TBL(FIELDS_NAMES_STUDY,  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
+        FLD_PROJECT("project",  LPDatabase.stringNotNull(100)),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
         FLD_STARTED_ON("started_on", dateTime()),
         FLD_ENDED_ON("ended_on", dateTime()),
         ;
@@ -222,14 +222,14 @@ public class TblsGenomaData {
 
     public enum StudyUsers{
         FLD_ID("row_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_row_id_seq'::regclass)"),
-        TBL("study_users", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("study_users", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.StringNotNull(100)),
-        FLD_PERSON("person",  LPDatabase.StringNotNull(100)),
-        FLD_ROLES("roles", LPDatabase.StringNotNull()),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.stringNotNull(100)),
+        FLD_PERSON("person",  LPDatabase.stringNotNull(100)),
+        FLD_ROLES("roles", LPDatabase.stringNotNull()),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
         ;
         
@@ -288,16 +288,16 @@ public class TblsGenomaData {
 
     public enum StudyIndividual{
         FLD_INDIVIDUAL_ID("individual_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_individual_id_seq'::regclass)"),
-        TBL("study_individual", LPDatabase.CreateSequence(FLD_INDIVIDUAL_ID.getName())
+        TBL("study_individual", LPDatabase.createSequence(FLD_INDIVIDUAL_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_INDIVIDUAL_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_INDIVIDUAL_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.StringNotNull(100)),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_INDIVIDUAL_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.stringNotNull(100)),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
-        FLD_INDIV_NAME("individual_name", LPDatabase.String()),        
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_INDIV_NAME("individual_name", LPDatabase.string()),        
         ;
         private StudyIndividual(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -353,16 +353,16 @@ public class TblsGenomaData {
 
     public enum StudyIndividualSample{
         FLD_SAMPLE_ID("sample_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_sample_id_seq'::regclass)"),
-        TBL("study_individual_sample", LPDatabase.CreateSequence(FLD_SAMPLE_ID.getName())
+        TBL("study_individual_sample", LPDatabase.createSequence(FLD_SAMPLE_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_SAMPLE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_SAMPLE_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_INDIVIDUAL_ID("individual_id", LPDatabase.Integer()),
-        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.StringNotNull(100)),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_SAMPLE_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_INDIVIDUAL_ID("individual_id", LPDatabase.integer()),
+        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.stringNotNull(100)),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
         ;
         private StudyIndividualSample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -421,17 +421,17 @@ public class TblsGenomaData {
         /**
          *
          */
-        TBL("study_samples_set",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_NAME("name",  LPDatabase.StringNotNull(100)),
-        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.StringNotNull(100)),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
-        FLD_TYPE("type", LPDatabase.String()),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean(false)),
-        FLD_COMPLETED("completed", LPDatabase.Boolean(false)),
+        TBL("study_samples_set",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
+        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.stringNotNull(100)),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_TYPE("type", LPDatabase.string()),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(false)),
+        FLD_COMPLETED("completed", LPDatabase.booleanFld(false)),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),        
-        FLD_UNSTRUCT_CONTENT("samples_content", LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),        
+        FLD_UNSTRUCT_CONTENT("samples_content", LPDatabase.string()),
         ;
         
         private StudySamplesSet(String dbObjName, String dbObjType){
@@ -496,17 +496,17 @@ public class TblsGenomaData {
         /**
          *
          */
-        TBL("study_family",  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_NAME("name",  LPDatabase.StringNotNull(100)),
-        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.StringNotNull(100)),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
-        FLD_TYPE("type", LPDatabase.String()),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean(false)),
-        FLD_COMPLETED("completed", LPDatabase.Boolean(false)),
+        TBL("study_family",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_NAME("name",  LPDatabase.stringNotNull(100)),
+        FLD_STUDY(FIELDS_NAMES_STUDY,  LPDatabase.stringNotNull(100)),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_TYPE("type", LPDatabase.string()),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld(false)),
+        FLD_COMPLETED("completed", LPDatabase.booleanFld(false)),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),        
-        FLD_UNSTRUCT_CONTENT("unstruct_content", LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),        
+        FLD_UNSTRUCT_CONTENT("unstruct_content", LPDatabase.string()),
         ;
         
         private StudyFamily(String dbObjName, String dbObjType){
@@ -568,26 +568,26 @@ public class TblsGenomaData {
          *
          */
         FLD_ID("id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_id_seq'::regclass)"),
-        TBL("study_variable_values", LPDatabase.CreateSequence(FLD_ID.getName())
+        TBL("study_variable_values", LPDatabase.createSequence(FLD_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
-        FLD_OWNER_TABLE("owner_table", LPDatabase.StringNotNull()),
-        FLD_OWNER_ID("owner_id", LPDatabase.StringNotNull()),
-        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.StringNotNull()),
-        FLD_INDIVIDUAL("individual", LPDatabase.Integer()),
-        FLD_FAMILY("family", LPDatabase.String()),
-        FLD_SAMPLE("sample", LPDatabase.String()),
-        FLD_DESCRIPTION("description", LPDatabase.String()),
-        FLD_VARIABLE_SET("variable_set", LPDatabase.StringNotNull()),
-        FLD_NAME("name", LPDatabase.StringNotNull()),
-        FLD_VALUE("value", LPDatabase.String()),
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.Boolean()),
-        FLD_TYPE("type", LPDatabase.String()),
-        FLD_REQUIRED("required", LPDatabase.String()),
-        FLD_ALLOWED_VALUES("allowed_values", LPDatabase.String()),
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";"),
+        FLD_OWNER_TABLE("owner_table", LPDatabase.stringNotNull()),
+        FLD_OWNER_ID("owner_id", LPDatabase.stringNotNull()),
+        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.stringNotNull()),
+        FLD_INDIVIDUAL("individual", LPDatabase.integer()),
+        FLD_FAMILY("family", LPDatabase.string()),
+        FLD_SAMPLE("sample", LPDatabase.string()),
+        FLD_DESCRIPTION("description", LPDatabase.string()),
+        FLD_VARIABLE_SET("variable_set", LPDatabase.stringNotNull()),
+        FLD_NAME("name", LPDatabase.stringNotNull()),
+        FLD_VALUE("value", LPDatabase.string()),
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld()),
+        FLD_TYPE("type", LPDatabase.string()),
+        FLD_REQUIRED("required", LPDatabase.string()),
+        FLD_ALLOWED_VALUES("allowed_values", LPDatabase.string()),
         FLD_CREATED_ON( LPDatabase.FIELDS_NAMES_CREATED_ON, dateTime()),
-        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.String()),
+        FLD_CREATED_BY( LPDatabase.FIELDS_NAMES_CREATED_BY, LPDatabase.string()),
         ;
         
         private StudyVariableValues(String dbObjName, String dbObjType){
@@ -644,19 +644,19 @@ public class TblsGenomaData {
     }
     public enum studyObjectsFiles{
         FLD_FILE_ID("file_id", "integer NOT NULL DEFAULT nextval('#SCHEMA.#TBL_file_id_seq'::regclass)")        ,
-        TBL("study_objects_files", LPDatabase.CreateSequence(FLD_FILE_ID.getName())
+        TBL("study_objects_files", LPDatabase.createSequence(FLD_FILE_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_FILE_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_FILE_ID) )" +
-                LPDatabase.POSTGRESQL_OIDS+LPDatabase.CreateTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
-        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.StringNotNull()),
-        FLD_OWNER_TABLE("owner_table", LPDatabase.StringNotNull()),
-        FLD_OWNER_ID("owner_id", LPDatabase.StringNotNull()),
-        FLD_DOC_NAME("doc_name", LPDatabase.StringNotNull())       ,
+                +  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey1 PRIMARY KEY (#FLD_FILE_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")        ,
+        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.stringNotNull()),
+        FLD_OWNER_TABLE("owner_table", LPDatabase.stringNotNull()),
+        FLD_OWNER_ID("owner_id", LPDatabase.stringNotNull()),
+        FLD_DOC_NAME("doc_name", LPDatabase.stringNotNull())       ,
         FLD_ADDED_ON("added_on", dateTime()),
-        FLD_ADDED_BY("added_by", LPDatabase.String())        ,
-        FLD_FILE_LINK("file_link", LPDatabase.String())        ,
-        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.String())       ,
-        FLD_AUTHOR("author", LPDatabase.String()),
+        FLD_ADDED_BY("added_by", LPDatabase.string())        ,
+        FLD_FILE_LINK("file_link", LPDatabase.string())        ,
+        FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.string())       ,
+        FLD_AUTHOR("author", LPDatabase.string()),
         ;
         private studyObjectsFiles(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

@@ -87,15 +87,6 @@ public class DataSample {
     String errorCode ="";
     Object[] errorDetailVariables= new Object[0];
     
-    /**
-     *
-     */
-    public static String[] mandatoryFields = null;
-
-    /**
-     *
-     */
-    public static Object[] mandatoryFieldsValue = null;
 
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
     DataSampleAnalysisStrategy smpAna;
@@ -155,6 +146,8 @@ public class DataSample {
 
 
 Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Integer sampleTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue, Boolean devMode, Integer numSamplesToLog) {
+    String[] mandatoryFields = null;
+    Object[] mandatoryFieldsValue = null;
     Object[] diagnoses = new Object[7];
         String actionName = "Insert";
         
@@ -275,7 +268,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){return diagnoses;}
             
             Integer sampleId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
-            smpStages.DataSampleStagesTimingCapture(schemaPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
+            smpStages.dataSampleStagesTimingCapture(schemaPrefix, sampleId, firstStage[firstStage.length-1][1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
             
             SampleAudit smpAudit = new SampleAudit();            
             Object[] sampleAuditAdd = smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.SAMPLE_LOGGED.toString(), TblsData.Sample.TBL.getName(), sampleId, 
@@ -551,6 +544,9 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      */
     
     private String specialFieldCheckSampleStatus( String schemaPrefix, String template, Integer templateVersion){                      
+         String[] mandatoryFields = null;
+         Object[] mandatoryFieldsValue = null;
+
         String myDiagnoses = "";        
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
@@ -592,6 +588,9 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @return
      */
     private String specialFieldCheckSampleSpecCode( String schemaPrefix, String template, Integer templateVersion){ 
+        String[] mandatoryFields = null;
+        Object[] mandatoryFieldsValue = null;
+
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 

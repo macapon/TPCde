@@ -285,7 +285,7 @@ public class DataBatchIncubator {
                 requiredFields, requiredFieldsValue, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString()))
-            IncubBatchAudit.IncubBatchAuditAdd(schemaPrefix, token, batchAuditEvent, TblsEnvMonitData.IncubBatch.TBL.getName(), bName, bName,
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, batchAuditEvent, TblsEnvMonitData.IncubBatch.TBL.getName(), bName, bName,
                 LPArray.joinTwo1DArraysInOneOf1DString(requiredFields, requiredFieldsValue, ": "), null);
         return updateDiagnostic;
     }
@@ -355,7 +355,7 @@ public class DataBatchIncubator {
                 updFieldName, updFieldValue, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName});        
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagn[0].toString()))
-            IncubBatchAudit.IncubBatchAuditAdd(schemaPrefix, token, BatchAuditEvents.BATCH_ASSIGN_INCUBATOR.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, incubName,  
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, BatchAuditEvents.BATCH_ASSIGN_INCUBATOR.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, incubName,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         return updateDiagn;
     }
@@ -381,7 +381,7 @@ public class DataBatchIncubator {
                 fieldsName, fieldsValue, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName});
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateDiagnostic[0].toString()))
-            IncubBatchAudit.IncubBatchAuditAdd(schemaPrefix, token, BatchAuditEvents.BATCH_UPDATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, batchName,
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, BatchAuditEvents.BATCH_UPDATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, batchName,
                 LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ": "), null);
         return updateDiagnostic;
     }

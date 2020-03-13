@@ -29,9 +29,9 @@ public class TblsGenomaDataAudit {
          */
         FLD_AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
         ,
-        TBL("project", LPDatabase.CreateSequence(FLD_AUDIT_ID.getName())
+        TBL("project", LPDatabase.createSequence(FLD_AUDIT_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 
@@ -48,13 +48,13 @@ public class TblsGenomaDataAudit {
         /**
          *
          */
-        FLD_TRANSACTION_ID("transaction_id", LPDatabase.Integer())
+        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_TABLE_ID("table_id", LPDatabase.String())
+        FLD_TABLE_ID("table_id", LPDatabase.string())
         ,
 
         /**
@@ -66,55 +66,55 @@ public class TblsGenomaDataAudit {
         /**
          *
          */
-        FLD_PERSON("person", LPDatabase.String())
+        FLD_PERSON("person", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ACTION_NAME("action_name", LPDatabase.String())
+        FLD_ACTION_NAME("action_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.String())
+        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROJECT("project", LPDatabase.String())
+        FLD_PROJECT("project", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.String())
+        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_USER_ROLE("user_role", LPDatabase.String())
+        FLD_USER_ROLE("user_role", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE("procedure", LPDatabase.String())
+        FLD_PROCEDURE("procedure", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.Integer())
+        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_APP_SESSION_ID("app_session_id", LPDatabase.Integer())
+        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())
         ,
 
         /**
@@ -132,7 +132,7 @@ public class TblsGenomaDataAudit {
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.Integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
         ;
         private Project(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -191,9 +191,9 @@ public class TblsGenomaDataAudit {
          */
         FLD_AUDIT_ID("audit_id", "bigint NOT NULL DEFAULT nextval('#SCHEMA.#TBL_audit_id_seq'::regclass)")
         ,
-        TBL(FIELDS_NAMES_STUDY, LPDatabase.CreateSequence(FLD_AUDIT_ID.getName())
+        TBL(FIELDS_NAMES_STUDY, LPDatabase.createSequence(FLD_AUDIT_ID.getName())
                 + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_AUDIT_ID_seq OWNER TO #OWNER;"
-                +  LPDatabase.CreateTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_AUDIT_ID) ) " +
                 LPDatabase.POSTGRESQL_OIDS+" TABLESPACE #TABLESPACE; ALTER TABLE  #SCHEMA.#TBL" + "    OWNER to #OWNER;")
         ,
 
@@ -210,13 +210,13 @@ public class TblsGenomaDataAudit {
         /**
          *
          */
-        FLD_TRANSACTION_ID("transaction_id", LPDatabase.Integer())
+        FLD_TRANSACTION_ID("transaction_id", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_TABLE_ID("table_id", LPDatabase.String())
+        FLD_TABLE_ID("table_id", LPDatabase.string())
         ,
 
         /**
@@ -228,55 +228,55 @@ public class TblsGenomaDataAudit {
         /**
          *
          */
-        FLD_PERSON("person", LPDatabase.String())
+        FLD_PERSON("person", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_ACTION_NAME("action_name", LPDatabase.String())
+        FLD_ACTION_NAME("action_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.String())
+        FLD_FIELDS_UPDATED("fields_updated", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROJECT("project", LPDatabase.String())
+        FLD_PROJECT("project", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.String())
+        FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_USER_ROLE("user_role", LPDatabase.String())
+        FLD_USER_ROLE("user_role", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE("procedure", LPDatabase.String())
+        FLD_PROCEDURE("procedure", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.Integer())
+        FLD_PROCEDURE_VERSION("procedure_version", LPDatabase.integer())
         ,
 
         /**
          *
          */
-        FLD_APP_SESSION_ID("app_session_id", LPDatabase.Integer())
+        FLD_APP_SESSION_ID("app_session_id", LPDatabase.integer())
         ,
 
         /**
@@ -294,7 +294,7 @@ public class TblsGenomaDataAudit {
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.Integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
         ;
         private Study(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
