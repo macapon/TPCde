@@ -87,6 +87,15 @@ public class DataSample {
     String errorCode ="";
     Object[] errorDetailVariables= new Object[0];
     
+    /**
+     *
+     */
+    public static String[] mandatoryFields = null;
+
+    /**
+     *
+     */
+    public static Object[] mandatoryFieldsValue = null;
 
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
     DataSampleAnalysisStrategy smpAna;
@@ -146,8 +155,6 @@ public class DataSample {
 
 
 Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Integer sampleTemplateVersion, String[] sampleFieldName, Object[] sampleFieldValue, Boolean devMode, Integer numSamplesToLog) {
-    String[] mandatoryFields = null;
-    Object[] mandatoryFieldsValue = null;
     Object[] diagnoses = new Object[7];
         String actionName = "Insert";
         
@@ -544,9 +551,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      */
     
     private String specialFieldCheckSampleStatus( String schemaPrefix, String template, Integer templateVersion){                      
-         String[] mandatoryFields = null;
-         Object[] mandatoryFieldsValue = null;
-
         String myDiagnoses = "";        
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
@@ -588,9 +592,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @return
      */
     private String specialFieldCheckSampleSpecCode( String schemaPrefix, String template, Integer templateVersion){ 
-        String[] mandatoryFields = null;
-        Object[] mandatoryFieldsValue = null;
-
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
