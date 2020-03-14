@@ -23,7 +23,7 @@ public class RelatedObjects {
             return this.labelName;
         }           
         private final String labelName;
-    };
+    }
     
     private static RelatedObjects mainStructureObject;
     private final JSONArray jArrMainObject;

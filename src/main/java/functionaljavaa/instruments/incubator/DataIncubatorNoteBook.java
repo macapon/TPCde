@@ -20,7 +20,7 @@ import lbplanet.utilities.LPPlatform;
  */
 public class DataIncubatorNoteBook {
     
-    private enum EventType{TEMPERATURE_READING, ACTIVATE, DEACTIVATE};
+    private enum EventType{TEMPERATURE_READING, ACTIVATE, DEACTIVATE}
     
     /**
      *

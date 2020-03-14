@@ -40,9 +40,9 @@ public class DataSampleIncubation {
      * @return
      */
     enum SampleIncubationObjects{
-        SAMPLE, BATCH};
+        SAMPLE, BATCH}
     enum SampleIncubationLevel{
-        DATE, INCUBATOR};
+        DATE, INCUBATOR}
     enum SampleIncubationMoment{ START, END;
         private static final Set<String> _values = new HashSet<>();
         // O(n) - runs once

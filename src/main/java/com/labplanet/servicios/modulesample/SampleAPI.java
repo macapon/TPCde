@@ -42,7 +42,7 @@ import org.json.simple.JSONObject;
  */
 public class SampleAPI extends HttpServlet {
     
-    private String propertyFileName = "";    
+    String propertyFileName = "";    
 
     @Override
     public void init(ServletConfig config) throws ServletException {

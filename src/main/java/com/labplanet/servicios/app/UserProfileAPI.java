@@ -9,7 +9,6 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
-import com.labplanet.servicios.moduleenvmonit.EnvMonAPI;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsApp.Users;
@@ -17,8 +16,6 @@ import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -158,7 +155,7 @@ public class UserProfileAPI extends HttpServlet {
                     String newEsignPhrase = request.getParameter("newEsignPhrase"); 
                     userActionDiagnostic = Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
                             new String[]{Users.FLD_ESIGN.getName()}, new Object[]{newEsignPhrase}, new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()});
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     messageDynamicData=new Object[]{token.getUserName()};
                     break;
                 default:

@@ -24,8 +24,7 @@ public class GenomaConfigVariablesQueries {
             return LPArray.array2dTo1d(variableSetInfo);
         }
         String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
-        String[] variableSetContentArr = variableSetContent.split("\\|");
-        return variableSetContentArr;
+        return variableSetContent.split("\\|");
     }
 
     public static Object[][] getVariableSetVariablesProperties(String schemaPrefix, String variableSetName){

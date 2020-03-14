@@ -150,7 +150,7 @@ public class SopUserAPI extends HttpServlet {
                 String userName = token.getUserName();
                 userSopDiagnositc=UserSop.userSopMarkedAsCompletedByUser(schemaPrefix, userName, sopName);
                 messageDynamicData=new Object[]{sopName};
-                rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
+                RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
                 break;
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              

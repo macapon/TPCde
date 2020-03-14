@@ -52,7 +52,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
         }
       String endPointName="";
       String endPointMandatoryFields="";
-    };
+    }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.

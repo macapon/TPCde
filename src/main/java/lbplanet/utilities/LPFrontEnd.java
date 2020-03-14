@@ -34,7 +34,7 @@ public class LPFrontEnd {
             return this.labelName;
         }           
         private final String labelName;
-    };
+    }
 
     private LPFrontEnd(){    throw new IllegalStateException("Utility class");}    
 

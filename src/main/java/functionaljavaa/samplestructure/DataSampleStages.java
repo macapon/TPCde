@@ -43,7 +43,7 @@ Boolean isSampleStagesTimingCaptureEnable=false;
 Integer sampleId=-999;
 Object[][] firstStageData=new Object[0][0];
 
-    public enum SampleStageTimingCapturePhases{START, END};
+    public enum SampleStageTimingCapturePhases{START, END}
     /**
      *
      */
@@ -220,16 +220,14 @@ Object[][] firstStageData=new Object[0][0];
             if ((LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1))
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, schemaPrefix});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
-            Object[] actionDiagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
+            return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
                     new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()}, 
-                    new Object[]{sampleId, currStage, LPDate.getCurrentTimeStamp()});
-            return actionDiagn;            
+                    new Object[]{sampleId, currStage, LPDate.getCurrentTimeStamp()});            
         }else if (SampleStageTimingCapturePhases.END.toString().equalsIgnoreCase(phase)){
-            Object[] actionDiagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
+           return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
                 new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()}, 
                 new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+" is null", TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+" is not null"},
-                new Object[]{sampleId, currStage });
-            return actionDiagn;
+                new Object[]{sampleId, currStage });            
         }else{
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>", 
                 new Object[]{phase, Arrays.toString(new String[]{SampleStageTimingCapturePhases.START.toString(), SampleStageTimingCapturePhases.END.toString()})});

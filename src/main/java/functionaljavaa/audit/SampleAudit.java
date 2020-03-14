@@ -132,7 +132,7 @@ public class SampleAudit {
         /**
          *
          */
-        SAMPLE_UNCANCELED};   
+        SAMPLE_UNCANCELED}  
 
     /**
      *
@@ -167,7 +167,7 @@ public class SampleAudit {
         /**
          *
          */
-        SAMPLE_ANALYSIS_UNCANCELED};
+        SAMPLE_ANALYSIS_UNCANCELED}
     
     /**
      *
@@ -202,7 +202,7 @@ public class SampleAudit {
         /**
          *
          */
-        SAMPLE_ANALYSIS_RESULT_REVIEWED};
+        SAMPLE_ANALYSIS_RESULT_REVIEWED}
     String classVersion = "0.1";
     Integer auditId=0;
       

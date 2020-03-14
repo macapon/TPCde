@@ -23,7 +23,7 @@ import lbplanet.utilities.LPPlatform;
  */
 public class DataStudyObjectsVariableValues {
     
-    public enum VariableTypes{CATEGORICAL, INTEGER};
+    public enum VariableTypes{CATEGORICAL, INTEGER}
     
     public static Object[] addVariableSetToObject(String schemaPrefix, Token token, String studyName, String variableSetName, String ownerTable, String ownerId){
         Object[] diagn=new Object[0];

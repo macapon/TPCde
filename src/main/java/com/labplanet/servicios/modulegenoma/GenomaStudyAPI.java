@@ -66,7 +66,7 @@ public class GenomaStudyAPI extends HttpServlet {
         }
       String endPointName="";
       String endPointMandatoryFields="";
-    };
+    }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -242,7 +242,7 @@ public class GenomaStudyAPI extends HttpServlet {
                     dataSample =stud.studyUserManagement(schemaPrefix, token, actionName, studyName, userName, userRole);
                     break;
                 case "STUDY_ADD_INDIVIDUAL":
-                    GenomaDataStudyIndividuals StdInd = new GenomaDataStudyIndividuals();
+                    GenomaDataStudyIndividuals stdInd = new GenomaDataStudyIndividuals();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_ADD_INDIVIDUAL.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -262,12 +262,12 @@ public class GenomaStudyAPI extends HttpServlet {
                     if (individualName.length()==0)
                         individualName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsGenomaData.StudyIndividual.FLD_INDIV_NAME.getName())].toString();
 
-                    dataSample =StdInd.createStudyIndividual(schemaPrefix, token, studyName, individualName, fieldNames, fieldValues,  false);
+                    dataSample =stdInd.createStudyIndividual(schemaPrefix, token, studyName, individualName, fieldNames, fieldValues,  false);
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
                     break;
                 case "STUDY_INDIVIDUAL_ACTIVATE":
                 case "STUDY_INDIVIDUAL_DEACTIVATE":     
-                    StdInd = new GenomaDataStudyIndividuals();
+                    stdInd = new GenomaDataStudyIndividuals();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_INDIVIDUAL_ACTIVATE.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -277,14 +277,14 @@ public class GenomaStudyAPI extends HttpServlet {
                     studyName=request.getParameter(GenomaStudyAPIParamsList.studyName.toString());
                     String individualId=request.getParameter(GenomaStudyAPIParamsList.individualId.toString());
                     if ("STUDY_INDIVIDUAL_ACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdInd.studyIndividualActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId));
+                        dataSample =stdInd.studyIndividualActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId));
                     else if ("STUDY_INDIVIDUAL_DEACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdInd.studyIndividualDeActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId));
+                        dataSample =stdInd.studyIndividualDeActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId));
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;          
                 case "STUDY_ADD_INDIVIDUAL_SAMPLE":
-                    GenomaDataStudyIndividualSamples StdIndSmp = new GenomaDataStudyIndividualSamples();
+                    GenomaDataStudyIndividualSamples stdIndSmp = new GenomaDataStudyIndividualSamples();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_ADD_INDIVIDUAL_SAMPLE.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -304,12 +304,12 @@ public class GenomaStudyAPI extends HttpServlet {
                     if (individualId.length()==0)
                         individualId = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsGenomaData.StudyIndividual.FLD_INDIV_NAME.getName())].toString();
 
-                    dataSample =StdIndSmp.createStudyIndividualSample(schemaPrefix, token, studyName, Integer.valueOf(individualId), fieldNames, fieldValues,  false);
+                    dataSample =stdIndSmp.createStudyIndividualSample(schemaPrefix, token, studyName, Integer.valueOf(individualId), fieldNames, fieldValues,  false);
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
                     break;
                 case "STUDY_INDIVIDUAL_SAMPLE_ACTIVATE":
                 case "STUDY_INDIVIDUAL_SAMPLE_DEACTIVATE":     
-                    StdIndSmp = new GenomaDataStudyIndividualSamples();
+                    stdIndSmp = new GenomaDataStudyIndividualSamples();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_INDIVIDUAL_SAMPLE_ACTIVATE.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -320,14 +320,14 @@ public class GenomaStudyAPI extends HttpServlet {
                     individualId=request.getParameter(GenomaStudyAPIParamsList.individualId.toString());
                     String sampleId=request.getParameter(GenomaStudyAPIParamsList.sampleId.toString());
                     if ("STUDY_INDIVIDUAL_SAMPLE_ACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdIndSmp.studyIndividualSampleActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId), Integer.valueOf(sampleId));
+                        dataSample =stdIndSmp.studyIndividualSampleActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId), Integer.valueOf(sampleId));
                     else if ("STUDY_INDIVIDUAL_SAMPLE_DEACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdIndSmp.studyIndividualSampleDeActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId), Integer.valueOf(sampleId));
+                        dataSample =stdIndSmp.studyIndividualSampleDeActivate(schemaPrefix, token, studyName, Integer.valueOf(individualId), Integer.valueOf(sampleId));
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;                          
                 case "STUDY_ADD_FAMILY":
-                    GenomaDataStudyFamily StdFam = new GenomaDataStudyFamily();
+                    GenomaDataStudyFamily stdFam = new GenomaDataStudyFamily();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_ADD_FAMILY.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -350,12 +350,12 @@ public class GenomaStudyAPI extends HttpServlet {
                     String individualsList=request.getParameter(GenomaStudyAPIParamsList.individualsList.toString());                    
                     if (individualsList!=null && individualsList.length()>0)
                         individualsListArr = individualsList.split("\\|");
-                    dataSample=StdFam.createStudyFamily(schemaPrefix, token, studyName, familyName, individualsListArr, fieldNames, fieldValues, Boolean.FALSE);
+                    dataSample=stdFam.createStudyFamily(schemaPrefix, token, studyName, familyName, individualsListArr, fieldNames, fieldValues, Boolean.FALSE);
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
                     break;
                 case "STUDY_FAMILY_ACTIVATE":
                 case "STUDY_FAMILY_DEACTIVATE":     
-                    StdFam = new GenomaDataStudyFamily();
+                    stdFam = new GenomaDataStudyFamily();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_FAMILY_ACTIVATE.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -365,15 +365,15 @@ public class GenomaStudyAPI extends HttpServlet {
                     studyName=request.getParameter(GenomaStudyAPIParamsList.studyName.toString());
                     familyName=request.getParameter(GenomaStudyAPIParamsList.familyName.toString());
                     if ("STUDY_FAMILY_ACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdFam.studyFamilyActivate(schemaPrefix, token, studyName, familyName);
+                        dataSample =stdFam.studyFamilyActivate(schemaPrefix, token, studyName, familyName);
                     else if ("STUDY_FAMILY_DEACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdFam.studyFamilyDeActivate(schemaPrefix, token, studyName, familyName);
+                        dataSample =stdFam.studyFamilyDeActivate(schemaPrefix, token, studyName, familyName);
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;       
                 case "STUDY_FAMILY_ADD_INDIVIDUAL":
                 case "STUDY_FAMILY_REMOVE_INDIVIDUAL":     
-                    StdFam = new GenomaDataStudyFamily();
+                    stdFam = new GenomaDataStudyFamily();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_FAMILY_ADD_INDIVIDUAL.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -391,7 +391,7 @@ public class GenomaStudyAPI extends HttpServlet {
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;       
                 case "STUDY_ADD_SAMPLES_SET":
-                    GenomaDataStudySamplesSet StdSmpSet = new GenomaDataStudySamplesSet();
+                    GenomaDataStudySamplesSet stdSmpSet = new GenomaDataStudySamplesSet();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_ADD_SAMPLES_SET.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -414,12 +414,12 @@ public class GenomaStudyAPI extends HttpServlet {
                     String samplesList=request.getParameter(GenomaStudyAPIParamsList.samplesList.toString());                    
                     if (samplesList!=null && samplesList.length()>0)
                         samplesListArr = samplesList.split("\\|");
-                    dataSample=StdSmpSet.createStudySamplesSet(schemaPrefix, token, studyName, samplesSetName, samplesListArr, fieldNames, fieldValues, Boolean.FALSE);
+                    dataSample=stdSmpSet.createStudySamplesSet(schemaPrefix, token, studyName, samplesSetName, samplesListArr, fieldNames, fieldValues, Boolean.FALSE);
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
                     break;
                 case "STUDY_SAMPLES_SET_ACTIVATE":
                 case "STUDY_SAMPLES_SET_DEACTIVATE":     
-                    StdSmpSet = new GenomaDataStudySamplesSet();
+                    stdSmpSet = new GenomaDataStudySamplesSet();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_SAMPLES_SET_ACTIVATE.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -429,15 +429,15 @@ public class GenomaStudyAPI extends HttpServlet {
                     studyName=request.getParameter(GenomaStudyAPIParamsList.studyName.toString());
                     samplesSetName=request.getParameter(GenomaStudyAPIParamsList.samplesSetName.toString());
                     if ("STUDY_SAMPLES_SET_ACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdSmpSet.studySamplesSetActivate(schemaPrefix, token, studyName, samplesSetName);
+                        dataSample =stdSmpSet.studySamplesSetActivate(schemaPrefix, token, studyName, samplesSetName);
                     else if ("STUDY_SAMPLES_SET_DEACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =StdSmpSet.studySamplesSetDeActivate(schemaPrefix, token, studyName, samplesSetName);
+                        dataSample =stdSmpSet.studySamplesSetDeActivate(schemaPrefix, token, studyName, samplesSetName);
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;       
                 case "STUDY_SAMPLES_SET_ADD_SAMPLE":
                 case "STUDY_SAMPLES_SET_REMOVE_SAMPLE":     
-                    StdSmpSet = new GenomaDataStudySamplesSet();
+                    stdSmpSet = new GenomaDataStudySamplesSet();
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyAPIEndPoints.STUDY_SAMPLES_SET_ADD_SAMPLE.getMandatoryFields().split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 

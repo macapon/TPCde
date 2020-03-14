@@ -48,7 +48,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         }
       String endPointName="";
       String endPointMandatoryFields="";
-    };
+    }
     
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws IOException {
         request=LPHttp.requestPreparation(request);

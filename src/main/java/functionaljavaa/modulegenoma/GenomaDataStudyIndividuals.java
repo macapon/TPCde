@@ -206,20 +206,20 @@ public class GenomaDataStudyIndividuals {
         return diagnosesProj; 
     }    
 
-    public Object[] studyIndividualActivate( String schemaPrefix, Token token, String studyName, Integer IndivId){
+    public Object[] studyIndividualActivate( String schemaPrefix, Token token, String studyName, Integer indivId){
 
         String[] fieldsName=new String[]{TblsGenomaData.StudyIndividual.FLD_ACTIVE.getName()};
         Object[] fieldsValue=new Object[]{true};
 
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyIndividual.TBL.getName(), 
-                fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{IndivId});
+                fieldsName, fieldsValue, new String[]{TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{indivId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL.toString(), TblsGenomaData.StudyIndividual.TBL.getName(), IndivId.toString(), 
+            GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.ACTIVATE_STUDY_INDIVIDUAL.toString(), TblsGenomaData.StudyIndividual.TBL.getName(), indivId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
         return diagnosesProj;      
     }    
 
-    public Object[] studyIndividualDeActivate(String schemaPrefix, Token token, String studyName, Integer IndivId){
+    public Object[] studyIndividualDeActivate(String schemaPrefix, Token token, String studyName, Integer indivId){
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
@@ -228,14 +228,14 @@ public class GenomaDataStudyIndividuals {
 
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyIndividual.TBL.getName(), 
                 fieldsName, fieldsValue, 
-                new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{studyName, IndivId});
+                new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{studyName, indivId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
-            GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL.toString(), TblsGenomaData.StudyIndividual.TBL.getName(), IndivId.toString(), 
+            GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.DEACTIVATE_STUDY_INDIVIDUAL.toString(), TblsGenomaData.StudyIndividual.TBL.getName(), indivId.toString(), 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
         return diagnosesProj;      
     }   
 
-    public Object[] studyIndividualUpdate( String schemaPrefix, Token token, String studyName, Integer IndivId, String[] fieldsName, Object[] fieldsValue){
+    public Object[] studyIndividualUpdate( String schemaPrefix, Token token, String studyName, Integer indivId, String[] fieldsName, Object[] fieldsValue){
         Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
 
@@ -244,7 +244,7 @@ public class GenomaDataStudyIndividuals {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, specialFieldsPresent[specialFieldsPresent.length-1].toString(), null);
         Object[] diagnosesProj = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyIndividual.TBL.getName(), 
                 fieldsName, fieldsValue, 
-                new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{studyName, IndivId});
+                new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{studyName, indivId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.UPDATE_STUDY_INDIVIDUAL.toString(), TblsGenomaData.StudyIndividual.TBL.getName(), studyName, 
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
