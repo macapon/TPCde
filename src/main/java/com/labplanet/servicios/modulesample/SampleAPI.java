@@ -31,7 +31,6 @@ import java.io.PrintWriter;
 import java.math.BigDecimal;
 import java.sql.Date;
 import javax.servlet.ServletConfig;
-import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -156,7 +155,6 @@ public class SampleAPI extends HttpServlet {
             Integer sampleId = null;
 
             SampleAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
             try{
                 endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){

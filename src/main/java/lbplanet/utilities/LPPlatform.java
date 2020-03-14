@@ -204,6 +204,7 @@ public class LPPlatform {
     /**
      *
      * @param schemaPrefix
+     * @param token
      * @param actionName
      * @return
      */
@@ -958,7 +959,6 @@ public class LPPlatform {
 
     }
     String my="";
-    return;
   }    
   
     /**
@@ -980,6 +980,5 @@ public class LPPlatform {
 
     }
     String my="";
-    return;
   }      
 }

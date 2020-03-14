@@ -120,7 +120,6 @@ public class SopUserAPI extends HttpServlet {
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
 
             SopUserAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
             try{
                 endPoint = SopUserAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){

@@ -106,8 +106,6 @@ Integer sampleId=-1;
 Integer pendingIncubationStage=-1;
 Integer row=-1;
 Integer col=-1;
-String[] batchContent1D=new String[0];
-String[][] batchContent2D=new String[0][0];        
 /*
 Object[][] objectsToAdd=new Object[][]{{12,1,1,2},{55,2,5,1},{53,2,5,3}};
     for (Object[] curObj: objectsToAdd){

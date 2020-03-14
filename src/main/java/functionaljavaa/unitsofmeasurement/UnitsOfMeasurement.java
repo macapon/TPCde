@@ -235,11 +235,8 @@ public class UnitsOfMeasurement {
         String schemaName = LPPlatform.SCHEMA_CONFIG;
         schemaName = LPPlatform.buildSchemaName(schemaPrefix, schemaName);
        
-        String baseUnitName="";
-        
         Object[][] unitsList = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
                  new String[]{TblsCnfg.UnitsOfMeasurement.FLD_MEASUREMENT_FAMILY.getName(), TblsCnfg.UnitsOfMeasurement.FLD_IS_BASE.getName()},  new Object[]{family, true}, new String[]{TblsCnfg.UnitsOfMeasurement.FLD_NAME.getName()});        
-        
         return unitsList[0][0].toString();            
 
     }

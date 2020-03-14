@@ -580,20 +580,6 @@ if (1==1)return;
         }                    
     }
 
-    /**
-     *
-     * @param schemaName
-     * @param tableName
-     * @param whereFieldNames
-     * @param whereFieldValues
-     * @param fieldsToRetrieve
-     * @param fieldsSortBy
-     * @return
-     */
-    public static String getRecordFieldsByFilterJSONString(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] fieldsSortBy){
-        // Falta implementar que devuelva JSON
-        return "";
-    }
 
     /**
      *

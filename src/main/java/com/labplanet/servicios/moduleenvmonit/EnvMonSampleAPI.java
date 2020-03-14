@@ -217,7 +217,6 @@ public class EnvMonSampleAPI extends HttpServlet {
             Object[] dataSample = null;
 
             EnvMonSampleAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
             try{
                 endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){

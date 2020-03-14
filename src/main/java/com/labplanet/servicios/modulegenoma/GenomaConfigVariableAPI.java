@@ -61,7 +61,6 @@ public class GenomaConfigVariableAPI extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        GenomaConfigVariables cnfVar = new GenomaConfigVariables();
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 

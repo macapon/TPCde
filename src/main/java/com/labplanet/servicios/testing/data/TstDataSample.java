@@ -104,7 +104,6 @@ public class TstDataSample extends HttpServlet {
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();   
         DataSample smp = new DataSample(smpAna);   
         DataSampleAnalysisResult smpAnaRes = new functionaljavaa.samplestructure.DataSampleAnalysisResult(moduleSmpAnaRes);   
-        Integer appSessionId = null;
         
         String language = LPFrontEnd.setLanguage(request);
         

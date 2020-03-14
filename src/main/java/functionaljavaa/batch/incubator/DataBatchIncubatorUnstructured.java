@@ -139,7 +139,6 @@ public class DataBatchIncubatorUnstructured {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sampleInfo);
         }
-        Object[] autoDiagn=null;
         String batchSamples = LPNulls.replaceNull(sampleInfo[0][0]).toString();
         String[] batchSamplesArr = batchSamples.split("\\|");
         for (String currSample : batchSamplesArr) {

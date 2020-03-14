@@ -447,7 +447,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @param testId
      * @param analyst
      */
-    public void _sampleAssignAnalyst( String schemaPrefix, Token token, Integer testId, String analyst){
+    public void zsampleAssignAnalyst( String schemaPrefix, Token token, Integer testId, String analyst){
         // Not implemented yet
     }
 

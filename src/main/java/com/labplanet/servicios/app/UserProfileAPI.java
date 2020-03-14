@@ -132,7 +132,6 @@ public class UserProfileAPI extends HttpServlet {
         }        
 */           
             UserProfileAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
             try{
                 endPoint = UserProfileAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){

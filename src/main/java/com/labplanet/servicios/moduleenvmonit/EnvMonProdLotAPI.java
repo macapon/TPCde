@@ -160,7 +160,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
             Rdbms.setTransactionId(schemaConfigName);      
             EnvMonProdLotAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
             try{
                 endPoint = EnvMonProdLotAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){

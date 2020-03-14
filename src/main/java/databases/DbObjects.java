@@ -8,7 +8,6 @@ package databases;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
-import javax.sql.rowset.CachedRowSet;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

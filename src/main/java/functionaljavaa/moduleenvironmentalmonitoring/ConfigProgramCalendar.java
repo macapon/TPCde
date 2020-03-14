@@ -303,7 +303,6 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
               }                
           }            
       }
-      String[] daysOfWeekArr = null;
       String daysOfWeek ="";
       if (LPArray.valueInArray(fieldName, TblsEnvMonitConfig.ProgramCalendar.FLD_DAY_OF_WEEK.getName())){
           daysOfWeek = (String) fieldValue[LPArray.valuePosicInArray(fieldName, TblsEnvMonitConfig.ProgramCalendar.FLD_DAY_OF_WEEK.getName())];

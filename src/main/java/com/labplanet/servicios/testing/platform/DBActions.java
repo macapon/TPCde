@@ -7,7 +7,6 @@ package com.labplanet.servicios.testing.platform;
 
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import functionaljavaa.testingscripts.LPTestingOutFormat;

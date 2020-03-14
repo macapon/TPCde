@@ -159,21 +159,11 @@ public class Batch {
      * @param mode
      * @return
      */
-    public String batchCommentAddOthers(String oper, String mode){ // Improve!!
-        return "";
-    }
-
-    /**
-     *
-     * @param oper
-     * @param mode
-     * @return
-     */
     public String batchCommentOpen(String oper, String mode){
     if (this.batchCommentAuthor.equalsIgnoreCase(oper)) 
             {return this.batchComment;}
     else
-    { return batchCommentAddOthers(oper, mode);
+    { return "batchCommentAddOthers(oper, mode)";
     
     }
               

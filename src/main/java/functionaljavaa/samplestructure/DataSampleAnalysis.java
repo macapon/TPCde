@@ -81,7 +81,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     /**
      *
      */
-    public DataSampleAnalysis(){  return;  }    
+    public DataSampleAnalysis(){}    
     /**
      *  Automate the sample analysis assignment as to be triggered by any sample action.<br>
      *      Assigned to the actions: LOGSAMPLE.

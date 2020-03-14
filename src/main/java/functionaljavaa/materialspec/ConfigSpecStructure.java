@@ -246,16 +246,6 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
     }
 
     /**
-     *
-     * @param schemaPrefix
-     * @param v1
-     * @return
-     */
-    public String specialFieldCheckSpecLimitsRuleType(String schemaPrefix, String v1){ 
-        // not implemented with SchemaPrefix
-        return "NOT IMPLEMENTED YET";
-    }
-    /**
      *bm
      * @return
      */
@@ -316,7 +306,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
      *
      * @return
      */
-    public Object[] _specRemove(){
+    public Object[] zspecRemove(){
         //String schemaPrefix, String code. Estos son candidatos a argumentos, no esta implementado aun, no borrar.
         return new Object[6];
     }
