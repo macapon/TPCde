@@ -196,8 +196,7 @@ public class AuthenticationAPI extends HttpServlet {
                     }else{               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_ESIGN_TO_CHECK_INVALID, new Object[]{esignPhraseToCheck}, language);
                         return;                             
-                    }
-                    
+                    }                    
                 case AuthenticationAPIParams.API_ENDPOINT_TOKEN_VALIDATE_USER_CREDENTIALS:     
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_USER_CREDENTIALS.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
