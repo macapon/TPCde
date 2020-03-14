@@ -217,7 +217,6 @@ public class LPPlatform {
             return trapMessage(LAB_FALSE, "The user is not declared for the procedure <*1*>. The user procedures are: <*2*>", new String[]{schemaPrefix, userProceduresList});
         
         actionName = actionName.toUpperCase();
-        String errorCode = ""; 
         String[] procedureActions = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL")){
@@ -958,7 +957,6 @@ public class LPPlatform {
     }else{
 
     }
-    String my="";
   }    
   
     /**
@@ -979,6 +977,5 @@ public class LPPlatform {
     }else{
 
     }
-    String my="";
   }      
 }

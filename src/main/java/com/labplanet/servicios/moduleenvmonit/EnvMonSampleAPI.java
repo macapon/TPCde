@@ -192,7 +192,6 @@ public class EnvMonSampleAPI extends HttpServlet {
             Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
@@ -260,7 +259,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                     }
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
                     messageDynamicData=new Object[]{dataSample[dataSample.length-1]};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), dataSample[dataSample.length-1]);                            
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), dataSample[dataSample.length-1]);                            
                     break;
                 case ENTERRESULT:
                     Integer resultId = 0;
@@ -270,7 +269,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                     rawValueResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT);
                     dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
                     messageDynamicData=new Object[]{""};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), "");                            
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), "");                            
                     break;             
                 case ADD_SAMPLE_MICROORGANISM:
                     String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
@@ -281,7 +280,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                       dataSample = DataProgramSample.addSampleMicroorganism(schemaPrefix, token, sampleId, orgName);
                     }
                     messageDynamicData=new Object[]{microorganismName.replace("\\|", ", "), sampleId};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);                                                
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);                                                
                     break;
                 case EM_BATCH_INCUB_ADD_SMP:
                     String batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
@@ -302,8 +301,8 @@ public class EnvMonSampleAPI extends HttpServlet {
                     dataSample=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
                             , Integer.valueOf(sampleIdStr), positionRow, positionCol, positionOverride);
                     messageDynamicData=new Object[]{sampleIdStr, batchName};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
                     break;
                 case EM_BATCH_INCUB_MOVE_SMP:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
@@ -319,8 +318,8 @@ public class EnvMonSampleAPI extends HttpServlet {
                     dataSample=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
                             , Integer.valueOf(sampleIdStr), Integer.valueOf(positionRowStr), Integer.valueOf(positionColStr), positionOverride);
                     messageDynamicData=new Object[]{sampleIdStr, batchName};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
                     break;
                 case EM_BATCH_INCUB_REMOVE_SMP:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
@@ -329,14 +328,14 @@ public class EnvMonSampleAPI extends HttpServlet {
                     sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     dataSample=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), Integer.valueOf(sampleIdStr));
                     messageDynamicData=new Object[]{sampleIdStr, batchName};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
+                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
                     break;
                 case GETSAMPLEINFO2:
                     RequestDispatcher rd3 = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
                     rd3.forward(request,response);  
                     //messageDynamicData=new Object[]{sampleId};
-                    //rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleId));                    
+                    //RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleId));                    
                     return;
                 default:    
                     Rdbms.closeRdbms(); 

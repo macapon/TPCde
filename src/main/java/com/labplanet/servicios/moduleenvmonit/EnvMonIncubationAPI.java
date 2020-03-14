@@ -169,28 +169,27 @@ public class EnvMonIncubationAPI extends HttpServlet {
             Object[] messageDynamicData=new Object[]{};
             RelatedObjects rObj=RelatedObjects.getInstance();
             
-            String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
             Rdbms.setTransactionId(schemaConfigName);        
             switch (endPoint){
                 case EM_INCUBATION_ACTIVATE:
                     String instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
                     actionDiagnoses=ConfigIncubator.activateIncubator(schemaPrefix, instrName, token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
                     messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_DEACTIVATE:
                     instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
                     actionDiagnoses=ConfigIncubator.deactivateIncubator(schemaPrefix, instrName, token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
                     messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_ADD_TEMP_READING:
                     instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
                     String temperature=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE);                  
                     actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(schemaPrefix, instrName, token.getPersonName(), new BigDecimal(temperature));                    
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
                     messageDynamicData=new Object[]{temperature, instrName};
                     break;                    
                 default:      

@@ -136,7 +136,6 @@ public class IncidentAPI extends HttpServlet {
                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
             return;          
         }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
         
@@ -174,7 +173,6 @@ public class IncidentAPI extends HttpServlet {
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}        
 */        
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;} 
-        String firstN="";
         try (PrintWriter out = response.getWriter()) {
 
 /*            Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);

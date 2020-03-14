@@ -11,7 +11,6 @@ import databases.Rdbms;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
-import functionaljavaa.parameter.Parameter;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
@@ -113,11 +112,6 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
                 
                 String schemaConfigName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG);
                 String schemaDataName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
-                String specArgumentsSeparator = "\\*";
-                Boolean specMinSpecStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_minStrictSpecWhenNotSpecified"));
-                Boolean specMinControlStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_minStrictControlWhenNotSpecified"));
-                Boolean specMaxControlStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_maxStrictControlWhenNotSpecified"));
-                Boolean specMaxSpecStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_maxStrictSpecWhenNotSpecified"));
 
                 Rdbms.stablishDBConection();                                
                 Object[] resSpecEvaluation = null;                

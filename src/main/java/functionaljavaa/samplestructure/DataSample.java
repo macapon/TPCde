@@ -710,7 +710,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         smpAudit.sampleAliquotingAuditAdd(schemaPrefix, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_ALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId,
                 sampleId, null, null, 
                 fieldsOnLogSample, null);
-        Integer transactionId = null;
 
         return diagnoses;
     }
@@ -796,7 +795,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         smpAudit.sampleAliquotingAuditAdd(schemaPrefix, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliqSub.TBL.getName(), subaliquotId, subaliquotId, aliquotId,
                 sampleId, null, null, 
                 fieldsOnLogSample, null);
-        Integer transactionId = null;
 
         return diagnoses;
     }

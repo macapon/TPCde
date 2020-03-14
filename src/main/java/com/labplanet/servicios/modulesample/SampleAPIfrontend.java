@@ -144,7 +144,7 @@ public class SampleAPIfrontend extends HttpServlet {
             String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);  
         
-            Token token = new Token(finalToken);
+            //Token token = new Token(finalToken);
 
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
         

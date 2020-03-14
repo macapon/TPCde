@@ -56,7 +56,7 @@ public class DBActions extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         response = LPTestingOutFormat.responsePreparation(response);     
 
-        String language = LPFrontEnd.setLanguage(request); 
+//        String language = LPFrontEnd.setLanguage(request); 
 
         Object[][] dataSample2D = new Object[1][6];
         Object[] dataSample2Din1D = new Object[0];

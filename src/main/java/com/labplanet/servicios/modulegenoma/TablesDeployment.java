@@ -36,7 +36,6 @@ public class TablesDeployment extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
             
             String schemaNamePrefix="genoma-1";
-            String tblCreateScript = "";
             out.println("<!DOCTYPE html>");
             out.println("<html>");
             out.println("<head>");
@@ -49,7 +48,7 @@ public class TablesDeployment extends HttpServlet {
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table "+TblsCnfg.SopMetaData.TBL.getName()+" created.</p>");
             
-            tblCreateScript=TblsData.UserSop.createTableScript(schemaNamePrefix, new String[]{""});
+            String tblCreateScript=TblsData.UserSop.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
             out.println("<p>Table "+TblsData.UserSop.TBL.getName()+" created.</p>");
 

@@ -156,7 +156,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return ;                           
             }     
-            String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
             Rdbms.setTransactionId(schemaConfigName);      
             EnvMonProdLotAPIEndpoints endPoint = null;
@@ -184,17 +183,17 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     diagnostic=DataProgramProductionLot.newProgramProductionLot(schemaPrefix, lotName, fieldNameArr, fieldValueArr, 
                           token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
                     messageDynamicData=new Object[]{lotName};
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     break;
                 case EM_ACTIVATE_PRODUCTION_LOT:
                     lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);  
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     messageDynamicData=new Object[]{lotName};
                     diagnostic=DataProgramProductionLot.activateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
                     break;
                 case EM_DEACTIVATE_PRODUCTION_LOT:
                     lotName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);    
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
                     messageDynamicData=new Object[]{lotName};
                     diagnostic=DataProgramProductionLot.deactivateProgramProductionLot(schemaPrefix, lotName, token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
                     break;

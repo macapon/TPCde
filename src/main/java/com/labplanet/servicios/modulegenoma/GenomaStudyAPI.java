@@ -15,10 +15,6 @@ import functionaljavaa.modulegenoma.GenomaDataStudyIndividualSamples;
 import functionaljavaa.modulegenoma.GenomaDataStudySamplesSet;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.sql.Connection;
-import java.sql.SQLException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -149,7 +145,6 @@ public class GenomaStudyAPI extends HttpServlet {
             Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
         //ResponseEntity<String121> responsew;        
@@ -387,9 +382,9 @@ public class GenomaStudyAPI extends HttpServlet {
                     familyName=request.getParameter(GenomaStudyAPIParamsList.familyName.toString());
                     individualId=request.getParameter(GenomaStudyAPIParamsList.individualId.toString());
                     if ("STUDY_FAMILY_ADD_INDIVIDUAL".equalsIgnoreCase(actionName))
-                        dataSample =StdFam.studyFamilyAddIndividual(schemaPrefix, token, studyName, familyName, individualId);
+                        dataSample =GenomaDataStudyFamily.studyFamilyAddIndividual(schemaPrefix, token, studyName, familyName, individualId);
                     else if ("STUDY_FAMILY_REMOVE_INDIVIDUAL".equalsIgnoreCase(actionName))
-                        dataSample =StdFam.studyFamilyRemoveIndividual(schemaPrefix, token, studyName, familyName, individualId);
+                        dataSample =GenomaDataStudyFamily.studyFamilyRemoveIndividual(schemaPrefix, token, studyName, familyName, individualId);
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;       
@@ -451,9 +446,9 @@ public class GenomaStudyAPI extends HttpServlet {
                     samplesSetName=request.getParameter(GenomaStudyAPIParamsList.samplesSetName.toString());
                     sampleId=request.getParameter(GenomaStudyAPIParamsList.sampleId.toString());
                     if ("STUDY_SAMPLES_SET_ADD_SAMPLE".equalsIgnoreCase(actionName))
-                        dataSample =StdSmpSet.studySamplesSetAddSample(schemaPrefix, token, studyName, samplesSetName, sampleId);
+                        dataSample =GenomaDataStudySamplesSet.studySamplesSetAddSample(schemaPrefix, token, studyName, samplesSetName, sampleId);
                     else if ("STUDY_SAMPLES_SET_REMOVE_SAMPLE".equalsIgnoreCase(actionName))
-                        dataSample =StdSmpSet.studySamplesSetRemoveSample(schemaPrefix, token, studyName, samplesSetName, sampleId);
+                        dataSample =GenomaDataStudySamplesSet.studySamplesSetRemoveSample(schemaPrefix, token, studyName, samplesSetName, sampleId);
                     else
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;       

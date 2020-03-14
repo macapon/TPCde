@@ -7,7 +7,6 @@ package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import databases.Token;
 import functionaljavaa.modulegenoma.GenomaConfigVariablesQueries;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -58,7 +57,6 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
 
         try (PrintWriter out = response.getWriter()) {
 
-        String[] mandatoryParams = new String[]{""};
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPI.MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
@@ -69,7 +67,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
 
-        Token token = new Token(finalToken);
+        //Token token = new Token(finalToken);
 
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 

@@ -7,7 +7,6 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import databases.Token;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -71,7 +70,6 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
 
     try (PrintWriter out = response.getWriter()) {
 
-    String[] mandatoryParams = new String[]{""};
     Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -82,7 +80,7 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
     String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
             
-    Token token = new Token(finalToken);
+   // Token token = new Token(finalToken);
 
     if (!LPFrontEnd.servletStablishDBConection(request, response))return;
         

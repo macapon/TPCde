@@ -60,7 +60,6 @@ public class IncidentAPIfrontend extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
                 return;                             
         }
-        String[] mandatoryParams = null;  
         IncidentAPIfrontendEndpoints endPoint = null;
         try{
             endPoint = IncidentAPIfrontendEndpoints.valueOf(actionName.toUpperCase());

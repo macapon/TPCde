@@ -13,7 +13,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.API_ENDPOINT_GET_ACTIVE_PRODUCTION_LOTS;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
-import databases.Token;
 import functionaljavaa.samplestructure.DataSampleUtilities;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
@@ -222,7 +221,6 @@ public class EnvMonAPIfrontend extends HttpServlet {
         String language = LPFrontEnd.setLanguage(request); 
         try (PrintWriter out = response.getWriter()) {
             
-        String[] mandatoryParams = new String[]{""};
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
@@ -233,7 +231,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
             
-        Token token = new Token(finalToken);
+        //Token token = new Token(finalToken);
 
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
         
@@ -373,7 +371,6 @@ public class EnvMonAPIfrontend extends HttpServlet {
                                     programLocationCardInfoFldNameArray, programLocationCardInfoFldSortArray);
                             JSONArray programLocationCardInfoJsonArr = new JSONArray(); 
 
-                            JSONArray programLocationCardInfoJsonArray = new JSONArray();
                             JSONObject programLocationCardInfoJsonObj = new JSONObject();  
                             for (int xProc=0; xProc<programLocationCardInfo.length; xProc++){   
                                 for (int yProc=0; yProc<programLocationCardInfo[0].length; yProc++){              

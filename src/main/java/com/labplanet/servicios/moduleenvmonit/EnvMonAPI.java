@@ -18,8 +18,6 @@ import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import functionaljavaa.samplestructure.DataSample;
-import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.time.LocalDateTime;
@@ -177,10 +175,7 @@ public class EnvMonAPI extends HttpServlet {
       
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
 
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         //Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         EnvMonAPIEndpoints endPoint = null;
         Object[] actionDiagnoses = null;
         try{
@@ -211,8 +206,6 @@ public class EnvMonAPI extends HttpServlet {
             DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();           
             DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();           
             DataProgramSample prgSmp = new DataProgramSample();     
-            DataSample smp = new DataSample(prgSmpAna);    
-            DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(prgSmpAnaRes);                           
             String batchName = "";
             String incubationName = "";
             RelatedObjects rObj=RelatedObjects.getInstance();   
