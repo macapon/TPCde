@@ -217,7 +217,6 @@ public class LPPlatform {
         
         actionName = actionName.toUpperCase();
         String errorCode = ""; 
-        Object[] errorDetailVariables = new Object[0];                
         String[] procedureActions = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "procedureActions").split("\\|");
         
         if (LPArray.valueInArray(procedureActions, "ALL")){

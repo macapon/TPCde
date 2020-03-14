@@ -2053,9 +2053,6 @@ public class TblsData {
                 String objName = obj.name();
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
-                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
                         fieldsScript.append(currField[1]).append(" AS ").append(currField[0]);
                         tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
                 }

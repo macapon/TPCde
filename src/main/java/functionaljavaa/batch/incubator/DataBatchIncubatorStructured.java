@@ -183,12 +183,17 @@ public class DataBatchIncubatorStructured {
                 IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_MOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         }
         String batchFldName = "";
-        if (pendingIncubationStage == 1) {
-            batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName();
-        } else if (pendingIncubationStage == 2) {
-            batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
-        } else {
+        if (null == pendingIncubationStage) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", new Object[]{pendingIncubationStage, schemaPrefix});
+        } else switch (pendingIncubationStage) {
+            case 1:
+                batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName();
+                break;
+            case 2:
+                batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
+                break;
+            default:
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", new Object[]{pendingIncubationStage, schemaPrefix});
         }
         Object[] updateSampleBatch = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), new String[]{batchFldName}, new Object[]{batchName}, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         return updateSampleBatch;
@@ -337,9 +342,9 @@ public class DataBatchIncubatorStructured {
                 inumLetAlphabet++;
             }            
         }else{
-            for (int i=0;i<names.length;i++){
+            for (String name : names) {
                 if (linesName.length()>0)linesName=linesName+valuesSeparator;
-                linesName=linesName+names[i];                                
+                linesName = linesName + name;
             }            
 //            if (linesName.length==names.length) linesName=names;
         }
@@ -360,9 +365,9 @@ public class DataBatchIncubatorStructured {
                 inumLet++;
             }
         } else{
-            for (int i=0;i<names.length;i++){
+            for (String name : names) {
                 if (columnsName.length()>0)columnsName=columnsName+valuesSeparator;
-                columnsName=columnsName+names[i];                                
+                columnsName = columnsName + name;                                
             }
 //            if (columnsName.length==names.length) columnsName=names;            
         }

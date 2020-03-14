@@ -139,7 +139,6 @@ public class AppIncident {
         if ( (newStatus!=null) && (newStatus.length()>0) && (!addNoteAvailableStatuses.contains("ALL") || (!addNoteAvailableStatuses.contains(newStatus))) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "status <*1*> not allowed as new status through Add Note Incident", new Object[]{newStatus});
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
-        String previousStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS_PREVIOUS.getName())].toString();
 
         String[] updFieldName=new String[]{TblsApp.Incident.FLD_DATE_LAST_UPDATE.getName(), TblsApp.Incident.FLD_PERSON_LAST_UPDATE.getName()};
         Object[] updFieldValue=new Object[]{LPDate.getCurrentTimeStamp(), token.getPersonName()};

@@ -156,7 +156,7 @@ Object[][] firstStageData=new Object[0][0];
             String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
             Object[] sampleFieldValue=new Object[]{moveDiagn[moveDiagn.length-1], sampleCurrStage};
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(moveDiagn[0].toString())){
-                Object[] dataSample=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                     sampleFieldName, 
                     sampleFieldValue,
                     new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});

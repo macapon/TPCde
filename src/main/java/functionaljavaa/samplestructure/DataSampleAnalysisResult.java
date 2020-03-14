@@ -181,7 +181,6 @@ public class DataSampleAnalysisResult {
      * @throws IllegalArgumentException
      */
     public Object[] sampleAnalysisResultEntry(String schemaPrefix, Token token, Integer resultId, Object resultValue, DataSample dataSample) {        
-        String actionName = "Insert";
         String[] sampleFieldName=new String[0];
         Object[] sampleFieldValue=new Object[0];
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
@@ -213,7 +212,6 @@ public class DataSampleAnalysisResult {
         String currResultStatus = (String) resultData[0][6];
         String currRawValue = (String) resultData[0][7];
         String resultUomName = (String) resultData[0][8];
-        String resultUomConversionMode = (String) resultData[0][9];
         if (resultStatusReviewed.equalsIgnoreCase(currResultStatus) || resultStatusCanceled.equalsIgnoreCase(currResultStatus)) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultLocked", new Object[]{currResultStatus, resultId.toString(), schemaConfigName});
         if ((currRawValue != null) && (currRawValue.equalsIgnoreCase(resultValue.toString()))) 
@@ -325,7 +323,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         }
         Integer limitId = (Integer) specLimits[0][0];
         String ruleType = (String) specLimits[0][1];
-        String ruleVariables = (String) specLimits[0][2];
         String specUomName = (String) specLimits[0][4];
         String specUomConversionMode = (String) specLimits[0][5];
         Boolean requiresUnitsConversion = false;

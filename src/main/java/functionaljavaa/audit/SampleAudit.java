@@ -592,7 +592,6 @@ public class SampleAudit {
       Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
               whereFieldName, whereFieldValue, 
               new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
-      Object[] sampleInfoReviewed1D=LPArray.getColumnFromArray2D(sampleInfo, 1);
       Boolean pendingRecords=true;
       for (Object[] curSampleInfo: sampleInfo){
         if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {

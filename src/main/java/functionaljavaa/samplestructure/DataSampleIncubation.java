@@ -233,7 +233,6 @@ public class DataSampleIncubation {
         Integer deviationAndStop=0;
         Object[] deviationAndStopDiagn = new Object[0];        
         Boolean finalDiagn=true;
-        Object[] diagnoses = new Object[0];        
         for (String currSampleIncubationTempReadingBusinessRulevalue: sampleIncubationTempReadingBusinessRulevalueArr){
             Boolean currDiagn=false;
             Object[] currDiagnoses = new Object[0];
@@ -280,7 +279,7 @@ public class DataSampleIncubation {
         if (finalDiagn) return new Object[]{LPPlatform.LAB_TRUE};  
 
         if (deviationAndStop>0){
-            Object diagnCreateReadingViolation=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
                     new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_BY.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_REASON.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STAGE_CURRENT.getName()}, 
@@ -292,7 +291,7 @@ public class DataSampleIncubation {
         if (stoppables>0) return stoppablesDiagn;
         
         if (deviations>0){
-            Object diagnCreateReadingViolation=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.IncubatorTempReadingViolations.TBL.getName(), 
                     new String[]{TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_CREATED_BY.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STARTED_ON.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_REASON.getName(), 
                         TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_INCUBATOR.getName(), TblsEnvMonitProcedure.IncubatorTempReadingViolations.FLD_STAGE_CURRENT.getName()}, 
