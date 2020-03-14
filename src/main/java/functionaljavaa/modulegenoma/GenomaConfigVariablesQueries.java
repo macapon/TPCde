@@ -18,7 +18,6 @@ import lbplanet.utilities.LPPlatform;
 public class GenomaConfigVariablesQueries {
     
     public static Object[] getVariableSetVariablesId(String schemaPrefix, String variableSetName){
-        String separator = "*";
         Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsGenomaConfig.VariablesSet.TBL.getName(), 
                 new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, new String[]{TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetInfo[0][0].toString())) {
@@ -30,14 +29,12 @@ public class GenomaConfigVariablesQueries {
     }
 
     public static Object[][] getVariableSetVariablesProperties(String schemaPrefix, String variableSetName){
-        String separator = "*";
         Object[][] variableSetInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsGenomaConfig.VariablesSet.TBL.getName(), 
             new String[]{TblsGenomaConfig.VariablesSet.FLD_NAME.getName()}, new Object[]{variableSetName}, new String[]{TblsGenomaConfig.VariablesSet.FLD_VARIABLES_LIST.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetInfo[0][0].toString())) {
             return variableSetInfo;
         }
         String variableSetContent = LPNulls.replaceNull(variableSetInfo[0][0]).toString();
-        String[] variableSetContentArr = variableSetContent.split("\\|");
         String[] fieldsToRetrieve=new String[]{TblsGenomaConfig.Variables.FLD_NAME.getName(), TblsGenomaConfig.Variables.FLD_TYPE.getName(), TblsGenomaConfig.Variables.FLD_REQUIRED.getName(), 
             TblsGenomaConfig.Variables.FLD_ALLOWED_VALUES.getName()};
         Object[][] variablesProperties2D= Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsGenomaConfig.Variables.TBL.getName(), 

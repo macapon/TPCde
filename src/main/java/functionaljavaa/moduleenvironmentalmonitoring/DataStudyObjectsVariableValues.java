@@ -31,12 +31,13 @@ public class DataStudyObjectsVariableValues {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyOpenToChanges[0].toString())) return isStudyOpenToChanges;
         
         Object[][] variableSetContent=getVariableSetVariablesProperties(schemaPrefix, variableSetName);
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(variableSetContent[0].toString())) return variableSetContent;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(variableSetContent[0]))) return variableSetContent;
         String[] fieldHeaders=new String[0];
         for (Object[] currVar: variableSetContent){
             if (fieldHeaders.length==0){
-                for (int iFields=0;iFields<currVar.length;iFields++)
-                    fieldHeaders=LPArray.addValueToArray1D(fieldHeaders, currVar[iFields].toString());                
+                for (Object currVar1 : currVar) {
+                    fieldHeaders = LPArray.addValueToArray1D(fieldHeaders, currVar1.toString());                
+                }
             }else{
                 Object[] fieldVarProperties=new Object[0];
                 for (int iFields=0;iFields<currVar.length;iFields++)

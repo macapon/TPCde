@@ -47,10 +47,8 @@ public Object[] createStudyIndividualSample( String schemaPrefix, Token token, S
             String actionName = "Insert";
 
             String schemaDataName = LPPlatform.SCHEMA_DATA;
-            String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
 
             schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
-            schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
 
             mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudyIndividualSample.TBL.getName(), actionName);
 
@@ -97,7 +95,6 @@ public Object[] createStudyIndividualSample( String schemaPrefix, Token token, S
                 String currField = mandatoryFields[inumLines];
                 boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
                 if (!contains){
-                    Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, TblsGenomaData.StudyIndividualSample.TBL.getName(), actionName); 
                     if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
 
                     mandatoryFieldsMissingBuilder.append(currField);

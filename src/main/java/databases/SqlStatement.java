@@ -157,7 +157,6 @@ public class SqlStatement {
                 queryWhere.append(")");
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.BETWEEN.getSqlClause())) {
                 queryWhere.append(fn.toLowerCase()).append(" ? ").append(" and ").append(" ? ");
-                String separator = "|";
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames+1]);
             } else if ( (fn.toUpperCase().contains(WHERECLAUSE_TYPES.LESS_THAN.getSqlClause())) ||

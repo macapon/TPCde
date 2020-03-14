@@ -188,7 +188,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(sampleFieldName).contains(currField.toLowerCase());
             if (!contains){
-                Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, sampleLevel, actionName);                
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);

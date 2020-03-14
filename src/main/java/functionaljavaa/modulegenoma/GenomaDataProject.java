@@ -45,10 +45,8 @@ public Object[] createProject( String schemaPrefix, Token token, String projectN
         String actionName = "Insert";
         
         String schemaDataName = LPPlatform.SCHEMA_DATA;
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
-        schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
         
         mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(schemaDataName, tableName, actionName);
         
@@ -95,7 +93,6 @@ public Object[] createProject( String schemaPrefix, Token token, String projectN
             String currField = mandatoryFieldsProj[inumLines];
             boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
             if (!contains){
-                Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName); 
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);

@@ -49,10 +49,8 @@ public Object[] createStudy( String schemaPrefix, Token token, String studyName,
         String actionName = "Insert";
         
         String schemaDataName = LPPlatform.SCHEMA_DATA;
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
-        schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
         
         mandatoryFieldsProj = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.Study.TBL.getName(), actionName);
         
@@ -99,7 +97,6 @@ public Object[] createStudy( String schemaPrefix, Token token, String studyName,
             String currField = mandatoryFieldsProj[inumLines];
             boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
             if (!contains){
-                Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, TblsGenomaData.Study.TBL.getName(), actionName); 
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);

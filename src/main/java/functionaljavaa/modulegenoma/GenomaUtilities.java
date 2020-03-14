@@ -18,7 +18,6 @@ import lbplanet.utilities.LPPlatform;
 public class GenomaUtilities {
     
     public static Object[] addObjectToUnstructuredField(String schemaPrefix, String schemaType, String tableName, String[] tableKeyFieldName, Object[] tableKeyFieldValue, String unstructuredFieldName, String newObjectId, String newObjectInfoToStore){
-        String separator = "*";
         String[] sampleInfoFieldsToRetrieve = new String[]{unstructuredFieldName};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, schemaType), tableName, 
                 tableKeyFieldName, tableKeyFieldValue, sampleInfoFieldsToRetrieve);
@@ -40,8 +39,7 @@ public class GenomaUtilities {
     }
 
     public static Object[] removeObjectToUnstructuredField(String schemaPrefix, String schemaType, String tableName, String[] tableKeyFieldName, Object[] tableKeyFieldValue, 
-            String unstructuredFieldName, String objectTableName, String newObjectId, String newObjectInfoToStore){
-        String separator = "*";
+        String unstructuredFieldName, String objectTableName, String newObjectId, String newObjectInfoToStore){
         String[] sampleInfoFieldsToRetrieve = new String[]{unstructuredFieldName};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, schemaType), tableName, 
                 tableKeyFieldName, tableKeyFieldValue, sampleInfoFieldsToRetrieve);

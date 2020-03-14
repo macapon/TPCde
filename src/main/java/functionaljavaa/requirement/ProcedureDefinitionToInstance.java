@@ -191,7 +191,6 @@ public class ProcedureDefinitionToInstance {
      */
     public static final JSONObject createDBProcedureInfo(String procedure,  Integer procVersion, String schemaPrefix){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestinationConfig=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE);
          Object[][] procInfoRecordsSource = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsProcedure.ProcedureInfo.TBL.getName(), 
                 new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName(), TblsProcedure.ProcedureInfo.FLD_VERSION.getName(),FLD_NAME_PROCEDURE_SCHEMA_PREFIX}, new Object[]{procedure, procVersion, schemaPrefix}, 
@@ -248,7 +247,6 @@ public class ProcedureDefinitionToInstance {
      */
     public static final  JSONObject createDBPersonProfiles(String procedure,  Integer procVersion, String schemaPrefix){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestinationConfig=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE);
          Object[][] procUserRolesRecordsSource = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TABLE_NAME_PROCEDURE_USER_ROLE_SOURCE, 
                 new String[]{FLD_NAME_PROCEDURE_USER_ROLE_NAME, FLD_NAME_PROCEDURE_USER_ROLE_VERSION,FLD_NAME_PROCEDURE_USER_ROLE_SCHEMA_PREFIX}, new Object[]{procedure, procVersion, schemaPrefix}, 
@@ -348,7 +346,6 @@ public class ProcedureDefinitionToInstance {
      */
     public static final  JSONObject addProcedureSOPtoUsers(String procedure,  Integer procVersion, String schemaPrefix){
         JSONObject jsonObj = new JSONObject();
-        String schemaNameDestinationConfig=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE);
         Object[][] procEventSopsRecordsSource = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.ProcedureEvents.TBL.getName(), 
                 new String[]{TblsProcedure.ProcedureEvents.FLD_SOP.getName()+" is not null"}, new Object[]{""}, 

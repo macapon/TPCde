@@ -84,8 +84,7 @@ public class DataProgramProductionLot{
       return updateProgramProductionLot(schemaPrefix, lotName, fieldName, fieldValue, personName, userRole, appSessionId);
     }        
     private static Object[] updateProgramProductionLot(String schemaPrefix, String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
-      Object[] updProjSample = new Object[0];
-      updProjSample=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+      Object[] updProjSample=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
               fieldName, fieldValue, new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
       return updProjSample;            
     }

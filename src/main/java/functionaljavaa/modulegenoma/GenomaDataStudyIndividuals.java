@@ -46,10 +46,8 @@ public class GenomaDataStudyIndividuals {
             String actionName = "Insert";
 
             String schemaDataName = LPPlatform.SCHEMA_DATA;
-            String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
 
             schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
-            schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
 
             mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudyIndividual.TBL.getName(), actionName);
 
@@ -96,7 +94,6 @@ public class GenomaDataStudyIndividuals {
                 String currField = mandatoryFields[inumLines];
                 boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
                 if (!contains){
-                    Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, TblsGenomaData.StudyIndividual.TBL.getName(), actionName); 
                     if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
 
                     mandatoryFieldsMissingBuilder.append(currField);

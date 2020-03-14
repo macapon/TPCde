@@ -32,7 +32,6 @@ public class ProcedureDefinitionToInstanceUtility {
      * @return
      */
     public static final Object[][] procedureAddSopToUsersByRole( String procName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
-        String schemaNameDestinationConfig=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG);
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_PROCEDURE);
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];

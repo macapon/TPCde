@@ -215,7 +215,6 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
             String currField = mandatoryFieldsProj[inumLines];
             boolean contains = Arrays.asList(sampleFieldName).contains(currField.toLowerCase());
             if (!contains){
-                Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName); 
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);
@@ -223,7 +222,6 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
             }else{
                 Integer valuePosic = Arrays.asList(sampleFieldName).indexOf(currField);
                 mandatoryFieldsValueProj[inumLines] = sampleFieldValue[valuePosic]; 
-                //if ("config_code".equals(currField)){String configCode = sampleFieldValue[Arrays.asList(sampleFieldName).indexOf(currField)].toString();}
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){

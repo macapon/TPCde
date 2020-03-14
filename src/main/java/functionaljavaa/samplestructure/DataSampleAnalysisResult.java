@@ -192,11 +192,6 @@ public class DataSampleAnalysisResult {
         String resultStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSREVIEWED);
         String resultStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
         
-        Boolean specMinSpecStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_minStrictSpecWhenNotSpecified"));
-        Boolean specMinControlStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_minStrictControlWhenNotSpecified"));
-        Boolean specMaxControlStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_maxStrictControlWhenNotSpecified"));
-        Boolean specMaxSpecStrictDefault = Boolean.getBoolean(Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "specLimit_maxStrictSpecWhenNotSpecified"));
-        mandatoryFields = dataSample.labIntChecker.getTableMandatoryFields(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), actionName);
         String[] fieldsName = new String[0];
         Object[] fieldsValue = new Object[0];
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsData.SampleAnalysisResult.FLD_RAW_VALUE.getName());
@@ -248,7 +243,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleConfigCodeVer
             sampleSpecCode = sampleSpecData[0][0].toString();
             sampleSpecCodeVersion = Integer.valueOf(sampleSpecData[0][1].toString());
             sampleSpecVariationName = sampleSpecData[0][2].toString();
-            String status = sampleSpecData[0][3].toString();
 sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SPEC_CODE.getName());
 sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecCode);
 sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());

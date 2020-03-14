@@ -49,10 +49,8 @@ public Object[] createStudyFamily( String schemaPrefix, Token token, String stud
         String actionName = "Insert";
         
         String schemaDataName = LPPlatform.SCHEMA_DATA;
-        String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, schemaDataName);    
-        schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
         
         mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, TblsGenomaData.StudyFamily.TBL.getName(), actionName);
         
@@ -99,7 +97,6 @@ public Object[] createStudyFamily( String schemaPrefix, Token token, String stud
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());
             if (!contains){
-                Object[] sampleDefaultFieldValues = labIntChecker.getTableFieldsDefaulValues(schemaDataName, TblsGenomaData.StudyFamily.TBL.getName(), actionName); 
                 if (mandatoryFieldsMissingBuilder.length()>0){mandatoryFieldsMissingBuilder.append(",");}
                 
                 mandatoryFieldsMissingBuilder.append(currField);
