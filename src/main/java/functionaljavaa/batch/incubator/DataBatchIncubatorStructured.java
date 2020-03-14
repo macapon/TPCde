@@ -13,7 +13,6 @@ import functionaljavaa.audit.IncubBatchAudit;
 import functionaljavaa.samplestructure.DataSampleIncubation;
 import java.math.BigDecimal;
 import java.util.Objects;
-import javax.sql.rowset.serial.SerialArray;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -127,7 +126,6 @@ public class DataBatchIncubatorStructured {
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
         Integer batchNumRows=(Integer) batchInfo[0][0];
         Integer batchNumCols=(Integer) batchInfo[0][1];
-        Integer batchTotalPositions=(Integer) batchInfo[0][2];
         Integer batchTotalObjects=LPNulls.replaceNull(batchInfo[0][3]).toString().length()==0 ? 0 : Integer.valueOf(batchInfo[0][3].toString());
         String batchContentStr=batchInfo[0][4].toString();
         
@@ -136,7 +134,6 @@ public class DataBatchIncubatorStructured {
         if (col>batchNumCols) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "This col, <*1*>, is greater than the batch total columns, <*2*> for batch <*3*> in procedure <*4*>"
                 , new Object[]{col, batchNumCols, batchName, schemaPrefix});
         
-        String[] batchContent1D=new String[0];
         String[][] batchContent2D=new String[0][0];        
         if ((batchContentStr==null) || (batchContentStr.length()==0)){
             batchContent2D=new String[batchNumRows][0];
@@ -145,7 +142,7 @@ public class DataBatchIncubatorStructured {
 //            batchContent2D=new String[batchNumRows][batchNumCols];
 //            batchContent1D=LPArray.array2dTo1d(batchContent2D);
         }else{
-            batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+            String[] batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
             batchContent2D=LPArray.array1dTo2d(batchContent1D, batchNumCols);
         }
         String posicContent=batchContent2D[row-1][col-1];
@@ -198,8 +195,7 @@ public class DataBatchIncubatorStructured {
     }
 
     static Object[] batchMoveSampleStructured(String schemaPrefix, Token token, String batchName, Integer sampleId, Integer pendingIncubationStage, Integer newRow, Integer newCol, Boolean override) {
-        Object[] moveDiagn=new Object[0];
-        moveDiagn=batchAddSampleStructured(schemaPrefix, token, batchName, sampleId, pendingIncubationStage, newRow, newCol, override, true);
+        Object[] moveDiagn=batchAddSampleStructured(schemaPrefix, token, batchName, sampleId, pendingIncubationStage, newRow, newCol, override, true);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(moveDiagn[0].toString())) return moveDiagn;
         moveDiagn=batchRemoveSampleStructured(schemaPrefix, token, batchName, sampleId, pendingIncubationStage, true);
         return moveDiagn;
@@ -216,16 +212,14 @@ public class DataBatchIncubatorStructured {
                 new Object[]{batchName}, batchFldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
         Integer batchNumCols=(Integer) batchInfo[0][0];
-        Integer batchTotalPositions=(Integer) batchInfo[0][1];
         Integer batchTotalObjects=LPNulls.replaceNull(batchInfo[0][2]).toString().length()==0 ? 0 : Integer.valueOf(batchInfo[0][2].toString());
         String batchContentStr=batchInfo[0][3].toString();
         String positionValueToFind=positionValueToFind=buildBatchPositionValue(sampleId, pendingIncubationStage);
 
-        String[] batchContent1D=new String[0];
         if ((batchContentStr==null) || (batchContentStr.length()==0))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The batch <*1*> is empty in procedure <*2*>", new Object[]{batchName, schemaPrefix});
         
-        batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
+        String[] batchContent1D=batchContentStr.split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
         Integer valuePosition=LPArray.valuePosicInArray(batchContent1D, positionValueToFind);
         if (valuePosition==-1)
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The sample <*1*> is not part of the batch <*1*> in procedure <*2*>", new Object[]{sampleId, batchName, schemaPrefix});

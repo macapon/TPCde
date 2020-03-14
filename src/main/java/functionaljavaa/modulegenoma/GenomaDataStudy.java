@@ -107,7 +107,6 @@ public Object[] createStudy( String schemaPrefix, Token token, String studyName,
             }else{
                 Integer valuePosic = Arrays.asList(fieldsName).indexOf(currField);
                 mandatoryFieldsValueProj[inumLines] = fieldsValue[valuePosic]; 
-                if ("config_code".equals(currField)){String configCode = fieldsValue[Arrays.asList(fieldsName).indexOf(currField)].toString();}
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){

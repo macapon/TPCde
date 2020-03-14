@@ -111,8 +111,6 @@ public class ChangeOfCustody {
     }
     
     private Object[] cocCompleteChange( String schemaPrefix, String objectTable, String objectFieldName, Object objectId, Token token, String comment, String actionName) {
-        String auditActionName = actionName.toUpperCase()+"_CHAIN_OF_CUSTODY";       
-        
         String cocTableName = objectTable.toLowerCase()+"_coc";
 
         Object[] changeOfCustodyEnable = isChangeOfCustodyEnable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), objectTable);

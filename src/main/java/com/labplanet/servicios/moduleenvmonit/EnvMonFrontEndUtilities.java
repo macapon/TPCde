@@ -83,11 +83,6 @@ public class EnvMonFrontEndUtilities {
             new String[]{TblsEnvMonitData.Program.FLD_NAME.getName()}, 
             new Object[]{programName}, 
             fieldsName, sortFields);
-    JSONArray jArr = new JSONArray();
-    /*for (Object[] curRec: records){
-      return LPJson.convertArrayRowToJSONObject(fieldsName, curRec));
-    }
-    return jArr;*/
     return LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
   }
 

@@ -48,7 +48,6 @@ public class SampleAPI extends HttpServlet {
     @Override
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
-        ServletContext context = getServletContext();
         propertyFileName = ClassPath.getInstance().getConfigXmlPath(); //context.getInitParameter("jsfiles");
     }    
     /**

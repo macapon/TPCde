@@ -49,7 +49,6 @@ public class TesterFromUploadFile extends HttpServlet {
             Enumeration files = mReq.getFileNames();
             while (files.hasMoreElements()) {
                 String upload = (String) files.nextElement();
-                filename = mReq.getFilesystemName(upload);
                 String fullFileName=mReq.getOriginalFileName(upload);
                 
                 String csvPathName=saveDirectory+fullFileName;

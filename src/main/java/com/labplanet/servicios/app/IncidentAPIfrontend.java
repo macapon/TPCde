@@ -45,14 +45,12 @@ public class IncidentAPIfrontend extends HttpServlet {
 
         String language = LPFrontEnd.setLanguage(request); 
 
-        String[] mandatoryParams = new String[]{""};
         Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
             return;          
         }             
-        String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
         
@@ -62,7 +60,7 @@ public class IncidentAPIfrontend extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
                 return;                             
         }
-        mandatoryParams = null;  
+        String[] mandatoryParams = null;  
         IncidentAPIfrontendEndpoints endPoint = null;
         try{
             endPoint = IncidentAPIfrontendEndpoints.valueOf(actionName.toUpperCase());

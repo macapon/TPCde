@@ -106,7 +106,6 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
             }else{
                 Integer valuePosic = Arrays.asList(fieldsName).indexOf(currField);
                 mandatoryFieldsValue[inumLines] = fieldsValue[valuePosic]; 
-                if ("config_code".equals(currField)){String configCode = fieldsValue[Arrays.asList(fieldsName).indexOf(currField)].toString();}
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){

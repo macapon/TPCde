@@ -404,9 +404,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             boolean contains = Arrays.asList(specialFields).contains(currField);
             if (contains) {
                 specialFieldIndex = Arrays.asList(specialFields).indexOf(currField);
-                String aMethod = specialFieldsFunction[specialFieldIndex];
                 Method method = null;
 /*                try {
+                    String aMethod = specialFieldsFunction[specialFieldIndex];
                     Class<?>[] paramTypes = {Rdbms.class, String.class};
                     method = getClass().getDeclaredMethod(aMethod, paramTypes);
                 } catch (NoSuchMethodException | SecurityException ex) {

@@ -159,7 +159,7 @@ public class DataBatchIncubatorUnstructured {
             }else{
                 DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
                 if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                    autoDiagn=smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);                                                
+                    smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, EnvMonAPIEndpoints.EM_BATCH_INCUB_END.getName(), sampleId);                                                
             }
         }
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "All sample set as incubation ended", null);

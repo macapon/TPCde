@@ -530,7 +530,6 @@ private Object[][] sampleStageDataArr(String schemaPrefix, Integer sampleId, Str
             String[] incub1Flds=new String[]{TblsEnvMonitData.Sample.FLD_INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName(), 
                 TblsEnvMonitData.Sample.FLD_INCUBATION_START.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMPERATURE.getName(),
                 TblsEnvMonitData.Sample.FLD_INCUBATION_END.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_END_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_END_TEMPERATURE.getName()};
-            Object[][] incFldArr = new Object[0][4];
             Object[] curFldArr=new Object[0];
             for (String curFld: incub1Flds){
                 Integer fldPosic=LPArray.valuePosicInArray(sampleFldName, curFld);
@@ -566,7 +565,6 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
     if (!LPArray.valueInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
     String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
     JSONObject jObj= new JSONObject();
-    JSONObject jObj2= new JSONObject();
     JSONArray jArrMainObj=new JSONArray();
     JSONArray jArrMainObj2=new JSONArray();
     switch (currentStage.toUpperCase()){
@@ -581,8 +579,6 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
             String[] incub1Flds=new String[]{TblsEnvMonitData.Sample.FLD_INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName(), 
                 TblsEnvMonitData.Sample.FLD_INCUBATION_START.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMPERATURE.getName(),
                 TblsEnvMonitData.Sample.FLD_INCUBATION_END.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_END_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_END_TEMPERATURE.getName()};
-            Object[][] incFldArr = new Object[0][4];
-            Object[] curFldArr=new Object[0];
             for (String curFld: incub1Flds){
                 Integer fldPosic=LPArray.valuePosicInArray(sampleFldName, curFld);
                 if (fldPosic>-1){
@@ -606,7 +602,7 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
                     jArrMainObj2.add(jObjSampleStageInfo);
                 }                
             }
-            jObj2= new JSONObject();
+            JSONObject jObj2= new JSONObject();
             jObj2.put("incubation_1", jArrMainObj);
             jObj2.put("incubation_2", jArrMainObj2);
             jArrMainObj=new JSONArray();
@@ -619,7 +615,6 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
                     new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName()}, new Object[]{Integer.valueOf(sampleId)}, 
                     tblAllFlds, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RESULT_ID.getName()});                    
             jObj= new JSONObject();
-            JSONArray jArrSampleStageInfo=new JSONArray();
             for (Object[] curRow: sampleStageInfo){
                 jObj2= new JSONObject();
                 for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ //Object[] curRec: sampleInfo){   

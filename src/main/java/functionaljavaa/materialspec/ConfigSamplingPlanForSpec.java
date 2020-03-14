@@ -77,8 +77,6 @@ public class ConfigSamplingPlanForSpec {
     }  
         String actionName = "Insert";
         tableName = "project";
-        String auditActionName = "CREATE SAMPLING PLAN DETAIL RECORD";
-        String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
     if (devMode){
         StackTraceElement[] elementsDev = Thread.currentThread().getStackTrace();
         javaDocLineName = "CHECK fieldsName and fieldsValue match in length";

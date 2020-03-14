@@ -145,7 +145,6 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
     }    
         String tableName = "project";
         String actionName = "Insert";
-        String auditActionName = "ADD_SAMPLE_ANALYSIS";                        
         
         String schemaDataName = LPPlatform.SCHEMA_DATA;
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
@@ -224,30 +223,14 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
             }else{
                 Integer valuePosic = Arrays.asList(sampleFieldName).indexOf(currField);
                 mandatoryFieldsValueProj[inumLines] = sampleFieldValue[valuePosic]; 
-                if ("config_code".equals(currField)){String configCode = sampleFieldValue[Arrays.asList(sampleFieldName).indexOf(currField)].toString();}
+                //if ("config_code".equals(currField)){String configCode = sampleFieldValue[Arrays.asList(sampleFieldName).indexOf(currField)].toString();}
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-            diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
-            diagnosesProj[1]= classVersionProj;
-            diagnosesProj[2]= "Code Line " + (elements[1].getLineNumber());
-            diagnosesProj[3]=LPPlatform.LAB_FALSE;
-            diagnosesProj[4]="ERROR:Missing Mandatory Fields";
-            diagnosesProj[5]="Mandatory fields not found: "+mandatoryFieldsMissingBuilder.toString();
-            return diagnosesProj;
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Mandatory fields not found: <*1*>", new Object[]{mandatoryFieldsMissingBuilder.toString()});
         }        
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
-        if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	
-            StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-            diagnosesProj[0]= elements[1].getClassName() + "." + elements[1].getMethodName();
-            diagnosesProj[1]= classVersionProj;
-            diagnosesProj[2]= "Code Line " + (elements[1].getLineNumber());
-            diagnosesProj[3]=LPPlatform.LAB_FALSE;
-            diagnosesProj[4]="ERROR:Sample Config Code NOT FOUND";
-            diagnosesProj[5]="The sample config code "+projectTemplate+" in its version "+projectTemplateVersion+" was not found in the schema "+schemaConfigName+". Detail:"+diagnosis[5];
-            return diagnosesProj;
-        }
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) return diagnosis;
 
         String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure", actionName);
         String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, "projectStructure", actionName);
@@ -256,7 +239,6 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
         Integer specialFieldIndex = -1;
         for (Integer inumLines=0;inumLines<sampleFieldName.length;inumLines++){
             String currField = tableName+"." + sampleFieldName[inumLines];
-            String currFieldValue = sampleFieldValue[inumLines].toString();
             boolean contains = Arrays.asList(specialFields).contains(currField);
             if (contains){                    
                     specialFieldIndex = Arrays.asList(specialFields).indexOf(currField);

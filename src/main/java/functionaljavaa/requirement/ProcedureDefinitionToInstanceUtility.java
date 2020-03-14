@@ -41,7 +41,8 @@ public class ProcedureDefinitionToInstanceUtility {
         
         for (Object[] curPersRole: personPerRole){
             String curPersonName=curPersRole[0].toString();
-            Object[] addSopToUserByName = usSop.addSopToUserByName(schemaName, curPersonName, sopName);            
+            //Object[] addSopToUserByName = 
+                    usSop.addSopToUserByName(schemaName, curPersonName, sopName);            
             //diagnoses = LPArray.joinTwo2DArrays(diagnoses, new Object[][]{{curPersonName, addSopToUserByName}});
         }
         return diagnoses;

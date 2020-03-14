@@ -248,7 +248,7 @@ public class DataBatchIncubator {
         String batchType=templateInfo[0][1].toString();
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;
-        Object[] batchSampleIncubationMomentMarkedDiagn= new Object[0];
+        Object[] batchSampleIncubationMomentMarkedDiagn= new Object[]{};
 
         if (BatchIncubatorMoments.START.toString().equalsIgnoreCase(moment)){
             if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())) 

@@ -39,13 +39,12 @@ public class DbObjects {
      }    
 
     public static JSONObject createModuleSchemas(String schemaPrefix){
-        JSONObject jsonObj = new JSONObject();
         String tblCreateScript="";
         String[] schemaNames = new String[]{LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), 
             LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), 
             LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG_AUDIT), LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), 
             LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE)};        
-        jsonObj=createSchemas(schemaNames);
+        JSONObject jsonObj=createSchemas(schemaNames);
 
         tblCreateScript=TblsProcedure.PersonProfile.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
@@ -76,7 +75,7 @@ public class DbObjects {
             
             String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+SCHEMA_AUTHORIZATION_ROLE+";"+
                     " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+SCHEMA_AUTHORIZATION_ROLE+ ";";     
-            CachedRowSet prepRdQuery = Rdbms.prepRdQuery(configSchemaScript, new Object[]{});
+            Rdbms.prepRdQuery(configSchemaScript, new Object[]{});
             
             // La idea es no permitir ejecutar prepUpQuery directamente, por eso es privada y no publica.            
                 //Integer prepUpQuery = Rdbms.prepUpQuery(configSchemaScript, new Object[0]);

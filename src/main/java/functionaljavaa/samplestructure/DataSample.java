@@ -195,7 +195,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             }else{
                 Integer valuePosic = Arrays.asList(sampleFieldName).indexOf(currField);
                 mandatoryFieldsValue[inumLines] = sampleFieldValue[valuePosic]; 
-                if (TblsData.Sample.FLD_CONFIG_CODE.getName().equals(currField)){String configCode = sampleFieldValue[Arrays.asList(sampleFieldName).indexOf(currField)].toString();}
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){

@@ -1243,7 +1243,6 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
                         currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
                         fieldsScript.append(currField[1]).append(" AS ").append(currField[0]);
                         tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
                 }
