@@ -39,8 +39,7 @@ public class SpecFrontEndUtilities {
             new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
             new Object[]{code, configVersion}, 
             fieldsName, sortFields);
-    JSONObject jObj = new JSONObject();
-    jObj=LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
+    JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
     Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.Spec.FLD_ANALYSES.getName());
     if (posicInArr>-1){
       String[] strToArr=records[0][posicInArr].toString().split("\\|");

@@ -190,7 +190,6 @@ public Object[] createStudyIndividualSample( String schemaPrefix, Token token, S
             fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
     */
 
-            Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":");
             diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.StudyIndividualSample.TBL.getName(), fieldsName, fieldsValue);
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
                 GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.NEW_STUDY_INDIVIDUAL_SAMPLE.toString(), TblsGenomaData.StudyIndividualSample.TBL.getName(), diagnosesProj[diagnosesProj.length-1].toString(), 

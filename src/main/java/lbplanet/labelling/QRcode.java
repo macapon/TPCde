@@ -32,7 +32,7 @@ public class QRcode {
     public static String main(String[] args) {
         try {
             String qrCodeData = "www.chillyfacts.com";
-            String filePath = "D:\\QRCODE\\chillyfacts.png";
+            //String filePath = "D:\\QRCODE\\chillyfacts.png";
             String charset = "UTF-8"; // or "ISO-8859-1"
             Map < EncodeHintType, ErrorCorrectionLevel > hintMap = new HashMap < EncodeHintType, ErrorCorrectionLevel > ();
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);

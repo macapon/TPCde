@@ -191,7 +191,6 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         
-        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":");
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.StudySamplesSet.TBL.getName(), fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             for (String currSample: samples)

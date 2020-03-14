@@ -245,6 +245,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(updateFieldName, updateFieldValue, ":");
                 SampleAudit smpAudit = new SampleAudit();
                 smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisAuditEvents.SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, token, null);
+                return diagnoses;
             }
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisAssignment_databaseReturnedError", new Object[]{testId, newAnalyst, schemaDataName});
         }
@@ -496,7 +497,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         }
         // This is temporary !!!! ***************************************************************
-        String[] resultMandatoryFields = mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel, actionName);
+        String[] resultMandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel, actionName);
         String[] resultDefaulFields = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName);
         Object[] resultDefaulFieldValue = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName);
         Object[] resultMandatoryFieldsValue = new Object[resultMandatoryFields.length];

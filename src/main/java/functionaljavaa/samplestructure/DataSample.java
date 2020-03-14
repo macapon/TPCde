@@ -514,8 +514,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA); 
             
-        String sampleAnalysisStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSCANCELED);
-        String sampleAnalysisStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleAnalysis.CONFIG_SAMPLEANALYSIS_STATUSREVIEWED);
         String sampleStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSCANCELED);
         String sampleStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSREVIEWED);
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(schemaPrefix, sampleId);
@@ -909,7 +907,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             CachedRowSet prepRdQuery = Rdbms.prepRdQuery(qry, new Object[]{sampleId});
             
             
-            boolean first = prepRdQuery.first();
             String finalString = "";
             if (prepRdQuery.getString(1)==null){
                 return LPPlatform.LAB_FALSE;

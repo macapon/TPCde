@@ -221,9 +221,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
               new String[]{TblsEnvMonitConfig.ProgramCalendar.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName()}, 
               new Object[]{pName, programCalendarId});
       if (LPPlatform.LAB_FALSE.equalsIgnoreCase(existsRecord[0].toString())){ return existsRecord;}
-
-      Object[] newProjSchedRecursive=new Object[0];
-          newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
+          Object[] newProjSchedRecursive = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.TBL.getName(), 
           new String[]{TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_RULE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_IS_HOLIDAYS.getName()},
           new Object[]{pName, programCalendarId, holidaysCalendarCode, true});
       int projRecursiveId = Integer.parseInt(newProjSchedRecursive[newProjSchedRecursive.length-1].toString());

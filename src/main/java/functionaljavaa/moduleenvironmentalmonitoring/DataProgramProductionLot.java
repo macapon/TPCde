@@ -29,7 +29,6 @@ public class DataProgramProductionLot{
      * @return
      */
     public static Object[] newProgramProductionLot(String schemaPrefix, String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
-        Object[] newProjSample = new Object[0];
         String[] tblFlds=new String[0];
         for (TblsEnvMonitData.ProductionLot obj: TblsEnvMonitData.ProductionLot.values()){
           tblFlds=LPArray.addValueToArray1D(tblFlds, obj.getName());
@@ -51,7 +50,7 @@ public class DataProgramProductionLot{
           fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName());
           fieldValue=LPArray.addValueToArray1D(fieldValue, LPDate.getCurrentTimeStamp());
         }else{fieldValue[posicInArr]=LPDate.getCurrentTimeStamp();}
-        newProjSample=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), fieldName, fieldValue);
+        Object[]  newProjSample=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), fieldName, fieldValue);
         return newProjSample;
     }
 

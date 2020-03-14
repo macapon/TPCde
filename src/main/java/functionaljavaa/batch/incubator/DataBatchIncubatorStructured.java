@@ -214,7 +214,7 @@ public class DataBatchIncubatorStructured {
         Integer batchNumCols=(Integer) batchInfo[0][0];
         Integer batchTotalObjects=LPNulls.replaceNull(batchInfo[0][2]).toString().length()==0 ? 0 : Integer.valueOf(batchInfo[0][2].toString());
         String batchContentStr=batchInfo[0][3].toString();
-        String positionValueToFind=positionValueToFind=buildBatchPositionValue(sampleId, pendingIncubationStage);
+        String positionValueToFind=buildBatchPositionValue(sampleId, pendingIncubationStage);
 
         if ((batchContentStr==null) || (batchContentStr.length()==0))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The batch <*1*> is empty in procedure <*2*>", new Object[]{batchName, schemaPrefix});
@@ -237,12 +237,17 @@ public class DataBatchIncubatorStructured {
         IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         
         String batchFldName = "";
-        if (pendingIncubationStage == 1) {
-            batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName();
-        } else if (pendingIncubationStage == 2) {
-            batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
-        } else {
+        if (null == pendingIncubationStage) {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", new Object[]{pendingIncubationStage, schemaPrefix});
+        } else switch (pendingIncubationStage) {
+            case 1:
+                batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName();
+                break;
+            case 2:
+                batchFldName = TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
+                break;
+            default:
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.", new Object[]{pendingIncubationStage, schemaPrefix});
         }
         Object[] updateSampleBatch = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), new String[]{batchFldName}, new Object[]{null}, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         return updateSampleBatch;                
@@ -252,7 +257,6 @@ public class DataBatchIncubatorStructured {
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchRemoveSampleStructured not implemented yet", null);
     }    
     static Object[] batchSampleIncubStartedStructured(String schemaPrefix, Token token, String batchName, String incubName) {
-        String separator = "*";
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
@@ -280,7 +284,6 @@ public class DataBatchIncubatorStructured {
     }
     
     static Object[] batchSampleIncubEndedStructured(String schemaPrefix, Token token, String batchName, String incubName) {
-        String separator = "*";
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName()};
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {

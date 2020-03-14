@@ -10,7 +10,6 @@ import databases.TblsApp;
 import databases.TblsAppAudit;
 import databases.TblsDataAudit;
 import java.time.LocalDateTime;
-import java.util.Date;
 
 /**
  * Create one new app.app_session
@@ -26,7 +25,7 @@ public class LPSession {
      * @return
      */
     public static Object[] newAppSession( String[] fieldsName, Object[] fieldsValue){        
-        Date nowLocalDate = LPDate.getTimeStampLocalDate();
+//        Date nowLocalDate = LPDate.getTimeStampLocalDate();
         LocalDateTime localDateTime=LPDate.getCurrentTimeStamp();
         //localDateTime = null;
         //localDateTime=LocalDateTime.now();

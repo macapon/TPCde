@@ -517,7 +517,6 @@ if (1==1)return;
      * @return
      */
     public Object[] zzzexistsRecord(String schemaName, String tableName, String[] keyFieldName, Object keyFieldValue){
-        String[] errorDetailVariables = new String[0];
         SqlStatement sql = new SqlStatement();        
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatement(SQLSELECT, schemaName, tableName,
                 keyFieldName, null, keyFieldName,  null, null,  null, null);          
@@ -607,7 +606,6 @@ if (1==1)return;
      * @return
      */
     public static String getRecordFieldsByFilterJSON(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] fieldsSortBy){
-        String[] errorDetailVariables = new String[0];        
         schemaName = LPPlatform.buildSchemaName(schemaName, "");
         
         if (whereFieldNames.length==0){
@@ -652,7 +650,6 @@ if (1==1)return;
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve){        
-        String[] errorDetailVariables = new String[0];                
         if ( (schemaName==null) || (schemaName.length()==0) ){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_NotschemaNameSpecified", new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);
@@ -803,7 +800,6 @@ if (1==1)return;
      * @return
      */
     public static Object[][] getRecordFieldsByFilter(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues, String[] fieldsToRetrieve, String[] orderBy, Boolean inforceDistinct){
-        String[] errorDetailVariables = new String[0];                
         if (whereFieldNames.length==0){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
@@ -850,8 +846,6 @@ if (1==1)return;
         }                    
     }
     public static Object[][] getGrouper(String schemaName, String tableName, String[] fieldsToGroup, String[] whereFieldNames, Object[] whereFieldValues, String[] orderBy){
-        String[] errorDetailVariables = new String[0];        
-        
         if (whereFieldNames.length==0){
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
@@ -906,8 +900,6 @@ if (1==1)return;
      * @return
      */
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
-        String[] errorDetailVariables = new String[0];        
-
         if (fieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
         }
@@ -945,8 +937,6 @@ if (1==1)return;
      */
     public static Object[] updateRecordFieldsByFilter(String schemaName, String tableName, String[] updateFieldNames, Object[] updateFieldValues, String[] whereFieldNames, Object[] whereFieldValues) {
         updateFieldValues = LPArray.decryptTableFieldArray(schemaName, tableName, updateFieldNames, (Object[]) updateFieldValues);        
-        String[] errorDetailVariables = new String[0];        
-       
         if (whereFieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
         }

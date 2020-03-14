@@ -26,7 +26,7 @@ public class RequirementLogFile {
         String logDir = prop.getString("logDirPath");
 
         String logFile = logDir + "/" + newLogFileName;
-        logFile = logFile.replace("/", "\\");        
+        logFile.replace("/", "\\");        
     }
 
     /**

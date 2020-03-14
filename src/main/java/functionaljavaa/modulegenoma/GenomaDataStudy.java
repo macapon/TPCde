@@ -192,7 +192,6 @@ public Object[] createStudy( String schemaPrefix, Token token, String studyName,
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         
-        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":");
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.Study.TBL.getName(), fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             GenomaDataAudit.studyAuditAdd(schemaPrefix, token, StudyAuditEvents.NEW_STUDY.toString(), TblsGenomaData.Study.TBL.getName(), studyName, 

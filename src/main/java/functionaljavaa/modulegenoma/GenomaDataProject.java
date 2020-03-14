@@ -183,7 +183,6 @@ public Object[] createProject( String schemaPrefix, Token token, String projectN
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         
-        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":");
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, tableName, fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             GenomaDataAudit.projectAuditAdd(schemaPrefix, token, ProjectAuditEvents.NEW_PROJECT.toString(), tableName, projectName, 

@@ -42,7 +42,6 @@ public class DataProgramCorrectiveAction {
       TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_SPEC_EVAL_DETAIL.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_LIMIT_ID.getName(),
       TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ANALYSIS.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_METHOD_NAME.getName(),
       TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_METHOD_VERSION.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PARAM_NAME.getName()};
-    String[] missingFields=new String[0];
     String[] myFldName=new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName()};    
     Object[] myFldValue=new Object[]{""};        
     for (TblsEnvMonitProcedure.ProgramCorrectiveAction obj: TblsEnvMonitProcedure.ProgramCorrectiveAction.values()){

@@ -192,7 +192,6 @@ public Object[] createStudyFamily( String schemaPrefix, Token token, String stud
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, projectTemplateVersion); 
 */
         
-        Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":");
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.StudyFamily.TBL.getName(), fieldsName, fieldsValue);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
             for (String currIndiv: individuals)
