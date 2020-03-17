@@ -241,7 +241,7 @@ public class LPFrontEnd {
         RequestDispatcher rd = request.getRequestDispatcher(LPPlatform.SERVLETS_RESPONSE_SUCCESS_SERVLET_NAME);
         try {           
             rd.forward(request,response);
-        } catch (ServletException | IOException ex) {
+        } catch (IOException | ServletException ex) {
             Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
