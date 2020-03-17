@@ -68,15 +68,15 @@
             <version>0.9.5.5</version>
         </dependency>
         <dependency>
-            <groupId>servlets.com</groupId>
-            <artifactId>cos</artifactId>
-            <version>05Nov2002</version>
-            <type>jar</type>
-        </dependency>
-        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpcore</artifactId>
             <version>4.4.11</version>
+            <type>jar</type>
+        </dependency>
+        <dependency>
+            <groupId>servlets.com</groupId>
+            <artifactId>cos</artifactId>
+            <version>05Nov2002</version>
             <type>jar</type>
         </dependency>
         <dependency>
@@ -99,25 +99,32 @@
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-core</artifactId>
-    <version>2.9.9</version>
+    <version>2.10.0.pr3</version>
 </dependency>
         
         <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-annotations</artifactId>
-    <version>2.9.0</version>
+    <version>2.10.0.pr3</version>
 </dependency>
+<dependency>
+    <groupId>commons-codec</groupId>
+    <artifactId>commons-codec</artifactId>
+    <version>1.12</version>
+</dependency>
+
 <dependency>
     <groupId>com.fasterxml.jackson.core</groupId>
     <artifactId>jackson-databind</artifactId>
-    <version>[2.9.10.3,)</version>
+    <version>2.10.0.pr3</version>
 </dependency>
-    <dependency>
-        <groupId>com.auth0</groupId>
-        <artifactId>java-jwt</artifactId>
-        <version>3.4.1</version>
-      <type>jar</type>
-    </dependency>         
+
+<dependency>
+    <groupId>com.auth0</groupId>
+    <artifactId>java-jwt</artifactId>
+    <version>3.10.0</version>
+</dependency>
+      
 
 <dependency>
     <groupId>javax.json</groupId>

@@ -24,7 +24,7 @@ import java.util.Map;
  * @author Administrator
  */
 public final class Token {   
-    private static final String KEY = "mi clave";
+    private static final String KEY = "miclave";
     private static final String ISSUER = "LabPLANETdestrangisInTheNight";
     
     private static final String TOKEN_PARAM_USERDB="userDB";
@@ -81,12 +81,13 @@ public final class Token {
     }  
     
     private Object[] isValidToken(String token){
+        if (token.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE , "token is empty", new Object[]{});
         Object[] diagnoses = new Object[0];
         try {
             
             Algorithm algorithm = Algorithm.HMAC256(KEY);
             JWTVerifier verifier = JWT.require(algorithm)
-                .withIssuer(ISSUER)
+                .withIssuer(new String[]{ISSUER})
                 .build(); //Reusable verifier instance
             DecodedJWT decode = JWT.decode(token); // This is need for the check that should be implemented
             DecodedJWT jwt = verifier.verify(token);            
@@ -97,7 +98,7 @@ public final class Token {
             diagnoses = LPArray.addValueToArray1D(diagnoses, jwt);
             return diagnoses;
             
-        } catch (JWTVerificationException exception){
+        } catch (JWTVerificationException | IllegalArgumentException exception){
             diagnoses = LPArray.addValueToArray1D(diagnoses, false);
             return diagnoses;
         }       

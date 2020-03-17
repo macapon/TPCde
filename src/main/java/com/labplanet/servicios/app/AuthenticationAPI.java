@@ -10,7 +10,6 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPSession;
-import com.auth0.jwt.exceptions.JWTCreationException;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.Token;
@@ -196,7 +195,8 @@ public class AuthenticationAPI extends HttpServlet {
                     }else{               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_ESIGN_TO_CHECK_INVALID, new Object[]{esignPhraseToCheck}, language);
                         return;                             
-                    }                    
+                    }
+                    
                 case AuthenticationAPIParams.API_ENDPOINT_TOKEN_VALIDATE_USER_CREDENTIALS:     
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_USER_CREDENTIALS.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -291,7 +291,7 @@ public class AuthenticationAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;
             }
-        }catch(IOException | JWTCreationException e){            
+        }catch(IOException e){            
             String exceptionMessage = e.getMessage();            
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);  
         }catch(@SuppressWarnings("FieldNameHidesFieldInSuperclass") Exception e){            
