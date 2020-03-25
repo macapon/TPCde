@@ -112,7 +112,10 @@ public class AppIncident {
 
     public Object[] reopenIncident(Token token, Integer incidentId, String note){  
         Object[] isActive=isIncidentActive(incidentId);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isActive[0].toString())) return isActive;
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isActive[0].toString())){
+            isActive[0]=LPPlatform.LAB_FALSE;
+            return isActive;
+        }
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
         String previousStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS_PREVIOUS.getName())].toString();
 

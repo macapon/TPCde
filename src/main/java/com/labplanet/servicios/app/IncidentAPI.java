@@ -18,6 +18,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
@@ -43,17 +44,29 @@ public class IncidentAPI extends HttpServlet {
         /**
          *
          */
-        NEW_INCIDENT("NEW_INCIDENT", "incidentTitle|incidentDetail", "", "incidentNewIncident_success"),
-        CONFIRM_INCIDENT("CONFIRM_INCIDENT", "incidentId|note", "", "incidentConfirmIncident_success"),
-        CLOSE_INCIDENT("CLOSE_INCIDENT", "incidentId|note", "", "incidentClosedIncident_success"),
-        REOPEN_INCIDENT("REOPEN_INCIDENT", "incidentId|note", "", "incidentReopenIncident_success"),
-        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", "incidentId|note", "", "incidentAddNoteToIncident_success"),
+        NEW_INCIDENT("NEW_INCIDENT", "incidentTitle|incidentDetail", "", "incidentNewIncident_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_TITLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6 ),
+                new LPAPIArguments(ParamsList.INCIDENT_DETAIL.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7 ) }),
+        CONFIRM_INCIDENT("CONFIRM_INCIDENT", "incidentId|note", "", "incidentConfirmIncident_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        CLOSE_INCIDENT("CLOSE_INCIDENT", "incidentId|note", "", "incidentClosedIncident_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        REOPEN_INCIDENT("REOPEN_INCIDENT", "incidentId|note", "", "incidentReopenIncident_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", "incidentId|note", "", "incidentAddNoteToIncident_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(ParamsList.NOTE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+            new LPAPIArguments(ParamsList.NEW_STATUS.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), false, 7)}),
         ;
-        private IncidentAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private IncidentAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
+            this.arguments=argums;
             
         } 
         public String getName(){
@@ -68,11 +81,17 @@ public class IncidentAPI extends HttpServlet {
         private String[] getEndpointDefinition(){
             return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
         }
-     
+       /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
         private final String name;
         private final String mandatoryParams; 
         private final String optionalParams; 
         private final String successMessageCode;       
+        public  LPAPIArguments[] arguments;
     }
     
     public enum IncidentAPIfrontendEndpoints{
@@ -132,7 +151,7 @@ public class IncidentAPI extends HttpServlet {
         String[] errObject = new String[]{"Servlet IncidentAPI at " + request.getServletPath()};   
 
         String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -160,7 +179,7 @@ public class IncidentAPI extends HttpServlet {
         }        
 */        
         if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
+            areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -195,49 +214,44 @@ public class IncidentAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
-            }
+            }                
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
             Integer incId=null;
-            String incIdStr=request.getParameter(ParamsList.INCIDENT_ID.getParamName());
+/*            String incIdStr=request.getParameter(ParamsList.INCIDENT_ID.getParamName());
             if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
             String note=request.getParameter(ParamsList.NOTE.getParamName());
-            String newStatus=request.getParameter(ParamsList.NEW_STATUS.getParamName());
+            String newStatus=request.getParameter(ParamsList.NEW_STATUS.getParamName());*/
             switch (endPoint){
                 case NEW_INCIDENT:
-/*                    HttpEntityEnclosingRequest entityRequest = (HttpEntityEnclosingRequest) request;
-                    HttpEntity entity = entityRequest.getEntity();                    
-                    //HttpEntity entity = ((HttpEntityEnclosingRequest)request).getEntity();
-                    String result = EntityUtils.toString(entity);
-                    InputStream inputStream = entity.getContent();
-
-            // CONVERT RESPONSE STRING TO JSON ARRAY
-                    JSONArray ja = new JSONArray();                    */
-                    
-                    //firstN=request.getAttribute("firstName").toString();
-                    actionDiagnoses = AppIncident.newIncident(token, request.getParameter(ParamsList.INCIDENT_TITLE.getParamName()),
-                            request.getParameter(ParamsList.INCIDENT_DETAIL.getParamName()), "");
-                    incIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                    actionDiagnoses = AppIncident.newIncident(token, argValues[0].toString(), argValues[1].toString(), "");
+                    String incIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
                     if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
                     break;
                 case CONFIRM_INCIDENT:
+                    incId=(Integer) argValues[0];
                     AppIncident inc=new AppIncident(incId);
-                    actionDiagnoses = inc.confirmIncident(token, incId, note);
+                    actionDiagnoses = inc.confirmIncident(token, incId, argValues[1].toString());
                     break;
                 case ADD_NOTE_INCIDENT:
+                    incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.addNoteIncident(token, incId, note, newStatus);
+                    String newNote=argValues[2].toString();
+                    actionDiagnoses = inc.addNoteIncident(token, incId, argValues[1].toString(), newNote);
                     break;                    
                 case CLOSE_INCIDENT:
+                    incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.closeIncident(token, incId, note);
+                    actionDiagnoses = inc.closeIncident(token, incId, argValues[1].toString());
                     break;                    
                 case REOPEN_INCIDENT:
+                    incId=(Integer) argValues[0];
                     inc=new AppIncident(incId);
-                    actionDiagnoses = inc.reopenIncident(token, incId, note);
+                    actionDiagnoses = inc.reopenIncident(token, incId, argValues[1].toString());
                     break;                    
             }    
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
@@ -249,8 +263,9 @@ public class IncidentAPI extends HttpServlet {
             }else{
                 //actionDiagnoses[0]=firstN;
                 RelatedObjects rObj=RelatedObjects.getInstance();
-                RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), "incident", incId);                
+                rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), "incident", incId);                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+                rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           
         }catch(Exception e){   
@@ -267,7 +282,7 @@ public class IncidentAPI extends HttpServlet {
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
             // release database resources
-            try {
+            try {                
                 //con.close();
                 Rdbms.closeRdbms();   
             } catch (Exception ignore) {

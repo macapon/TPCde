@@ -8,10 +8,13 @@ package com.labplanet.servicios.app;
 import lbplanet.utilities.LPFrontEnd;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 
 /**
  *
@@ -19,34 +22,89 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class AuthenticationAPIParams extends HttpServlet {
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GET_USER_ROLE = "GETUSERROLE";
+    public enum AuthenticationAPIEndpoints{
+        AUTHENTICATE("AUTHENTICATE", "sampleTemplate|sampleTemplateVersion|programName|locationName", "", "userAuthentication_success", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_USERNAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        GETUSERROLE("GETUSERROLE", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)} ),
+        FINALTOKEN("FINALTOKEN", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_ROLE, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)} ),
+        TOKEN_VALIDATE_USER_CREDENTIALS("TOKEN_VALIDATE_USER_CREDENTIALS", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 8)} ),
+        TOKEN_VALIDATE_ESIGN_PHRASE("TOKEN_VALIDATE_ESIGN_PHRASE", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)} ),
+        USER_CHANGE_PSWD("USER_CHANGE_PASSWORD", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)} ),
+        USER_CHANGE_ESIGN("USER_CHANGE_ESIGN", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ESIGN_NEW, LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK, LPAPIArguments.ArgumentType.STRING.toString(), false, 9)} ),
+        SET_DEFAULT_TABS_ON_LOGIN("SET_DEFAULT_TABS_ON_LOGIN", "resultId|rawValueResult", "", "getUserRoles_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABS_STRING, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        ;      
+        private AuthenticationAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.mandatoryParams=mandatoryParams;
+            this.optionalParams=optionalParams;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;            
+        } 
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_TOKEN_VALIDATE_USER_CREDENTIALS = "TOKEN_VALIDATE_USER_CREDENTIALS";
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+contentLine[lineIndex][curArg.getTestingArgPosic()]);
+                request.setAttribute(curArg.getName(), contentLine[lineIndex][curArg.getTestingArgPosic()]);
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }
+        public String getName(){
+            return this.name;
+        }
+        public String getMandatoryParams(){
+            return this.mandatoryParams;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+        }
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }
+     
+        private final String name;
+        private final String mandatoryParams; 
+        private final String optionalParams; 
+        private final String successMessageCode;  
+        public  LPAPIArguments[] arguments;
 
-    public static final String API_ENDPOINT_USER_CHANGE_PSSWD = "USER_CHANGE_PASSWORD";
-    public static final String API_ENDPOINT_USER_CHANGE_ESIGN = "USER_CHANGE_ESIGN";
-    public static final String API_ENDPOINT_SET_DEFAULT_TABS_ON_LOGIN = "SET_DEFAULT_TABS_ON_LOGIN";
+    }
     
     /**
      *
      */
-    public static final String API_ENDPOINT_FINAL_TOKEN = "FINALTOKEN";
 
     /**
      *
      */
-    public static final String API_ENDPOINT_AUTHENTICATE = "AUTHENTICATE";
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_TOKEN_VALIDATE_ESIGN_PHRASE = "TOKEN_VALIDATE_ESIGN_PHRASE";
         
     /**
      *
@@ -123,29 +181,6 @@ public class AuthenticationAPIParams extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_ESIGN_PHRASE = "myToken|esignPhraseToCheck";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CASE_AUTHENTICATE = "dbUserName|dbUserPassword";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CASE_FINALTOKEN = "myToken|userRole";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CASE_GETUSERROLE = "myToken";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_USER_CREDENTIALS = "myToken|userToCheck|passwordToCheck";
-    public static final String MANDATORY_PARAMS_CASE_USER_CHANGE_PSSWD = "finalToken|newPassword";
-    public static final String MANDATORY_PARAMS_CASE_USER_CHANGE_ESIGN = "finalToken|newEsign";
    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.

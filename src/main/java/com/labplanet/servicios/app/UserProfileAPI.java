@@ -155,7 +155,7 @@ public class UserProfileAPI extends HttpServlet {
                     String newEsignPhrase = request.getParameter("newEsignPhrase"); 
                     userActionDiagnostic = Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
                             new String[]{Users.FLD_ESIGN.getName()}, new Object[]{newEsignPhrase}, new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()});
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     messageDynamicData=new Object[]{token.getUserName()};
                     break;
                 default:

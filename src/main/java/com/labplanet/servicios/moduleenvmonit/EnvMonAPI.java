@@ -229,20 +229,20 @@ public class EnvMonAPI extends HttpServlet {
                     if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     actionDiagnoses= DataBatchIncubator.createBatch(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), fieldNames, fieldValues);
                     batchName=actionDiagnoses[actionDiagnoses.length-1].toString();
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     messageDynamicData=new Object[]{batchName};
                     break;                    
                 case EM_BATCH_ASSIGN_INCUB: 
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
                     incubationName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     messageDynamicData=new Object[]{incubationName, batchName};
                     actionDiagnoses=DataBatchIncubator.batchAssignIncubator(schemaPrefix, token, batchName, incubationName);
                     break;
                 case EM_BATCH_UPDATE_INFO: 
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     fieldName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME);
                     String[] fieldsName = fieldName.split("\\|");
                     fieldValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE);
@@ -252,7 +252,7 @@ public class EnvMonAPI extends HttpServlet {
                     break;
                 case EM_BATCH_INCUB_START:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);                    
                     String incubName=null;
@@ -261,7 +261,7 @@ public class EnvMonAPI extends HttpServlet {
                     break;                    
                 case EM_BATCH_INCUB_END:
                     batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    RelatedObjects.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
                     batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);                    
                     incubName=null;

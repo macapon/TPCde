@@ -31,7 +31,7 @@ public class SampleAPIlogic {
         int testId = Integer.parseInt(objectIdStr);     
                     String newAnalyst = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST);
         Object[] dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
-                   RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
+                   rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
         Object[] messageDynamicData = new Object[]{sampleId}; 
                     //break;                               
         JSONObject dataSampleJSONMsg=new JSONObject();

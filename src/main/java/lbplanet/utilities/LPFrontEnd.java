@@ -75,8 +75,10 @@ public class LPFrontEnd {
      * @return
      */
     public static final Boolean servletUserToVerify(HttpServletRequest request, HttpServletResponse response, String dbUserName, String dbUserPassword){    
-        String userToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);                   
+        String userToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK); 
+            if (userToVerify==null) userToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK)).toString();
         String passwordToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
+            if (passwordToVerify==null) passwordToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK)).toString();
         if ( (!userToVerify.equalsIgnoreCase(dbUserName)) || (!passwordToVerify.equalsIgnoreCase(dbUserPassword)) ){
             servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_INVALID_USER_VERIFICATION, null, null);           
             return false;                                
@@ -92,7 +94,8 @@ public class LPFrontEnd {
      * @return
      */
     public static final Boolean servletEsignToVerify(HttpServletRequest request, HttpServletResponse response, String eSign){    
-        String eSignToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);                   
+        String eSignToVerify = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);      
+            if (eSignToVerify==null) eSignToVerify=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK)).toString();
         if (!eSignToVerify.equalsIgnoreCase(eSign)) {  
             servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_INVALID_ESIGN, null, null);           
             return false;                                

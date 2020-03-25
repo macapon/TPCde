@@ -3,12 +3,11 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package com.labplanet.servicios.testing.config.nodb;
+package com.labplanet.servicios.modulesample;
 
+import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
-import lbplanet.utilities.LPPlatform;
-import lbplanet.utilities.LPFrontEnd;
-import functionaljavaa.materialspec.ConfigSpecRule;
+import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -22,38 +21,51 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 
 /**
  *
- * @author Administrator
+ * @author User
  */
-public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
+public class TestingSamples extends HttpServlet {
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
      *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String table1Header = TestingServletsConfig.DB_SCHEMADATA_SAMPLES.getTablesHeaders();
+        Integer table1NumArgs=13;
+        
+        Object[] functionEvaluation=new Object[0];
+        JSONArray functionRelatedObjects=new JSONArray();
+        Object[] argsForLogFiles=new Object[0];
 
-        String table1Header = TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTablesHeaders();
-
+        Object schemaPrefix=request.getAttribute(LPTestingParams.SCHEMA_PREFIX);
+        Object tokenStr=request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
+        Token token = new Token(tokenStr.toString());
+                
         response = LPTestingOutFormat.responsePreparation(response);        
-        ConfigSpecRule mSpec = new ConfigSpecRule();        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
-        String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTesterFileName();                         
+        String testerFileName=LPTestingParams.TestingServletsConfig.DB_SCHEMADATA_ENVMONIT_SAMPLES.getTesterFileName();                         
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
         StringBuilder fileContentBuilder = new StringBuilder();        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
-
+        testingContent=LPArray.addColumnToArray2D(testingContent, new JSONArray());
+        
         try (PrintWriter out = response.getWriter()) {
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
@@ -64,54 +76,55 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
             
             StringBuilder fileContentTable1Builder = new StringBuilder();
-            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             
+            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
-                tstAssertSummary.increaseTotalTests();
-                    
-                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
+                tstAssertSummary.increaseTotalTests();                    
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
+                
+                Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                    new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
+
+                ClassSampleController clssController=new ClassSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                if (clssController.getFunctionFound()){
+                    functionRelatedObjects=clssController.getFunctionRelatedObjects();
+                    functionEvaluation=(Object[]) clssController.getFunctionDiagn();
+                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                    fileContentTable1Builder.append(clssController.getRowArgsRows());
+                }                
                 
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
+                                    
+                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                    new Object[]{
+                    (LPNulls.replaceNull(testingContent[iLines][2]).toString().length()>0) ? "Yes" : "No",
+                    (LPNulls.replaceNull(testingContent[iLines][3]).toString().length()>0) ? "Yes" : "No",
+                    (LPNulls.replaceNull(testingContent[iLines][4]).toString().length()>0) ? "Yes" : "No",
+                }));                                     
 
-                Integer lineNumCols = testingContent[0].length-1;
-                String ruleType = null;
-                if (lineNumCols>=numEvaluationArguments)                               
-                     ruleType = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][numEvaluationArguments]);
-                String specText = null;
-                if (lineNumCols>=numEvaluationArguments+1)                               
-                     specText = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][numEvaluationArguments+1]);
-                String separator = null;
-                if (lineNumCols>=numEvaluationArguments+2)                               
-                     separator = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][numEvaluationArguments+2]);
-
-                fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{iLines-numHeaderLines+1, ruleType, specText, separator}));
-                    
-                Object[] functionEvaluation = mSpec.specLimitIsCorrectQualitative(ruleType, specText, separator);
-                    
-                
                 if (numEvaluationArguments==0){                    
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(Arrays.toString(functionEvaluation)));                     
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
-                    Integer stepId=Integer.valueOf(testingContent[iLines][testingContent[0].length-1].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert));
+                    Integer stepId=Integer.valueOf(testingContent[iLines][testingContent[0].length-2].toString());
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
-                    fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
                 }
+                fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            //fileContentTable1Builder.append();
             fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
-                        
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+
             out.println(fileContentBuilder.toString());            
             LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
-            tstAssertSummary=null; mSpec=null;
+            tstAssertSummary=null; 
         }
         catch(IOException error){
-            tstAssertSummary=null; mSpec=null;
+            tstAssertSummary=null; 
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
         } finally {
@@ -120,22 +133,22 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 Rdbms.closeRdbms();   
             } catch (Exception ignore) {
             }
-        }       
-        }
+        }               
+    }
+
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
      * @param request servlet request
      * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
-        try{
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
-        }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
-        }
     }
 
     /**
@@ -143,14 +156,13 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
-        try{
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         processRequest(request, response);
-        }catch(ServletException|IOException e){
-            LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
-        }
     }
 
     /**

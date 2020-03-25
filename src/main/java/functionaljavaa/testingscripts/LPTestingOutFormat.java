@@ -5,6 +5,11 @@
  */
 package functionaljavaa.testingscripts;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import databases.Rdbms;
+import databases.TblsTesting;
 import lbplanet.utilities.LPHashMap;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
@@ -17,18 +22,152 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import jdk.nashorn.internal.parser.JSONParser;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPJson;
+import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
+import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 //import jdk.jfr.internal.LogLevel;
 //import jdk.jfr.internal.LogTag;
 //import jdk.jfr.internal.Logger;
 
-/**
+/*
  *
  * @author Administrator
  */
 public class LPTestingOutFormat {
-    private LPTestingOutFormat(){    throw new IllegalStateException("Utility class");}    
+
+    /**
+     * @return the csvHeaderTags
+     */
+    public HashMap<String, Object> getCsvHeaderTags() {
+        return csvHeaderTags;
+    }
+    
+    public enum InputModes{FILE, DATABASE};
+    private String inputMode="";
+    private Object[][] testingContent=new Object[0][0];
+    private String filePathName="";
+    private String fileName="";
+    private HashMap<String, Object> csvHeaderTags=null;
+    private StringBuilder htmlStyleHeader = new StringBuilder();
+    private Integer numEvaluationArguments = 0;
+    
+    public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
+        String csvPathName ="";
+        String csvFileName ="";
+        Object[][] csvFileContent = new Object[0][0];
+        Object testingSource=request.getAttribute(LPTestingParams.TESTING_SOURCE);
+        Integer numEvalArgs=0;
+        StringBuilder htmlStyleHdr = new StringBuilder();
+        HashMap<String, Object> headerTags = new HashMap();   
+        if (testingSource!=null && testingSource=="DB"){
+            csvPathName ="";
+            csvFileName ="";
+            if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}     
+            numEvalArgs = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.NUM_EVAL_ARGS).toString()));
+            Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+            String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+            csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
+                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
+                    new String[]{TblsTesting.ScriptSteps.FLD_EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.FLD_ESIGN_TO_CHECK.getName(),
+                        TblsTesting.ScriptSteps.FLD_CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.FLD_CONFIRMUSER_PW_TO_CHECK.getName(),
+                        TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_02.getName(),
+                        TblsTesting.ScriptSteps.FLD_ARGUMENT_03.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_04.getName(),
+                        TblsTesting.ScriptSteps.FLD_ARGUMENT_05.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_06.getName(),
+                        TblsTesting.ScriptSteps.FLD_ARGUMENT_07.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_08.getName(),
+                        TblsTesting.ScriptSteps.FLD_ARGUMENT_09.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_10.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()},
+                    new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
+                    
+            //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(csvFileContent[0][0].toString())) csvFileContent = new Object[0][0];
+            headerTags.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, 0);   
+            headerTags.put(FILEHEADER_NUM_TABLES_TAG_NAME, "-");  
+            headerTags.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, numEvalArgs);   
+        }else{
+            csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
+            csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
+            if ("".equals(csvPathName) || csvPathName==null){
+                csvFileName = testerFileName; 
+                csvPathName = LPTestingOutFormat.TESTING_FILES_PATH; }
+            csvPathName = csvPathName+csvFileName; 
+            String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
+
+            csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
+
+            String[][] headerInfo = LPArray.convertCSVinArray(csvPathName, "=");
+            headerTags = LPTestingOutFormat.getCSVHeader(headerInfo);          
+            numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
+            
+        }        
+        htmlStyleHdr = new StringBuilder();
+        htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
+
+        this.testingContent=csvFileContent;
+        this.inputMode=LPNulls.replaceNull(testingSource).toString();
+        this.filePathName=csvPathName;
+        this.fileName=csvFileName;
+        this.csvHeaderTags=headerTags;
+        this.htmlStyleHeader=htmlStyleHdr;
+        this.numEvaluationArguments=numEvalArgs;
+    }
+    
+    public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
+        StringBuilder fileContentBuilder = new StringBuilder();  
+                
+        String[] updFldNames=new String[]{TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
+        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp()};        
+        if (numEvaluationArguments>0){
+            if ("DB".equals(this.inputMode)){
+                Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+                String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+                updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName()});
+                updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_EVALUATION_POSIC], tstAssert.getEvalSyntaxisDiagnostic()});
+                if (numEvaluationArguments>1){
+                    updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(),
+                        TblsTesting.ScriptSteps.FLD_DYNAMIC_DATA.getName()});
+                    updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
+                        functionRelatedObjects.toJSONString()});                    
+                }
+                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
+                        updFldNames, updFldValues,
+                        new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});            
+            }
+        }
+        return fileContentBuilder;
+    }   
+    
+    public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary){
+        StringBuilder fileContentBuilder = new StringBuilder();  
+        tstAssertSummary.notifyResults();
+        String[] updFldNames=new String[]{TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName()};
+        Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp(), tstAssertSummary.getTotalTests()};        
+        if (numEvaluationArguments>0){
+            String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
+            fileContentBuilder.append(fileContentSummary);            
+            if (this.inputMode=="DB"){
+                if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}          
+                Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+                String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+                updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(),
+                            TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName()});
+                updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalSyntaxisMatch(), tstAssertSummary.getTotalSyntaxisUndefined(), tstAssertSummary.getTotalSyntaxisUnMatch()});
+                if (numEvaluationArguments>1){
+                    updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(),
+                                TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName()});
+                    updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalCodeMatch(), tstAssertSummary.getTotalCodeUndefined(), tstAssertSummary.getTotalCodeUnMatch()});                    
+                }
+                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),                         
+                        updFldNames, updFldValues,
+                        new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});            
+            }
+        }
+        return fileContentBuilder;
+    }   
     
     /**
      *
@@ -456,19 +595,19 @@ public class LPTestingOutFormat {
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total Tests");
             fileContentSummary = fileContentSummary +rowAddField(tstAssert.getTotalTests().toString()); 
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Match "+LPTestingOutFormat.TST_ICON_MATCH);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanMatch.toString());
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisMatch().toString());
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanUndefined.toString()); 
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisUndefined().toString()); 
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Syntaxis Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetBooleanUnMatch.toString()); 
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalSyntaxisUnMatch().toString()); 
         }
         if (numArguments>1){
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Match "+LPTestingOutFormat.TST_ICON_MATCH);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeMatch.toString()); 
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeMatch().toString()); 
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Code Undefined "+LPTestingOutFormat.TST_ICON_UNDEFINED);                
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeUndefined.toString()); 
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUndefined().toString()); 
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total ErrorCode Unmatch "+LPTestingOutFormat.TST_ICON_UNMATCH);       
-            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.totalLabPlanetErrorCodeUnMatch.toString()); 
+            fileContentSummary = fileContentSummary +LPTestingOutFormat.rowAddField(tstAssert.getTotalCodeUnMatch().toString()); 
         }
         fileContentSummary = fileContentHeaderSummary+fileContentSummary +rowEnd();            
         fileContentSummary = fileContentSummary +tableEnd();        
@@ -599,6 +738,78 @@ public class LPTestingOutFormat {
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;        
         return LPArray.convertCSVinArray(csvPathName, csvFileSeparator);         
     } 
-            
+    
+    public static String getAttributeValue(Object value, Object[][] scriptSteps){            
+        try{
+            if (!value.toString().contains("step")) return LPNulls.replaceNull(value.toString());
+
+            JsonObject JsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
+            int stepNumber = JsonObject.get("step").getAsInt();        
+            String stepObjectType = JsonObject.get("object_type").getAsString(); 
+            int stepObjectPosic = 1;
+            try{
+                stepObjectPosic = JsonObject.get("object_posic").getAsInt();  
+            }catch(Exception ex){stepObjectPosic = 1;}
+
+            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-2),Integer.valueOf(stepNumber));
+            if (stepPosic==-1) return "";
+
+            JsonArray jsonArr=LPJson.convertToJsonArrayStringedObject(scriptSteps[stepPosic][scriptSteps[0].length-1].toString());
+            Integer numObjectsFound=0;
+            for (int i = 0; i < jsonArr.size(); i++) {
+               JsonObject object = (JsonObject) jsonArr.get(i);
+               String objType=object.get("object_type").getAsString();
+               if (objType.equalsIgnoreCase(stepObjectType)){
+                   numObjectsFound++;
+                   if (numObjectsFound.equals(Integer.valueOf(stepObjectPosic))) return object.get("object_name").getAsString();                   
+               }
+            }
+            return "";
+        }catch(Exception ex){ return "";}
+    }
+
+    
+    /**
+     * @return the inputMode
+     */
+    public String getInputMode() {
+        return inputMode;
+    }
+
+    /**
+     * @return the testingContent
+     */
+    public Object[][] getTestingContent() {
+        return testingContent;
+    }
+
+    /**
+     * @return the filePathName
+     */
+    public String getFilePathName() {
+        return filePathName;
+    }
+
+    /**
+     * @return the fileName
+     */
+    public String getFileName() {
+        return fileName;
+    }
+
+    /**
+     * @return the htmlStyleHeader
+     */
+    public StringBuilder getHtmlStyleHeader() {
+        return htmlStyleHeader;
+    }
+
+    /**
+     * @return the numEvaluationArguments
+     */
+    public Integer getNumEvaluationArguments() {
+        return numEvaluationArguments;
+    }
+                
     
 }

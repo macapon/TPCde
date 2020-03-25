@@ -5,6 +5,9 @@
  */
 package lbplanet.utilities;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.util.Arrays;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
@@ -79,6 +82,17 @@ public class LPJson {
         JSONArray jsonArray= new JSONArray();
         jsonArray.addAll(Arrays.asList(normalArray));
         return jsonArray;
+    }
+    
+    public static JsonObject convertToJsonObjectStringedObject(String value){
+        JsonParser parser = new JsonParser();
+        JsonObject JsonObject = parser.parse(value).getAsJsonObject();
+        return JsonObject;
+    }
+    
+    public static JsonArray convertToJsonArrayStringedObject(String value){
+        JsonParser parser = new JsonParser();
+        return parser.parse(value).getAsJsonArray();
     }
 
    

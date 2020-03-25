@@ -21,11 +21,14 @@
         document.getElementById("date").innerHTML = Date();
     </script>
         <div class="btn-group">
-            <h1>Platform</h1>
             <form name="platform" action="/LabPLANET-API/" method="post" enctype="multipart/form-data">                
                 Select File:<input type="file" name="file1"><br />
-                <input type="submit" value="upload" formaction="/LabPLANET-API/testing/platform/TesterFromUploadFile">
+                <input type="submit" value="uploads" formaction="/LabPLANET-API/testing/platform/TesterFromUploadFile">
             </form>                              
+            <form name="platform" action="/LabPLANET-API/">                
+                <input type="submit" value="Regression Testing" formaction="/LabPLANET-API/testing/platform/TestingRegressionUAT">
+            </form>                                          
+            <h1>Platform</h1>
             <form name="platform" action="/LabPLANET-API/">                
                 <input type="submit" value="Testing Server" formaction="/LabPLANET-API/app/TestingServer">
                 <input type="submit" value="Rdbms Class" formaction="/LabPLANET-API/testing/platform/DBActions">

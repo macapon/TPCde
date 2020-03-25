@@ -1108,7 +1108,7 @@ if (1==1)return;
             //String[] split = obj.toString().split("\\|");
             //if (split.length==1) 
             String[]    split = obj.toString().split(">>>");
-            if ( (obj.toString().toLowerCase().contains("null")) || (split.length>1) ) {                                
+            if ( (obj.toString().toLowerCase().contains("null")) && (split.length>1) ) {                                
                     clase = split[1];
                     switch(clase.toUpperCase()){
                         case "INTEGER":

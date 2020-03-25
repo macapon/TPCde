@@ -52,6 +52,7 @@ public class LPPlatform {
     public static final String SCHEMA_APP = "app";
     
     public static final String SCHEMA_APP_AUDIT = "app-audit";
+    public static final String SCHEMA_TESTING = "testing";
 
     /**
      *

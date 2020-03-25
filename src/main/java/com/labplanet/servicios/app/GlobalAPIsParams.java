@@ -199,6 +199,7 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_RAW_VALUE_RESULT = "rawValueResult";
+    public static final String REQUEST_PARAM_RESULT_NEW_UOM = "newResultUom";
 
     /**
      *

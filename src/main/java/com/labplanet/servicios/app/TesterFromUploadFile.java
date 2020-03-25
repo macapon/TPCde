@@ -64,7 +64,8 @@ public class TesterFromUploadFile extends HttpServlet {
                 
                 request.setAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH, saveDirectory+"\\");
                 request.setAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME, fullFileName);
-                
+                request.setAttribute(LPTestingParams.TESTING_SOURCE, "FILE");
+
                 TestingServletsConfig endPoints = TestingServletsConfig.valueOf(testerName);
 
                 switch (endPoints){

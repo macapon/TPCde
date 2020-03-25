@@ -19,6 +19,7 @@ import databases.TblsAppAudit;
 import databases.TblsCnfg;
 import databases.Token;
 import databases.TblsData;
+import databases.TblsTesting;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.ConfigProgramCalendar;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
@@ -81,13 +82,19 @@ public class TestingServer extends HttpServlet {
 //            MyEnum m = null;            
 //            out.println("Fran "+m.getByIndexFran(1));
 
+String schemaPrefix="em-demo-a";
+        String tblCreateScript=TblsTesting.Script.createTableScript(schemaPrefix, new String[]{""});
+        //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+        tblCreateScript=TblsTesting.ScriptSteps.createTableScript(schemaPrefix, new String[]{""});
+        //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+        
         String tblCreateScript2=TblsApp.Incident.createTableScript(new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
         tblCreateScript2=TblsAppAudit.Session.createTableScript("", new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
-            String schemaPrefix="genoma-1";
+schemaPrefix="genoma-1";
         tblCreateScript2=TblsCnfg.SopMetaData.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
         
@@ -226,7 +233,7 @@ out.println("FIN");
             out.println("Info from "+schemaPrefixSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
         
         JSONObject jsonObj = new JSONObject();
-        String tblCreateScript="";
+
 
         String schemaNamePrefix="em-demo-a";
         tblCreateScript=TblsEnvMonitConfig.InstrIncubator.createTableScript(schemaNamePrefix, new String[]{""});

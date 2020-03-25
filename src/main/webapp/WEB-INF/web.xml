@@ -209,12 +209,24 @@
         <servlet-class>com.labplanet.servicios.app.TesterFromUploadFile</servlet-class>
     </servlet>
     <servlet>
+        <servlet-name>TestingRegressionUAT</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.TestingRegressionUAT</servlet-class>
+    </servlet>
+    <servlet>
         <servlet-name>IncidentAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.IncidentAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>IncidentAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.IncidentAPIfrontend</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TestingEnvMonitSamples</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.TestingEnvMonitSamples</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>TestingSamples</servlet-name>
+        <servlet-class>com.labplanet.servicios.modulesample.TestingSamples</servlet-class>
     </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
@@ -416,12 +428,24 @@
         <url-pattern>/testing/platform/TesterFromUploadFile</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
+        <servlet-name>TestingRegressionUAT</servlet-name>
+        <url-pattern>/testing/platform/TestingRegressionUAT</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
         <servlet-name>IncidentAPI</servlet-name>
         <url-pattern>/app/IncidentAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>IncidentAPIfrontend</servlet-name>
         <url-pattern>/frontend/IncidentAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingEnvMonitSamples</servlet-name>
+        <url-pattern>/testing/moduleEnvMonit/TestingEnvMonitSamples</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>TestingSamples</servlet-name>
+        <url-pattern>/testing/moduleSamples/TestingSamples</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

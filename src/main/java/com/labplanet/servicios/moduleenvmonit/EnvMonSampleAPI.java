@@ -10,25 +10,18 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.batch.incubator.DataBatchIncubator;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
-import functionaljavaa.responserelatedobjects.RelatedObjects;
-import functionaljavaa.samplestructure.DataSample;
-import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
 
 /**
@@ -36,7 +29,8 @@ import org.json.simple.JSONObject;
  * @author Administrator
  */
 public class EnvMonSampleAPI extends HttpServlet {
-
+    
+    
     /**
      *
      */
@@ -46,21 +40,41 @@ public class EnvMonSampleAPI extends HttpServlet {
         /**
          *
          */
-        LOGSAMPLE("LOGSAMPLE", "sampleTemplate|sampleTemplateVersion|programName|locationName", "", "sampleLogged_success"),
-        ENTERRESULT("ENTERRESULT", "resultId|rawValueResult", "", "enterResult_success"),
-        ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "sampleId|microorganismName", "", "MigroorganismAdded_success"),
-        EM_BATCH_INCUB_ADD_SMP("EM_BATCH_INCUB_ADD_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId", "", "batchIncubator_sampleAdded_success"),
-        EM_BATCH_INCUB_MOVE_SMP("EM_BATCH_INCUB_MOVE_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId|positionRow|positionCol", "", "batchIncubator_sampleMoved_success"),
-        EM_BATCH_INCUB_REMOVE_SMP("EM_BATCH_INCUB_REMOVE_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId", "", "batchIncubator_sampleRemoved_success"),
-        GETSAMPLEINFO2("*****", "", "", ""),
+        LOGSAMPLE("LOGSAMPLE", "sampleTemplate|sampleTemplateVersion|programName|locationName", "", "sampleLogged_success", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7), 
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 11)} ),
+        ENTERRESULT("ENTERRESULT", "resultId|rawValueResult", "", "enterResult_success", new LPAPIArguments[0] ),
+        ADD_SAMPLE_MICROORGANISM("ADD_SAMPLE_MICROORGANISM", "sampleId|microorganismName", "", "MigroorganismAdded_success",  
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6 ),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7 ) }),
+        EM_BATCH_INCUB_ADD_SMP("EM_BATCH_INCUB_ADD_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId", "", "batchIncubator_sampleAdded_success", new LPAPIArguments[0] ),
+        EM_BATCH_INCUB_MOVE_SMP("EM_BATCH_INCUB_MOVE_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId|positionRow|positionCol", "", "batchIncubator_sampleMoved_success", new LPAPIArguments[0] ),
+        EM_BATCH_INCUB_REMOVE_SMP("EM_BATCH_INCUB_REMOVE_SMP", "batchName|batchTemplateId|batchTemplateVersion|sampleId", "", "batchIncubator_sampleRemoved_success", new LPAPIArguments[0] ),
+        GETSAMPLEINFO2("*****", "", "", "", new LPAPIArguments[0] ) 
         ;      
-        private EnvMonSampleAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private EnvMonSampleAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
+            this.arguments=argums;
             
         } 
+
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+contentLine[lineIndex][curArg.getTestingArgPosic()]);
+                request.setAttribute(curArg.getName(), contentLine[lineIndex][curArg.getTestingArgPosic()]);
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }
         public String getName(){
             return this.name;
         }
@@ -73,11 +87,19 @@ public class EnvMonSampleAPI extends HttpServlet {
         private String[] getEndpointDefinition(){
             return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
         }
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }
      
         private final String name;
         private final String mandatoryParams; 
         private final String optionalParams; 
-        private final String successMessageCode;       
+        private final String successMessageCode;  
+        public  LPAPIArguments[] arguments;
+
     }
 
     /**
@@ -210,13 +232,6 @@ public class EnvMonSampleAPI extends HttpServlet {
                 return ;                           
             }            
             
-            DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();           
-            DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();           
-            DataProgramSample prgSmp = new DataProgramSample();     
-            DataSample smp = new DataSample(prgSmpAna);    
-            DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(prgSmpAnaRes);               
-            Object[] dataSample = null;
-
             EnvMonSampleAPIEndpoints endPoint = null;
             try{
                 endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -230,130 +245,17 @@ public class EnvMonSampleAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }    
-            Object[] messageDynamicData=new Object[]{};
-            RelatedObjects rObj=RelatedObjects.getInstance();
-            switch (endPoint){
-                case LOGSAMPLE:
-                    String sampleTemplate=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE);
-                    String sampleTemplateVersionStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION);                                  
 
-                    Integer sampleTemplateVersion = Integer.parseInt(sampleTemplateVersionStr);                  
-                    String fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);                                        
-                    String fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE);                    
-                    String[] fieldNames=null;
-                    Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                            
-                    String programName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);
-                    if (programName.length()==0)
-                        programName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName())].toString();
-                    String locationName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME);                                        
-                    if ((locationName==null) || (locationName.length())==0)
-                        locationName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName())].toString();
-                    Integer numSamplesToLog = 1;
-                    String numSamplesToLogStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG);    
-                    if (numSamplesToLogStr!=null){numSamplesToLog = Integer.parseInt(numSamplesToLogStr);}
-
-                    if (numSamplesToLogStr==null){
-                        dataSample = prgSmp.logProgramSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, locationName);
-                    }else{
-                        dataSample = prgSmp.logProgramSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, locationName);
-                    }
-                    //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
-                    messageDynamicData=new Object[]{dataSample[dataSample.length-1]};
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), dataSample[dataSample.length-1]);                            
-                    break;
-                case ENTERRESULT:
-                    Integer resultId = 0;
-                    String rawValueResult = "";
-                    String resultIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID);
-                    resultId = Integer.parseInt(resultIdStr);       
-                    rawValueResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT);
-                    dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
-                    messageDynamicData=new Object[]{""};
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), "");                            
-                    break;             
-                case ADD_SAMPLE_MICROORGANISM:
-                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                    Integer sampleId = Integer.parseInt(sampleIdStr);       
-                    String microorganismName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISM_NAME);  
-                    String[] microorganismNameArr=microorganismName.split("\\|");                     
-                    for (String orgName: microorganismNameArr){
-                      dataSample = DataProgramSample.addSampleMicroorganism(schemaPrefix, token, sampleId, orgName);
-                    }
-                    messageDynamicData=new Object[]{microorganismName.replace("\\|", ", "), sampleId};
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);                                                
-                    break;
-                case EM_BATCH_INCUB_ADD_SMP:
-                    String batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    String batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
-                    String batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
-                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                    
-                    Integer positionRow=null;
-                    String positionRowStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_ROW); 
-                    if (positionRowStr!=null && positionRowStr.length()>0) positionRow=Integer.valueOf(positionRowStr);
-                    Integer positionCol=null;
-                    String positionColStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_COL); 
-                    if (positionColStr!=null && positionColStr.length()>0) positionCol=Integer.valueOf(positionColStr);
-                    Boolean positionOverride=false;
-                    String positionOverrideStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE); 
-                    if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
-                    
-                    dataSample=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
-                            , Integer.valueOf(sampleIdStr), positionRow, positionCol, positionOverride);
-                    messageDynamicData=new Object[]{sampleIdStr, batchName};
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
-                    break;
-                case EM_BATCH_INCUB_MOVE_SMP:
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
-                    batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
-                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                    
-                    positionRowStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_ROW); 
-                    positionColStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_COL); 
-                    positionOverride=false;
-                    positionOverrideStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_POSITION_OVERRIDE); 
-                    if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
-                    
-                    dataSample=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
-                            , Integer.valueOf(sampleIdStr), Integer.valueOf(positionRowStr), Integer.valueOf(positionColStr), positionOverride);
-                    messageDynamicData=new Object[]{sampleIdStr, batchName};
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
-                    break;
-                case EM_BATCH_INCUB_REMOVE_SMP:
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
-                    batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
-                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                    dataSample=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), Integer.valueOf(sampleIdStr));
-                    messageDynamicData=new Object[]{sampleIdStr, batchName};
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleIdStr));
-                    RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
-                    break;
-                case GETSAMPLEINFO2:
-                    RequestDispatcher rd3 = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
-                    rd3.forward(request,response);  
-                    //messageDynamicData=new Object[]{sampleId};
-                    //RelatedObjects.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), Integer.valueOf(sampleId));                    
-                    return;
-                default:    
-                    Rdbms.closeRdbms(); 
-                    RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_API_URL);
-                    rd.forward(request,response);   
-                    return;
-            }    
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
+            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
+            Object[] diagnostic=clss.getDiagnostic();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
-                rObj.killInstance();
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
             }            
         }catch(Exception e){   

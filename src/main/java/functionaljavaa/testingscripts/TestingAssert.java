@@ -16,8 +16,10 @@ import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_MESSAGE_POSIC;
  */
 public class TestingAssert {
     
-    String evalBoolean="";
-    String errorCode="";    
+    private String evalSyntaxis="";
+    private String evalCode="";    
+    private String evalSyntaxisDiagnostic="";  
+    private String evalCodeDiagnostic="";  
     
     /**
      *
@@ -27,11 +29,11 @@ public class TestingAssert {
     public TestingAssert(Object[] line, Integer numArgs){
         switch (numArgs.toString()){                    
             case "1":
-                this.evalBoolean=(String) line[0];
+                this.evalSyntaxis=(String) line[0];
                 break;
             case "2":
-                this.evalBoolean=(String) line[0];
-                this.errorCode=(String) line[1];
+                this.evalSyntaxis=(String) line[0];
+                this.evalCode=(String) line[1];
                 break;
             default:                
         }        
@@ -48,37 +50,81 @@ public class TestingAssert {
         String sintaxisIcon = ""; 
         String codeIcon = "";
         if (numEvaluationArguments>=1){
-            if ( (this.evalBoolean==null) || (this.evalBoolean.length()==0) ||("".equals(this.evalBoolean)) ){
-                tstAssertSummary.increasetotalLabPlanetBooleanUndefined();sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;
+            if ( (this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())) ){
+                tstAssertSummary.increasetotalLabPlanetBooleanUndefined();
+                sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;
+                this.evalSyntaxisDiagnostic="UNDEFINED";
             }else{
-                if (this.evalBoolean.equalsIgnoreCase(diagnoses[0].toString())){
-                    tstAssertSummary.increasetotalLabPlanetBooleanMatch(); sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
-                }else{tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;}
+                if (this.getEvalSyntaxis().equalsIgnoreCase(diagnoses[0].toString())){
+                    tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
+                    sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
+                    this.evalSyntaxisDiagnostic="MATCH";
+                }else{
+                    tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
+                    sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
+                    this.evalSyntaxisDiagnostic="UNMATCH";
+                }
             }
         }else{
             tstAssertSummary.increasetotalLabPlanetBooleanUndefined();sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;            
         }
         if (numEvaluationArguments>=2){
-            if ( (this.errorCode==null) || (this.errorCode.length()==0) ||("".equals(this.errorCode)) ){
-                tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
+            if ( (this.getEvalCode()==null) || (this.getEvalCode().length()==0) ||("".equals(this.getEvalCode())) ){
+                tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
+                codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
+                this.evalCodeDiagnostic="UNDEFINED";
             }else{
-                if (this.errorCode.equalsIgnoreCase(diagnoses[4].toString())){
-                    tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
-                }else{tstAssertSummary.increasetotalLabPlanetErrorCodeUnMatch(); codeIcon=LPTestingOutFormat.TST_ERRORCODEUNMATCH;}
+                if (this.getEvalCode().equalsIgnoreCase(diagnoses[4].toString())){
+                    tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); 
+                    codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
+                    this.evalCodeDiagnostic="MATCH";
+                }else{
+                    tstAssertSummary.increasetotalLabPlanetErrorCodeUnMatch(); 
+                    codeIcon=LPTestingOutFormat.TST_ERRORCODEUNMATCH;
+                    this.evalCodeDiagnostic="UNMATCH";
+                }
             }    
         }else{
             tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;            
         }
-        Object[] diagnostic=new Object[] {sintaxisIcon + " ("+this.evalBoolean+") "};
+        Object[] diagnostic=new Object[] {sintaxisIcon + " ("+this.getEvalSyntaxis()+") "};
         String message="";
         if (diagnoses.length>TRAP_MESSAGE_EVALUATION_POSIC) message=message+"Syntaxis:"+diagnoses[TRAP_MESSAGE_EVALUATION_POSIC]+". ";
         if (numEvaluationArguments>=2){
             if (diagnoses.length>TRAP_MESSAGE_CODE_POSIC) message=message+"Code:"+diagnoses[TRAP_MESSAGE_CODE_POSIC]+". ";
-            diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.errorCode+")</h8> ");
+            diagnostic=LPArray.addValueToArray1D(diagnostic, codeIcon + "<h8>("+this.getEvalCode()+")</h8> ");
         }
         if (diagnoses.length>TRAP_MESSAGE_MESSAGE_POSIC) message=message+"Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]+". ";  
         diagnostic=LPArray.addValueToArray1D(diagnostic, message);
         return diagnostic;
 }
+
+    /**
+     * @return the evalSyntaxis
+     */
+    public String getEvalSyntaxis() {
+        return evalSyntaxis;
+    }
+
+    /**
+     * @return the evalCode
+     */
+    public String getEvalCode() {
+        return evalCode;
+    }
+
+    /**
+     * @return the evalSyntaxisDiagnostic
+     */
+    public String getEvalSyntaxisDiagnostic() {
+        return evalSyntaxisDiagnostic;
+    }
+
+    /**
+     * @return the evalCodeDiagnostic
+     */
+    public String getEvalCodeDiagnostic() {
+        return evalCodeDiagnostic;
+    }
     
 }

@@ -71,6 +71,30 @@ public class LPHttp {
      * @param paramNames
      * @return
      */
+    public static Object[] areAPIMandatoryParamsInApiRequest(HttpServletRequest request, String[] paramNames){        
+        Object [] diagnoses = null;        
+        StringBuilder paramsNotPresent = new StringBuilder(); 
+        if ( (paramNames!=null) && (paramNames.length>1 || (paramNames.length==1 && (!"".equals(paramNames[0])))) ){
+            for (String curParam: paramNames){
+                Boolean notPresent = false;
+                String curParamValue = request.getParameter(curParam);
+                if (curParamValue==null){notPresent=true;}
+                if ("undefined".equals(curParamValue)){notPresent=true;}
+                if ("".equals(curParamValue)){notPresent=true;}
+                if (notPresent){
+                    paramsNotPresent.append(curParam).append(", ");
+                }
+            }
+        }
+        if (paramsNotPresent.length()>0){
+            diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_FALSE);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, paramsNotPresent);
+            return diagnoses;
+        }else{
+            return new Object[]{LPPlatform.LAB_TRUE};           
+        }
+    }
+
     public static Object[] areMandatoryParamsInApiRequest(HttpServletRequest request, String[] paramNames){        
         Object [] diagnoses = null;        
         StringBuilder paramsNotPresent = new StringBuilder(); 
@@ -83,6 +107,37 @@ public class LPHttp {
                 if ("".equals(curParamValue)){notPresent=true;}
                 if (notPresent){
                     paramsNotPresent.append(curParam).append(", ");
+                }
+            }
+        }
+        if (paramsNotPresent.length()>0){
+            diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_FALSE);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, paramsNotPresent);
+            return diagnoses;
+        }else{
+            return new Object[]{LPPlatform.LAB_TRUE};           
+        }
+    }
+    
+    /**
+     *
+     * @param request
+     * @param paramNames
+     * @return
+     */
+    public static Object[] areEndPointMandatoryParamsInApiRequest(HttpServletRequest request, LPAPIArguments[] paramNames){        
+        Object [] diagnoses = null;        
+        StringBuilder paramsNotPresent = new StringBuilder(); 
+        if ( (paramNames!=null) && (paramNames.length>1 || (paramNames.length==1 && (!"".equals(paramNames[0])))) ){
+            for (LPAPIArguments curParam: paramNames){
+                if (curParam.getMandatory()){
+                    Boolean notPresent = false;
+                    String curParamValue = request.getParameter(curParam.getName());
+                    if (curParamValue==null){notPresent=true;}
+                    if ("undefined".equals(curParamValue)){notPresent=true;}
+                    if ("".equals(curParamValue)){notPresent=true;}
+                    if (notPresent)
+                        paramsNotPresent.append(curParam.getName()).append(", ");
                 }
             }
         }

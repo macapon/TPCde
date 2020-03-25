@@ -5,6 +5,7 @@
  */
 package com.labplanet.servicios.app;
 
+import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
@@ -30,6 +31,7 @@ import static functionaljavaa.user.UserAndRolesViews.setUserNewPassword;
 import functionaljavaa.user.UserProfile;
 import java.util.Date;
 import java.util.ResourceBundle;
+import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 /**
@@ -57,21 +59,30 @@ public class AuthenticationAPI extends HttpServlet {
             
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
             ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-
+            
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);                                    
-            switch (actionName.toUpperCase()){
-                case AuthenticationAPIParams.API_ENDPOINT_AUTHENTICATE:                         
-                    Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_AUTHENTICATE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                                    
-                    }     
-                    String dbUserName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_USERNAME);   
+            AuthenticationAPIEndpoints endPoint=null;
+            try{
+                endPoint = AuthenticationAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }                
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
+            switch (endPoint){
+                case AUTHENTICATE:                         
+                    
+                    String dbUserName = argValues[0].toString();
+                    String dbUserPassword = argValues[1].toString();                 
                     String userIsCaseSensitive = prop.getString(BUNDLE_PARAMETER_CREDENTIALS_USER_IS_CASESENSITIVE);
                     if (!Boolean.valueOf(userIsCaseSensitive)) dbUserName=dbUserName.toLowerCase();
                     
-                    String dbUserPassword = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DB_PSSWD);                      
                     String personName = UserAndRolesViews.getPersonByUser(dbUserName);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(personName)){               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_PERSON_NOT_FOUND, null, language);              
@@ -93,15 +104,8 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_MY_TOKEN, myToken);
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;
-                case AuthenticationAPIParams.API_ENDPOINT_GET_USER_ROLE:                                                 
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_GETUSERROLE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                          
-                    }                                             
-                    String firstToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN);                   
-                    
+                case GETUSERROLE:                                                 
+                    String firstToken = argValues[0].toString();                    
                     token = new Token(firstToken);
                     
                     UserProfile usProf = new UserProfile();
@@ -120,20 +124,13 @@ public class AuthenticationAPI extends HttpServlet {
                     response.getWriter().write(jArray.toJSONString()); 
                     Rdbms.closeRdbms();    
                     return;                                
-                case AuthenticationAPIParams.API_ENDPOINT_FINAL_TOKEN:   
+                case FINALTOKEN:   
                   Rdbms.stablishDBConection();
                   if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_FINALTOKEN.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                                               
-                    }                                                     
-                    firstToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN);                   
-                    String userRole = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_ROLE);                     
+                    firstToken = argValues[0].toString();
+                    String userRole = argValues[1].toString();
 
                     token = new Token(firstToken);
-
                     String[] fieldsName = new String[]{TblsApp.AppSession.FLD_PERSON.getName(), TblsApp.AppSession.FLD_ROLE_NAME.getName()};
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
                     Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue);                    
@@ -177,15 +174,9 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_USER_TABS_ON_LOGIN, jArr);
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;                                   
-                case AuthenticationAPIParams.API_ENDPOINT_TOKEN_VALIDATE_ESIGN_PHRASE:     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_ESIGN_PHRASE.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);  
-                        return;                                                                                          
-                    }                                               
-                    myToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN);                   
-                    String esignPhraseToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);                      
+                case TOKEN_VALIDATE_ESIGN_PHRASE:     
+                    myToken = argValues[0].toString();
+                    String esignPhraseToCheck = argValues[1].toString();
 
                     token = new Token(myToken);
                     
@@ -197,16 +188,10 @@ public class AuthenticationAPI extends HttpServlet {
                         return;                             
                     }
                     
-                case AuthenticationAPIParams.API_ENDPOINT_TOKEN_VALIDATE_USER_CREDENTIALS:     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_TOKEN_VALIDATE_USER_CREDENTIALS.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);
-                        return;                                          
-                    }                                                                                            
-                    myToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MY_TOKEN);                   
-                    String userToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);                      
-                    String passwordToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);                      
+                case TOKEN_VALIDATE_USER_CREDENTIALS:     
+                    myToken = argValues[0].toString();
+                    String userToCheck = argValues[1].toString();                      
+                    String passwordToCheck = argValues[2].toString();
                     
                     token = new Token(myToken);
                     if ( (userToCheck.equals(token.getUserName())) && (passwordToCheck.equals(token.getUsrPw())) ){
@@ -215,17 +200,11 @@ public class AuthenticationAPI extends HttpServlet {
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_PSSWD_TO_CHECK_INVALID, new Object[]{userToCheck}, language);              
                     }    
                     break;
-                case AuthenticationAPIParams.API_ENDPOINT_USER_CHANGE_PSSWD:     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_USER_CHANGE_PSSWD.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);
-                        return;                                          
-                    }                                                                                            
-                    String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-                    userToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);                      
-                    passwordToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);  
-                    String newPassword = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_NEW); 
+                case USER_CHANGE_PSWD:     
+                    String finalToken = argValues[0].toString();
+                    userToCheck = argValues[1].toString();
+                    passwordToCheck = argValues[2].toString();
+                    String newPassword = argValues[3].toString();
                     token = new Token(finalToken);
                     Object[] newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
@@ -245,17 +224,11 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;      
-                case AuthenticationAPIParams.API_ENDPOINT_USER_CHANGE_ESIGN:     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, AuthenticationAPIParams.MANDATORY_PARAMS_CASE_USER_CHANGE_ESIGN.split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[] {areMandatoryParamsInResponse[1].toString()}, language);
-                        return;                                          
-                    }                                                                                            
-                    finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-                    userToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);                      
-                    passwordToCheck = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);  
-                    String newEsign = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ESIGN_NEW); 
+                case USER_CHANGE_ESIGN:     
+                    finalToken = argValues[0].toString();
+                    userToCheck = argValues[1].toString();
+                    passwordToCheck = argValues[2].toString();
+                    String newEsign = argValues[3].toString();
                     token = new Token(finalToken);
                     Object[] newEsignDiagn=setUserNewEsign(token.getUserName(), newEsign);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newEsignDiagn[0].toString()))
@@ -275,9 +248,9 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;        
-                case AuthenticationAPIParams.API_ENDPOINT_SET_DEFAULT_TABS_ON_LOGIN: 
-                    finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
-                    String tabsString = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TABS_STRING);   
+                case SET_DEFAULT_TABS_ON_LOGIN: 
+                    finalToken = argValues[0].toString();
+                    String tabsString = argValues[1].toString();
                     token = new Token(finalToken);
                     Object[] diagn=setUserDefaultTabsOnLogin(token, tabsString);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))
