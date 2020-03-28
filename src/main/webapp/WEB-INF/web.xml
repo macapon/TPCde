@@ -75,7 +75,7 @@
     </servlet>
     <servlet>
         <servlet-name>UserProfileAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.app.UserProfileAPI</servlet-class>
+        <servlet-class>com.labplanet.servicios.app.zUserProfileAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>GlobalAPIsParams</servlet-name>

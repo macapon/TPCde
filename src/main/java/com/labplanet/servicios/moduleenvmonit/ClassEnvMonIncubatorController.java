@@ -5,32 +5,30 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 
 /**
  *
  * @author User
  */
-public class ClassEnvMonSampleController {
-    
+public class ClassEnvMonIncubatorController {
     private StringBuilder rowArgsRows=new StringBuilder();
     private Object[] functionDiagn=new Object[0];
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassEnvMonSampleController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonIncubatorController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
         
         Object[] argsForLogFiles=new Object[0];
-        EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint = null;
+        EnvMonIncubationAPIEndpoints endPoint = null;
         try{
-            endPoint = EnvMonSampleAPI.EnvMonSampleAPIEndpoints.valueOf(actionName.toString().toUpperCase());
+            endPoint = EnvMonIncubationAPIEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);
@@ -39,7 +37,7 @@ public class ClassEnvMonSampleController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix.toString(), endPoint);
+            ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, token, schemaPrefix, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
             

@@ -32,8 +32,8 @@ public class AppIncident {
     
     enum IncidentAPIErrorMessages{
         AAA_FILE_NAME("errorTrapping"),
-        INCIDENT_NOT_ACTIVE("incidentNotActive"),
-        INCIDENT_ACTIVE("incidentActive"),
+        INCIDENT_CURRENTLY_NOT_ACTIVE("incidentCurrentlyNotActive"),
+        INCIDENT_ALREADY_ACTIVE("incidentAlreadyActive"),
         ;
         private IncidentAPIErrorMessages(String sname){
             name=sname;
@@ -163,8 +163,8 @@ public class AppIncident {
     
     private Object[] isIncidentActive(Integer incidentId){
         String currentStatus=this.fieldValues[LPArray.valuePosicInArray(this.fieldNames, TblsApp.Incident.FLD_STATUS.getName())].toString();
-        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_NOT_ACTIVE.getErrorCode(), new Object[]{incidentId});
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ACTIVE.getErrorCode(), new Object[]{incidentId});
+        if (IncidentStatuses.CLOSED.toString().equalsIgnoreCase(currentStatus)) return  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, IncidentAPIErrorMessages.INCIDENT_CURRENTLY_NOT_ACTIVE.getErrorCode(), new Object[]{incidentId});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, IncidentAPIErrorMessages.INCIDENT_ALREADY_ACTIVE.getErrorCode(), new Object[]{incidentId});
     }
     
 /*    private static Object[] getValueByFldName(String fldName){

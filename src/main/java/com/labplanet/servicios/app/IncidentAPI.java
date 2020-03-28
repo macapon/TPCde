@@ -37,7 +37,7 @@ public class IncidentAPI extends HttpServlet {
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
     
     public enum IncidentAPIEndpoints{

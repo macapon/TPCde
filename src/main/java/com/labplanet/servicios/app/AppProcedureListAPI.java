@@ -33,7 +33,7 @@ public class AppProcedureListAPI extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET = "finalToken";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
     /**
      *

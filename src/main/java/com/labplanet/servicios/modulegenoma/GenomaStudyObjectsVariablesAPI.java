@@ -30,7 +30,7 @@ import org.json.simple.JSONObject;
 public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
     public enum  GenomaStudyObjectsVariablesAPIParamsList{
         studyName, variableSetName, variableName, newValue, fieldsValues, userName, userRole, ownerTable, ownerId}
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
             
     public enum  GenomaStudyObjectsVariablesAPIEndPoints{
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),

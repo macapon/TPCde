@@ -30,7 +30,7 @@ public class ProjectAPI extends HttpServlet {
     
     public enum  GenomaProjectAPIParamsList{
         projectName, fieldsNames, fieldsValues, userName, userRole}
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
             
     public enum  GenomaProjectAPIEndPoints{
           PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),

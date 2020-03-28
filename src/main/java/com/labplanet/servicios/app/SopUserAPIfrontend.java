@@ -33,7 +33,7 @@ public class SopUserAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
 
     /**
      *

@@ -35,7 +35,7 @@ public class GenomaStudyAPI extends HttpServlet {
 
     public enum  GenomaStudyAPIParamsList{
         projectName, studyName, individualId, individualName, sampleId, samplesSetName, familyName, individualsList, samplesList, fieldsNames, fieldsValues, userName, userRole}
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
             
     public enum  GenomaStudyAPIEndPoints{
           STUDY_NEW("STUDY_NEW", "studyName"), STUDY_UPDATE("STUDY_UPDATE", "studyName|fieldsNames|fieldsValues"),

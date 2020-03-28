@@ -5,6 +5,7 @@
  */
 package lbplanet.utilities;
 
+import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import java.sql.Date;
 /**
@@ -13,7 +14,7 @@ import java.sql.Date;
  */
 public class LPAPIArguments {
     
-    public enum ArgumentType{STRING, INTEGER, STRINGARR, STRINGOFOBJECTS, DATE};
+    public enum ArgumentType{STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, BOOLEAN};
     private final String name;
     private String type=ArgumentType.STRING.toString();
     private final Boolean mandatory;
@@ -54,8 +55,7 @@ public class LPAPIArguments {
             String requestArgValue=request.getParameter(currArg.getName());
                 if (requestArgValue==null) requestArgValue=LPNulls.replaceNull(request.getAttribute(currArg.getName())).toString();
             try{
-                ArgumentType argType=ArgumentType.valueOf(currArg.getType().toUpperCase());
-                
+                ArgumentType argType=ArgumentType.valueOf(currArg.getType().toUpperCase());                
                 switch (argType){
                     case STRING:
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
@@ -64,9 +64,17 @@ public class LPAPIArguments {
                         Integer valueConverted = Integer.parseInt(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConverted);
                         break;
+                    case BIGDECIMAL:
+                        BigDecimal valueConvertedBigDec = new BigDecimal(requestArgValue);
+                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBigDec);
+                        break;
                     case DATE:     
                         Date valueConvertedDate=Date.valueOf(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
+                        break;
+                    case BOOLEAN:     
+                        Boolean valueConvertedBoolean=Boolean.valueOf(requestArgValue);
+                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
                         break;
 /*                    case STRINGARR:
                         String[] valueConvertedStrArr = requestArgValue.split("\\|");
@@ -81,7 +89,7 @@ public class LPAPIArguments {
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                         break;                
                 }   
-            }catch(Exception e){
+            }catch(NumberFormatException e){
                     returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                     break;                                
             }

@@ -28,7 +28,7 @@ import org.json.simple.JSONObject;
  *
  * @author Administrator
  */
-public class UserProfileAPI extends HttpServlet {
+public class zUserProfileAPI extends HttpServlet {
     
     public enum UserProfileAPIEndpoints{
         /**
@@ -64,7 +64,7 @@ public class UserProfileAPI extends HttpServlet {
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET = "actionName|finalToken";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -79,7 +79,7 @@ public class UserProfileAPI extends HttpServlet {
         response=LPHttp.responsePreparation(response);
         String language = LPFrontEnd.setLanguage(request);         
         try (PrintWriter out = response.getWriter()) {
-            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+            Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                  LPFrontEnd.servletReturnResponseError(request, response, 
                          LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -100,7 +100,7 @@ public class UserProfileAPI extends HttpServlet {
                mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
            }        
            if (mandatoryParams!=null){
-               areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
+               areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                    LPFrontEnd.servletReturnResponseError(request, response, 
                            LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -135,7 +135,7 @@ public class UserProfileAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
@@ -146,7 +146,7 @@ public class UserProfileAPI extends HttpServlet {
             RelatedObjects rObj=RelatedObjects.getInstance();
             switch (endPoint){
                 case UPDATE_ESIGN: 
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, new String[]{"newEsignPhrase"});
+                    areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, new String[]{"newEsignPhrase"});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -196,7 +196,7 @@ public class UserProfileAPI extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(UserProfileAPI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(zUserProfileAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -211,7 +211,7 @@ public class UserProfileAPI extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(UserProfileAPI.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(zUserProfileAPI.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

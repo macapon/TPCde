@@ -345,11 +345,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
 
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
-            errorCode = "DataSample_SamplingDateChangedSuccessfully";
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, sampleId.toString());
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaDataName);
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", ")));        
-            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);
+            diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SamplingDateChangedSuccessfully", new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});
 
             String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
 

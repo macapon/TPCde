@@ -5,6 +5,7 @@
  */
 package functionaljavaa.instruments.incubator;
 
+import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
@@ -102,11 +103,14 @@ public class DataIncubatorNoteBook {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_ACTIVE", new Object[]{instName, schemaPrefix});
-        return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
+        Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()}, 
                 new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_ADD_TEMP_READING.getSuccessMessageCode(), new Object[]{instName, schemaPrefix});
+        
         //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT_IMPLEMENTED", new Object[0]);
     }
     

@@ -7,20 +7,17 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonSampleAPI.MANDATORY_PARAMS_MAIN_SERVLET;
-import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.instruments.incubator.ConfigIncubator;
-import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
-import functionaljavaa.responserelatedobjects.RelatedObjects;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.math.BigDecimal;
-import javax.servlet.RequestDispatcher;
+import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -32,22 +29,36 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class EnvMonIncubationAPI extends HttpServlet {
-    
+
     public enum EnvMonIncubationAPIEndpoints{
         /**
          *
          */
-        EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubatorName", "", "incubator_activate_success"),
-        EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubatorName", "", "incubator_deactivate_success"),
-        EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubatorName|temperature", "", "incubator_add_temp_reading_success"),
+        EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubatorName", "", "incubator_activate_success", 
+            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+        EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubatorName", "", "incubator_deactivate_success", 
+            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+        EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubatorName|temperature", "", "incubator_add_temp_reading_success", 
+            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 7)}),
         ;
-        private EnvMonIncubationAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private EnvMonIncubationAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
-            
+            this.arguments=argums;
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
             return this.name;
         }
@@ -60,11 +71,17 @@ public class EnvMonIncubationAPI extends HttpServlet {
         private String[] getEndpointDefinition(){
             return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
         }
-     
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
         private final String name;
         private final String mandatoryParams; 
         private final String optionalParams; 
-        private final String successMessageCode;       
+        private final String successMessageCode; 
+        public  LPAPIArguments[] arguments;
     }    
   
   /**
@@ -83,7 +100,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
         String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -111,7 +128,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
         }        
         if (mandatoryParams!=null){
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, mandatoryParams);
+            areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 
                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -160,12 +177,26 @@ public class EnvMonIncubationAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
-            }           
+            }                
+            ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, token, schemaPrefix, endPoint);
+            Object[] diagnostic=clss.getDiagnostic();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+/*                Rdbms.rollbackWithSavePoint();
+                if (!con.getAutoCommit()){
+                    con.rollback();
+                    con.setAutoCommit(true);}                */
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+            }else{
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+            }               
+/*            
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             Object[] messageDynamicData=new Object[]{};
             RelatedObjects rObj=RelatedObjects.getInstance();
             
@@ -173,20 +204,20 @@ public class EnvMonIncubationAPI extends HttpServlet {
             Rdbms.setTransactionId(schemaConfigName);        
             switch (endPoint){
                 case EM_INCUBATION_ACTIVATE:
-                    String instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
+                    String instrName=argValues[0].toString();               
                     actionDiagnoses=ConfigIncubator.activateIncubator(schemaPrefix, instrName, token.getPersonName());
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
                     messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_DEACTIVATE:
-                    instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
+                    instrName=argValues[0].toString();
                     actionDiagnoses=ConfigIncubator.deactivateIncubator(schemaPrefix, instrName, token.getPersonName());
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
                     messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_ADD_TEMP_READING:
-                    instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
-                    String temperature=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE);                  
+                    instrName=argValues[0].toString();
+                    String temperature=argValues[1].toString();
                     actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(schemaPrefix, instrName, token.getPersonName(), new BigDecimal(temperature));                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
@@ -198,16 +229,18 @@ public class EnvMonIncubationAPI extends HttpServlet {
                     rd.forward(request,response);  
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
+//                Rdbms.rollbackWithSavePoint();
+//                if (!con.getAutoCommit()){
+//                    con.rollback();
+//                    con.setAutoCommit(true);}                
+                rObj.killInstance();
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                
-            }                
+            } 
+*/            
         }catch(Exception e){      
             Rdbms.closeRdbms();                   
             errObject = new String[]{e.getMessage()};
@@ -215,7 +248,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, errMsg);
         } finally {
             // release database resources
-            try {
+            try {                
                 //con.close();
                 Rdbms.closeRdbms();   
             } catch (Exception ignore) {

@@ -5,14 +5,11 @@
  */
 package com.labplanet.servicios.modulesample;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 
 /**

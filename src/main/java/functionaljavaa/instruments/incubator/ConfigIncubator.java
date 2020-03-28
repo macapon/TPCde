@@ -5,6 +5,7 @@
  */
 package functionaljavaa.instruments.incubator;
 
+import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import databases.Rdbms;
 import lbplanet.utilities.LPPlatform;
@@ -15,6 +16,13 @@ import lbplanet.utilities.LPPlatform;
  */
 public class ConfigIncubator {
     
+    public enum ConfigIncubatorErrorCodes{NOT_EXISTS("incubatorDoesnotExist"),ALREADY_ACTIVE("incubatorAlreadyActive"), CURRENTLY_DEACTIVE("incubatorCurrentlyDeactive"); 
+        ConfigIncubatorErrorCodes(String cde){
+            this.code=cde;
+        }
+        public String getErrorCde(){return this.code;}
+        private final String code;
+    }
     /**
      *
      * @param schemaPrefix
@@ -27,14 +35,16 @@ public class ConfigIncubator {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.toString(), new Object[]{instName, schemaPrefix});
         if (Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_ALREADY_ACTIVE", new Object[]{instName, schemaPrefix}); 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.ALREADY_ACTIVE.toString(), new Object[]{instName, schemaPrefix}); 
         Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(),
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{true}, 
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubUpdate[0].toString())) return incubUpdate;
-        return DataIncubatorNoteBook.activation(schemaPrefix, instName, personName);        
+        Object[] incubNoteBookDiag=DataIncubatorNoteBook.activation(schemaPrefix, instName, personName); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubNoteBookDiag[0].toString())) return incubNoteBookDiag;
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_ACTIVATE.getSuccessMessageCode(), new Object[]{instName, schemaPrefix});
     }    
 
     /**
@@ -49,14 +59,17 @@ public class ConfigIncubator {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.toString(), new Object[]{instName, schemaPrefix});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_ALREADY_DEACTIVE", new Object[]{instName, schemaPrefix}); 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.CURRENTLY_DEACTIVE.toString(), new Object[]{instName, schemaPrefix}); 
         Object[] incubUpdate=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(),
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, new Object[]{false}, 
             new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubUpdate[0].toString())) return incubUpdate;
-        return DataIncubatorNoteBook.deactivation(schemaPrefix, instName, personName);        
+        Object[] incubNoteBookDiag=DataIncubatorNoteBook.deactivation(schemaPrefix, instName, personName); 
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubNoteBookDiag[0].toString())) return incubNoteBookDiag;
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_DEACTIVATE.getSuccessMessageCode(), new Object[]{instName, schemaPrefix});
+
     }    
 
 }

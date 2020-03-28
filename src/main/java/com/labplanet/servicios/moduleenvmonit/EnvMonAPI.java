@@ -12,47 +12,72 @@ import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.batch.incubator.DataBatchIncubator;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
-import functionaljavaa.responserelatedobjects.RelatedObjects;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.time.LocalDateTime;
+import java.util.HashMap;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
 
 /**
  *
  * @author Administrator
  */
-public class EnvMonAPI extends HttpServlet {    
-
+public class EnvMonAPI extends HttpServlet {  
     public enum EnvMonAPIEndpoints{
         /**
          *
          */
-        CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programName|programCorrectiveActionId", "", "programCompleteCorrectiveAction_success"),
-        EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_create_success"),
-        EM_BATCH_ASSIGN_INCUB("EM_BATCH_ASSIGN_INCUB", "incubatorName|batchName", "", "incubatorBatch_assignIncubator_success"),
-        EM_BATCH_UPDATE_INFO("EM_BATCH_UPDATE_INFO", "batchName|fieldName|fieldValue", "", "incubatorBatch_updateInfo_success"),
-        EM_BATCH_INCUB_START("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationStart_success"),
-        EM_BATCH_INCUB_END("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationEnd_success"),
-        EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "", "", "programScheduler_logScheduledSamples"),
+        CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programName|programCorrectiveActionId", "", "programCompleteCorrectiveAction_success", 
+                new LPAPIArguments[]{new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_create_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10)}),
+        EM_BATCH_ASSIGN_INCUB("EM_BATCH_ASSIGN_INCUB", "incubatorName|batchName", "", "incubatorBatch_assignIncubator_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+        EM_BATCH_UPDATE_INFO("EM_BATCH_UPDATE_INFO", "batchName|fieldName|fieldValue", "", "incubatorBatch_updateInfo_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)}),
+        EM_BATCH_INCUB_START("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationStart_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)}),
+        EM_BATCH_INCUB_END("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationEnd_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)}),
+        EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "", "", "programScheduler_logScheduledSamples", 
+                new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}),
         ;
-        private EnvMonAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private EnvMonAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
-            
+            this.arguments=argums;  
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
             return this.name;
         }
@@ -65,17 +90,23 @@ public class EnvMonAPI extends HttpServlet {
         private String[] getEndpointDefinition(){
             return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
         }
-     
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
         private final String name;
         private final String mandatoryParams; 
         private final String optionalParams; 
-        private final String successMessageCode;       
+        private final String successMessageCode;  
+        public  LPAPIArguments[] arguments;
     }
     
     /**
      *
      */
-    public static final String MANDATORY_PARAMS_MAIN_SERVLET="actionName|finalToken|schemaPrefix";
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
 
     /**
      *
@@ -138,7 +169,7 @@ public class EnvMonAPI extends HttpServlet {
         String[] errObject = new String[]{"Servlet programAPI at " + request.getServletPath()};   
 
         String[] mandatoryParams = new String[]{""};
-        Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+        Object[] areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response, 
                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
@@ -184,12 +215,13 @@ public class EnvMonAPI extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
+        areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
             LPFrontEnd.servletReturnResponseError(request, response,
                     LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
             return;
-        }
+        }                
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         try (PrintWriter out = response.getWriter()) {
 
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
@@ -201,103 +233,21 @@ public class EnvMonAPI extends HttpServlet {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){            
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return ;                           
-            }            
-            
-            DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();           
-            DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();           
-            DataProgramSample prgSmp = new DataProgramSample();     
-            String batchName = "";
-            String incubationName = "";
-            RelatedObjects rObj=RelatedObjects.getInstance();   
-            Object[] messageDynamicData=new Object[]{};
-            switch (endPoint){
-                case CORRECTIVE_ACTION_COMPLETE:
-                    String programName=request.getParameter(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME);
-                    Integer correctiveActionId = Integer.valueOf(request.getParameter(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID));                                  
-                    
-                    actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(schemaPrefix, token, correctiveActionId);
-                    break;
-                case EM_BATCH_INCUB_CREATE:    
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    String batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
-                    String batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);
-                    String fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);                                        
-                    String fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE);                    
-                    String[] fieldNames=new String[0];
-                    Object[] fieldValues=new Object[0];
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
-                    actionDiagnoses= DataBatchIncubator.createBatch(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), fieldNames, fieldValues);
-                    batchName=actionDiagnoses[actionDiagnoses.length-1].toString();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
-                    messageDynamicData=new Object[]{batchName};
-                    break;                    
-                case EM_BATCH_ASSIGN_INCUB: 
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    incubationName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
-                    messageDynamicData=new Object[]{incubationName, batchName};
-                    actionDiagnoses=DataBatchIncubator.batchAssignIncubator(schemaPrefix, token, batchName, incubationName);
-                    break;
-                case EM_BATCH_UPDATE_INFO: 
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
-                    fieldName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME);
-                    String[] fieldsName = fieldName.split("\\|");
-                    fieldValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE);
-                    Object[] fieldsValue= LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
-                    actionDiagnoses=DataBatchIncubator.batchUpdateInfo(schemaPrefix, token, batchName, fieldsName, fieldsValue);
-                    messageDynamicData=new Object[]{incubationName, batchName};
-                    break;
-                case EM_BATCH_INCUB_START:
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
-                    batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
-                    batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);                    
-                    String incubName=null;
-                    actionDiagnoses=DataBatchIncubator.batchStarted(schemaPrefix, token, batchName, incubName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion));
-                    messageDynamicData=new Object[]{incubationName, batchName};
-                    break;                    
-                case EM_BATCH_INCUB_END:
-                    batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
-                    batchTemplateId = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID);
-                    batchTemplateVersion = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION);                    
-                    incubName=null;
-                    actionDiagnoses=DataBatchIncubator.batchEnded(schemaPrefix, token, batchName, incubName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion));
-                    messageDynamicData=new Object[]{incubationName, batchName};
-                    break;
-                case EM_LOGSAMPLE_SCHEDULER:
-                    String dateStartStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DATE_START);      
-                    LocalDateTime dateStart=null;
-                    if (dateStartStr!=null) dateStart=LPDate.dateStringFormatToLocalDateTime(dateStartStr);
-                    String dateEndStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DATE_END);      
-                    LocalDateTime dateEnd=null;
-                    if (dateEndStr!=null) dateEnd=LPDate.dateStringFormatToLocalDateTime(dateEndStr);
-                    String programNameStr = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);      
-                    programName=null;
-                    if (programNameStr!=null) programName=programNameStr;
-                    actionDiagnoses=prgSmp.logProgramSampleScheduled(schemaPrefix, token, programName, dateStart, dateEnd);
-                    messageDynamicData=new Object[]{};
-                    break;
-                default:    
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-                    return;    
-            }    
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
-//                Rdbms.rollbackWithSavePoint();
-//                if (!con.getAutoCommit()){
-//                    con.rollback();
-//                    con.setAutoCommit(true);}                
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
+            }                        
+
+            ClassEnvMon clss=new ClassEnvMon(request, token, schemaPrefix, endPoint);
+            Object[] diagnostic=clss.getDiagnostic();
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+/*                Rdbms.rollbackWithSavePoint();
+                if (!con.getAutoCommit()){
+                    con.rollback();
+                    con.setAutoCommit(true);}                */
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
-                rObj.killInstance();
-                //LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                
-                //JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(actionDiagnoses);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }           
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+            }   
+            
         }catch(Exception e){   
  /*           try {
                 con.rollback();

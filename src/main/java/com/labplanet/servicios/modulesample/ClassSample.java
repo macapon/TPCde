@@ -24,9 +24,9 @@ import functionaljavaa.samplestructure.DataSampleStages;
 import java.math.BigDecimal;
 import java.sql.Date;
 import javax.servlet.http.HttpServletRequest;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -61,10 +61,14 @@ public class ClassSample {
     public Object[] getDiagnostic() {
         return this.diagnostic;
     }
+    public Boolean getFunctionFound() {
+        return functionFound;
+    }    
     private Object[] messageDynamicData=new Object[]{};
     private RelatedObjects relatedObj=RelatedObjects.getInstance();
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
+    private Boolean functionFound=false;
     
     public ClassSample(HttpServletRequest request, Token token, String schemaPrefix, SampleAPIEndpoints endPoint){
         Object[] dynamicDataObjects=new Object[]{};
@@ -75,31 +79,26 @@ public class ClassSample {
         DataModuleSampleAnalysisResult moduleSmpAnaRes = new DataModuleSampleAnalysisResult();
         DataSample smp = new DataSample(smpAna);
         DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(moduleSmpAnaRes);
+        
         Integer incubationStage=null;
         Integer sampleId = null;
         Object[] diagn = null;
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
+        this.functionFound=true;
         switch (endPoint){
             case LOGSAMPLE:
-                String sampleTemplate=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE);
-                    if (sampleTemplate==null) sampleTemplate=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE)).toString();
-                String sampleTemplateVersionStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION);                
-                    if (sampleTemplateVersionStr==null) sampleTemplateVersionStr=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION)).toString();
-                Integer sampleTemplateVersion = Integer.parseInt(sampleTemplateVersionStr);
-                String fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);
-                    if (fieldName==null) fieldName=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME)).toString();
-                String fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE);
-                    if (fieldValue==null) fieldValue=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE)).toString();
+                String sampleTemplate= argValues[0].toString();
+                Integer sampleTemplateVersion = (Integer) argValues[1];
+                String fieldName=argValues[2].toString();
+                String fieldValue=argValues[3].toString();
                 String[] fieldNames=null;
                 Object[] fieldValues=null;
                 if (fieldName!=null) fieldNames = fieldName.split("\\|");
                 if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 
-                Integer numSamplesToLog = 1;
-                String numSamplesToLogStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG);
-                    if (numSamplesToLogStr==null) numSamplesToLogStr=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_NUM_SAMPLES_TO_LOG)).toString();
-                if (numSamplesToLogStr!=null){numSamplesToLog = Integer.parseInt(numSamplesToLogStr);}
+                Integer numSamplesToLog=(Integer) argValues[4];
                 
-                if (numSamplesToLogStr==null){
+                if (numSamplesToLog==null){
                     diagn = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
                 }else{
                     diagn = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
@@ -109,41 +108,35 @@ public class ClassSample {
                 messageDynamicData=new Object[]{diagn[diagn.length-1]};
                 break;
             case RECEIVESAMPLE:
-                String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
+                sampleId = (Integer) argValues[0];
                 diagn = smp.sampleReception(schemaPrefix, token, sampleId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case SETSAMPLINGDATE:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                    if (sampleIdStr==null) sampleIdStr=LPNulls.replaceNull(request.getAttribute(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID)).toString();                
-                sampleId = Integer.parseInt(sampleIdStr);
+                sampleId = (Integer) argValues[0];
                 diagn = smp.setSamplingDate(schemaPrefix, token, sampleId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case CHANGESAMPLINGDATE:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
-                Date newDate=Date.valueOf(request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_DATE));
+                sampleId = (Integer) argValues[0];
+                Date newDate=(Date) argValues[1];
                 diagn = smp.changeSamplingDate(schemaPrefix, token, sampleId, newDate);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLINGCOMMENTADD:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
+                sampleId = (Integer) argValues[0];
                 String comment=null;
-                comment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_COMMENT);
+                comment = argValues[1].toString();
                 diagn = smp.sampleReceptionCommentAdd(schemaPrefix, token, sampleId, comment);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLINGCOMMENTREMOVE:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
-                comment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_COMMENT);
+                sampleId = (Integer) argValues[0];
+                comment = argValues[1].toString();
                 diagn = smp.sampleReceptionCommentRemove(schemaPrefix, token, sampleId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
@@ -152,9 +145,8 @@ public class ClassSample {
                 incubationStage=1;
             case INCUBATION2START:
                 if (incubationStage==null) incubationStage=2;
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
-                String incubName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
+                sampleId = (Integer) argValues[0];
+                String incubName=argValues[1].toString();
                 BigDecimal tempReading=null;
                 diagn = DataSampleIncubation.setSampleStartIncubationDateTime(schemaPrefix, token, sampleId, incubationStage, incubName, tempReading);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
@@ -164,22 +156,20 @@ public class ClassSample {
                 incubationStage=1;
             case INCUBATION2END:
                 if (incubationStage==null) incubationStage=2;
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
-                incubName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
+                sampleId = (Integer) argValues[0];
+                incubName= argValues[1].toString();
                 tempReading=null;
                 diagn = DataSampleIncubation.setSampleEndIncubationDateTime(schemaPrefix, token, sampleId, incubationStage, incubName, tempReading);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLEANALYSISADD:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
+                sampleId = (Integer) argValues[0];
                 String[] fieldNameArr = null;
                 Object[] fieldValueArr = null;
-                fieldName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);
+                fieldName = argValues[1].toString();
                 fieldNameArr =fieldName.split("\\|");
-                fieldValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE);
+                fieldValue = argValues[2].toString();
                 fieldValueArr = fieldValue.split("\\|");
                 fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray((String[]) fieldValueArr);
                 diagn = DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldNameArr, fieldValueArr, null);
@@ -187,20 +177,15 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case ENTERRESULT:
-                Integer resultId = 0;
-                String rawValueResult = "";
-                String resultIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID);
-                resultId = Integer.parseInt(resultIdStr);
-                rawValueResult = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT);
+                Integer resultId = (Integer) argValues[0];
+                String rawValueResult = argValues[1].toString();
                 diagn = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case REVIEWRESULT:
-                Integer objectId = 0;
-                String objectIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID);
-                objectId = Integer.parseInt(objectIdStr);
-                String objectLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL);
+                Integer objectId = (Integer) argValues[0];
+                String objectLevel = argValues[1].toString();
                 sampleId = null; Integer testId = null; resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
@@ -211,10 +196,8 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case CANCELRESULT:
-                objectId = 0;
-                objectIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID);
-                objectId = Integer.parseInt(objectIdStr);
-                objectLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL);
+                objectId = (Integer) argValues[0];
+                objectLevel = argValues[1].toString();
                 sampleId = null; testId = null; resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
@@ -225,10 +208,8 @@ public class ClassSample {
                 break;
             case UNREVIEWRESULT:   // No break then will take the same logic than the next one
             case UNCANCELRESULT:
-                objectId = 0;
-                objectIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID);
-                objectId = Integer.parseInt(objectIdStr);
-                objectLevel = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL);
+                objectId = (Integer) argValues[0];
+                objectLevel = argValues[1].toString();
                 sampleId = null; testId = null; resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
@@ -238,23 +219,21 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case TESTASSIGNMENT:
-                objectIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
-                testId = Integer.parseInt(objectIdStr);
-                String newAnalyst = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST);
+                testId = (Integer) argValues[0];
+                String newAnalyst = argValues[1].toString();
                 diagn = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case GETSAMPLEINFO:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
-                String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
+                sampleId = (Integer) argValues[0];
+                String sampleFieldToRetrieve = argValues[1].toString();
                 
                 String[] sampleFieldToRetrieveArr =sampleFieldToRetrieve.split("\\|");
                 schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
                 
                 String[] sortFieldsNameArr = null;
-                String sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
+                String sortFieldsName = argValues[2].toString();
                 if (! ((sortFieldsName==null) || (sortFieldsName.contains("undefined"))) ) {
                     sortFieldsNameArr = sortFieldsName.split("\\|");
                 }else{   sortFieldsNameArr=null;}
@@ -271,9 +250,8 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 return;
             case COC_STARTCHANGE:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                objectId = Integer.valueOf(sampleIdStr);
-                String custodianCandidate = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CUSTODIAN_CANDIDATE);
+                objectId = (Integer) argValues[0];
+                String custodianCandidate = argValues[1].toString();
                 ChangeOfCustody coc = new ChangeOfCustody();
                 Integer appSessionId=null;
                 if (token.getAppSessionId()!=null){appSessionId=Integer.valueOf(token.getAppSessionId());}
@@ -282,28 +260,25 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case COC_CONFIRMCHANGE:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.valueOf(sampleIdStr);
-                String confirmChangeComment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CONFIRM_CHANGE_COMMENT);
+                sampleId = (Integer) argValues[0];
+                String confirmChangeComment = argValues[1].toString();
                 coc =  new ChangeOfCustody();
                 diagn = coc.cocConfirmedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, confirmChangeComment);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case COC_ABORTCHANGE:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.valueOf(sampleIdStr);
-                String cancelChangeComment = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CANCEL_CHANGE_COMMENT);
+                sampleId = (Integer) argValues[0];
+                String cancelChangeComment = argValues[1].toString();
                 coc =  new ChangeOfCustody();
                 diagn = coc.cocAbortedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, cancelChangeComment);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case LOGALIQUOT:
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.valueOf(sampleIdStr);
-                fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);
-                fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE);
+                sampleId = (Integer) argValues[0];
+                fieldName=argValues[1].toString();
+                fieldValue=argValues[2].toString();
                 fieldNames=null;
                 fieldValues=null;
                 if (fieldName!=null) fieldNames = fieldName.split("\\|");
@@ -315,10 +290,9 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case LOGSUBALIQUOT:
-                String aliquotIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ALIQUOT_ID);
-                Integer aliquotId = Integer.valueOf(aliquotIdStr);
-                fieldName=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME);
-                fieldValue=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE);
+                Integer aliquotId = (Integer) argValues[0];
+                fieldName=argValues[1].toString();
+                fieldValue=argValues[2].toString();
                 fieldNames=null;
                 fieldValues=null;
                 if (fieldName!=null) fieldNames =  fieldName.split("\\|");
@@ -337,11 +311,9 @@ public class ClassSample {
                             LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "STAGES_FUNCTIONALITY_NOT_ENABLE", new Object[]{"Samples", schemaPrefix}));
                     return;
                 }
-                sampleId = 0;
-                sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
-                sampleId = Integer.parseInt(sampleIdStr);
-                String sampleStage = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_STAGE);
-                String sampleStageNext = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_STAGE_NEXT);
+                sampleId = (Integer) argValues[0];
+                String sampleStage = argValues[1].toString();
+                String sampleStageNext = argValues[2].toString();
                 if ((sampleStage==null) || (sampleStage=="undefined") || (sampleStage.length()==0)){
                     Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(),
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
@@ -373,10 +345,10 @@ public class ClassSample {
                 messageDynamicData=new Object[]{sampleId};
                 break;
             case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
-                String auditIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_ID);
-                diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, Integer.valueOf(auditIdStr), token.getPersonName());
-                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditIdStr);
-                messageDynamicData=new Object[]{auditIdStr};
+                Integer auditId = (Integer) argValues[0];
+                diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, Integer.valueOf(auditId), token.getPersonName());
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
+                messageDynamicData=new Object[]{auditId};
                 break;
         }
         this.diagnostic=diagn;
