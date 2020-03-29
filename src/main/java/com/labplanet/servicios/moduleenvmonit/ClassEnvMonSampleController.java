@@ -5,13 +5,11 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 
 /**
@@ -30,7 +28,7 @@ public class ClassEnvMonSampleController {
         Object[] argsForLogFiles=new Object[0];
         EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint = null;
         try{
-            endPoint = EnvMonSampleAPI.EnvMonSampleAPIEndpoints.valueOf(actionName.toString().toUpperCase());
+            endPoint = EnvMonSampleAPI.EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);
@@ -39,7 +37,7 @@ public class ClassEnvMonSampleController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix.toString(), endPoint);
+            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
             

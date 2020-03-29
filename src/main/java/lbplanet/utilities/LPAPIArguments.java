@@ -61,19 +61,23 @@ public class LPAPIArguments {
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                         break;
                     case INTEGER:
-                        Integer valueConverted = Integer.parseInt(requestArgValue);
+                        Integer valueConverted=null;
+                        if (requestArgValue.length()>0) valueConverted = Integer.parseInt(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConverted);
                         break;
                     case BIGDECIMAL:
-                        BigDecimal valueConvertedBigDec = new BigDecimal(requestArgValue);
+                        BigDecimal valueConvertedBigDec=null;
+                        if (requestArgValue.length()>0) valueConvertedBigDec = new BigDecimal(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBigDec);
                         break;
                     case DATE:     
-                        Date valueConvertedDate=Date.valueOf(requestArgValue);
+                        Date valueConvertedDate=null;
+                        if (requestArgValue.length()>0) valueConvertedDate=Date.valueOf(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedDate);
                         break;
                     case BOOLEAN:     
-                        Boolean valueConvertedBoolean=Boolean.valueOf(requestArgValue);
+                        Boolean valueConvertedBoolean=null;
+                        if (requestArgValue.length()>0) valueConvertedBoolean=Boolean.valueOf(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
                         break;
 /*                    case STRINGARR:

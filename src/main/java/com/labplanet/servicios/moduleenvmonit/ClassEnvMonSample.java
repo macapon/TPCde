@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.Token;
@@ -24,7 +23,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -75,32 +73,38 @@ public class ClassEnvMonSample {
             DataProgramSample prgSmp = new DataProgramSample();
             DataSample smp = new DataSample(prgSmpAna);               
             DataSampleAnalysisResult smpAnaRes = new DataSampleAnalysisResult(prgSmpAnaRes);
-            Object[] diagn = null;            
+            Object[] actionDiagnoses = null;              
             switch (endPoint){
                 case LOGSAMPLE:
                     if (argValues[5]==null){
-                        diagn = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], (String[]) argValues[2].toString().split("\\|"), 
+                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], (String[]) argValues[2].toString().split("\\|"), 
                                 (Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|")), (String) argValues[4], (String) argValues[5]);
                     }else{
-                        diagn = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], (String[]) argValues[2].toString().split("\\|"), 
+                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], (String[]) argValues[2].toString().split("\\|"), 
                                 (Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|")), (String) argValues[4], (String) argValues[5]);
                     }
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
-                    dynamicDataObjects=new Object[]{diagn[diagn.length-1]};
-                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), diagn[diagn.length-1]);                            
+                    dynamicDataObjects=new Object[]{actionDiagnoses[actionDiagnoses.length-1]};
+                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), actionDiagnoses[actionDiagnoses.length-1]);                            
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], schemaPrefix});                    
                     break;
                 case ENTERRESULT:
                     Integer resultId = (Integer) argValues[0];
                     String rawValueResult = argValues[1].toString();
-                    diagn = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
+                    actionDiagnoses = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{resultId, rawValueResult, schemaPrefix});                    
                     dynamicDataObjects=new Object[]{""};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), "");
                     break;             
                 case ADD_SAMPLE_MICROORGANISM: 
                     for (String orgName: (String[]) argValues[1].toString().split("\\|")){
-                        diagn = DataProgramSample.addSampleMicroorganism(schemaPrefix, token, (Integer) argValues[0], orgName);
-                        rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), diagn[diagn.length-1]);
+                        actionDiagnoses = DataProgramSample.addSampleMicroorganism(schemaPrefix, token, (Integer) argValues[0], orgName);
+                        rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), actionDiagnoses[actionDiagnoses.length-1]);
                     }
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{argValues[0], argValues[1], schemaPrefix});                    
                     //dynamicDataObjects=new Object[]{microorganismName.replace("\\|", ", "), sampleId};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), argValues[0]);                                                
                     break;
@@ -119,8 +123,10 @@ public class ClassEnvMonSample {
                         String positionOverrideStr=argValues[6].toString();
                         if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
                     }
-                    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion
+                    actionDiagnoses=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion
                             , sampleId, positionRow, positionCol, positionOverride);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);
@@ -141,8 +147,9 @@ public class ClassEnvMonSample {
                         if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
                     }
                    
-                    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion)
-                            , Integer.valueOf(sampleId), positionRow, positionCol, positionOverride);
+                    actionDiagnoses=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, positionRow, positionCol, positionOverride);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
@@ -152,7 +159,9 @@ public class ClassEnvMonSample {
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     sampleId = (Integer) argValues[3];
-                    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), sampleId);
+                    actionDiagnoses=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, Integer.valueOf(batchTemplateId), Integer.valueOf(batchTemplateVersion), sampleId);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), sampleId);
                     rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), Integer.valueOf(batchName));
@@ -163,7 +172,7 @@ public class ClassEnvMonSample {
                     RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_API_URL);
                     rd.forward(request,null);   
             } 
-        this.diagnostic=diagn;
+        this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
         this.messageDynamicData=dynamicDataObjects;
         } catch (ServletException | IOException ex) {

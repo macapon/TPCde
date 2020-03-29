@@ -32,39 +32,37 @@ public class EnvMonAPI extends HttpServlet {
         /**
          *
          */
-        CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programName|programCorrectiveActionId", "", "programCompleteCorrectiveAction_success", 
+        CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programCompleteCorrectiveAction_success", 
                 new LPAPIArguments[]{new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_create_success", 
+        EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "incubatorBatch_create_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 10)}),
-        EM_BATCH_ASSIGN_INCUB("EM_BATCH_ASSIGN_INCUB", "incubatorName|batchName", "", "incubatorBatch_assignIncubator_success", 
+        EM_BATCH_ASSIGN_INCUB("EM_BATCH_ASSIGN_INCUB", "incubatorBatch_assignIncubator_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        EM_BATCH_UPDATE_INFO("EM_BATCH_UPDATE_INFO", "batchName|fieldName|fieldValue", "", "incubatorBatch_updateInfo_success", 
+        EM_BATCH_UPDATE_INFO("EM_BATCH_UPDATE_INFO", "incubatorBatch_updateInfo_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)}),
-        EM_BATCH_INCUB_START("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationStart_success", 
+        EM_BATCH_INCUB_START("EM_BATCH_INCUB_START", "incubatorBatch_incubationStart_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)}),
-        EM_BATCH_INCUB_END("EM_BATCH_INCUB_START", "batchName|batchTemplateId|batchTemplateVersion", "", "incubatorBatch_incubationEnd_success", 
+        EM_BATCH_INCUB_END("EM_BATCH_INCUB_START", "incubatorBatch_incubationEnd_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 8)}),
-        EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "", "", "programScheduler_logScheduledSamples", 
+        EM_LOGSAMPLE_SCHEDULER("EM_LOGSAMPLE_SCHEDULER", "programScheduler_logScheduledSamples", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_START, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_DATE_END, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
                 new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), false, 8)}),
         ;
-        private EnvMonAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
         } 
@@ -81,14 +79,11 @@ public class EnvMonAPI extends HttpServlet {
         public String getName(){
             return this.name;
         }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
-        }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
         private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+            return new String[]{this.name, this.successMessageCode};
         }
         /**
          * @return the arguments
@@ -97,11 +92,51 @@ public class EnvMonAPI extends HttpServlet {
             return arguments;
         }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
         private final String successMessageCode;  
         public  LPAPIArguments[] arguments;
     }
+    
+    public enum EnvMonQueriesAPIEndpoints{
+        /**
+         *
+         */
+        GET_SAMPLE_RESULTS("GET_SAMPLE_RESULTS", "incubator_activate_success", 
+            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+        ;
+        private EnvMonQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.successMessageCode};
+        }
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode; 
+        public  LPAPIArguments[] arguments;
+    }    
     
     /**
      *

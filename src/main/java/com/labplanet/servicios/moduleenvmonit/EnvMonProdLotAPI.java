@@ -36,33 +36,28 @@ public class EnvMonProdLotAPI extends HttpServlet {
          *
          */
         
-        EM_NEW_PRODUCTION_LOT("EM_NEW_PRODUCTION_LOT", "lotName", "fieldName|fieldValue", "productionLot_newLotCreated_success",
+        EM_NEW_PRODUCTION_LOT("EM_NEW_PRODUCTION_LOT", "productionLot_newLotCreated_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELD_VALUE, LPAPIArguments.ArgumentType.STRING.toString(), false, 7)} ),
-        EM_ACTIVATE_PRODUCTION_LOT("EM_ACTIVATE_PRODUCTION_LOT", "lotName", "", "productionLot_activate_success",
+        EM_ACTIVATE_PRODUCTION_LOT("EM_ACTIVATE_PRODUCTION_LOT", "productionLot_activate_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
-        EM_DEACTIVATE_PRODUCTION_LOT("EM_DEACTIVATE_PRODUCTION_LOT", "lotName", "", "productionLot_deactivate_success",
+        EM_DEACTIVATE_PRODUCTION_LOT("EM_DEACTIVATE_PRODUCTION_LOT", "productionLot_deactivate_success",
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
         ;
-        private EnvMonProdLotAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonProdLotAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
             this.arguments=argums; 
         } 
         public String getName(){
             return this.name;
         }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
-        }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
         private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+            return new String[]{this.name, this.successMessageCode};
         }
         /**
          * @return the arguments
@@ -71,8 +66,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
             return arguments;
         }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
         private final String successMessageCode;       
         public  LPAPIArguments[] arguments;
     }    

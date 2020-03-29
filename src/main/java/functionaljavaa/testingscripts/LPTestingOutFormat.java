@@ -5,7 +5,6 @@
  */
 package functionaljavaa.testingscripts;
 
-import com.fasterxml.jackson.core.JsonParser;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import databases.Rdbms;
@@ -24,17 +23,12 @@ import java.util.HashMap;
 import java.util.ResourceBundle;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import jdk.nashorn.internal.parser.JSONParser;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPJson;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_CODE_POSIC;
 import static lbplanet.utilities.LPPlatform.TRAP_MESSAGE_EVALUATION_POSIC;
 import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-//import jdk.jfr.internal.LogLevel;
-//import jdk.jfr.internal.LogTag;
-//import jdk.jfr.internal.Logger;
 
 /*
  *
@@ -74,7 +68,7 @@ public class LPTestingOutFormat {
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
             String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
-                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 
+                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
                     new String[]{TblsTesting.ScriptSteps.FLD_EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.FLD_ESIGN_TO_CHECK.getName(),
                         TblsTesting.ScriptSteps.FLD_CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.FLD_CONFIRMUSER_PW_TO_CHECK.getName(),
                         TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_02.getName(),
@@ -149,7 +143,7 @@ public class LPTestingOutFormat {
         if (numEvaluationArguments>0){
             String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
             fileContentBuilder.append(fileContentSummary);            
-            if (this.inputMode=="DB"){
+            if ("DB".equals(this.inputMode)){
                 if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}          
                 Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
                 String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
@@ -586,6 +580,7 @@ public class LPTestingOutFormat {
     /**
      *
      * @param tstAssert
+     * @param numArguments
      * @return
      */
     public static String createSummaryTable(TestingAssertSummary tstAssert, Integer numArguments){
@@ -751,7 +746,7 @@ public class LPTestingOutFormat {
                 stepObjectPosic = JsonObject.get("object_posic").getAsInt();  
             }catch(Exception ex){stepObjectPosic = 1;}
 
-            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-2),Integer.valueOf(stepNumber));
+            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-2), stepNumber);
             if (stepPosic==-1) return "";
 
             JsonArray jsonArr=LPJson.convertToJsonArrayStringedObject(scriptSteps[stepPosic][scriptSteps[0].length-1].toString());
@@ -761,7 +756,7 @@ public class LPTestingOutFormat {
                String objType=object.get("object_type").getAsString();
                if (objType.equalsIgnoreCase(stepObjectType)){
                    numObjectsFound++;
-                   if (numObjectsFound.equals(Integer.valueOf(stepObjectPosic))) return object.get("object_name").getAsString();                   
+                   if (numObjectsFound.equals(stepObjectPosic)) return object.get("object_name").getAsString();                   
                }
             }
             return "";

@@ -34,18 +34,16 @@ public class EnvMonIncubationAPI extends HttpServlet {
         /**
          *
          */
-        EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubatorName", "", "incubator_activate_success", 
+        EM_INCUBATION_ACTIVATE("EM_INCUBATION_ACTIVATE", "incubator_activate_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
-        EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubatorName", "", "incubator_deactivate_success", 
+        EM_INCUBATION_DEACTIVATE("EM_INCUBATION_DEACTIVATE", "incubator_deactivate_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
-        EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubatorName|temperature", "", "incubator_add_temp_reading_success", 
+        EM_INCUBATION_ADD_TEMP_READING("EM_INCUBATION_ADD_TEMP_READING", "incubator_add_temp_reading_success", 
             new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_TEMPERATURE, LPAPIArguments.ArgumentType.BIGDECIMAL.toString(), true, 7)}),
         ;
-        private EnvMonIncubationAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
+        private EnvMonIncubationAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;
         } 
@@ -62,14 +60,11 @@ public class EnvMonIncubationAPI extends HttpServlet {
         public String getName(){
             return this.name;
         }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
-        }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
         private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+            return new String[]{this.name, this.successMessageCode};
         }
         /**
          * @return the arguments
@@ -78,12 +73,11 @@ public class EnvMonIncubationAPI extends HttpServlet {
             return arguments;
         }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
         private final String successMessageCode; 
         public  LPAPIArguments[] arguments;
     }    
-  
+
+    
   /**
    * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
    *

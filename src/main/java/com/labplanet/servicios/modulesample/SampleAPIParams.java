@@ -39,91 +39,89 @@ public class SampleAPIParams extends HttpServlet {
         /**
          *
          */
-        LOGSAMPLE("LOGSAMPLE", "sampleTemplate|sampleTemplateVersion", "", "sampleLogged_success",
+        LOGSAMPLE("LOGSAMPLE", "sampleLogged_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_TEMPLATE_VERSION, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7), 
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 9),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 11)}),
-        RECEIVESAMPLE("RECEIVESAMPLE", "sampleId", "", "sampleReceived_success",
+        RECEIVESAMPLE("RECEIVESAMPLE", "sampleReceived_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        SETSAMPLINGDATE("SETSAMPLINGDATE", "sampleId", "", "setSamplingDate_success",
+        SETSAMPLINGDATE("SETSAMPLINGDATE", "setSamplingDate_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        CHANGESAMPLINGDATE("CHANGESAMPLINGDATE", "sampleId|newDate", "", "changeSamplingDate_success",
+        CHANGESAMPLINGDATE("CHANGESAMPLINGDATE", "changeSamplingDate_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_DATE, LPAPIArguments.ArgumentType.DATE.toString(), true, 7)}),
-        SAMPLINGCOMMENTADD("SAMPLINGCOMMENTADD", "sampleId|sampleComment", "", "samplingCommentAdd_success",
+        SAMPLINGCOMMENTADD("SAMPLINGCOMMENTADD", "samplingCommentAdd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_COMMENT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        SAMPLINGCOMMENTREMOVE("SAMPLINGCOMMENTREMOVE", "sampleId", "", "samplingCommentRemove_success",
+        SAMPLINGCOMMENTREMOVE("SAMPLINGCOMMENTREMOVE", "samplingCommentRemove_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        INCUBATIONSTART("INCUBATIONSTART", "sampleId", "", "incubationStart_success",
+        INCUBATIONSTART("INCUBATIONSTART", "incubationStart_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        INCUBATIONEND("INCUBATIONEND", "sampleId", "", "incubationEnd_success",
+        INCUBATIONEND("INCUBATIONEND", "incubationEnd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        INCUBATION2START("INCUBATION2START", "sampleId", "", "incubation2Start_success",
+        INCUBATION2START("INCUBATION2START", "incubation2Start_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        INCUBATION2END("INCUBATION2END", "sampleId", "", "incubation2End_success",
+        INCUBATION2END("INCUBATION2END", "incubation2End_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        SAMPLEANALYSISADD("SAMPLEANALYSISADD", "sampleId|fieldName|fieldValue", "", "sampleAnalysisAdd_success",
+        SAMPLEANALYSISADD("SAMPLEANALYSISADD", "sampleAnalysisAdd_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_VALUE, LPAPIArguments.ArgumentType.STRINGOFOBJECTS.toString(), true, 8)}),
-        TESTASSIGNMENT("TESTASSIGNMENT", "testId|newAnalyst", "", "testAssignment_success",
+        TESTASSIGNMENT("TESTASSIGNMENT", "testAssignment_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        ENTERRESULT("ENTERRESULT", "resultId|rawValueResult", "", "enterResult_success",
+        ENTERRESULT("ENTERRESULT", "enterResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        ENTERRESULT_LOD("ENTERRESULT_LOD", "incidentId|note", "", "enterResultLOD_success",
+        ENTERRESULT_LOD("ENTERRESULT_LOD", "enterResultLOD_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RAW_VALUE_RESULT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        RESULT_CHANGE_UOM("RESULT_CHANGE_UOM", "incidentId|note", "", "resultChangeUOM_success",
+        RESULT_CHANGE_UOM("RESULT_CHANGE_UOM", "resultChangeUOM_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_NEW_UOM, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        REVIEWRESULT("REVIEWRESULT", "objectId|objectLevel", "", "reviewResult_success",
+        REVIEWRESULT("REVIEWRESULT", "reviewResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        UNREVIEWRESULT("UNREVIEWRESULT", "objectId|objectLevel", "", "unreviewResult_success",
+        UNREVIEWRESULT("UNREVIEWRESULT", "unreviewResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        CANCELRESULT("CANCELRESULT", "objectId|objectLevel", "", "cancelResult_success",
+        CANCELRESULT("CANCELRESULT", "cancelResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        UNCANCELRESULT("UNCANCELRESULT", "objectId|objectLevel", "", "uncancelResult_success",
+        UNCANCELRESULT("UNCANCELRESULT", "uncancelResult_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        COC_ABORTCHANGE("COC_ABORTCHANGE", "sampleId|cancelChangeComment", "", "cocAbortChange_success",
+        COC_ABORTCHANGE("COC_ABORTCHANGE", "cocAbortChange_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CANCEL_CHANGE_COMMENT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        COC_STARTCHANGE("COC_STARTCHANGE", "sampleId|custodianCandidate", "", "cocStartChange_success",
+        COC_STARTCHANGE("COC_STARTCHANGE", "cocStartChange_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CUSTODIAN_CANDIDATE, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        COC_CONFIRMCHANGE("COC_CONFIRMCHANGE", "sampleId|confirmChangeComment", "", "cocConfirmChange_success",
+        COC_CONFIRMCHANGE("COC_CONFIRMCHANGE", "cocConfirmChange_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CONFIRM_CHANGE_COMMENT, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
-        GETSAMPLEINFO("GETSAMPLEINFO", "sampleId|sampleFieldToRetrieve", "", "getSampleInfo_success",
+        GETSAMPLEINFO("GETSAMPLEINFO", "getSampleInfo_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7)}),
-        TOKEN_VALIDATE_ESIGN_PHRASE("TOKEN_VALIDATE_ESIGN_PHRASE", "myToken|esignPhraseToCheck", "", "tokenValidateEsignPhrase_success",
+        TOKEN_VALIDATE_ESIGN_PHRASE("TOKEN_VALIDATE_ESIGN_PHRASE", "tokenValidateEsignPhrase_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
             new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7)}),
-        LOGALIQUOT("LOGALIQUOT", "sampleId", "", "logAliquot_success",
+        LOGALIQUOT("LOGALIQUOT", "logAliquot_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        LOGSUBALIQUOT("LOGSUBALIQUOT", "aliquotId", "", "logSubAliquot_success",
+        LOGSUBALIQUOT("LOGSUBALIQUOT", "logSubAliquot_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_ALIQUOT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        SAMPLESTAGE_MOVETONEXT("SAMPLESTAGE_MOVETONEXT", "sampleId", "", "sampleStage_moveToNext_success",
+        SAMPLESTAGE_MOVETONEXT("SAMPLESTAGE_MOVETONEXT", "sampleStage_moveToNext_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        SAMPLESTAGE_MOVETOPREVIOUS("SAMPLESTAGE_MOVETOPREVIOUS", "sampleId", "", "sampleStage_moveToPrevious_success",
+        SAMPLESTAGE_MOVETOPREVIOUS("SAMPLESTAGE_MOVETOPREVIOUS", "sampleStage_moveToPrevious_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
-        SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED("SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED", "auditId", "", "sampleAudit_setAuditIdReviewed_success",
+        SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED("SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED", "sampleAudit_setAuditIdReviewed_success",
             new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_AUDIT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6)}),
         ;      
-        private SampleAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
+        private SampleAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;            
         } 
@@ -141,14 +139,11 @@ public class SampleAPIParams extends HttpServlet {
         public String getName(){
             return this.name;
         }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
-        }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
         private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
+            return new String[]{this.name, this.successMessageCode};
         }
         /**
          * @return the arguments
@@ -158,8 +153,6 @@ public class SampleAPIParams extends HttpServlet {
         }
      
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
         private final String successMessageCode;    
         public  LPAPIArguments[] arguments;
     }
