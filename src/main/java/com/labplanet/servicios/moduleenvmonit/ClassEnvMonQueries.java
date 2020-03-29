@@ -8,7 +8,6 @@ package com.labplanet.servicios.moduleenvmonit;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
-import functionaljavaa.instruments.incubator.ConfigIncubator;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
@@ -40,6 +39,25 @@ public class ClassEnvMonQueries {
             BigDecimal temperature=null;
             this.functionFound=true;
             switch (endPoint){
+                    case GET_SAMPLE_INFO:
+                        sampleId=(Integer) argValues[0];
+                        String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()};
+                        if (argValues.length>1 && argValues[1]!=null && argValues[1].toString().length()>0){
+                            if ("ALL".equalsIgnoreCase(argValues[1].toString())) fieldsToRetrieve=TblsEnvMonitData.Sample.getAllFieldNames();
+                            else fieldsToRetrieve=argValues[1].toString().split("\\|");
+                        }
+                        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                                new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                                fieldsToRetrieve, new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()});
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) actionDiagnoses=sampleInfo[0];
+                        else{
+                            for (Object[] curSample: sampleInfo){
+                                rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.Sample.TBL.getName(), TblsEnvMonitData.Sample.TBL.getName(), curSample[0], fieldsToRetrieve, curSample); 
+                            }
+                            actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
+                        }
+                        messageDynamicData=new Object[]{sampleId};    
+                        break;
                     case GET_SAMPLE_RESULTS:
                         sampleId=(Integer) argValues[0];
                         Integer testId=null;
@@ -66,7 +84,7 @@ public class ClassEnvMonQueries {
                             }
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }
-                        messageDynamicData=new Object[]{instrName};
+                        messageDynamicData=new Object[]{sampleId};
                         break;
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))                

@@ -351,6 +351,10 @@ public class ClassSample {
                 messageDynamicData=new Object[]{auditId};
                 break;
         }
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
+            DataSampleStages smpStage = new DataSampleStages(schemaPrefix);
+            smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, endPoint.getName().toUpperCase(), sampleId);
+        }
         this.diagnostic=diagn;
         this.relatedObj=rObj;
         this.messageDynamicData=dynamicDataObjects;

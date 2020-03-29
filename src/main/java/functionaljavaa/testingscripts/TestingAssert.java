@@ -97,7 +97,7 @@ public class TestingAssert {
         if (diagnoses.length>TRAP_MESSAGE_MESSAGE_POSIC) message=message+"Message:"+diagnoses[TRAP_MESSAGE_MESSAGE_POSIC]+". ";  
         diagnostic=LPArray.addValueToArray1D(diagnostic, message);
         return diagnostic;
-}
+    }
 
     /**
      * @return the evalSyntaxis

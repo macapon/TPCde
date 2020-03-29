@@ -184,7 +184,6 @@ public class EnvMonSampleAPI extends HttpServlet {
                 return;                             
         }
         mandatoryParams = null;                        
-
         Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
@@ -243,8 +242,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){       
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return ;                           
-            }            
-            
+            }                        
             EnvMonSampleAPIEndpoints endPoint = null;
             try{
                 endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());

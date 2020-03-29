@@ -5,6 +5,8 @@
  */
 package functionaljavaa.responserelatedobjects;
 
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -47,12 +49,21 @@ public class RelatedObjects {
         return jArrMainObject;
     }   
     public void addSimpleNode(String schema, String table, String objectType, Object object){
+        addSimpleNode(schema, table, objectType, object, null, null);
+    }
+    public void addSimpleNode(String schema, String table, String objectType, Object object, String[] fldName, Object[] fldValue){
         JSONObject jObj=new JSONObject();
         jObj.put(RelatedObjectsElementNames.SCHEMA.getLabelName(), schema);
         jObj.put(RelatedObjectsElementNames.TABLE.getLabelName(),  table);
         jObj.put(RelatedObjectsElementNames.OBJECT_TYPE.getLabelName(),  objectType);
-        jObj.put(RelatedObjectsElementNames.OBJECT.getLabelName(),  object);        
+        jObj.put(RelatedObjectsElementNames.OBJECT.getLabelName(),  object);   
+        if (fldName!=null && fldValue!=null){            
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(LPArray.checkTwoArraysSameLength(fldValue, fldValue)[0].toString()))
+                for (int iFld=0;iFld<fldName.length;iFld++){
+                    jObj.put(fldName[iFld],  fldValue[iFld]);}
+        }
         mainStructureObject.jArrMainObject.add(jObj);
     }
+
     
 }

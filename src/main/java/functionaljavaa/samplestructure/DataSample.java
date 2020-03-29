@@ -14,6 +14,7 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPMath;
 import databases.DataDataIntegrity;
+import static databases.Rdbms.ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
@@ -815,7 +816,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                 sarFieldToRetrieve, sarFieldToSort, sampleAuditFieldToRetrieve, sampleAuditResultFieldToSort);
     }
     private static String sampleEntireStructureDataPostgres(String schemaPrefix, Integer sampleId, String sampleFieldToRetrieve, String sampleAnalysisFieldToRetrieve, String sampleAnalysisFieldToSort,
-            String sarFieldToRetrieve, String sarFieldToSort, String sampleAuditFieldToRetrieve, String sampleAuditResultFieldToSort){
+        String sarFieldToRetrieve, String sarFieldToSort, String sampleAuditFieldToRetrieve, String sampleAuditResultFieldToSort){
         
         String [] sampleFieldToRetrieveArr = new String[0];  
             if (SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS.equalsIgnoreCase(sampleFieldToRetrieve)){                
@@ -898,13 +899,13 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                     +sqlFrom+schemaData+".sample s where s.sample_id in ("+ "?"+" ) ) sQry   ";
             
             CachedRowSet prepRdQuery = Rdbms.prepRdQuery(qry, new Object[]{sampleId});
-            
-            
-            String finalString = "";
-            if (prepRdQuery.getString(1)==null){
-                return LPPlatform.LAB_FALSE;
-            }
-            return prepRdQuery.getString(1);
+            prepRdQuery.last();
+            if (prepRdQuery.getRow()>0){
+                return prepRdQuery.getString(1);
+            }else{                
+                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"sample", "", schemaPrefix});                         
+                return null;
+            }            
         } catch (SQLException ex) {
             Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
             return LPPlatform.LAB_FALSE;
