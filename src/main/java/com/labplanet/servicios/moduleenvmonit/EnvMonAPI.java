@@ -100,8 +100,10 @@ public class EnvMonAPI extends HttpServlet {
         /**
          *
          */
-        GET_SAMPLE_RESULTS("GET_SAMPLE_RESULTS", "incubator_activate_success", 
-            new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6)}),
+        GET_SAMPLE_RESULTS("GET_SAMPLE_RESULTS", "get_sample_results_success", 
+            new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TEST_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 8)}),
         ;
         private EnvMonQueriesAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;

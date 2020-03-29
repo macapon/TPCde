@@ -11,7 +11,6 @@ import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
-import java.io.PrintWriter;
 import static java.lang.System.out;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -41,7 +40,7 @@ public class TestingRegressionUAT extends HttpServlet {
         String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
         
         String schemaPrefix="em-demo-a";
-        Integer scriptId= 2;
+        Integer scriptId=2;
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
         Object[][] scriptTblInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId}, 

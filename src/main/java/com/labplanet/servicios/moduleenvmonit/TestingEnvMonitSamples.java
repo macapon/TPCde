@@ -106,17 +106,25 @@ public class TestingEnvMonitSamples extends HttpServlet {
                             functionEvaluation=(Object[]) clssEnvMonIncubController.getFunctionDiagn();
                             testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
                             fileContentTable1Builder.append(clssEnvMonIncubController.getRowArgsRows());                
-                        }else{
-                            ClassSampleController clssSampleController=new ClassSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
-                            if (clssSampleController.getFunctionFound()){
-                                functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
-                                functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
+                        }else{                            
+                            ClassEnvMonQueriesController clssEnvMonQueriesController=new ClassEnvMonQueriesController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                            if (clssEnvMonQueriesController.getFunctionFound()){
+                                functionRelatedObjects=clssEnvMonQueriesController.getFunctionRelatedObjects();
+                                functionEvaluation=(Object[]) clssEnvMonQueriesController.getFunctionDiagn();
                                 testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
+                                fileContentTable1Builder.append(clssEnvMonQueriesController.getRowArgsRows());                
                             }else{
-                                functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
-                                testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
-                                fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                ClassSampleController clssSampleController=new ClassSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                                if (clssSampleController.getFunctionFound()){
+                                    functionRelatedObjects=clssSampleController.getFunctionRelatedObjects();
+                                    functionEvaluation=(Object[]) clssSampleController.getFunctionDiagn();
+                                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                    fileContentTable1Builder.append(clssSampleController.getRowArgsRows());                
+                                }else{
+                                    functionEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Endpoint <*1*> not found", new Object[]{actionName});
+                                    testingContent[iLines][testingContent[0].length-1]=functionRelatedObjects;
+                                    fileContentTable1Builder.append(clssSampleController.getRowArgsRows());         
+                                }
                             }
                         }
                     }
