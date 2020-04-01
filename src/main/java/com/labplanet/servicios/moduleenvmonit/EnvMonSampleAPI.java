@@ -10,6 +10,8 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.modulesample.ClassSample;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.Token;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -247,8 +249,29 @@ public class EnvMonSampleAPI extends HttpServlet {
             try{
                 endPoint = EnvMonSampleAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
-                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-                return;                   
+                SampleAPIEndpoints endPointSmp = null;
+                try{
+                    endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                }catch(Exception er){
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                    return;                   
+                }                
+                ClassSample clssSmp=new ClassSample(request, token, schemaPrefix, endPointSmp);
+                if (clssSmp.getEndpointExists()){
+                    Object[] diagnostic=clssSmp.getDiagnostic();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+        /*                Rdbms.rollbackWithSavePoint();
+                        if (!con.getAutoCommit()){
+                            con.rollback();
+                            con.setAutoCommit(true);}                */
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                    }else{
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+                    } 
+                }                
+//                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+//                return;                   
             }
             areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -257,17 +280,41 @@ public class EnvMonSampleAPI extends HttpServlet {
                 return;
             }                            
             ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
-            Object[] diagnostic=clss.getDiagnostic();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
-            }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
-            }            
+            if (clss.getEndpointExists()){
+                Object[] diagnostic=clss.getDiagnostic();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+    /*                Rdbms.rollbackWithSavePoint();
+                    if (!con.getAutoCommit()){
+                        con.rollback();
+                        con.setAutoCommit(true);}                */
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                }else{
+                    JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                    LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+                }            
+/*            }else{
+                SampleAPIEndpoints endPointSmp = null;
+                try{
+                    endPointSmp = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
+                }catch(Exception e){
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                    return;                   
+                }                
+                ClassSample clssSmp=new ClassSample(request, token, schemaPrefix, endPointSmp);
+                if (clssSmp.getEndpointExists()){
+                    Object[] diagnostic=clssSmp.getDiagnostic();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
+        //                Rdbms.rollbackWithSavePoint();
+        //                if (!con.getAutoCommit()){
+        //                    con.rollback();
+        //                    con.setAutoCommit(true);}                
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                    }else{
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+                    } 
+                }*/
+            }
         }catch(Exception e){   
  /*           try {
                 con.rollback();

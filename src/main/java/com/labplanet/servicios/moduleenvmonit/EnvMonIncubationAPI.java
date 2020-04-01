@@ -201,13 +201,13 @@ public class EnvMonIncubationAPI extends HttpServlet {
                     String instrName=argValues[0].toString();               
                     actionDiagnoses=ConfigIncubator.activateIncubator(schemaPrefix, instrName, token.getPersonName());
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
-                    messageDynamicData=new Object[]{instrName};
+                    this.messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_DEACTIVATE:
                     instrName=argValues[0].toString();
                     actionDiagnoses=ConfigIncubator.deactivateIncubator(schemaPrefix, instrName, token.getPersonName());
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
-                    messageDynamicData=new Object[]{instrName};
+                    this.messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_ADD_TEMP_READING:
                     instrName=argValues[0].toString();
@@ -215,7 +215,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
                     actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(schemaPrefix, instrName, token.getPersonName(), new BigDecimal(temperature));                    
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
-                    messageDynamicData=new Object[]{temperature, instrName};
+                    this.messageDynamicData=new Object[]{temperature, instrName};
                     break;                    
                 default:      
                     Rdbms.closeRdbms(); 

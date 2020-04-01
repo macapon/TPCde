@@ -169,10 +169,6 @@
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPIfrontend</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonIncubBatchAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonIncubBatchAPI</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>TablesDeployment</servlet-name>
         <servlet-class>com.labplanet.servicios.modulegenoma.TablesDeployment</servlet-class>
     </servlet>
@@ -378,10 +374,6 @@
     <servlet-mapping>
         <servlet-name>EnvMonIncubBatchAPIfrontend</servlet-name>
         <url-pattern>/moduleenvmon/frontend/EnvMonIncubBatchAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
-        <servlet-name>EnvMonIncubBatchAPI</servlet-name>
-        <url-pattern>/moduleenvmon/EnvMonIncubBatchAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TablesDeployment</servlet-name>

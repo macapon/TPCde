@@ -6,6 +6,7 @@
 package functionaljavaa.samplestructure;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
 import databases.TblsData;
@@ -14,6 +15,8 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.parameter.Parameter;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,7 +26,11 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static lbplanet.utilities.LPPlatform.trapMessage;
+import org.json.simple.JSONArray;
+
 
 /**
  *
@@ -53,11 +60,12 @@ Object[][] firstStageData=new Object[0][0];
      *
      */
     
-    
+    public enum SampleStagesTypes{JAVA, JAVASCRIPT};
     public static final String LOD_JAVASCRIPT_FORMULA="schemaPrefix-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"schemaPrefix-sample-stage.js";
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"schemaPrefix-sample-stage.js";
     
     public static final String BUSINESS_RULE_SAMPLE_STAGE_MODE="sampleStagesMode";
+    public static final String BUSINESS_RULE_SAMPLE_STAGE_TYPE="sampleStagesLogicType";    
     public static final String BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE="sampleStagesTimingCaptureMode";
     public static final String BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_STAGES="sampleStagesTimingCaptureStages";
 
@@ -106,9 +114,16 @@ Object[][] firstStageData=new Object[0][0];
     public Object[] moveToNextStage(String schemaPrefix, Integer sampleId, String currStage, String nextStageFromPull){    
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(schemaPrefix, sampleId);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())) return sampleAuditRevision;
-        Object[] javaScriptDiagnostic = moveStageJavascriptChecker(schemaPrefix, sampleId, currStage, "Next");
+        Object[] javaScriptDiagnostic = moveStagetChecker(schemaPrefix, sampleId, currStage, "Next");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic; 
-
+        if (!javaScriptDiagnostic[0].toString().contains(LPPlatform.LAB_TRUE)) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, javaScriptDiagnostic[0].toString(), null);
+        
+        String[] javaScriptDiagnosticArr=javaScriptDiagnostic[0].toString().split("\\|");
+        if (javaScriptDiagnosticArr.length>1){
+            String newStageProposedByChecker=javaScriptDiagnosticArr[1];
+            return new Object[]{LPPlatform.LAB_TRUE, newStageProposedByChecker};
+        }
+        
         String sampleStageNextStage = Parameter.getParameterBundle("config", schemaPrefix, "data", "sampleStage"+currStage+"Next", null);
         if (sampleStageNextStage.length()==0) return new Object[]{LPPlatform.LAB_FALSE, "Next Stage is blank for "+currStage};
 
@@ -128,7 +143,7 @@ Object[][] firstStageData=new Object[0][0];
      * @return
      */
     public Object[] moveToPreviousStage(String schemaPrefix, Integer sampleId, String currStage, String previousStageFromPull){  
-        Object[] javaScriptDiagnostic = moveStageJavascriptChecker(schemaPrefix, sampleId, currStage, "Previous");
+        Object[] javaScriptDiagnostic = moveStagetChecker(schemaPrefix, sampleId, currStage, "Previous");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(javaScriptDiagnostic[0].toString()))return javaScriptDiagnostic;
 
         String sampleStagePreviousStage = Parameter.getParameterBundle("config", schemaPrefix, "data", "sampleStage"+currStage+"Previous", null);
@@ -168,8 +183,43 @@ Object[][] firstStageData=new Object[0][0];
         }
         return moveDiagn;
     }
-    
-    private Object[] moveStageJavascriptChecker(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
+        
+    private Object[] moveStagetChecker(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
+        String sampleStagesType = Parameter.getParameterBundle("config", schemaPrefix, "procedure", BUSINESS_RULE_SAMPLE_STAGE_TYPE, null);
+        if (SampleStagesTypes.JAVA.toString().equalsIgnoreCase(sampleStagesType)) return moveStageCheckerJava(schemaPrefix, sampleId, currStage, moveDirection);
+        else return moveStageCheckerJavaScript(schemaPrefix, sampleId, currStage, moveDirection);
+    }
+    private Object[] moveStageCheckerJava(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
+      //try {
+        String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
+                                DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
+                                DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
+        String sampleStageClassName=schemaPrefix+"SampleStage"; 
+        String functionName="sampleStage"+currStage+moveDirection+"Checker";        
+        ProcedureSampleStage procSampleStage=new ProcedureSampleStage();        
+        Method method = null;
+        try {
+//
+            Class<?>[] paramTypes = {String.class, Integer.class, String.class};
+        //    method = getClass().getDeclaredMethod(functionName, paramTypes);
+            method = ProcedureSampleStage.class.getDeclaredMethod(functionName, paramTypes);
+        } catch (NoSuchMethodException | SecurityException ex) {
+                return trapMessage(LPPlatform.LAB_FALSE, "LabPLANETPlatform_SpecialFunctionReturnedEXCEPTION", new Object[]{ex.getMessage()});
+        }
+        Object specialFunctionReturn=null;      
+        try { //
+            if (method!=null){ specialFunctionReturn = method.invoke(procSampleStage, schemaPrefix, sampleId, jsonarrayf);}
+        } catch (IllegalAccessException | NullPointerException | IllegalArgumentException | InvocationTargetException ex) {
+            Logger.getLogger(DataSample.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
+
+        return new Object[]{specialFunctionReturn};
+        }
+
+
+    private Object[] moveStageCheckerJavaScript(String  schemaPrefix, Integer sampleId, String currStage, String moveDirection){
       try {
         String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
@@ -233,4 +283,13 @@ Object[][] firstStageData=new Object[0][0];
                 new Object[]{phase, Arrays.toString(new String[]{SampleStageTimingCapturePhases.START.toString(), SampleStageTimingCapturePhases.END.toString()})});
         }
     }
+    
+    //, JSONArray sampleData
+public String sampleStageSamplingNextChecker(String sch, Integer sampleId) {
+    //var sampleStructure=JSON.parse(sampleData);
+    //var samplingDate = sampleStructure.sampling_date;
+    //if (samplingDate==null){
+      //  return testId+" Fecha de muestreo es obligatoria para la muestra "+sampleId;}
+    return "LABPLANET_TRUE";
+}    
 }

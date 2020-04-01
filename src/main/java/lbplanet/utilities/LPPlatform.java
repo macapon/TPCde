@@ -862,6 +862,7 @@ public class LPPlatform {
     public static final Integer TRAP_MESSAGE_EVALUATION_POSIC=0;
     public static final Integer TRAP_MESSAGE_CODE_POSIC=4;
     public static final Integer TRAP_MESSAGE_MESSAGE_POSIC=6;
+    
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables) {
         Object[] fldValue = new Object[7];
         String errorDetail = "";
@@ -871,10 +872,14 @@ public class LPPlatform {
         Integer lineNumber = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getLineNumber(); 
         className = className.replace(".java", "");
         Boolean errorCodeFromBundle = true;
-        String errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, null);
-        if (errorCodeText.length()==0){errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, null);}
-        if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
-        
+        String errorCodeText="";
+/*        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
+            errorCodeText = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
+        }else{*/
+            errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, null);
+            if (errorCodeText.length()==0){errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, null);}
+            if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
+//        }
         if (!errorCodeFromBundle){
             errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file)";
             if ( (msgVariables!=null) &&  msgVariables.length>0){

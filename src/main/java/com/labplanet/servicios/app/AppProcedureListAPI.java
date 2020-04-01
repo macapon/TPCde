@@ -174,7 +174,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     
                     Object[][] procEvent = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureEvents.TBL.getName(), 
                             new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName()}, new String[]{rolName}, 
-                            procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.FLD_BRANCH_LEVEL.getName(), TblsProcedure.ProcedureEvents.FLD_ORDER_NUMBER.getName()});
+                            procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.FLD_ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.FLD_BRANCH_LEVEL.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){ 
                         JSONObject procEventJson = new JSONObject();
                         procEventJson.put("Error on get procedure_events records", procEvent[0][procEvent.length-1].toString());                        

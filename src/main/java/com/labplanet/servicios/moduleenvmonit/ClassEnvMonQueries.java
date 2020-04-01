@@ -56,7 +56,7 @@ public class ClassEnvMonQueries {
                             }
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }
-                        messageDynamicData=new Object[]{sampleId};    
+                        this.messageDynamicData=new Object[]{sampleId};    
                         break;
                     case GET_SAMPLE_RESULTS:
                         sampleId=(Integer) argValues[0];
@@ -84,13 +84,12 @@ public class ClassEnvMonQueries {
                             }
                             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId});
                         }
-                        messageDynamicData=new Object[]{sampleId};
+                        this.messageDynamicData=new Object[]{sampleId};
                         break;
             }
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))                
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;
-            this.messageDynamicData=dynamicDataObjects;
             rObj.killInstance();
         }finally{
             Rdbms.closeRdbms(); 
