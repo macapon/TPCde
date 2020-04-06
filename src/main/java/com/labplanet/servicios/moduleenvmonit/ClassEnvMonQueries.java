@@ -86,8 +86,9 @@ public class ClassEnvMonQueries {
                         }
                         this.messageDynamicData=new Object[]{sampleId};
                         break;
+                    default:
+                        break;
             }
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))                
             this.diagnostic=actionDiagnoses;
             this.relatedObj=rObj;
             rObj.killInstance();

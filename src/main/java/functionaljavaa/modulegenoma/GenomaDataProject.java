@@ -15,12 +15,32 @@ import databases.Token;
 import functionaljavaa.modulegenoma.GenomaDataAudit.ProjectAuditEvents;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 
 /**
  *
  * @author User
  */
 public class GenomaDataProject {
+    
+    public enum GenomaDataProjectErrorTrapping{ 
+        MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
+        NEW_PROJECT_MISSING_MANDATORY_FIELDS("NewProjectMissingMandatoryFields", "", ""),
+        ;
+        private GenomaDataProjectErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
 public Object[] createProject( String schemaPrefix, Token token, String projectName, String[] fieldsName, Object[] fieldsValue, Boolean devMode){
     String classVersionProj = "0.1";
     String[] mandatoryFieldsProj = null;
@@ -103,7 +123,7 @@ public Object[] createProject( String schemaPrefix, Token token, String projectN
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "newProjectMissingMandatoryFields", new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{projectName, mandatoryFieldsMissingBuilder.toString(), schemaPrefix});
         }        
 /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	

@@ -14,6 +14,36 @@ import java.util.Arrays;
 public class LPParadigm {
     private LPParadigm(){    throw new IllegalStateException("Utility class");}    
     
+    public enum ListOfErrorTrapping{
+        
+        ;
+        private ListOfErrorTrapping(String cName, String eName){
+            this.className=cName;
+            this.enumName=eName;
+        }        
+        private final String className;
+        private final String enumName;
+    }
+    
+    
+    public enum ParadigmErrorTrapping{ 
+        SPECIAL_FUNCTION_RETURNED_EXCEPTION("SpecialFunctionReturnedException", "", ""),
+        SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedError", "", ""),
+        UNHANDLED_EXCEPTION_IN_CODE("UnhandledExceptionInCode", "", ""),
+        ;
+        private ParadigmErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }    
     /**
      *
      * @param fName
@@ -39,8 +69,7 @@ public class LPParadigm {
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                      
         }        
         diagnoses = LPArray.addValueToArray1D(diagnoses, LPPlatform.LAB_TRUE);
-        return diagnoses;
-                
+        return diagnoses;                
     }
     
 }

@@ -146,7 +146,7 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
                         resultConverted =  new BigDecimal((String) convDiagnoses[1]);        
                     }
                     if (specRule.getRuleIsQuantitative()){
-                      BigDecimal resultValueBigDecimal= new BigDecimal(Double.valueOf(resultValue));
+                      BigDecimal resultValueBigDecimal= new BigDecimal(resultValue);
                       if (specRule.getQuantitativeHasControl()){
                           if (requiresUnitsConversion) {
                               resSpecEvaluation = resChkSpec.resultCheck(resultConverted, specRule.getMinSpec(), specRule.getMaxSpec(), specRule.getMinSpecIsStrict(), specRule.getMaxSpecIsStrict(), specRule.getMinControl(), specRule.getMaxControl(), specRule.getMinControlIsStrict(), specRule.getMaxControlIsStrict());

@@ -353,7 +353,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         Object[][] sampleData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleData[0][0].toString())) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.ERROR_TRAPPING_DATA_SAMPLE_NOT_FOUND, new Object[]{sampleId, schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId, schemaDataName});
         }
         String sampleSpecCode = "";
         Integer sampleSpecCodeVersion = null;
@@ -519,7 +519,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             }
         }
         if (resultMandatoryFieldsMissingBuilder.length() > 0) {
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_MissingMandatoryFields", new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.DataSampleErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), new Object[]{resultMandatoryFieldsMissingBuilder, schemaDataName});
         }
         fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_ADDED_ON.getName(), TblsData.SampleAnalysis.FLD_ADDED_BY.getName()});
         fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});

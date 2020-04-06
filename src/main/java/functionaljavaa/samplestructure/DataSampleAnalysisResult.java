@@ -17,6 +17,7 @@ import functionaljavaa.audit.SampleAudit;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.samplestructure.DataSample.DataSampleErrorTrapping;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -220,7 +221,7 @@ public class DataSampleAnalysisResult {
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_CONFIG_CODE.getName(), TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName()});
         if (LPPlatform.LAB_FALSE.equals(sampleData[0][0].toString())) 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.ERROR_TRAPPING_DATA_SAMPLE_NOT_FOUND, new Object[]{sampleId.toString(), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{sampleId.toString(), schemaDataName});
         String sampleConfigCode = (String) sampleData[0][1];
         Integer sampleConfigCodeVersion = (Integer) sampleData[0][2];
 sampleFieldName=LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_SAMPLE_ID.getName());
@@ -513,7 +514,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         if (resultInfo.length == 0) {
             String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + sampleId.toString() + " " + TblsData.SampleAnalysisResult.FLD_TEST_ID.getName() + ":" + testId.toString() +
                     " " + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName() + ":" + resultId.toString()};
-            errorCode = DataSample.ERROR_TRAPPING_DATA_SAMPLE_NOT_FOUND;
+            errorCode = DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode();
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{Arrays.toString(filter), schemaDataName});
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
         }
@@ -640,7 +641,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         if (objectInfo.length == 0) {
             String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + sampleId.toString() + TblsData.SampleAnalysisResult.FLD_TEST_ID.getName() + ":" + testId.toString() 
                     + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName() + ":" + resultId.toString()};
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSample.ERROR_TRAPPING_DATA_SAMPLE_NOT_FOUND, new Object[]{Arrays.toString(filter), schemaDataName});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filter), schemaDataName});
         } else {
             for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
                 String currStatus = (String) objectInfo[iResToCancel][0];

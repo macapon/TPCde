@@ -43,8 +43,8 @@ public class SampleAPIlogic {
                 con.setAutoCommit(true);}                */
         }else{
             DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
-            if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                //smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, actionName, sampleId);
+            /*if (smpStage.isSampleStagesEnable() && (sampleId!=null))
+                smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, actionName, sampleId);*/
             
             dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue("this.getClass().getSimpleName()", 
                     endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());

@@ -12,6 +12,7 @@ import databases.Token;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -104,7 +105,7 @@ public class GenomaDataStudyIndividuals {
                 }        
             }            
             if (mandatoryFieldsMissingBuilder.length()>0){
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "newProjectMissingMandatoryFields", new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), schemaPrefix});
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, GenomaDataProject.GenomaDataProjectErrorTrapping.NEW_PROJECT_MISSING_MANDATORY_FIELDS.getErrorCode(), new String[]{studyName, mandatoryFieldsMissingBuilder.toString(), schemaPrefix});
             }        
     /*        Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
             if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosis[0].toString())){	

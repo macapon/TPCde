@@ -241,8 +241,7 @@ public class ClassSample {
                 String diagnStr = Rdbms.getRecordFieldsByFilterJSON(schemaDataName, TblsData.Sample.TBL.getName(),
                         new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldToRetrieveArr, sortFieldsNameArr);
                 if (diagnStr.contains(LPPlatform.LAB_FALSE)){
-                    Object[] errMsg = LPFrontEnd.responseError(diagnStr.split("\\|"), language, schemaPrefix);
-                    //response.sendError((int) errMsg[0], (String) errMsg[1]);
+                    LPFrontEnd.responseError(diagnStr.split("\\|"), language, schemaPrefix);
                 }else{
                     LPFrontEnd.servletReturnSuccess(request, null, diagnStr);
                 }
@@ -348,10 +347,12 @@ public class ClassSample {
                 break;
             case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                 Integer auditId = (Integer) argValues[0];
-                diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, Integer.valueOf(auditId), token.getPersonName());
+                diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, auditId, token.getPersonName());
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
                 this.messageDynamicData=new Object[]{auditId};
                 break;
+            default:
+                break;                
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
             DataSampleStages smpStage = new DataSampleStages(schemaPrefix);

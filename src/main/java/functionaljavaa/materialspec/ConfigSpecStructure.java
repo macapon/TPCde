@@ -15,6 +15,7 @@ import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 import static lbplanet.utilities.LPPlatform.trapMessage;
 
 /**
@@ -28,10 +29,27 @@ public class ConfigSpecStructure {
     private static final String DIAGNOSES_SUCCESS = "SUCCESS";
     private static final String DIAGNOSES_ERROR = "ERROR";
     
-    private static final String ERROR_TRAPING_DATA_SAMPLE_SPECIAL_FUNCTION_RETURN_ERROR="DataSample_SpecialFunctionReturnedERROR";
-    private static final String ERROR_TRAPING_UNHANDLED_EXCEPTION_IN_CODE="UnhandledExceptionInCode";
-    
     private static final String ERROR_TRAPING_ARG_VALUE_LBL_ERROR="ERROR: ";
+    
+    public enum ConfigSpecErrorTrapping{ 
+        SAMPLE_NOT_FOUND ("SampleNotFound", "", ""),
+        ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
+        MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
+        MISSING_CONFIG_CODE("MissingConfigCode", "", ""),        
+        ;
+        private ConfigSpecErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     
     
 
@@ -354,11 +372,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
                     Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
                 }
                 if ( (specialFunctionReturn.toString().contains(DIAGNOSES_ERROR)) ){
-                    String errorCode = ERROR_TRAPING_DATA_SAMPLE_SPECIAL_FUNCTION_RETURN_ERROR;
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, LPNulls.replaceNull(specialFunctionReturn));
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                                
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                                                
                 }
             }
         }      
@@ -379,11 +396,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
        } catch (IllegalArgumentException ex) {
            Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
        }  
-        String errorCode = ERROR_TRAPING_UNHANDLED_EXCEPTION_IN_CODE;
         String params = "SchemaPrefix: "+schemaPrefix+"specCode"+specCode+"specCodeVersion"+specCodeVersion.toString()
                 +"specFieldName"+Arrays.toString(specFieldName)+"specFieldValue"+Arrays.toString(specFieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);        
-        return trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+        return trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);
     }
 
     /**
@@ -430,9 +446,8 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
             }            
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){
-           errorCode = "DataSample_MissingMandatoryFields";
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigSpecErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);                
         }
 
         Integer fieldIndex = Arrays.asList(specFieldName).indexOf(TblsCnfg.Spec.FLD_CODE.getName());
@@ -463,11 +478,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
                     Object specialFunctionReturn = DIAGNOSES_ERROR;
                     if (method!=null){ specialFunctionReturn = method.invoke(this, (Object[]) parameters); }     
                     if (specialFunctionReturn.toString().contains(DIAGNOSES_ERROR)){
-                        errorCode = ERROR_TRAPING_DATA_SAMPLE_SPECIAL_FUNCTION_RETURN_ERROR;
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                            
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), errorDetailVariables);                            
                     }
             }
         }
@@ -496,10 +510,9 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
-        errorCode = ERROR_TRAPING_UNHANDLED_EXCEPTION_IN_CODE;
         String params = "schemaPrefix: " + schemaPrefix+"specFieldName: "+Arrays.toString(specFieldName)+"specFieldValue: "+Arrays.toString(specFieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                  
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                  
     }
     
     /**
@@ -586,10 +599,9 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
             return diagnoses;
         }
         
-        if (mandatoryFieldsMissingBuilder.length()>0){
-           errorCode = "DataSample_MissingMandatoryFields";
+        if (mandatoryFieldsMissingBuilder.length()>0){           
            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, mandatoryFieldsMissingBuilder.toString());
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);    
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigSpecErrorTrapping.MISSING_MANDATORY_FIELDS.getErrorCode(), errorDetailVariables);    
         }
         
         String[] specialFields = getSpecialFields();
@@ -611,11 +623,10 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
                     Object specialFunctionReturn = DIAGNOSES_ERROR;
                     if (method!=null){ specialFunctionReturn = method.invoke(this, schemaName); }
                     if (specialFunctionReturn.toString().contains(DIAGNOSES_ERROR)){
-                        errorCode = ERROR_TRAPING_DATA_SAMPLE_SPECIAL_FUNCTION_RETURN_ERROR;
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, currField);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, aMethod);
                         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, specialFunctionReturn.toString());
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                            
+                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.SPECIAL_FUNCTION_RETURNED_ERROR.getErrorCode(), errorDetailVariables);                            
                     }
                 }
                 catch(InvocationTargetException ite){
@@ -666,10 +677,9 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(ConfigSpecStructure.class.getName()).log(Level.SEVERE, null, ex);
         }                    
-        errorCode = ERROR_TRAPING_UNHANDLED_EXCEPTION_IN_CODE;
         String params = "schemaPrefix: " + schemaPrefix+"specFieldName: "+Arrays.toString(specFieldName)+"specFieldValue: "+Arrays.toString(specFieldValue);
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, params);
-        diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                    
+        diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ParadigmErrorTrapping.UNHANDLED_EXCEPTION_IN_CODE.getErrorCode(), errorDetailVariables);                    
         return diagnoses;
     }
     
