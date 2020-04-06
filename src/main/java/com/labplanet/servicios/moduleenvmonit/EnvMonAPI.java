@@ -34,7 +34,7 @@ public class EnvMonAPI extends HttpServlet {
          */
         CORRECTIVE_ACTION_COMPLETE("CORRECTIVE_ACTION_COMPLETE", "programCompleteCorrectiveAction_success", 
                 new LPAPIArguments[]{new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID, LPAPIArguments.ArgumentType.STRING.toString(), true, 7)}),
+                new LPAPIArguments(PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7)}),
         EM_BATCH_INCUB_CREATE("EM_BATCH_INCUB_CREATE", "incubatorBatch_create_success", 
                 new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_BATCH_TEMPLATE_ID, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),

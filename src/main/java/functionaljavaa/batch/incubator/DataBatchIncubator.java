@@ -10,17 +10,48 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.IncubBatchAudit;
+import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
-
-
-
 /**
  *
  * @author User
  */
 public class DataBatchIncubator {
+    
+    public enum BatchBusinessRules{
+        START_MULTIPLE_BATCH_IN_PARALLEL("incubationBatch_startMultipleInParallelPerIncubator", LPPlatform.SCHEMA_CONFIG)
+        ;
+        private BatchBusinessRules(String tgName, String areaNm){
+            this.tagName=tgName;
+            this.areaName=areaNm;
+        }       
+        public String getTagName(){return this.tagName;}
+        public String getAreaName(){return this.areaName;}
+        
+        private final String tagName;
+        private final String areaName;
+    }
+    
+    public enum BatchErrorTrapping{ 
+        INCUBATORBATCH_NOT_STARTED("IncubatorBatchNotStartedYet", "The batch <*1*> was not started yet for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
+        INCUBATORBATCH_ALREADY_STARTED("IncubatorBatchAlreadyStarted", "The batch <*1*> was already started and cannot be started twice for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
+        INCUBATORBATCH_ALREADY_IN_PROCESS("IncubatorBatchAlreadyInProcess", "The batch <*1*> is already in process for incubator <*2*> and start multiples batches per incubator is not allowed for the procedure <*3*>", "")
+        ;
+        private BatchErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     
     /**
      *
@@ -132,6 +163,9 @@ public class DataBatchIncubator {
      * @param bTemplateId
      * @param bTemplateVersion
      * @param sampleId
+     * @param newRow
+     * @param newCol
+     * @param override
      * @return
      */
     public static Object[] batchMoveSample(String schemaPrefix, Token token, String bName, Integer bTemplateId, Integer bTemplateVersion, Integer sampleId, Integer newRow, Integer newCol, Boolean override){
@@ -212,6 +246,18 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchStarted(String schemaPrefix, Token token, String bName, String incubName, Integer bTemplateId, Integer bTemplateVersion){
+        Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName}, new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
+        incubName=batchInfo[0][1].toString();
+        if ( (batchInfo[0][0]!=null) && (batchInfo[0][0].toString().trim().length()>0) ) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, BatchErrorTrapping.INCUBATORBATCH_ALREADY_STARTED.getErrorCode(), new Object[]{bName, schemaPrefix});        
+        String allowMultipleStartBatch=Parameter.getParameterBundle(null, schemaPrefix, BatchBusinessRules.START_MULTIPLE_BATCH_IN_PARALLEL.getAreaName(), BatchBusinessRules.START_MULTIPLE_BATCH_IN_PARALLEL.getTagName(), null);
+        if (!"YES".equalsIgnoreCase(allowMultipleStartBatch)){
+            Object[][] batchInProcess = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                    new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()+" is not null", TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName()+" is null"}, new Object[]{incubName, "", ""},
+                    new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});            
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInProcess[0].toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, BatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS.getErrorCode(), new Object[]{batchInProcess[0][0], incubName, schemaPrefix});                    
+        }
         return batchMomentMarked(schemaPrefix, token, bName, incubName, bTemplateId, bTemplateVersion, BatchIncubatorMoments.START.toString());
     }
     
@@ -226,6 +272,10 @@ public class DataBatchIncubator {
      * @return
      */
     public static Object[] batchEnded(String schemaPrefix, Token token, String bName, String incubName, Integer bTemplateId, Integer bTemplateVersion){
+        Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName}, new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())) return LPArray.array2dTo1d(batchInfo);
+        if ( (batchInfo[0][0]==null) || (batchInfo[0][0].toString().trim().length()<1) ) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, BatchErrorTrapping.INCUBATORBATCH_NOT_STARTED.getErrorCode(), new Object[]{bName, schemaPrefix});
         return batchMomentMarked(schemaPrefix, token, bName, incubName, bTemplateId, bTemplateVersion, BatchIncubatorMoments.END.toString());
     }
     
@@ -316,13 +366,20 @@ public class DataBatchIncubator {
     
     private static Object[] sampleIncubStageIsBatchable(String schemaPrefix, Integer sampleId, Integer incubStage, String[] fieldsName, Object[] fieldsValue){
         String batchFldName="";
-        if (incubStage==1)
-            batchFldName=TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName();         
-        else if (incubStage==2)
-            batchFldName=TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
-        else
+        if (null==incubStage)
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.",
+                    new Object[]{incubStage, schemaPrefix});         
+        else switch (incubStage) {
+            case 1:
+                batchFldName=TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName();
+                break;
+            case 2:
+                batchFldName=TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName();
+                break;
+            default:
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Incubation stage <*1*> is not 1 or 2 therefore not recognized for procedure <*2*>.",
                         new Object[]{incubStage, schemaPrefix});
+        }
 
         Integer posic = LPArray.valuePosicInArray(fieldsName, batchFldName);
         if (posic==-1) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, " Field <*1*> not found in table <*2*> for procedure <*3*>",

@@ -26,6 +26,7 @@ import java.sql.Date;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 
@@ -117,7 +118,7 @@ public class ClassSample {
                 sampleId = (Integer) argValues[0];
                 diagn = smp.setSamplingDate(schemaPrefix, token, sampleId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{LPDate.getCurrentTimeStamp(), sampleId};
                 break;
             case CHANGESAMPLINGDATE:
                 sampleId = (Integer) argValues[0];
@@ -136,7 +137,6 @@ public class ClassSample {
                 break;
             case SAMPLINGCOMMENTREMOVE:
                 sampleId = (Integer) argValues[0];
-                comment = argValues[1].toString();
                 diagn = smp.sampleReceptionCommentRemove(schemaPrefix, token, sampleId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};

@@ -11,6 +11,7 @@ import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.ClassSample;
+import com.labplanet.servicios.modulesample.SampleAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.Token;
@@ -266,7 +267,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                             con.setAutoCommit(true);}                */
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                     }else{
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
+                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(SampleAPI.class.getSimpleName(), endPointSmp.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                     } 
                 }                

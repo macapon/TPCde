@@ -31,11 +31,11 @@ public class Parameter {
 
     /**
      *
-     * @param parameterFolder
-     * @param schemaName
-     * @param areaName
-     * @param parameterName
-     * @param language
+     * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
+     * @param schemaName - procedureName
+     * @param areaName - The procedure schema: config/data/procedure. 
+     * @param parameterName - Tag name
+     * @param language - Language
      * @return
      **/
     public static String getParameterBundle(String parameterFolder, String schemaName, String areaName, String parameterName, String language) {
