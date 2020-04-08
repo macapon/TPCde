@@ -18,7 +18,7 @@ import org.json.simple.JSONArray;
  */
 public class ClassEnvMonSampleController {
     
-    private StringBuilder rowArgsRows=new StringBuilder();
+    private StringBuilder rowArgsRows=new StringBuilder(0);
     private Object[] functionDiagn=new Object[0];
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;

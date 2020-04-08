@@ -267,7 +267,7 @@ public class UserSop {
             if (filterFieldValue==null){getUserProfileNEW[0][3]="filterFieldValue is null";}else{getUserProfileNEW[0][3]="filterFieldValue="+Arrays.toString(filterFieldValue);}
             return getUserProfileNEW;}       
                 
-        StringBuilder query = new StringBuilder();
+        StringBuilder query = new StringBuilder(0);
         for(String currSchemaPrefix: schemaPrefix){                    
             query.append("(select ");
             for(String fRet: fieldsToReturn){

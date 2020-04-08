@@ -94,14 +94,14 @@ public class TblsReqs {
             return createTableScriptPostgres(fields);
         }
         private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureInfo.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_REQUIREMENTS);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProcedureInfo obj: ProcedureInfo.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -187,14 +187,14 @@ public class TblsReqs {
             return createTableScriptPostgres(fields);
         }
         private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureRoles.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_REQUIREMENTS);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProcedureRoles obj: ProcedureRoles.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -326,14 +326,14 @@ public class TblsReqs {
             return createTableScriptPostgres(fields);
         }
         private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureSopMetaData.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_REQUIREMENTS);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProcedureSopMetaData obj: ProcedureSopMetaData.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -423,14 +423,14 @@ public class TblsReqs {
             return createTableScriptPostgres(fields);
         }
         private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureUserRequirements.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_REQUIREMENTS);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProcedureUserRequirements obj: ProcedureUserRequirements.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -517,14 +517,14 @@ public class TblsReqs {
             return createTableScriptPostgres(fields);
         }
         private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureUserRole.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_REQUIREMENTS);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProcedureUserRole obj: ProcedureUserRole.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -610,14 +610,14 @@ public class TblsReqs {
             return createTableScriptPostgres(fields);
         }
         private static String createTableScriptPostgres(String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProcedureUsers.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_REQUIREMENTS);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProcedureUsers obj: ProcedureUsers.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();

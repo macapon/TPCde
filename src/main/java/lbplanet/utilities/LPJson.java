@@ -54,7 +54,7 @@ public class LPJson {
      * @return
      */
     public static String convertToJSON(Object[] diagn) {
-        StringBuilder jsonStr = new StringBuilder().append("{");
+        StringBuilder jsonStr = new StringBuilder(0).append("{");
         
         for(int diagnItem = 0; diagnItem<diagn.length;diagnItem++){            
             jsonStr=jsonStr.append("diagn").append(diagnItem).append(":").append(diagn[diagnItem].toString());
@@ -64,7 +64,7 @@ public class LPJson {
     }
 
     public static String convertToJSON(Object[] diagn, String labelText) {
-        StringBuilder jsonStr = new StringBuilder().append("{");
+        StringBuilder jsonStr = new StringBuilder(0).append("{");
         
         for(int diagnItem = 0; diagnItem<diagn.length;diagnItem++){            
             jsonStr=jsonStr.append(labelText).append(diagnItem).append(":").append(diagn[diagnItem].toString());

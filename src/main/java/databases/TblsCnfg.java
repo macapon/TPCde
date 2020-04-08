@@ -107,14 +107,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Analysis.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.Analysis obj: TblsCnfg.Analysis.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -198,14 +198,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = AnalysisMethod.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.AnalysisMethod obj: TblsCnfg.AnalysisMethod.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -313,14 +313,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = AnalysisMethodParams.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.AnalysisMethodParams obj: TblsCnfg.AnalysisMethodParams.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -404,14 +404,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Sample.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.Sample obj: TblsCnfg.Sample.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -513,14 +513,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = SampleRules.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.SampleRules obj: TblsCnfg.SampleRules.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -639,14 +639,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = SopMetaData.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.SopMetaData obj: TblsCnfg.SopMetaData.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -751,14 +751,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Spec.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.Spec obj: TblsCnfg.Spec.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -887,14 +887,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = SpecLimits.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.SpecLimits obj: TblsCnfg.SpecLimits.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -982,14 +982,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = SpecRules.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.SpecRules obj: TblsCnfg.SpecRules.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -1089,14 +1089,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = UnitsOfMeasurement.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.UnitsOfMeasurement obj: TblsCnfg.UnitsOfMeasurement.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -1178,14 +1178,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ViewAnalysisMethodsView.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.ViewAnalysisMethodsView obj: TblsCnfg.ViewAnalysisMethodsView.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -1293,14 +1293,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = zzzDbErrorLog.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.zzzDbErrorLog obj: TblsCnfg.zzzDbErrorLog.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -1402,14 +1402,14 @@ public class TblsCnfg {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = zzzPropertiesMissing.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (TblsCnfg.zzzPropertiesMissing obj: TblsCnfg.zzzPropertiesMissing.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();

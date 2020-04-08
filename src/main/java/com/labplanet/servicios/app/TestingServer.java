@@ -346,7 +346,7 @@ String holidaysCalendar="España Comunidad X 2019";
             out.println("Reading web text file");
             String exampleUrl = "http://51.75.202.142:8888/myfiles/txtfile.txt";
             final URL url = new URL(exampleUrl);
-            final StringBuilder sb = new StringBuilder();
+            final StringBuilder sb = new StringBuilder(0);
 
             final char[] buf = new char[4096];
 

@@ -41,7 +41,7 @@ public class RequirementLogFile {
         FileWriter fw = null;  
         try{
             fw = new FileWriter(logFile, true);                  
-            StringBuilder newEntryBuilder = new StringBuilder();
+            StringBuilder newEntryBuilder = new StringBuilder(0);
             if (numTabs!=null){
                 for (Integer i=0;i<numTabs;i++){
                     newEntryBuilder.append( "     ");

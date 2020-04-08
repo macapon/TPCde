@@ -112,7 +112,7 @@ public class ConfigSpecStructure {
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf("code");        
         String specCode = (String) mandatoryFieldValue[specialFieldIndex];
 
-        StringBuilder variationNameExistBuilder = new StringBuilder();
+        StringBuilder variationNameExistBuilder = new StringBuilder(0);
 
 if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
         
@@ -154,7 +154,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
         Integer specialFieldIndex = Arrays.asList(mandatoryFields).indexOf("code");        
         String specCode = (String) mandatoryFieldValue[specialFieldIndex];
 
-        StringBuilder variationNameExistBuilder = new StringBuilder();
+        StringBuilder variationNameExistBuilder = new StringBuilder(0);
         
         Object[] variationNameDiagnosticArray = specVariationGetNamesList(schemaPrefix, specCode);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(variationNameDiagnosticArray[0].toString())){
@@ -413,7 +413,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
      */
     public Object[] specNew( String schemaPrefix, String[] specFieldName, Object[] specFieldValue ) throws IllegalAccessException, InvocationTargetException{                          
         Object[] mandatoryFieldValue = new String[0];
-        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
 
         String newCode = "";
         String errorCode = "";
@@ -523,7 +523,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
     public Object[] specVariationGetNamesList( String schemaPrefix, String specCode){
 
         String schemaName = LPPlatform.SCHEMA_CONFIG;
-        StringBuilder variationListBuilder = new StringBuilder();
+        StringBuilder variationListBuilder = new StringBuilder(0);
         String errorCode ="";
         
         schemaName = LPPlatform.buildSchemaName(schemaPrefix, schemaName);
@@ -556,7 +556,7 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
      */
     public Object[] specLimitNew( String schemaPrefix, String[] specFieldName, Object[] specFieldValue ) throws IllegalAccessException, InvocationTargetException{
         Object[] mandatoryFieldValue = new String[0];
-        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
                           
         String code = "";
         String errorCode="";

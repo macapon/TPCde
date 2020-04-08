@@ -83,7 +83,7 @@ public class TestingConfigSop extends HttpServlet {
             String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
 
             Object[][] configSpecTestingArray = LPArray.convertCSVinArray(csvPathName, csvFileSeparator);                        
-            StringBuilder fileContentBuilder = new StringBuilder();
+            StringBuilder fileContentBuilder = new StringBuilder(0);
             fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getServletName(), csvFileName));
             fileContentBuilder.append("<table>");
             for (Integer j=0;j<configSpecTestingArray[0].length;j++){               

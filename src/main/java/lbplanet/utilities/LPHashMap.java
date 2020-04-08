@@ -22,7 +22,7 @@ public class LPHashMap {
     public static String hashMapToStringKeys(HashMap<String, Object> map, String separator){ 
         String keys="";
         if (map.isEmpty()){return "";}
-        StringBuilder myKeys = new StringBuilder(); 
+        StringBuilder myKeys = new StringBuilder(0); 
         String[] strs = map.keySet().toArray(new String[map.size()]);
         for(String str : strs) {
           myKeys.append(keys).append(str).append(separator);

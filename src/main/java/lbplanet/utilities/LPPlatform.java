@@ -387,7 +387,7 @@ public class LPPlatform {
     
     private static HashMap<String, String> encryptEncryptableFields(Boolean override, String fieldName, String fieldValue){        
         HashMap<String, String> hm = new HashMap<>();        
-        StringBuilder newFieldValueBuilder = new StringBuilder();
+        StringBuilder newFieldValueBuilder = new StringBuilder(0);
         if (!fieldName.toUpperCase().contains("IN")){
             Object[] encStr = encryptString(fieldValue);
             if (override){
@@ -413,7 +413,7 @@ public class LPPlatform {
             }
             if (valuesEncripted.length()>0){
                 valuesEncripted=valuesEncripted.substring(0, valuesEncripted.length()-2);
-                newFieldValueBuilder = new StringBuilder();
+                newFieldValueBuilder = new StringBuilder(0);
                 newFieldValueBuilder.append(valuesEncripted);
             }                    
         }
@@ -441,7 +441,7 @@ public class LPPlatform {
             cipher.init(Cipher.ENCRYPT_MODE, aesKey);
             byte[] encrypted = cipher.doFinal(text.getBytes());
 
-            StringBuilder sb = new StringBuilder();
+            StringBuilder sb = new StringBuilder(0);
             for (byte b: encrypted) {
                 sb.append((char)b);
             }
@@ -604,7 +604,7 @@ public class LPPlatform {
         
         String[] mandatoryFields = mandatoryFieldsByDependency(schemaName, fieldNames, tableName, actionName);
 
-        StringBuilder mandatoryFieldsMissing = new StringBuilder();
+        StringBuilder mandatoryFieldsMissing = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(fieldNames).contains(currField.toLowerCase());
@@ -730,7 +730,7 @@ public class LPPlatform {
         String[] configTableKeyFieldName = configTableKeyFields.split("\\|");
         Object[] configTableKeyFielValue = new Object[0];
         
-        StringBuilder missingFieldInArray = new StringBuilder();
+        StringBuilder missingFieldInArray = new StringBuilder(0);
         for (Integer i=0;i<configTableKeyFieldName.length;i++){
             
             String currField = configTableKeyFieldName[i];

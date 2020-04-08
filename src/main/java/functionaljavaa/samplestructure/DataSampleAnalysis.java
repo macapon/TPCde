@@ -39,30 +39,11 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
      */
 
     
-    public enum DataSampleAnalyisAutoAddLevel{
-      
-        /**
-         *
-         */
-        DISABLE("DISABLE"), 
-
-        /**
-         *
-         */
-        SPEC("SPEC"), 
-
-        /**
-         *
-         */
-        SPEC_VARIATION("SPEC_VARIATION")
+    public enum DataSampleAnalyisAutoAddLevel{    
+        DISABLE("DISABLE"), SPEC("SPEC"), SPEC_VARIATION("SPEC_VARIATION")
         ; 
         private final String name;
         DataSampleAnalyisAutoAddLevel(String name) {this.name = name;}
-
-        /**
-         *
-         * @return
-         */
         public String getName() {return name;}
     }
     
@@ -322,7 +303,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             return fieldNameValueArrayChecker;
         }
         mandatoryFieldsValue = new Object[mandatoryFields.length];
-        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines = 0; inumLines < mandatoryFields.length; inumLines++) {
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(fieldName).contains(currField.toLowerCase());
@@ -501,7 +482,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String[] resultDefaulFields = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName);
         Object[] resultDefaulFieldValue = labIntChecker.getTableFieldsDefaulValues(schemaDataName, tableName, actionName);
         Object[] resultMandatoryFieldsValue = new Object[resultMandatoryFields.length];
-        StringBuilder resultMandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder resultMandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines = 0; inumLines < resultMandatoryFieldsValue.length; inumLines++) {
             String currField = resultMandatoryFields[inumLines];
             boolean contains = Arrays.asList(getResultFields).contains(currField.toLowerCase());

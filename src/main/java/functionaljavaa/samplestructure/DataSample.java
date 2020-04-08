@@ -14,7 +14,6 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPMath;
 import databases.DataDataIntegrity;
-import static databases.Rdbms.ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
@@ -24,8 +23,8 @@ import functionaljavaa.parameter.Parameter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
-import java.util.Date;
 import java.sql.SQLException;
+import java.util.Date;
 import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -57,10 +56,31 @@ public class DataSample {
      */
     public static final String DIAGNOSES_SUCCESS = "SUCCESS";
     
-    /**
-     *
-     */
     
+    public enum DataSampleProperties{ 
+        SUFFIX_STATUS_FIRST ("_statusFirst", "First status, to be concatenated to the entity name, example: sample_statusFirst, program_statusFirst etc...", "One of the given statuses"),
+        SUFFIX_SAMPLESTRUCTURE ("_sampleStructure", "TBD", "TBD"),
+        SAMPLE_STATUS_FIRST ("sample_statusFirst","", "One of the given statuses"),
+        SAMPLE_STATUS_RECEIVED ("sample_statusReceived", "", "One of the given statuses"),
+        SAMPLE_STATUS_INCOMPLETE ("sample_statusIncomplete", "", "One of the given statuses"),
+        SAMPLE_STATUS_COMPLETE ("sample_statusComplete", "", "One of the given statuses"),
+        SAMPLEALIQUOTING_VOLUME_REQUIRED ("sampleAliquot_volumeRequired", "TBD", "TBD"),
+        SAMPLEASUBLIQUOTING_VOLUME_REQUIRED ("sampleSubAliquot_volumeRequired", "TBD", "TBD"),        
+        ;
+        private DataSampleProperties(String pName, String descr, String possValues){
+            this.propertyName=pName;
+            this.description=descr;
+            this.possibleValues=possValues;
+        }
+        public String getPropertyName(){return this.propertyName;}
+        public String getDescription(){return this.description;}
+        public String getPossibleValues(){return this.possibleValues;}
+    
+        private final String propertyName;
+        private final String description;
+        private final String possibleValues;
+    }
+
     public enum DataSampleWithSuccess{ 
         SAMPLING_DATE_CHANGED ("SamplingDateChangedSuccessfully", "", ""),
         SAMPLE_RECEPTION_COMMENT_ADDED ("SampleReceptionCommentAdd", "", ""),
@@ -88,7 +108,8 @@ public class DataSample {
         SAMPLE_ALREADY_RECEIVED("SampleAlreadyReceived", "", ""),
         SAMPLE_NOT_REVIEWABLE("SampleNotReviewable", "", ""),
         VOLUME_SHOULD_BE_GREATER_THAN_ZERO("sampleAliquoting_volumeCannotBeNegativeorZero", "", ""),
-        
+        ALIQUOT_CREATED_BUT_ID_NOT_GOT("AliquotCreatedButIdNotGotToContinueApplyingAutomatisms", "Object created but aliquot id cannot be get back to continue with the logic", ""),
+        SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED ("sampleSubAliquoting_volumeAndUomMandatory", "", ""),        
         ;
         private DataSampleErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -187,7 +208,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
 
         mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel, actionName);
         
-        String sampleStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), sampleLevel+"_statusFirst");     
+        String sampleStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), sampleLevel+DataSampleProperties.SUFFIX_STATUS_FIRST.propertyName);     
 
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_STATUS.getName());
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleStatusFirst);
@@ -205,7 +226,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         }
 
         mandatoryFieldsValue = new Object[mandatoryFields.length];
-        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFields.length;inumLines++){
             String currField = mandatoryFields[inumLines];
             boolean contains = Arrays.asList(sampleFieldName).contains(currField.toLowerCase());
@@ -227,8 +248,8 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                 new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{sampleTemplate, sampleTemplateVersion, schemaConfigName, diagnosis[5]});    
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel+"_"+"sampleStructure", actionName);
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel+"_"+"sampleStructure", actionName);
+        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName(), actionName);
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName(), actionName);
         Integer specialFieldIndex = -1;
         
         for (Integer inumLines=0;inumLines<sampleFieldName.length;inumLines++){
@@ -482,8 +503,8 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
 
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA); 
 
-        String sampleStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statusFirst");
-        String sampleStatusInReceived = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statusReceived");
+        String sampleStatusFirst = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_FIRST.getPropertyName());
+        String sampleStatusInReceived = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_RECEIVED.getPropertyName());
 
         Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()},
                 new Object[]{sampleId}, new String[]{TblsData.Sample.FLD_STATUS.getName()});
@@ -494,8 +515,8 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             smpAudit.sampleAuditAdd(schemaPrefix, auditActionName, TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, preAuditId);              
             return new Object[]{LPPlatform.LAB_TRUE};
         }    
-        String sampleStatusIncomplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statusIncomplete");
-        String sampleStatusComplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sample_statusComplete");
+        String sampleStatusIncomplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_INCOMPLETE.getPropertyName());
+        String sampleStatusComplete = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), DataSampleProperties.SAMPLE_STATUS_COMPLETE.getPropertyName());
 
         String smpAnaNewStatus="";    
         Object[] diagnoses =  Rdbms.existsRecord(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
@@ -661,7 +682,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         BigDecimal aliqVolume = BigDecimal.ZERO;
         String aliqVolumeuom = "";
 
-        String actionEnabledSampleAliquotVolumeRequired = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+"-"+LPPlatform.SCHEMA_DATA, "sampleAliquot_volumeRequired");   
+        String actionEnabledSampleAliquotVolumeRequired = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+"-"+LPPlatform.SCHEMA_DATA, DataSampleProperties.SAMPLEALIQUOTING_VOLUME_REQUIRED.getPropertyName());   
         if (actionEnabledSampleAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
             String[] mandatorySampleFields = new String[]{TblsData.Sample.FLD_VOLUME_FOR_ALIQ.getName(), TblsData.Sample.FLD_VOLUME_FOR_ALIQ_UOM.getName()};
             String[] mandatorySampleAliqFields = new String[]{TblsData.Sample.FLD_VOLUME.getName(), TblsData.Sample.FLD_VOLUME_UOM.getName()};
@@ -713,7 +734,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ERROR_INSERTING_SAMPLE_RECORD.getErrorCode(), errorDetailVariables);
         }
         if (Rdbms.TBL_NO_KEY.equalsIgnoreCase(diagnoses[diagnoses.length-1].toString())){            
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Object created but aliquot id cannot be get back to continue with the logic", errorDetailVariables);
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.ALIQUOT_CREATED_BUT_ID_NOT_GOT.getErrorCode(), errorDetailVariables);
         }
         Integer aliquotId = Integer.parseInt(diagnoses[diagnoses.length-1].toString());
         Object[] fieldsOnLogSample = LPArray.joinTwo1DArraysInOneOf1DString(smpAliqFieldName, smpAliqFieldValue, ":");
@@ -741,7 +762,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
 
         Integer sampleId = 0;
         String[] mandatoryAliquotFields = new String[]{TblsData.SampleAliq.FLD_SAMPLE_ID.getName()};
-        String actionEnabledSampleSubAliquotVolumeRequired = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+"-data", "sampleSubAliquot_volumeRequired");             
+        String actionEnabledSampleSubAliquotVolumeRequired = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+"-"+LPPlatform.SCHEMA_DATA, DataSampleProperties.SAMPLEASUBLIQUOTING_VOLUME_REQUIRED.getPropertyName());             
 
         if (actionEnabledSampleSubAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
             mandatoryAliquotFields = LPArray.addValueToArray1D(mandatoryAliquotFields, TblsData.SampleAliq.FLD_VOLUME_FOR_ALIQ.getName());
@@ -754,10 +775,10 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                 return LPArray.array2dTo1d(aliquotInfo);}    
             for (String fv: mandatorySampleSubAliqFields){
                 if (LPArray.valuePosicInArray(smpSubAliqFieldName, fv) == -1) 
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_sampleSubAliquoting_volumeAndUomMandatory", 
-                        new Object[]{"sampleAliquot_volumeRequired", Arrays.toString(smpSubAliqFieldName), aliquotId, schemaPrefix});                
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLEASUBLIQUOTING_VOLUME_AND_UOM_REQUIRED.getErrorCode(), 
+                        new Object[]{DataSampleProperties.SAMPLEALIQUOTING_VOLUME_REQUIRED.getPropertyName(), Arrays.toString(smpSubAliqFieldName), aliquotId, schemaPrefix});                
             }
-            if (aliquotInfo[0][1]==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_sampleAliquoting_volumeCannotBeNegativeorZero", 
+            if (aliquotInfo[0][1]==null) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.VOLUME_SHOULD_BE_GREATER_THAN_ZERO.getErrorCode(), 
                                                     new Object[]{"null", sampleId, schemaPrefix});                
             sampleId = (Integer) aliquotInfo[0][0];
             BigDecimal aliqVolume = new BigDecimal(aliquotInfo[0][1].toString());           
@@ -917,7 +938,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             if (prepRdQuery.getRow()>0){
                 return prepRdQuery.getString(1);
             }else{                
-                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"sample", "", schemaPrefix});                         
+                LPPlatform.trapMessage(LPPlatform.LAB_FALSE, Rdbms.ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"sample", "", schemaPrefix});                         
                 return null;
             }            
         } catch (SQLException ex) {

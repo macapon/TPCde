@@ -46,7 +46,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         
         Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-        StringBuilder fileContentBuilder = new StringBuilder();
+        StringBuilder fileContentBuilder = new StringBuilder(0);
         try (PrintWriter out = response.getWriter()) {
             fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
@@ -59,11 +59,11 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
             String table1Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"1").toString();               
-            StringBuilder fileContentTable1Builder = new StringBuilder();
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
 
             String table2Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"2").toString();            
-            StringBuilder fileContentTable2Builder = new StringBuilder();
+            StringBuilder fileContentTable2Builder = new StringBuilder(0);
             fileContentTable2Builder.append(LPTestingOutFormat.createTableWithHeader(table2Header, numEvaluationArguments));
 
             for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){

@@ -210,7 +210,7 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
             mandatoryFieldsProj = LPArray.addValueToArray1D(mandatoryFieldsProj, "spec_variation_name");
         }
         mandatoryFieldsValueProj = new Object[mandatoryFieldsProj.length];
-        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFieldsProj.length;inumLines++){
             String currField = mandatoryFieldsProj[inumLines];
             boolean contains = Arrays.asList(sampleFieldName).contains(currField.toLowerCase());

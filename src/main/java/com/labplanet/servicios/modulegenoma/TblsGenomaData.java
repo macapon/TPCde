@@ -61,14 +61,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaPrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaPrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Project.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (Project obj: Project.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -127,14 +127,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaPrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaPrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProjectUsers.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (ProjectUsers obj: ProjectUsers.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -193,14 +193,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaPrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaPrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Study.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (Study obj: Study.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -259,14 +259,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaPrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaPrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = StudyUsers.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (StudyUsers obj: StudyUsers.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -324,14 +324,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaPrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaPrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = StudyIndividual.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (StudyIndividual obj: StudyIndividual.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -389,14 +389,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaPrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaPrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = StudyIndividualSample.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (StudyIndividualSample obj: StudyIndividualSample.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -460,14 +460,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix,String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = StudySamplesSet.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (StudySamplesSet obj: StudySamplesSet.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -535,14 +535,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix,String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = StudyFamily.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (StudyFamily obj: StudyFamily.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -616,14 +616,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix,String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = StudyVariableValues.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (StudyVariableValues obj: StudyVariableValues.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();
@@ -684,14 +684,14 @@ public class TblsGenomaData {
             return createTableScriptPostgres(schemaNamePrefix, fields);
         }
         private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
-            StringBuilder tblCreateScript=new StringBuilder();
+            StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = studyObjectsFiles.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
-            StringBuilder fieldsScript=new StringBuilder();
+            StringBuilder fieldsScript=new StringBuilder(0);
             for (studyObjectsFiles obj: studyObjectsFiles.values()){
                 String[] currField = obj.getDbFieldDefinitionPostgres();
                 String objName = obj.name();

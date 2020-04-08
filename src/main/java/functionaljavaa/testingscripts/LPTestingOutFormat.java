@@ -49,7 +49,7 @@ public class LPTestingOutFormat {
     private String filePathName="";
     private String fileName="";
     private HashMap<String, Object> csvHeaderTags=null;
-    private StringBuilder htmlStyleHeader = new StringBuilder();
+    private StringBuilder htmlStyleHeader = new StringBuilder(0);
     private Integer numEvaluationArguments = 0;
     
     public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
@@ -58,7 +58,7 @@ public class LPTestingOutFormat {
         Object[][] csvFileContent = new Object[0][0];
         Object testingSource=request.getAttribute(LPTestingParams.TESTING_SOURCE);
         Integer numEvalArgs=0;
-        StringBuilder htmlStyleHdr = new StringBuilder();
+        StringBuilder htmlStyleHdr = new StringBuilder(0);
         HashMap<String, Object> headerTags = new HashMap();   
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
@@ -98,7 +98,7 @@ public class LPTestingOutFormat {
             numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             
         }        
-        htmlStyleHdr = new StringBuilder();
+        htmlStyleHdr = new StringBuilder(0);
         htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
 
         this.testingContent=csvFileContent;
@@ -111,7 +111,7 @@ public class LPTestingOutFormat {
     }
     
     public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
-        StringBuilder fileContentBuilder = new StringBuilder();  
+        StringBuilder fileContentBuilder = new StringBuilder(0);  
                 
         String[] updFldNames=new String[]{TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
         Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp()};        
@@ -136,7 +136,7 @@ public class LPTestingOutFormat {
     }   
     
     public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary){
-        StringBuilder fileContentBuilder = new StringBuilder();  
+        StringBuilder fileContentBuilder = new StringBuilder(0);  
         tstAssertSummary.notifyResults();
         String[] updFldNames=new String[]{TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName()};
         Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp(), tstAssertSummary.getTotalTests()};        
@@ -401,7 +401,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String headerAddFields(Object[] fields){
-        StringBuilder content=new StringBuilder();
+        StringBuilder content=new StringBuilder(0);
         for (Object fld: fields){
             content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());           
         }
@@ -414,7 +414,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String headerAddFields(String[] fields){
-        StringBuilder content=new StringBuilder();
+        StringBuilder content=new StringBuilder(0);
         for (Object fld: fields){
             content.append(headerStart()).append(LPNulls.replaceNull(fld).toString()).append(headerEnd());           
         }
@@ -444,7 +444,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String rowAddField(String field){
-        StringBuilder content=new StringBuilder();
+        StringBuilder content=new StringBuilder(0);
         content.append(headerStart()).append(LPNulls.replaceNull(field)).append(headerEnd());           
         return content.toString();
     }
@@ -455,7 +455,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String rowAddFields(Object[] fields){
-        StringBuilder content=new StringBuilder();
+        StringBuilder content=new StringBuilder(0);
         for (Object field: fields){
             if (field==null){
                 content.append(fieldStart()).append("").append(fieldEnd());  
@@ -615,7 +615,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String convertArrayInHtmlTable(Object[][] content){
-        StringBuilder fileContentTable = new StringBuilder();
+        StringBuilder fileContentTable = new StringBuilder(0);
         fileContentTable.append(LPTestingOutFormat.tableStart());    
         fileContentTable.append(headerAddFields(content[0])).append(headerEnd());
         for (int iRows=1; iRows< content.length; iRows++){

@@ -91,7 +91,7 @@ public class  LPArray {
                     cipher.init(Cipher.ENCRYPT_MODE, aesKey);
                     byte[] encrypted = cipher.doFinal(text.getBytes());
 
-                    StringBuilder sb = new StringBuilder();
+                    StringBuilder sb = new StringBuilder(0);
                     for (byte b: encrypted) {
                         sb.append((char)b);
                     }
@@ -823,7 +823,7 @@ public class  LPArray {
      */
     public static String convertArrayToString(Object[] matrix, String fieldsSeparator, String fieldAdorn){
         if (matrix.length > 0) {
-            StringBuilder nameBuilder = new StringBuilder();
+            StringBuilder nameBuilder = new StringBuilder(0);
             for (Object n : matrix) {
                 nameBuilder.append(fieldAdorn).append(LPNulls.replaceNull(n).toString().replace("'", "\\'")).append(fieldAdorn).append(fieldsSeparator);
             }

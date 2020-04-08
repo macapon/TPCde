@@ -131,7 +131,7 @@ public final class BatchArray extends Batch{
             //Integer numLet=alphabet.length;
             Integer inumLet=0;
             Integer inumLetAlphabet=0;
-            StringBuilder currPrefixBuilder =new StringBuilder();
+            StringBuilder currPrefixBuilder =new StringBuilder(0);
             while (inumLet<linesName.length){
                 if (Objects.equals(inumLet, alphabet.length)){
                     currPrefixBuilder.append("A");

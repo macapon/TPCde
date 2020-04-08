@@ -252,7 +252,7 @@ public class AppProcedureListAPI extends HttpServlet {
             procEventSopDetail.put(LABEL_SOP_TOTAL_NOT_COMPLETED, 0);
         }else{
             Object[] procEventSopsArr = procEventSops.split("\\|");
-            StringBuilder sopListStrBuilder = new StringBuilder();
+            StringBuilder sopListStrBuilder = new StringBuilder(0);
             Integer sopTotalNotCompleted = 0;                
             Integer sopTotalCompleted = 0;                
             JSONArray procEventSopSummary = new JSONArray();   

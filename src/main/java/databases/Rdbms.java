@@ -702,8 +702,8 @@ if (1==1)return;
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, errorDetailVariables);                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }        
-        StringBuilder query = new StringBuilder();
-        StringBuilder fieldsToRetrieveStr = new StringBuilder();
+        StringBuilder query = new StringBuilder(0);
+        StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         for (String fn: fieldsToRetrieve){fieldsToRetrieveStr.append(fn).append(", ");}
         fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
         fieldsToRetrieveStr.deleteCharAt(fieldsToRetrieveStr.length() - 1);
@@ -1082,7 +1082,7 @@ if (1==1)return;
                 return Arrays.toString(errorLog);
             }
             items = res.next() ? LPArray.getStringArray(res.getArray("fields").getArray()) : null;
-            StringBuilder tableFields = new StringBuilder();
+            StringBuilder tableFields = new StringBuilder(0);
             for (String f: items){
                 if (tableFields.length()>0){tableFields.append(separator);}
                 if (addTableName){tableFields.append(table).append(".").append(f);

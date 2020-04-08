@@ -68,7 +68,7 @@ public class DBActions extends HttpServlet {
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         
         Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-        StringBuilder fileContentBuilder = new StringBuilder();
+        StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
                 
         try (PrintWriter out = response.getWriter()) {    
@@ -83,7 +83,7 @@ public class DBActions extends HttpServlet {
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
             String table1Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"1").toString();               
-            StringBuilder fileContentTable1Builder = new StringBuilder();
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             Integer fileLines=csvFileContent.length; 
 //fileLines=4;
@@ -195,7 +195,7 @@ public class DBActions extends HttpServlet {
                         }
                     }
                     if ( (!ENDPOINTS_BEING_TESTED_GETRECORDFIELDSBYFILTER.equalsIgnoreCase(actionName)) && (!LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample2D[0][0].toString())) ){                        
-                        StringBuilder dataSampleFldOutBuilder = new StringBuilder();
+                        StringBuilder dataSampleFldOutBuilder = new StringBuilder(0);
                         for (int iFields=0; iFields<dataSample2D[0].length;iFields++){
                             dataSampleFldOutBuilder.append(LPNulls.replaceNull((String) dataSample2D[0][iFields])).append(". ");
                         }

@@ -52,7 +52,7 @@ public class TesterFromUploadFile extends HttpServlet {
                 String fullFileName=mReq.getOriginalFileName(upload);
                 
                 String csvPathName=saveDirectory+fullFileName;
-                StringBuilder fileContentBuilder = new StringBuilder();
+                StringBuilder fileContentBuilder = new StringBuilder(0);
                 String[][] headerInfo = LPArray.convertCSVinArray(csvPathName, "=");
                 HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeaderTester(headerInfo);
                 if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){

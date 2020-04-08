@@ -119,7 +119,7 @@ public class SqlStatement {
     }
     
     private Object[] buildWhereClause(String[] whereFieldNames, Object[] whereFieldValues){
-        StringBuilder queryWhere = new StringBuilder();
+        StringBuilder queryWhere = new StringBuilder(0);
         Object[] whereFieldValuesNew = new Object[0];
         for (int iwhereFieldNames=0; iwhereFieldNames<whereFieldNames.length; iwhereFieldNames++){
             String fn = whereFieldNames[iwhereFieldNames];
@@ -173,7 +173,7 @@ public class SqlStatement {
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
     }
     private String  buildUpdateSetFields(String[] setFieldNames) {
-        StringBuilder updateSetSectionStr = new StringBuilder();
+        StringBuilder updateSetSectionStr = new StringBuilder(0);
         for (String setFieldName : setFieldNames) {
             updateSetSectionStr.append(setFieldName).append("=?, ");
         }
@@ -183,7 +183,7 @@ public class SqlStatement {
     }
 
     private String buildInsertFieldNames(String[] setFieldNames) {
-        StringBuilder setFieldNamesStr = new StringBuilder();
+        StringBuilder setFieldNamesStr = new StringBuilder(0);
         if (setFieldNames != null) {
             for (String setFieldName: setFieldNames) {
                 setFieldNamesStr.append(setFieldName).append(", ");
@@ -195,7 +195,7 @@ public class SqlStatement {
     }
 
     private String buildInsertFieldNamesValues(String[] setFieldNames) {
-        StringBuilder setFieldNamesArgStr = new StringBuilder();
+        StringBuilder setFieldNamesArgStr = new StringBuilder(0);
         if (setFieldNames != null) {
             for (String setFieldName: setFieldNames) {
                 setFieldNamesArgStr.append("?, ");
@@ -213,7 +213,7 @@ public class SqlStatement {
     }
 
     private String buildFieldsToRetrieve(String[] fieldsToRetrieve) {
-        StringBuilder fieldsToRetrieveStr = new StringBuilder();
+        StringBuilder fieldsToRetrieveStr = new StringBuilder(0);
         if (fieldsToRetrieve != null) {
             for (String fn : fieldsToRetrieve) {
                 if (fn.toUpperCase().contains(" IN")) {
@@ -230,7 +230,7 @@ public class SqlStatement {
     }
 
     private String buildGroupBy(String[] fieldsToGroup) {
-        StringBuilder fieldsToGroupStr = new StringBuilder();
+        StringBuilder fieldsToGroupStr = new StringBuilder(0);
         if (fieldsToGroup != null) {
             for (String fn : fieldsToGroup) {
                 fieldsToGroupStr.append(fn).append(", ");
@@ -245,7 +245,7 @@ public class SqlStatement {
     }
 
     private String buildOrderBy(String[] fieldsToOrder) {
-        StringBuilder fieldsToOrderBuilder = new StringBuilder();
+        StringBuilder fieldsToOrderBuilder = new StringBuilder(0);
         if (fieldsToOrder != null) {
             for (String fn : fieldsToOrder) {
                 fieldsToOrderBuilder.append(fn).append(", ");

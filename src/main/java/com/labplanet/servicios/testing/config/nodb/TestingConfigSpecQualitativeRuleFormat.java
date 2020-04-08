@@ -50,7 +50,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
         LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
         HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
         
-        StringBuilder fileContentBuilder = new StringBuilder();        
+        StringBuilder fileContentBuilder = new StringBuilder(0);        
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
 
@@ -63,7 +63,7 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
             Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
             
-            StringBuilder fileContentTable1Builder = new StringBuilder();
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
             
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){

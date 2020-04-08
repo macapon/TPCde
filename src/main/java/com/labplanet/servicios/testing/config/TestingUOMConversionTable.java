@@ -42,7 +42,7 @@ public class TestingUOMConversionTable extends HttpServlet {
         String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-        StringBuilder fileContentBuilder = new StringBuilder();
+        StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
 
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
@@ -58,7 +58,7 @@ public class TestingUOMConversionTable extends HttpServlet {
             Integer numEvaluationArguments = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
             Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
             String table1Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"1").toString();               
-            StringBuilder fileContentTable1Builder = new StringBuilder();
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
 
             for (Integer iLines=numHeaderLines;iLines<csvFileContent.length;iLines++){
@@ -90,7 +90,7 @@ public class TestingUOMConversionTable extends HttpServlet {
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(tableGet[0][3].toString()))
                             .append(tableGet[0][5].toString());
                 }else{
-                    StringBuilder tableConversionsBuilder = new StringBuilder();
+                    StringBuilder tableConversionsBuilder = new StringBuilder(0);
                     for (Object[] tableGet1 : tableGet) {
                         tableConversionsBuilder.append(LPTestingOutFormat.rowStart());
                         Object[] newValue = uom.convertValue(schemaPrefix, baseValue, baseUnitName, (String) tableGet1[0]);

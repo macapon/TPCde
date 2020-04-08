@@ -70,7 +70,7 @@ public class ProcedureDefinitionToInstanceUtility {
         String tableName = "procedure";  
         String methodName = "addUserSop";
         String newEntry = "";
-        StringBuilder sopListBuilder = new StringBuilder();
+        StringBuilder sopListBuilder = new StringBuilder(0);
         
         Object[][] procUserReqInfo = Rdbms.getRecordFieldsByFilter(schemaName, tableName, 
                         new String[]{"procedure", "version", "code is not null", "active", "in_scope", "in_system"}, 

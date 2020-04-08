@@ -108,7 +108,7 @@ public Object[] createProject( String schemaPrefix, Token token, String projectN
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Detected any field duplicated in FieldName, the values are: <*1*>", new String[]{Arrays.toString(fieldsName)});
         }
 
-        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder();
+        StringBuilder mandatoryFieldsMissingBuilder = new StringBuilder(0);
         for (Integer inumLines=0;inumLines<mandatoryFieldsProj.length;inumLines++){
             String currField = mandatoryFieldsProj[inumLines];
             boolean contains = Arrays.asList(fieldsName).contains(currField.toLowerCase());

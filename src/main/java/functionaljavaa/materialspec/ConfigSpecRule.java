@@ -272,7 +272,7 @@ public class ConfigSpecRule {
       String errorCode ="";
       Object[] errorDetailVariables= new Object[0];
       String specArgumentsSeparator = "\\*";
-      StringBuilder ruleBuilder = new StringBuilder();
+      StringBuilder ruleBuilder = new StringBuilder(0);
       Object[][] specDef=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
               new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()}, new Object[]{limitId}, 
               new String[]{TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName()});
@@ -327,7 +327,7 @@ public class ConfigSpecRule {
                       curParam = curParam.replace("MAXSPEC", "");              this.maxSpec =BigDecimal.valueOf(Double.valueOf(curParam)); this.maxSpecIsStrict=false;
               }        
           }   
-          StringBuilder ruleRepresentation = new StringBuilder();
+          StringBuilder ruleRepresentation = new StringBuilder(0);
           if (this.minSpec!=null){
             if (this.minSpecIsStrict)ruleRepresentation.append("<");
             ruleRepresentation.append(this.minSpec);

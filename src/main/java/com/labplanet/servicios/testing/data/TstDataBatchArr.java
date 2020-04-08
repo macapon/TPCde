@@ -38,7 +38,7 @@ public class TstDataBatchArr extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         response = LPTestingOutFormat.responsePreparation(response);        
         String csvFileName = "tstDataBatchArray.txt"; 
-        StringBuilder fileContentBuilder = new StringBuilder();
+        StringBuilder fileContentBuilder = new StringBuilder(0);
         String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
 

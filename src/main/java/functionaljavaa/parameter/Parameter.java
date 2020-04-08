@@ -119,7 +119,7 @@ public class Parameter {
      */
     public String addTagInPropertiesFile(String fileName, String entryName, String entryValue) throws IOException{
 
-        StringBuilder newEntryBuilder = new StringBuilder();
+        StringBuilder newEntryBuilder = new StringBuilder(0);
 
         ResourceBundle propConfig = ResourceBundle.getBundle(BUNDLE_TAG_PARAMETER_CONFIG_CONF);        
         String translationsDir = propConfig.getString(BUNDLE_TAG_TRANSLATION_DIR_PATH);

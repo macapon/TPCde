@@ -73,7 +73,7 @@ public class LPHttp {
      */
     public static Object[] areAPIMandatoryParamsInApiRequest(HttpServletRequest request, String[] paramNames){        
         Object [] diagnoses = null;        
-        StringBuilder paramsNotPresent = new StringBuilder(); 
+        StringBuilder paramsNotPresent = new StringBuilder(0); 
         if ( (paramNames!=null) && (paramNames.length>1 || (paramNames.length==1 && (!"".equals(paramNames[0])))) ){
             for (String curParam: paramNames){
                 Boolean notPresent = false;
@@ -97,7 +97,7 @@ public class LPHttp {
 
     public static Object[] areMandatoryParamsInApiRequest(HttpServletRequest request, String[] paramNames){        
         Object [] diagnoses = null;        
-        StringBuilder paramsNotPresent = new StringBuilder(); 
+        StringBuilder paramsNotPresent = new StringBuilder(0); 
         if ( (paramNames!=null) && (paramNames.length>1 || (paramNames.length==1 && (!"".equals(paramNames[0])))) ){
             for (String curParam: paramNames){
                 Boolean notPresent = false;
@@ -127,7 +127,7 @@ public class LPHttp {
      */
     public static Object[] areEndPointMandatoryParamsInApiRequest(HttpServletRequest request, LPAPIArguments[] paramNames){        
         Object [] diagnoses = null;        
-        StringBuilder paramsNotPresent = new StringBuilder(); 
+        StringBuilder paramsNotPresent = new StringBuilder(0); 
         if ( (paramNames!=null) && (paramNames.length>1 || (paramNames.length==1 && (!"".equals(paramNames[0])))) ){
             for (LPAPIArguments curParam: paramNames){
                 if (curParam.getMandatory()){
