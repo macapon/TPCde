@@ -11,6 +11,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsCnfg;
+import databases.TblsData;
 import databases.Token;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -199,8 +200,19 @@ public class SopUserAPIfrontend extends HttpServlet {
                         if (!columnsCreated){
                             columns.put("column_"+yProc, fieldsToRetrieve[yProc]);
                         }                       
-                    }
+                    }                    
                     columnsCreated=true;
+                    String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
+                    JSONArray jArrPieceOfInfo=new JSONArray();
+                    for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
+                        if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
+                            JSONObject jObjPieceOfInfo = new JSONObject();
+                            jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
+                            jObjPieceOfInfo.put("field_value", curSop[iFlds].toString());
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
+                        }
+                    }
+                    sop.put(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELD_TO_DISPLAY, jArrPieceOfInfo);
                     mySops.add(sop);
                 }    
                 columnNames.add(columns);
@@ -247,10 +259,21 @@ public class SopUserAPIfrontend extends HttpServlet {
                             for (int yProc = 0; yProc<userProcSops[0].length; yProc++) {
                                 sop.put(fieldsToRetrieve[yProc], userProcSop[yProc]);
                             }
+                            mySopsList.put("pending_sops", mySops);
+                            mySopsList.put("procedure_name", currProc);
+                            String[] userSopTblAllFields=TblsData.UserSop.getAllFieldNames();
+                            JSONArray jArrPieceOfInfo=new JSONArray();
+                            for (int iFlds=0;iFlds<fieldsToRetrieve.length;iFlds++){                      
+                                if (LPArray.valueInArray(userSopTblAllFields, fieldsToRetrieve[iFlds])){
+                                    JSONObject jObjPieceOfInfo = new JSONObject();
+                                    jObjPieceOfInfo.put("field_name", fieldsToRetrieve[iFlds]);
+                                    jObjPieceOfInfo.put("field_value", userProcSop[iFlds].toString());
+                                    jArrPieceOfInfo.add(jObjPieceOfInfo);
+                                }
+                            }
+                            sop.put(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELD_TO_DISPLAY, jArrPieceOfInfo);
                             mySops.add(sop);
                         }    
-                        mySopsList.put("pending_sops", mySops);
-                        mySopsList.put("procedure_name", currProc);
                         myPendingSopsByProc.add(mySopsList);
                     }
                 }                

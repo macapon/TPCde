@@ -24,6 +24,7 @@ import org.json.simple.JSONObject;
  * @author Administrator
  */
 public class LPFrontEnd {
+    public static final String ERROR_TRAPPING_TABLE_NO_RECORDS="tableWithNoRecords";
 
     public enum ResponseTags{
         DIAGNOTIC("diagnostic"), CATEGORY("category"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
@@ -127,6 +128,19 @@ public class LPFrontEnd {
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
     }
+    public static JSONObject responseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
+        JSONObject errJsObj = new JSONObject();
+        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_FALSE);
+        Object [] errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
+        Object [] errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
+        String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
+        String errorTextEs = errorMsgEs[errorMsgEs.length-1].toString(); 
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
+        errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
+        errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
+        return errJsObj;
+    }
+    
 
     /**
      *
@@ -320,7 +334,11 @@ public class LPFrontEnd {
         request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());        
         servetInvokeResponseErrorServlet(request, response);
     }    
-
+    public static final void servletReturnResponseErrorLPFalseDiagnosticBilingue(HttpServletRequest request, HttpServletResponse response, String errorCode, Object[] msgVariables){       
+        JSONObject errJSONMsg = LPFrontEnd.responseJSONDiagnosticLPFalse(errorCode, msgVariables);
+        request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, errJSONMsg.toString());        
+        servetInvokeResponseErrorServlet(request, response);
+    }    
     /**
      *
      * @param request
@@ -331,5 +349,8 @@ public class LPFrontEnd {
         JSONObject successJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(lPTrueObject);
         request.setAttribute(LPPlatform.SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME, successJSONMsg.toString());        
         servetInvokeResponseErrorServlet(request, response);
-    }      
+    }  
+    public static final JSONObject noRecordsInTableMessage(){
+        return LPFrontEnd.responseJSONDiagnosticLPFalse(ERROR_TRAPPING_TABLE_NO_RECORDS, new Object[0]);
+    }
 }

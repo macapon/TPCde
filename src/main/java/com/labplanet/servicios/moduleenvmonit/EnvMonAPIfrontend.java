@@ -30,6 +30,7 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure.ProgramCorre
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
+import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPJson;
 /**
  *
@@ -71,7 +72,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_TO_GET="program_name|location_name|description_en|description_es|map_icon|map_icon_h|map_icon_w|map_icon_top|map_icon_left|area|spec_code|spec_variation_name|spec_analysis_variation";
+    public static final String DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_TO_GET="program_name|location_name|description_en|description_es|map_icon|map_icon_h|map_icon_w|map_icon_top|map_icon_left|area|spec_code|spec_variation_name|spec_analysis_variation|person_ana_definition|requires_person_ana";
 
     /**
      *
@@ -471,7 +472,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
                     Object specCode = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CODE.getName());
                     Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CONFIG_VERSION.getName());                    
                     JSONObject specDefinition = new JSONObject();
-                    if (!(specCode==null || specCode=="" || specConfigVersion==null || specConfigVersion.toString()=="")){
+                    if (!(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
                       JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
                               null, null);
                       specDefinition.put(TblsCnfg.Spec.TBL.getName(), specInfo);
@@ -548,9 +549,14 @@ public class EnvMonAPIfrontend extends HttpServlet {
                          , fieldsToRetrieve
                          , new String[]{TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName()+" desc"} );
                  JSONArray jArr=new JSONArray();
-                 for (Object[] curRec: list){
-                   JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
-                   jArr.add(jObj);
+                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(list[0][0].toString())){
+                      JSONObject jObj= noRecordsInTableMessage();                    
+                      jArr.add(jObj);
+                 }else{
+                    for (Object[] curRec: list){
+                      JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, curRec);
+                      jArr.add(jObj);
+                    }
                  }
                  LPFrontEnd.servletReturnSuccess(request, response, jArr);
                  return;

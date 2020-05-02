@@ -88,7 +88,7 @@ public class LPPlatform {
      *
      */
     public static final String CONFIG_FILES_FOLDER = "LabPLANET";
-    private static final String CONFIG_FILES_ERRORTRAPING = "errorTraping";
+    static final String CONFIG_FILES_ERRORTRAPING = "errorTraping";
 
     /**
      *
@@ -864,6 +864,9 @@ public class LPPlatform {
     public static final Integer TRAP_MESSAGE_MESSAGE_POSIC=6;
     
     public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables) {
+        return trapMessage(evaluation, msgCode, msgVariables, null);
+    }
+    public static Object[] trapMessage(String evaluation, String msgCode, Object[] msgVariables, String language) {
         Object[] fldValue = new Object[7];
         String errorDetail = "";
         String className = Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
@@ -888,8 +891,8 @@ public class LPPlatform {
                 }
             }            
         }else{
-            errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode+"_detail", null);
-            if (errorDetail.length()==0){errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode+"_detail", null);}
+            errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode+"_detail", language);
+            if (errorDetail.length()==0){errorDetail = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode+"_detail", language);}
             if (errorDetail==null || (errorDetail!=null && errorDetail.length()==0) ){
                 if (msgVariables.length>0){errorDetail =msgVariables[0].toString();}else{errorDetail="";}
             }else{

@@ -68,11 +68,10 @@ public class ClassEnvMon {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     actionDiagnoses= DataBatchIncubator.createBatch(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
-                    batchName=actionDiagnoses[actionDiagnoses.length-1].toString();
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});                    
-                    this.messageDynamicData=new Object[]{batchName};
+                    this.messageDynamicData=new Object[]{batchName, schemaPrefix};
                     break;                    
                 case EM_BATCH_ASSIGN_INCUB: 
                     batchName = argValues[0].toString();
@@ -103,9 +102,15 @@ public class ClassEnvMon {
                     batchTemplateVersion = (Integer) argValues[2];
                     String incubName=null;
                     actionDiagnoses=DataBatchIncubator.batchStarted(schemaPrefix, token, batchName, incubName, batchTemplateId, batchTemplateVersion);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});
-                    this.messageDynamicData=new Object[]{incubationName, batchName};
+                        this.messageDynamicData=new Object[]{incubationName, batchName};                    
+                    }else{
+                        if (actionDiagnoses[4]==DataBatchIncubator.BatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS.getErrorCode())
+                            this.messageDynamicData=new Object[]{actionDiagnoses[actionDiagnoses.length-2], actionDiagnoses[actionDiagnoses.length-1], schemaPrefix};                                  
+                        else
+                            this.messageDynamicData=new Object[]{batchName, schemaPrefix};
+                    }
                     break;                    
                 case EM_BATCH_INCUB_END:
                     batchName = argValues[0].toString();

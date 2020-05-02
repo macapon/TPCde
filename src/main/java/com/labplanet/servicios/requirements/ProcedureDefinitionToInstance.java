@@ -24,10 +24,10 @@ import org.json.simple.JSONObject;
 public class ProcedureDefinitionToInstance extends HttpServlet {
 
     private static final Boolean  CREATE_SCHEMAS_AND_PROC_TBLS=false;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=true;
-    private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=true;
+    private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=false;
+    private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=false;
     private static final Boolean  PROC_DEPLOY_PROCEDURE_SOP_META_DATA=false;
-    private static final Boolean  PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS=false;
+    private static final Boolean  PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS=true;
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -41,9 +41,9 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         response=LPTestingOutFormat.responsePreparation(response);
         String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File");
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        String procName = "genoma-Instancia1"; 
+        String procName = "em-demo-a"; 
         Integer procVersion = 1; 
-        String schemaPrefix = "genoma-1";
+        String schemaPrefix = "em-demo-a";
         
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
                             , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", schemaPrefix}

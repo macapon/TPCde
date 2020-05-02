@@ -184,7 +184,7 @@ public class DataSampleIncubation {
             Integer tempReadingEvId=null;
             if (tempReading==null){
                 Object[][] incubLastTempReading=DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, incubName, 1);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubLastTempReading[0].toString())) return incubLastTempReading;
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubLastTempReading[0][0].toString())) return LPArray.array2dTo1d(incubLastTempReading);
                 tempReadingEvId= Integer.valueOf(incubLastTempReading[0][0].toString());
                 tempReading= BigDecimal.valueOf(Double.valueOf(incubLastTempReading[0][4].toString()));                
                 Object[] tempReadingChecker=tempReadingBusinessRule(schemaPrefix, token, incubName, incubLastTempReading[0][2]);

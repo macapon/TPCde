@@ -17,6 +17,25 @@ import lbplanet.utilities.LPPlatform;
  * @author Administrator
  */
 public class DataProgramProductionLot{
+    
+    public enum ProductionLotErrorTrapping{ 
+        PRODUCTIONLOT_ALREADY_EXIST("incubatorBatchExist", "One production lot called <*1*> already exist in procedure <*2*>", "Un lote de producción con el nombre <*1*> ya existe en el proceso <*2*>"),
+        PRODUCTIONLOT_FIELD_NOT_FOUND("productionLot_fieldNotFound", "", ""),
+        ;
+        private ProductionLotErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
+    
     /**
      *
      * @param schemaPrefix
@@ -27,16 +46,23 @@ public class DataProgramProductionLot{
      * @param userRole
      * @param appSessionId
      * @return
-     */
+     */    
     public static Object[] newProgramProductionLot(String schemaPrefix, String lotName, String[] fieldName, Object[] fieldValue, String personName, String userRole, Integer appSessionId) {
         String[] tblFlds=new String[0];
+        Object[] batchExists=Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(batchExists[0].toString())){
+            Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode(), new Object[]{lotName, schemaPrefix});
+            return LPArray.addValueToArray1D(trapMessage, new Object[]{lotName, schemaPrefix});
+        }
+        
         for (TblsEnvMonitData.ProductionLot obj: TblsEnvMonitData.ProductionLot.values()){
           tblFlds=LPArray.addValueToArray1D(tblFlds, obj.getName());
         }        
         if (fieldName==null)fieldName=new String[0];
         for (String curFld: fieldName){
           if (curFld.length()>0 && LPArray.valuePosicInArray(tblFlds, curFld)==-1)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, 
-                  "productionLot_fieldNotFound", new Object[]{curFld, lotName, Arrays.toString(fieldName), Arrays.toString(fieldValue), schemaPrefix});
+                  ProductionLotErrorTrapping.PRODUCTIONLOT_FIELD_NOT_FOUND.getErrorCode(), new Object[]{curFld, lotName, Arrays.toString(fieldName), Arrays.toString(fieldValue), schemaPrefix});
         }
         fieldName=LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName());
         fieldValue=LPArray.addValueToArray1D(fieldValue, lotName);

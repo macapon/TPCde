@@ -282,8 +282,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             }
                         }
                     }
-                    jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);
-                    
+                    jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);                    
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     break;                    
                 case API_ENDPOINT_GET_INCUBATOR_REPORT:
@@ -357,7 +356,12 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     }
                     jArrLastTempReadings = new JSONArray();
                     for (Object[] currReading: instrReadings){
-                        JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
+                        JSONObject jObj= new JSONObject();
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currReading[0].toString())){
+                            jObj.put("error", "No temperature readings found");
+                        }else{
+                            jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);}
+                        
                         jArrLastTempReadings.add(jObj);
                     }
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);

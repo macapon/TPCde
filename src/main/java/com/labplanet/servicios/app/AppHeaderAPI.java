@@ -30,13 +30,13 @@ public class AppHeaderAPI extends HttpServlet {
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     public static final String MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE="first_name|last_name|photo";
-    public enum IncidentAPIEndpoints{
+    public enum AppHeaderAPIEndpoints{
         /**
          *
          */
         GETAPPHEADER("GETAPPHEADER", "", "", ""),
         ;
-        private IncidentAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private AppHeaderAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
             this.name=name;
             this.mandatoryParams=mandatoryParams;
             this.optionalParams=optionalParams;
@@ -89,9 +89,9 @@ public class AppHeaderAPI extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
 
             JSONObject personInfoJsonObj = new JSONObject();
-            IncidentAPIEndpoints endPoint = null;
+            AppHeaderAPIEndpoints endPoint = null;
             try{
-                endPoint = IncidentAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = AppHeaderAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
@@ -101,9 +101,10 @@ public class AppHeaderAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
-            }            
-            switch (endPoint){
-                case GETAPPHEADER:          
+            }    
+            if (actionName.toUpperCase().equalsIgnoreCase(AppHeaderAPIEndpoints.GETAPPHEADER.getName())){
+//            switch (endPoint){
+//                case GETAPPHEADER:          
                     String personFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME);
                     String[] personFieldsNameArr = new String[0];
                     if ( personFieldsName==null || personFieldsName.length()==0){
@@ -127,8 +128,8 @@ public class AppHeaderAPI extends HttpServlet {
                     token=null;
                     LPFrontEnd.servletReturnSuccess(request, response, personInfoJsonObj);
                     return;  
-                default:      
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                      
+//                default:      
+//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                      
             }            
         }catch(Exception e){            
             String exceptionMessage = e.getMessage();           

@@ -189,8 +189,16 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     if (fieldValue!=null && fieldValue.length()>0) fieldValueArr = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                     diagnostic=DataProgramProductionLot.newProgramProductionLot(schemaPrefix, lotName, fieldNameArr, fieldValueArr, 
                           token.getPersonName(), token.getUserRole(), Rdbms.getTransactionId());
-                    messageDynamicData=new Object[]{lotName};
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnostic[0].toString())){
+                        diagnostic=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{lotName, schemaPrefix});
+                        messageDynamicData=new Object[]{lotName};
+                        rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.ProductionLot.TBL.getName(), TblsEnvMonitData.ProductionLot.TBL.getName(), lotName);
+                    }else{
+                        if (diagnostic[4]==DataProgramProductionLot.ProductionLotErrorTrapping.PRODUCTIONLOT_ALREADY_EXIST.getErrorCode())
+                            messageDynamicData=new Object[]{diagnostic[diagnostic.length-2], diagnostic[diagnostic.length-1], schemaPrefix};                                  
+                        else
+                            messageDynamicData=new Object[]{lotName, schemaPrefix};
+                    }
                     break;
                 case EM_ACTIVATE_PRODUCTION_LOT:
                     lotName=argValues[0].toString();
@@ -214,7 +222,8 @@ public class EnvMonProdLotAPI extends HttpServlet {
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);   
+                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();

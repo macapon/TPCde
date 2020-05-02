@@ -104,7 +104,7 @@ public class UserSop {
             return LPArray.array1dTo2d(userSchemas, userSchemas.length);
         }    
         
-        String[] fieldsToReturn = new String[]{TblsData.UserSop.FLD_SOP_ID.getName(), TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
+        String[] fieldsToReturn = new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_SOP_ID.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
         String[] filterFieldName =new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()};
         Object[] filterFieldValue =new Object[]{sopName, userName};        
         Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{schemaPrefix});   
@@ -368,16 +368,17 @@ public class UserSop {
         
         String[] insertFieldNames=new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName, TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
         Object[] insertFieldValues=new Object[]{personName, sopIdFieldValue, userSopInitialStatus, userSopInitialLight};
-        if (TblsCnfg.SopMetaData.FLD_SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)){
+        if ( (TblsCnfg.SopMetaData.FLD_SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopIdByName(schemaPrefix, sopIdFieldValue.toString()));
         }
-        if (TblsCnfg.SopMetaData.FLD_SOP_ID.getName().equalsIgnoreCase(sopIdFieldName)){
+        if ( (TblsCnfg.SopMetaData.FLD_SOP_ID.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName())) ){
             insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_ID.getName()); 
             insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, Sop.dbGetSopNameById(schemaPrefix, sopIdFieldValue));
-        }        
-        insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName()); 
-        insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, UserAndRolesViews.getUserByPerson(personName));        
+        }     
+        if (!LPArray.valueInArray(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName())){
+            insertFieldNames=LPArray.addValueToArray1D(insertFieldNames, TblsData.UserSop.FLD_USER_NAME.getName()); 
+            insertFieldValues=LPArray.addValueToArray1D(insertFieldValues, UserAndRolesViews.getUserByPerson(personName));}
         
         Object[] diagnosis = Rdbms.insertRecordInTable(schemaName, TblsData.UserSop.TBL.getName(), insertFieldNames, insertFieldValues);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
@@ -413,13 +414,13 @@ public class UserSop {
         if (SOP_PASS_LIGHT_CODE.equalsIgnoreCase(sopInfo[0][3].toString())){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_SOP_MARKEDASCOMPLETED_NOT_PENDING, new Object[]{sopName, schemaPrefix});
         }
-        Object[] userSopDiagnositc=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
+        Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
                 new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}, new Object[]{true, SOP_PASS_CODE, SOP_PASS_LIGHT_CODE},
                 new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()}, new Object[]{sopName, userName} );
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnositc[0].toString())){
-            userSopDiagnositc[userSopDiagnositc.length]="Sop assigned";
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
+            userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";
         }
-        return userSopDiagnositc; 
+        return userSopDiagnostic; 
     }
     
 }

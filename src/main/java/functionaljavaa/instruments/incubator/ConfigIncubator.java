@@ -20,7 +20,7 @@ public class ConfigIncubator {
         ConfigIncubatorErrorCodes(String cde){
             this.code=cde;
         }
-        public String getErrorCde(){return this.code;}
+        public String getErrorCode(){return this.code;}
         private final String code;
     }
     /**

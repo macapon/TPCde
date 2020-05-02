@@ -42,6 +42,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 
@@ -81,7 +82,48 @@ public class TestingServer extends HttpServlet {
 //            out.println(OtherEnumClass.getCell(1));
 //            MyEnum m = null;            
 //            out.println("Fran "+m.getByIndexFran(1));
+/*
+Integer[] misEnterosArr = new Integer[5];
+Integer valorABuscar=12;
 
+misEnterosArr[0]=1;        
+misEnterosArr[1]=12;  
+misEnterosArr[2]=41;
+misEnterosArr[3]=44;
+misEnterosArr[4]=87;
+String dameLaPosicion=null;
+int indice=0;
+Integer indiceEnArray=null;
+
+Boolean noOut=true;
+Integer tamañoArr=misEnterosArr.length;
+while(noOut){
+    indiceEnArray=Integer.valueOf(tamañoArr/2);
+    if (misEnterosArr[indiceEnArray]==valorABuscar){
+       dameLaPosicion=indiceEnArray.toString();
+       noOut=false;
+    }else{
+        if (misEnterosArr[indiceEnArray]<valorABuscar) tamañoArr
+    }
+}
+
+//for (Integer currInt: misEnterosArr){    
+//    if (currInt==valorABuscar) {
+//        dameLaPosicion=String.valueOf(indice);
+//        break;
+//    } 
+//    indice++;
+//}
+
+if (dameLaPosicion==null) dameLaPosicion="No existe";
+
+//dameLaPosicion == null ? "No existe" : String.valueOf(indice);
+String msgStr="El valor "+valorABuscar.toString()+" está en la posición "+dameLaPosicion;
+out.println(msgStr);         
+if (1==1) return;
+
+if (1==1) return;
+*/
 String schemaPrefix="em-demo-a";
         String tblCreateScript=TblsTesting.Script.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});

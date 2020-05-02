@@ -9,6 +9,7 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubati
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
 import databases.Rdbms;
+import functionaljavaa.instruments.incubator.ConfigIncubator.ConfigIncubatorErrorCodes;
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import lbplanet.utilities.LPArray;
@@ -20,7 +21,25 @@ import lbplanet.utilities.LPPlatform;
  * @author User
  */
 public class DataIncubatorNoteBook {
+
+    public enum DataIncubatorNoteBookErrorTrapping{ 
+//        INCUBATOR_NOT_EXIST("IncubatorNotExists", "The incubator <*1*> does not exist for procedure <*2*>", "La incubadora <*1*> no existe para el proceso <*2*>"),
+        NO_READINGS_SINCE_LATEST_ACTIVATION("IncubatorNotebookNoReadingSinceLatestActivation", "", ""),
+        NO_READINGS_LOGGED_YET("IncubatorNotebookNoReadingLoggedYet", "", "")
+        ;
+        private DataIncubatorNoteBookErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }    
     private enum EventType{TEMPERATURE_READING, ACTIVATE, DEACTIVATE}
     
     /**
@@ -36,9 +55,9 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, schemaPrefix});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_ACTIVE", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, schemaPrefix});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
@@ -59,7 +78,7 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, schemaPrefix});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
@@ -79,7 +98,7 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, schemaPrefix});
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
@@ -100,9 +119,9 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{instName}, 
                 new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName(), TblsEnvMonitConfig.InstrIncubator.FLD_ACTIVE.getName()}, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrInfo[0][0].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_EXIST", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.NOT_EXISTS.getErrorCode(), new Object[]{instName, schemaPrefix});
         if (!Boolean.valueOf(instrInfo[0][1].toString()))
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "INCUBATOR_NOT_ACTIVE", new Object[]{instName, schemaPrefix});
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ConfigIncubatorErrorCodes.CURRENTLY_DEACTIVE.getErrorCode(), new Object[]{instName, schemaPrefix});
         Object[] diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
@@ -158,7 +177,11 @@ public class DataIncubatorNoteBook {
         Object[][] instrNotebook=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
                 whereFieldName, whereFieldValue, 
                 fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName()+ " desc"});
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrNotebook[0][0].toString())) return instrNotebook;
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(instrNotebook[0][0].toString())){
+            Object[] errDiagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_LOGGED_YET.getErrorCode(), new Object[0]);
+            return LPArray.array1dTo2d(errDiagn, errDiagn.length);            
+        }
+        
         Object[] pointsFromLatestActivation= new Object[0];        
         Integer pointsAdded=0;
         for (Object[] currReading: instrNotebook){
@@ -171,7 +194,7 @@ public class DataIncubatorNoteBook {
             }
         }
         if (pointsAdded==0){
-            Object[] errDiagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NO_READINGS_SINCE_LATEST_ACTIVATION", new Object[0]);
+            Object[] errDiagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataIncubatorNoteBookErrorTrapping.NO_READINGS_SINCE_LATEST_ACTIVATION.getErrorCode(), new Object[0]);
             return LPArray.array1dTo2d(errDiagn, errDiagn.length-1);            
         } 
         return LPArray.array1dTo2d(pointsFromLatestActivation, instrNotebook[0].length);

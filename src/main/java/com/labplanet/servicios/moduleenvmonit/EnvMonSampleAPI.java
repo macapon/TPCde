@@ -265,7 +265,8 @@ public class EnvMonSampleAPI extends HttpServlet {
                         if (!con.getAutoCommit()){
                             con.rollback();
                             con.setAutoCommit(true);}                */
-                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
+                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                     }else{
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(SampleAPI.class.getSimpleName(), endPointSmp.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 

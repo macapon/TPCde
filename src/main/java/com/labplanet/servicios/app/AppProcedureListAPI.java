@@ -30,6 +30,9 @@ import functionaljavaa.sop.UserSop;
  */
 public class AppProcedureListAPI extends HttpServlet {
 
+    private enum elementType{TREE_LIST, ICON_BUTTON};
+    private enum iconPosition{UP, DOWN};
+    
     /**
      *
      */
@@ -44,6 +47,8 @@ public class AppProcedureListAPI extends HttpServlet {
      *
      */
     public static final String LABEL_ARRAY_PROC_EVENTS ="definition";
+    public static final String LABEL_ARRAY_PROC_EVENTS_ICONS_UP ="icons_up";
+    public static final String LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN ="icons_down";
     public static final String LABEL_ARRAY_PROC_EVENTS_ERROR ="definition_returned_error";
 
     /**
@@ -120,6 +125,8 @@ public class AppProcedureListAPI extends HttpServlet {
      *
      */
     public static final String PROC_EVENT_FLD_NAME="name|label_en|label_es|branch_level|type|mode|esign_required|lp_frontend_page_name|sop";
+    public static final String PROC_EVENT_ICONS_UP_FLD_NAME="name|label_en|label_es|icon_name|type|mode|esign_required|lp_frontend_page_name|sop";
+    public static final String PROC_EVENT_ICONS_DOWN_FLD_NAME="name|label_en|label_es|icon_name|type|mode|esign_required|lp_frontend_page_name|sop";
     
 /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -155,8 +162,10 @@ public class AppProcedureListAPI extends HttpServlet {
                 return;
             }
             String[] procFldNameArray = PROC_FLD_NAME.split("\\|");
-            String[] procEventFldNameArray = PROC_EVENT_FLD_NAME.split("\\|");            
-
+            String[] procEventFldNameArray = PROC_EVENT_FLD_NAME.split("\\|");
+            String[] procEventFldNameIconsUpArray = PROC_EVENT_ICONS_UP_FLD_NAME.split("\\|");
+            String[] procEventFldNameIconsDownArray = PROC_EVENT_ICONS_DOWN_FLD_NAME.split("\\|");
+            
             JSONArray procedures = new JSONArray();     
             for (Object curProc: allUserProcedurePrefix){
                 JSONObject procedure = new JSONObject();
@@ -173,7 +182,7 @@ public class AppProcedureListAPI extends HttpServlet {
                     if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
                     
                     Object[][] procEvent = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureEvents.TBL.getName(), 
-                            new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName()}, new String[]{rolName}, 
+                            new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_TYPE.getName()}, new String[]{rolName,elementType.TREE_LIST.toString().toLowerCase().replace("_","-")}, 
                             procEventFldNameArray, new String[]{TblsProcedure.ProcedureEvents.FLD_ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.FLD_BRANCH_LEVEL.getName()});
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){ 
                         JSONObject procEventJson = new JSONObject();
@@ -195,6 +204,55 @@ public class AppProcedureListAPI extends HttpServlet {
                         }
                         procedure.put(LABEL_ARRAY_PROC_EVENTS, procEvents);
                     } 
+
+                    Object[][] procEventIconsUp = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureEvents.TBL.getName(), 
+                            new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_POSITION.getName(), TblsProcedure.ProcedureEvents.FLD_TYPE.getName()}, new String[]{rolName, iconPosition.UP.toString().toLowerCase(), elementType.ICON_BUTTON.toString().toLowerCase().replace("_","-")}, 
+                            procEventFldNameIconsUpArray, new String[]{TblsProcedure.ProcedureEvents.FLD_ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.FLD_BRANCH_LEVEL.getName()});
+/*                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsUp[0][0].toString())){ 
+                        JSONObject procEventJson = new JSONObject();
+                        procEventJson.put("Error on get procedure_events records", procEventIconsUp[0][procEventIconsUp.length-1].toString());                        
+                        procedure.put(LABEL_ARRAY_PROC_EVENTS_ERROR, procEventJson);
+                        procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONObject());
+                    }
+*/                    
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsUp[0][0].toString())){                                                
+                        JSONArray procEventsIconsUp = new JSONArray(); 
+                        for (Object[] procEvent1 : procEventIconsUp) {
+                            JSONObject procEventJson = new JSONObject();
+                            procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameIconsUpArray, procEvent1);
+
+                            JSONObject procEventSopDetail = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson, procEventFldNameIconsUpArray, procEvent1);
+
+                            procEventJson.put(LABEL_ARRAY_SOPS, procEventSopDetail);
+                            procEventsIconsUp.add(procEventJson);
+                        }
+                        procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_UP, procEventsIconsUp);
+                    } 
+
+                    Object[][] procEventIconsDown = Rdbms.getRecordFieldsByFilter(schemaNameProcedure, TblsProcedure.ProcedureEvents.TBL.getName(), 
+                            new String[]{TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName(), TblsProcedure.ProcedureEvents.FLD_POSITION.getName(), TblsProcedure.ProcedureEvents.FLD_TYPE.getName()}, new String[]{rolName, iconPosition.DOWN.toString().toLowerCase(), elementType.ICON_BUTTON.toString().toLowerCase().replace("_","-")}, 
+                            procEventFldNameIconsDownArray, new String[]{TblsProcedure.ProcedureEvents.FLD_ORDER_NUMBER.getName(), TblsProcedure.ProcedureEvents.FLD_BRANCH_LEVEL.getName()});
+                    JSONArray procEventsIconsDown = new JSONArray(); 
+/*                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsDown[0][0].toString())){ 
+                        JSONObject procEventJson = new JSONObject();
+                        procEventJson.put("Error on get procedure_events records", procEventIconsDown[0][procEventIconsDown.length-1].toString());                        
+                        procedure.put(LABEL_ARRAY_PROC_EVENTS_ERROR, procEventJson);
+                        procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONObject());
+                    }
+                    JSONArray procEventsIconsDown = new JSONArray(); */
+                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventIconsDown[0][0].toString())){                                                                        
+                        for (Object[] procEvent1 : procEventIconsDown) {
+                            JSONObject procEventJson = new JSONObject();
+                            procEventJson = LPJson.convertArrayRowToJSONObject(procEventFldNameIconsDownArray, procEvent1);
+
+                            JSONObject procEventSopDetail = procEventSops(token.getPersonName(), curProc.toString(), procedure, procEventJson, procEventFldNameIconsDownArray, procEvent1);
+
+                            procEventJson.put(LABEL_ARRAY_SOPS, procEventSopDetail);
+                            procEventsIconsDown.add(procEventJson);
+                        }
+                    } 
+                    procedure.put(LABEL_ARRAY_PROC_EVENTS_ICONS_DOWN, procEventsIconsDown);
+
                 }
                 procedures.add(procedure);
             }

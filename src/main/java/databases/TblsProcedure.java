@@ -196,7 +196,9 @@ public class TblsProcedure {
         /**
          *
          */
-        FLD_LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string())
+        FLD_LP_FRONTEND_PAGE_NAME("lp_frontend_page_name", LPDatabase.string()),
+        FLD_ICON_NAME("icon_name", LPDatabase.string()),
+        FLD_POSITION("position", LPDatabase.string()),
         ;
         private ProcedureEvents(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

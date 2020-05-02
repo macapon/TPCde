@@ -121,7 +121,6 @@ public class SampleAPI extends HttpServlet {
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {
-
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
@@ -131,8 +130,7 @@ public class SampleAPI extends HttpServlet {
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){       
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                 return ;                           
-            }            
-            
+            }                        
             SampleAPIEndpoints endPoint = null;
             try{
                 endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
@@ -154,7 +152,8 @@ public class SampleAPI extends HttpServlet {
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clss.getMessageDynamicData());   
+                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 

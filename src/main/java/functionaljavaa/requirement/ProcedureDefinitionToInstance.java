@@ -360,7 +360,7 @@ public class ProcedureDefinitionToInstance {
         for (Object[] curProcEventSops: procEventSopsRecordsSource){
             Object curProcEventName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_NAME.getName())];
             Object curSops = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_SOP.getName())];
-            Object curRoleName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_SOP.getName())];
+            Object curRoleName = curProcEventSops[LPArray.valuePosicInArray(FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), TblsProcedure.ProcedureEvents.FLD_ROLE_NAME.getName())];
             JSONArray jsArr = new JSONArray(); 
             JSONObject jsUserRoleObj = new JSONObject();
             jsUserRoleObj.put("Procedure Event", curProcEventName); jsUserRoleObj.put("SOP Name", curSops); jsUserRoleObj.put("Role Name", curRoleName);

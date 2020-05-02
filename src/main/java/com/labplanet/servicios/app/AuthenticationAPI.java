@@ -16,6 +16,7 @@ import databases.TblsApp;
 import databases.Token;
 import databases.TblsApp.Users;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -159,7 +160,8 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_ID, sessionIdStr);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_DATE, nowLocalDate.toString());
-                    String tabsStr="lp_frontend_page_name:sample-incub-batch*tabName:em-demo-a-sample-incub-batch*tabLabel_en:em-demo-a-sample-incub-batch*tabLabel_es:em-demo-a-sample-incub-batch*procedure:em-demo-a*tabType:tab*tabEsignRequired:undefined*tabConfirmUserRequired:false|lp_frontend_page_name:browser*tabName:em-demo-a-browser*tabLabel_en:em-demo-a-browser*tabLabel_es:em-demo-a-browser*procedure:em-demo-a*tabType:tab*tabEsignRequired:false*tabConfirmUserRequired:false|lp_frontend_page_name:user-profile/user-profile.js*tabName:user-profile*tabLabel_en:User Profile*tabLabel_es:Perfil de Usuario*procedure:user*tabType:systab*tabEsignRequired:false*tabConfirmUserRequired:true|lp_frontend_page_name:sop/my-sops.js*tabName:sop-allMySops*tabLabel_en:All My SOPs*tabLabel_es:Mis PNTs*procedure:sop*tabType:systab*tabEsignRequired:false*tabConfirmUserRequired:false";            
+                    //String tabsStr="lp_frontend_page_name:sample-incub-batch*tabName:em-demo-a-sample-incub-batch*tabLabel_en:em-demo-a-sample-incub-batch*tabLabel_es:em-demo-a-sample-incub-batch*procedure:em-demo-a*tabType:tab*tabEsignRequired:undefined*tabConfirmUserRequired:false|lp_frontend_page_name:browser*tabName:em-demo-a-browser*tabLabel_en:em-demo-a-browser*tabLabel_es:em-demo-a-browser*procedure:em-demo-a*tabType:tab*tabEsignRequired:false*tabConfirmUserRequired:false|lp_frontend_page_name:user-profile/user-profile.js*tabName:user-profile*tabLabel_en:User Profile*tabLabel_es:Perfil de Usuario*procedure:user*tabType:systab*tabEsignRequired:false*tabConfirmUserRequired:true|lp_frontend_page_name:sop/my-sops.js*tabName:sop-allMySops*tabLabel_en:All My SOPs*tabLabel_es:Mis PNTs*procedure:sop*tabType:systab*tabEsignRequired:false*tabConfirmUserRequired:false";            
+                    String tabsStr=userInfo[0][1].toString();
                     String[] tabs=tabsStr.split("\\|");
                     JSONArray jArr=new JSONArray();
                     for (String curTab: tabs){
@@ -167,7 +169,8 @@ public class AuthenticationAPI extends HttpServlet {
                         JSONObject jObj = new JSONObject();
                         for (String curTabAttr: tabAttrArr){ 
                             String[] curAttr=curTabAttr.split("\\:");
-                            jObj.put(curAttr[0], curAttr[1]);
+                            if (curAttr.length>=2)
+                                jObj.put(curAttr[0], curAttr[1]);
                         }
                         jArr.add(jObj);
                     }                    
@@ -202,9 +205,9 @@ public class AuthenticationAPI extends HttpServlet {
                     break;
                 case USER_CHANGE_PSWD:     
                     String finalToken = argValues[0].toString();
-                    userToCheck = argValues[1].toString();
-                    passwordToCheck = argValues[2].toString();
-                    String newPassword = argValues[3].toString();
+                    String newPassword = argValues[1].toString();
+                    userToCheck = argValues[2].toString();
+                    passwordToCheck = argValues[3].toString();
                     token = new Token(finalToken);
                     Object[] newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
@@ -219,16 +222,21 @@ public class AuthenticationAPI extends HttpServlet {
                             token.getAppSessionId(), 
                             appStartedDate, 
                             token.geteSign());
-                    Rdbms.closeRdbms();                    
+                    Rdbms.closeRdbms();  
+                    RelatedObjects rObj=RelatedObjects.getInstance();
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     jsonObj = new JSONObject();
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
+                    //LPPlatform.trapMessageJSON(LPPlatform.trapMessage(finalToken, userRole, argValues));                    
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
+                    rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;      
                 case USER_CHANGE_ESIGN:     
                     finalToken = argValues[0].toString();
-                    userToCheck = argValues[1].toString();
-                    passwordToCheck = argValues[2].toString();
-                    String newEsign = argValues[3].toString();
+                    String newEsign = argValues[1].toString();
+                    userToCheck = argValues[2].toString();
+                    passwordToCheck = argValues[3].toString();
                     token = new Token(finalToken);
                     Object[] newEsignDiagn=setUserNewEsign(token.getUserName(), newEsign);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newEsignDiagn[0].toString()))
@@ -245,7 +253,12 @@ public class AuthenticationAPI extends HttpServlet {
                             newEsign);
                     Rdbms.closeRdbms();                    
                     jsonObj = new JSONObject();
+                    rObj=RelatedObjects.getInstance();
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    jsonObj = new JSONObject();
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
+                    rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;        
                 case SET_DEFAULT_TABS_ON_LOGIN: 
@@ -256,8 +269,10 @@ public class AuthenticationAPI extends HttpServlet {
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString()))
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagn);   
                     else{
-                        JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(diagn);
-                        LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                        
+                        rObj=RelatedObjects.getInstance();
+                        jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                                        
+                        rObj.killInstance();
+                        LPFrontEnd.servletReturnSuccess(request, response, jsonObj);                        
                     }
                     return;
                 default:      

@@ -343,20 +343,30 @@ public class ClassSample {
                     smpAudit.sampleAuditAdd(schemaPrefix, endPoint.getName(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
                 }
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{sampleId, schemaPrefix};
                 break;
             case SAMPLEAUDIT_SET_AUDIT_ID_REVIEWED:
                 Integer auditId = (Integer) argValues[0];
-                diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, auditId, token.getPersonName());
+                Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+                    new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId}, 
+                    new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName()}, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditInfo[0][0].toString())){
+                    diagn=LPPlatform.trapMessage(auditInfo[0][0].toString(), SampleAudit.SampleAuditErrorTrapping.AUDIT_RECORD_NOT_FOUND.getErrorCode(), new Object[]{auditId});
+                    sampleId=null;
+                }else{
+                    diagn=SampleAudit.sampleAuditSetAuditRecordAsReviewed(schemaPrefix, auditId, token.getPersonName());
+                    sampleId=Integer.valueOf(auditInfo[0][0].toString());
+                }
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsDataAudit.Sample.TBL.getName(), TblsDataAudit.Sample.TBL.getName(), auditId);
-                this.messageDynamicData=new Object[]{auditId};
+                this.messageDynamicData=new Object[]{auditId, sampleId};
                 break;
             default:
                 break;                
         }
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
             DataSampleStages smpStage = new DataSampleStages(schemaPrefix);
-            smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, endPoint.getName().toUpperCase(), sampleId);
+            if (sampleId!=null)
+                smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, endPoint.getName().toUpperCase(), sampleId);
         }
         this.diagnostic=diagn;
         this.relatedObj=rObj;

@@ -43,6 +43,7 @@ public class TestingSamples extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        
         String table1Header = TestingServletsConfig.DB_SCHEMADATA_SAMPLES.getTablesHeaders();
         Integer table1NumArgs=13;
         
@@ -124,7 +125,7 @@ public class TestingSamples extends HttpServlet {
             tstAssertSummary=null; 
         }
         catch(IOException error){
-            tstAssertSummary=null; 
+            //tstAssertSummary=null; 
             String exceptionMessage = error.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    
         } finally {

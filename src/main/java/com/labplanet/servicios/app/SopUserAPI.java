@@ -145,26 +145,31 @@ public class SopUserAPI extends HttpServlet {
         }        
 */
         RelatedObjects rObj=RelatedObjects.getInstance();
-        Object[] userSopDiagnositc=new Object[0];
+        Object[] userSopDiagnostic=new Object[0];
         try (PrintWriter out = response.getWriter()) {        
             switch (endPoint){
             case SOP_MARK_AS_COMPLETED:
                 String sopName = argValues[0].toString();
                 String userName = token.getUserName();
-                userSopDiagnositc=UserSop.userSopMarkedAsCompletedByUser(schemaPrefix, userName, sopName);
-                messageDynamicData=new Object[]{sopName};
+                userSopDiagnostic=UserSop.userSopMarkedAsCompletedByUser(schemaPrefix, userName, sopName);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
+                    messageDynamicData=new Object[]{sopName, userName, schemaPrefix};
+                }else{
+                    messageDynamicData=new Object[]{sopName};                
+                }
                 rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsData.UserSop.TBL.getName(), TblsData.UserSop.TBL.getName(), sopName);
                 break;
             default:                
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                                          
             }
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnositc[0].toString())){  
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, userSopDiagnositc);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, userSopDiagnostic[4].toString(), messageDynamicData);                
+                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, userSopDiagnositc);   
             }else{                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();

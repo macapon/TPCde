@@ -29,7 +29,29 @@ public class SampleAudit {
     /**
      *
      */
+ 
+    public enum SampleAuditErrorTrapping{ 
+        
+        AUDIT_RECORDS_PENDING_REVISION("auditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
+        AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),
+        AUDIT_RECORD_ALREADY_REVIEWED("AuditRecordAlreadyReviewed", "The audit record <*1*> was reviewed therefore cannot be reviewed twice.", "El registro de audit para muestra con id <*1*> ya fue revisado, no se puede volver a revisar."),
+        AUTHOR_CANNOT_BE_REVIEWER("AuditSamePersonCannotBeAuthorAndReviewer", "Same person cannot review its own actions", "La misma persona no puede revisar sus propias acciones")
+        //INCUBATORBATCH_ALREADY_STARTED("IncubatorBatchAlreadyStarted", "The batch <*1*> was already started and cannot be started twice for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
+        //INCUBATORBATCH_ALREADY_IN_PROCESS("IncubatorBatchAlreadyInProcess", "The batch <*1*> is already in process for incubator <*2*> and start multiples batches per incubator is not allowed for the procedure <*3*>", "")
+        ;
+        private SampleAuditErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
     
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }    
     public enum SampleAuditEvents{
 
         /**
@@ -538,12 +560,15 @@ public class SampleAudit {
      */
     public static Object[] sampleAuditSetAuditRecordAsReviewed(String schemaPrefix, Integer auditId, String personName){
         String auditAuthorCanBeReviewerMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_AUTHOR_CAN_REVIEW_TOO, null);  
+        Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+            new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId}, 
+            new String[]{TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()}, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
         if (!"TRUE".equalsIgnoreCase(auditAuthorCanBeReviewerMode)){
-            Object[][] auditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
-                new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()}, new Object[]{auditId}, 
-                new String[]{TblsDataAudit.Sample.FLD_PERSON.getName()}, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(auditInfo[0][0].toString())) return LPArray.array2dTo1d(auditInfo);
-            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Same person cannot review its own actions", new Object[]{});
+            if (personName.equalsIgnoreCase(auditInfo[0][0].toString())) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUTHOR_CANNOT_BE_REVIEWER.getErrorCode(), new Object[]{});
+        }
+        if (Boolean.valueOf(auditInfo[0][1].toString())){
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORD_ALREADY_REVIEWED.getErrorCode(), new Object[]{auditId});              
         }
         return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
             new String[]{TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_BY.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName()}, 
@@ -595,7 +620,7 @@ public class SampleAudit {
       Boolean pendingRecords=true;
       for (Object[] curSampleInfo: sampleInfo){
         if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
-          return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "auditRecordsPendingRevision", 
+          return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
           new Object[]{sampleId, schemaPrefix});
         }
       }      
