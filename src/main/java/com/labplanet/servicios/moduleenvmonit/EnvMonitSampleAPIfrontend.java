@@ -170,14 +170,14 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         if (LPArray.valueInArray(sampleToRetrieveArr, sampleTblAllFields[iFlds]))
                             jObjSampleInfo.put(sampleTblAllFields[iFlds], sampleInfo[0][iFlds].toString());
                     }
-                    for (int iFlds=0;iFlds<sampleToDisplayArr.length;iFlds++){                      
-                        if (LPArray.valueInArray(sampleTblAllFields, sampleToDisplayArr[iFlds])){
+                    for (String sampleToDisplayArr1 : sampleToDisplayArr) {
+                        if (LPArray.valueInArray(sampleTblAllFields, sampleToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", sampleToDisplayArr[iFlds]);
-                            jObjPieceOfInfo.put("field_value", sampleInfo[0][LPArray.valuePosicInArray(sampleTblAllFields, sampleToDisplayArr[iFlds])].toString());
+                            jObjPieceOfInfo.put("field_name", sampleToDisplayArr1);
+                            jObjPieceOfInfo.put("field_value", sampleInfo[0][LPArray.valuePosicInArray(sampleTblAllFields, sampleToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
-                        }
                     }
+            }
 
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, jObjSampleInfo);
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, jArrPieceOfInfo);
@@ -240,11 +240,11 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         if (LPArray.valueInArray(fieldToRetrieveArr, batchTblAllFields[iFlds]))
                             jObjBatchInfo.put(batchTblAllFields[iFlds], batchInfo[0][iFlds].toString());
                     }
-                    for (int iFlds=0;iFlds<fieldToDisplayArr.length;iFlds++){                      
-                        if (LPArray.valueInArray(batchTblAllFields, fieldToDisplayArr[iFlds])){
+                    for (String fieldToDisplayArr1 : fieldToDisplayArr) {
+                        if (LPArray.valueInArray(batchTblAllFields, fieldToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr[iFlds]);
-                            jObjPieceOfInfo.put("field_value", batchInfo[0][LPArray.valuePosicInArray(batchTblAllFields, fieldToDisplayArr[iFlds])].toString());
+                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
+                            jObjPieceOfInfo.put("field_value", batchInfo[0][LPArray.valuePosicInArray(batchTblAllFields, fieldToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
@@ -284,7 +284,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     }
                     jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);                    
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
-                    break;                    
+                    break;                                        
                 case API_ENDPOINT_GET_INCUBATOR_REPORT:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_GET_INCUBATOR_REPORT.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -323,11 +323,11 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         if (LPArray.valueInArray(fieldToRetrieveArr, incubTblAllFields[iFlds]))
                             jObjBatchInfo.put(incubTblAllFields[iFlds], incubInfo[0][iFlds].toString());
                     }
-                    for (int iFlds=0;iFlds<fieldToDisplayArr.length;iFlds++){                      
-                        if (LPArray.valueInArray(incubTblAllFields, fieldToDisplayArr[iFlds])){
+                    for (String fieldToDisplayArr1 : fieldToDisplayArr) {
+                        if (LPArray.valueInArray(incubTblAllFields, fieldToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
-                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr[iFlds]);
-                            jObjPieceOfInfo.put("field_value", incubInfo[0][LPArray.valuePosicInArray(incubTblAllFields, fieldToDisplayArr[iFlds])].toString());
+                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
+                            jObjPieceOfInfo.put("field_value", incubInfo[0][LPArray.valuePosicInArray(incubTblAllFields, fieldToDisplayArr1)].toString());
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
@@ -367,7 +367,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_LAST_N_TEMP_READINGS, jArrLastTempReadings);
                     
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
-                    break;                    
+                    break;                                        
                     
                 case API_ENDPOINT_STATS_SAMPLES_PER_STAGE:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_STATS_SAMPLES_PER_STAGE.split("\\|"));
@@ -615,7 +615,7 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
         case "MICROORGANISMIDENTIFICATION":
             String[] tblAllFlds=TblsEnvMonitData.ViewSampleMicroorganismList.getAllFieldNames();
             Object[][] sampleStageInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewSampleMicroorganismList.TBL.getName(), 
-                    new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName()}, new Object[]{Integer.valueOf(sampleId)}, 
+                    new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                     tblAllFlds, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RESULT_ID.getName()});                    
             jObj= new JSONObject();
             for (Object[] curRow: sampleStageInfo){

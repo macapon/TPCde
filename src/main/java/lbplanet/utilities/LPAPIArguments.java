@@ -14,7 +14,7 @@ import java.sql.Date;
  */
 public class LPAPIArguments {
     
-    public enum ArgumentType{STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, BOOLEAN};
+    public enum ArgumentType{STRING, INTEGER, BIGDECIMAL, STRINGARR, STRINGOFOBJECTS, DATE, BOOLEAN}
     private final String name;
     private String type=ArgumentType.STRING.toString();
     private final Boolean mandatory;

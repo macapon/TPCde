@@ -124,7 +124,7 @@ public class DataSample {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }
-    public enum SampleStatuses{LOGGED, RECEIVED, NOT_STARTED, STARTED, INCOMPLETE};
+    public enum SampleStatuses{LOGGED, RECEIVED, NOT_STARTED, STARTED, INCOMPLETE}
     
     String classVersion = "0.1";
     String errorCode ="";

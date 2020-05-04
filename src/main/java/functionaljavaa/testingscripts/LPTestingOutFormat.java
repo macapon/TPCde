@@ -43,7 +43,7 @@ public class LPTestingOutFormat {
         return csvHeaderTags;
     }
     
-    public enum InputModes{FILE, DATABASE};
+    public enum InputModes{FILE, DATABASE}
     private String inputMode="";
     private Object[][] testingContent=new Object[0][0];
     private String filePathName="";

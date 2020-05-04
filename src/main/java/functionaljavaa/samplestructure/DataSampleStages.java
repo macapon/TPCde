@@ -60,7 +60,7 @@ Object[][] firstStageData=new Object[0][0];
      *
      */
     
-    public enum SampleStagesTypes{JAVA, JAVASCRIPT};
+    public enum SampleStagesTypes{JAVA, JAVASCRIPT}
     public static final String LOD_JAVASCRIPT_FORMULA="schemaPrefix-sample-stage.js"; // "WEB-INF/classes/JavaScript/"+"schemaPrefix-sample-stage.js";
     public static final String LOD_JAVASCRIPT_LOCAL_FORMULA="D:\\LP\\LabPLANETAPI_20200113_beforeRefactoring\\src\\main\\resources\\JavaScript\\"+"schemaPrefix-sample-stage.js";
     

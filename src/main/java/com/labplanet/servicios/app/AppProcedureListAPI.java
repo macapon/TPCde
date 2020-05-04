@@ -30,8 +30,8 @@ import functionaljavaa.sop.UserSop;
  */
 public class AppProcedureListAPI extends HttpServlet {
 
-    private enum elementType{TREE_LIST, ICON_BUTTON};
-    private enum iconPosition{UP, DOWN};
+    private enum elementType{TREE_LIST, ICON_BUTTON}
+    private enum iconPosition{UP, DOWN}
     
     /**
      *

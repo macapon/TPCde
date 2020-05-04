@@ -27,7 +27,7 @@ public class ClassSampleController {
         Object[] argsForLogFiles=new Object[0];
         SampleAPIParams.SampleAPIEndpoints endPoint = null;
                 try{
-                    endPoint = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toString().toUpperCase());
+                    endPoint = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toUpperCase());
                     HashMap<HttpServletRequest, Object[]> hmQuery = endPoint.testingSetAttributesAndBuildArgsArray(request, testingContent, iLines);
                     HttpServletRequest query= hmQuery.keySet().iterator().next();   
                     argsForLogFiles = hmQuery.get(query);                    
@@ -55,7 +55,7 @@ public class ClassSampleController {
                     }
                     this.functionFound=true;
                     this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-                    ClassSample clss=new ClassSample(request, token, schemaPrefix.toString(), endPoint);
+                    ClassSample clss=new ClassSample(request, token, schemaPrefix, endPoint);
                     this.functionDiagn=clss.getDiagnostic();
                     this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
                 }catch(Exception e){
