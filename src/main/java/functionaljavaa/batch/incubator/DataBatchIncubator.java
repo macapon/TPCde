@@ -39,6 +39,7 @@ public class DataBatchIncubator {
         INCUBATORBATCH_ALREADY_STARTED("IncubatorBatchAlreadyStarted", "The batch <*1*> was already started and cannot be started twice for procedure <*2*>", "La tanda <*1*> no está iniciada todavía para el proceso <*2*>"),
         INCUBATORBATCH_ALREADY_IN_PROCESS("IncubatorBatchAlreadyInProcess", "The batch <*1*> is already in process for incubator <*2*> and start multiples batches per incubator is not allowed for the procedure <*3*>", ""),
         INCUBATORBATCH_ALREADY_EXIST("incubatorBatchExist", "One incubator batch called <*1*> already exist in procedure <*2*>", "Una tanda con el nombre <*1*> ya existe en el proceso <*2*>"),
+        INCUBATORBATCH_NOT_FOUND("incubatorBatchNotFound", "One incubator batch called <*1*> does not exist in procedure <*2*>", "Una tanda con el nombre <*1*> no existe en el proceso <*2*>"),        
         ;
         private BatchErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
             this.errorCode=errCode;
@@ -110,6 +111,29 @@ public class DataBatchIncubator {
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchType <*1*> Not recognized", new Object[]{batchType});         
     }
     
+    public static Object[] removeBatch(String schemaPrefix, Token token, String bName){
+        Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName},
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInfo[0][0].toString())){
+            Object[] trapMessage = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, BatchErrorTrapping.INCUBATORBATCH_NOT_FOUND.getErrorCode(), new Object[]{bName, schemaPrefix});
+            return LPArray.addValueToArray1D(trapMessage, new Object[]{bName, schemaPrefix});
+        } 
+        String batchType=batchInfo[0][0].toString();
+        Boolean isBatchEmpty=false;
+        if (batchType.equalsIgnoreCase(BatchIncubatorType.UNSTRUCTURED.toString())){ 
+            isBatchEmpty=DataBatchIncubatorUnstructured.batchIsEmptyUnstructured(schemaPrefix, token, bName);
+        }else if (batchType.equalsIgnoreCase(BatchIncubatorType.STRUCTURED.toString())) 
+            isBatchEmpty=DataBatchIncubatorStructured.batchIsEmptyStructured(schemaPrefix, token, bName);
+        else
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "batchType <*1*> Not recognized", new Object[]{batchType});   
+        if (isBatchEmpty){
+            return Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitConfig.IncubBatch.TBL.getName(),
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{bName});
+        }else{
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IncubatorBatchNotEmptyToRemove", new Object[]{bName, schemaPrefix});        
+        }
+    }
     private static Object[] createBatchTypeChecker(String schemaPrefix, String batchType, String bName, Integer bTemplateId, Integer bTemplateVersion, String[] fldName, Object[] fldValue){
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;

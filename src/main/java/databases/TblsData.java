@@ -2021,7 +2021,17 @@ public class TblsData {
         /**
          *
          */
-        FLD_UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode")        
+        FLD_UOM_CONVERSION_MODE_SPEC_LIMITS("uom_conversion_mode_spec_limits", "spcLim.uom_conversion_mode") ,
+        FLD_MIN_VAL_ALLOWED("min_val_allowed", "spcLim.min_val_allowed"),
+        FLD_MAX_VAL_ALLOWED("max_val_allowed", "spcLim.max_val_allowed"),
+        FLD_MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", "spcLim.min_allowed_strict"),
+        FLD_MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", "spcLim.max_allowed_strict"),        
+        FLD_MIN_VAL_FOR_UNDETERMINED("min_undetermined", "spcLim.min_undetermined"),
+        FLD_MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined"),
+        FLD_MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict"),
+        FLD_MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict"),
+        
+        
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

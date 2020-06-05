@@ -18,6 +18,7 @@ import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
+import functionaljavaa.materialspec.ConfigSpecRule;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -79,6 +80,58 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}              
             
             switch (actionName.toUpperCase()){
+                case API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        LPFrontEnd.servletReturnResponseError(request, response, 
+                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+                        return;                  
+                    }                      
+                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                                                      
+                    Integer sampleId = Integer.parseInt(sampleIdStr);                           
+                    String resultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE);
+                    String[] resultFieldToRetrieveArr=null;
+                    if (resultFieldToRetrieve!=null){resultFieldToRetrieveArr=  resultFieldToRetrieve.split("\\|");}
+                    resultFieldToRetrieveArr = LPArray.addValueToArray1D(resultFieldToRetrieveArr, SampleAPIParams.MANDATORY_FIELDS_FRONTEND_TO_RETRIEVE_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
+                    
+                    String[] sortFieldsNameArr = null;
+                    String sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME); 
+                    if (! ((sortFieldsName==null) || (sortFieldsName.contains(GlobalAPIsParams.REQUEST_PARAM_VALUE_UNDEFINED))) ) {
+                        sortFieldsNameArr = sortFieldsName.split("\\|");                                    
+                    }else{   
+                        sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|");     
+                    }  
+                    resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
+                    Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
+                    Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
+                            new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()},new Object[]{sampleId}, resultFieldToRetrieveArr, sortFieldsNameArr);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisResultList[0][0].toString())){  
+                        Rdbms.closeRdbms();                                          
+                        Object[] errMsg = LPFrontEnd.responseError(new String[] {Arrays.toString(LPArray.array2dTo1d(analysisResultList))}, language, null);
+                        response.sendError((int) errMsg[0], (String) errMsg[1]);                            
+                    }else{                
+                      JSONArray jArr=new JSONArray();
+                      for (Object[] curRow: analysisResultList){
+                        ConfigSpecRule specRule = new ConfigSpecRule();
+                        String currRowLimitId=curRow[posicLimitIdFld-1].toString();
+                        Object[] resultLockData=sampleAnalysisResultLockData(resultFieldToRetrieveArr, curRow);
+                        if (resultLockData!=null){
+                            resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]);
+                            curRow=LPArray.addValueToArray1D(curRow, resultLockData[1]);
+                        }        
+                        JSONObject row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
+                        if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
+                          specRule.specLimitsRule(schemaPrefix, Integer.valueOf(currRowLimitId) , null);                        
+                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
+                        }
+                        jArr.add(row);
+                      }                        
+                    Rdbms.closeRdbms();                    
+                      LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                    }                    
+                    return;                  
+                  
+                  
                 case API_ENDPOINT_GET_MICROORGANISM_LIST:
                   String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()};
                   Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
@@ -141,7 +194,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                  
                     }                                                              
-                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
+                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
                     String sampleToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);
                     String[] sampleToRetrieveArr=new String[0];
                     if ((sampleToRetrieve!=null) && (sampleToRetrieve.length()>0))
@@ -649,7 +702,14 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
     
     //return new Object[][]{{"hola", "adios"}};
 }
-
+    Object[] sampleAnalysisResultLockData(String[] resultFieldToRetrieveArr, Object[] curRow){
+        String[] fldNameArr=new String[0];
+        Object[] fldValueArr=new Object[0];
+        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
+        fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+        return new Object[]{fldNameArr, fldValueArr};
+        //return null;
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

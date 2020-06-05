@@ -21,7 +21,25 @@ import lbplanet.utilities.LPPlatform;
  * @author Administrator
  */
 public class DataProgramCorrectiveAction {
+    
+    public enum ProgramCorrectiveStatus{CREATED, CLOSED} 
 
+    public enum ProgramCorrectiveActionErrorTrapping{ 
+        ACTION_CLOSED("DataProgramCorrectiveAction_actionClosed", "The action <*1*> is already closed, no action can be performed.", "La acción <*1*> está cerrada y no admite cambios."),
+        ;
+        private ProgramCorrectiveActionErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     /**
      *
      * @param schemaPrefix
@@ -136,7 +154,15 @@ public class DataProgramCorrectiveAction {
      */
     public static Object[] markAsCompleted(String schemaPrefix, Token token, Integer correctiveActionId){    
     String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
-    
+    Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+    new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
+    new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()});
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
+        return correctiveActionInfo[0];
+    }
+    if (statusClosed.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED.getErrorCode(), new Object[]{correctiveActionId});
+    }
     return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
             new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()}, 
             new Object[]{statusClosed}, 

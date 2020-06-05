@@ -23,10 +23,20 @@ import lbplanet.utilities.LPPlatform;
  */
 public class DataBatchIncubatorUnstructured {
 
+    static Boolean batchIsEmptyUnstructured(String schemaPrefix, Token token, String batchName){
+        Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()});
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(batchInfo[0][0]).toString())){
+            if (LPNulls.replaceNull(batchInfo[0][0]).toString().length()==0) return true;
+        }
+        return false;
+    }
     static Object[] batchAddSampleUnstructured(String schemaPrefix, Token token, String batchName, Integer sampleId, Integer incubStage) {
         String separator = "*";
         String[] sampleInfoFieldsToRetrieve = new String[]{TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()};
-        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
+        Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, sampleInfoFieldsToRetrieve);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())) {
             return LPArray.array2dTo1d(sampleInfo);
         }

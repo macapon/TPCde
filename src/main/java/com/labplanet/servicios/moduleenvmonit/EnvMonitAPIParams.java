@@ -35,6 +35,8 @@ public class EnvMonitAPIParams extends HttpServlet {
     /**
      *
      */
+    
+    public static final String API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_LIST = "GET_SAMPLE_ANALYSIS_RESULT_LIST";
     public static final String API_ENDPOINT_GET_MICROORGANISM_LIST = "GET_MICROORGANISM_LIST";
     public static final String API_ENDPOINT_GET_SAMPLE_MICROORGANISM_VIEW = "GET_SAMPLE_MICROORGANISM_VIEW";
     public static final String API_ENDPOINT_GET_SAMPLE_STAGES_SUMMARY_REPORT = "GET_SAMPLE_STAGES_SUMMARY_REPORT";

@@ -89,6 +89,10 @@ public class SqlStatement {
                 query = "update " + schemaName + "." + tableName + " set " + updateSetSectionStr + " where " + queryWhere;
                 whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
                 break;
+            case "DELETE":                
+                query = "delete from " + schemaName + "." + tableName + " where " + queryWhere;
+                whereFieldValuesNew= LPArray.addValueToArray1D(setFieldValues, whereFieldValuesNew);
+                break;
             default:
                 break;
         }

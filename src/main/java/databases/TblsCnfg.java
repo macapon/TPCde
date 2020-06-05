@@ -859,7 +859,15 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string())
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string()),
+        FLD_MIN_VAL_ALLOWED("min_val_allowed", LPDatabase.real()),
+        FLD_MAX_VAL_ALLOWED("max_val_allowed", LPDatabase.real()),
+        FLD_MIN_VAL_ALLOWED_IS_STRICT("min_allowed_strict", LPDatabase.booleanFld(false)),
+        FLD_MAX_VAL_ALLOWED_IS_STRICT("max_allowed_strict", LPDatabase.booleanFld(false)),        
+        FLD_MIN_VAL_FOR_UNDETERMINED("min_undetermined", LPDatabase.real()),
+        FLD_MAX_VAL_FOR_UNDETERMINED("max_undetermined", LPDatabase.real()),
+        FLD_MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", LPDatabase.booleanFld(false)),
+        FLD_MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", LPDatabase.booleanFld(false)),
         ;
         private SpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

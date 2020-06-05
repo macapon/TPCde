@@ -6,6 +6,7 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.moduleenvmonit.EnvMonAPI.EnvMonAPIEndpoints;
+import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
@@ -53,9 +54,15 @@ public class ClassEnvMon {
                     String programName=argValues[0].toString();
                     Integer correctiveActionId = (Integer) argValues[1];                    
                     actionDiagnoses = DataProgramCorrectiveAction.markAsCompleted(schemaPrefix, token, correctiveActionId);
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
-                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, schemaPrefix}); 
-                    this.messageDynamicData=new Object[]{correctiveActionId, schemaPrefix};   
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){                        
+                        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
+                            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_SAMPLE_ID.getName()});
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix}); 
+                        this.messageDynamicData=new Object[]{correctiveActionId, correctiveActionInfo[0][0], schemaPrefix};   
+                    }else{
+                        this.messageDynamicData=new Object[]{correctiveActionId, schemaPrefix};                           
+                    }                    
                     break;
                 case EM_BATCH_INCUB_CREATE:    
                     batchName = argValues[0].toString();
@@ -68,16 +75,24 @@ public class ClassEnvMon {
                     if (fieldName!=null && fieldName.length()>0) fieldNames = fieldName.split("\\|");                                            
                     if (fieldValue!=null && fieldValue.length()>0) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     actionDiagnoses= DataBatchIncubator.createBatch(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, fieldNames, fieldValues);
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});                    
                     this.messageDynamicData=new Object[]{batchName, schemaPrefix};
-                    break;                    
+                    break;   
+                case EM_BATCH_INCUB_REMOVE:    
+                    batchName = argValues[0].toString();
+                    actionDiagnoses= DataBatchIncubator.removeBatch(schemaPrefix, token, batchName);
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                        actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});                    
+                    this.messageDynamicData=new Object[]{batchName, schemaPrefix};
+                    break;   
                 case EM_BATCH_ASSIGN_INCUB: 
                     batchName = argValues[0].toString();
                     incubationName = argValues[1].toString();
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator", incubationName);                
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     this.messageDynamicData=new Object[]{incubationName, batchName};
                     actionDiagnoses=DataBatchIncubator.batchAssignIncubator(schemaPrefix, token, batchName, incubationName);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
@@ -85,7 +100,7 @@ public class ClassEnvMon {
                     break;
                 case EM_BATCH_UPDATE_INFO: 
                     batchName = argValues[0].toString();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     fieldName = argValues[1].toString();
                     String[] fieldsName = fieldName.split("\\|");
                     fieldValue = argValues[2].toString();
@@ -97,7 +112,7 @@ public class ClassEnvMon {
                     break;
                 case EM_BATCH_INCUB_START:
                     batchName = argValues[0].toString();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     String incubName=null;
@@ -114,7 +129,7 @@ public class ClassEnvMon {
                     break;                    
                 case EM_BATCH_INCUB_END:
                     batchName = argValues[0].toString();
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), "incubator_batch", batchName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     incubName=null;

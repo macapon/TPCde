@@ -881,10 +881,35 @@ if (1==1)return;
      *
      * @param schemaName
      * @param tableName
-     * @param fieldNames
-     * @param fieldValues
+     * @param whereFieldNames
+     * @param whereFieldValues
      * @return
      */
+    public static Object[] removeRecordInTable(String schemaName, String tableName, String[] whereFieldNames, Object[] whereFieldValues){
+        SqlStatement sql = new SqlStatement(); 
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("DELETE", schemaName, tableName,
+                whereFieldNames, whereFieldValues, null, null, null,
+                null, null);              
+        String query= hmQuery.keySet().iterator().next();   
+        whereFieldValues = LPArray.encryptTableFieldArray(schemaName, tableName, whereFieldNames, whereFieldValues);
+        Integer deleteRecordDiagnosis = Rdbms.prepUpQuery(query, whereFieldValues); 
+        if (deleteRecordDiagnosis>0){     
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordUpdated", new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});   
+        }else if(deleteRecordDiagnosis==-999){
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{"The database cannot perform this sql statement: Schema: "+schemaName+". Table: "+tableName+". Statement: "+query+", By the values "+ Arrays.toString(whereFieldValues), query});   
+        }else{   
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{tableName, Arrays.toString(whereFieldValues), schemaName});                         
+        }        
+/*        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(deleteRecordDiagnosis[0])){
+            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordDeleted", new String[]{String.valueOf(deleteRecordDiagnosis[1]), query, Arrays.toString(whereFieldValues), schemaName});
+            diagnosis = LPArray.addValueToArray1D(diagnosis, deleteRecordDiagnosis[1]);
+            return diagnosis;
+        }else{
+            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotDeleted", new String[]{String.valueOf(deleteRecordDiagnosis[1]), query, Arrays.toString(whereFieldValues), schemaName});
+            diagnosis = LPArray.addValueToArray1D(diagnosis, deleteRecordDiagnosis[1]);
+            return diagnosis;                         
+        }*/
+    }
     public static Object[] insertRecordInTable(String schemaName, String tableName, String[] fieldNames, Object[] fieldValues){
         if (fieldNames.length==0){
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
@@ -905,7 +930,7 @@ if (1==1)return;
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
             return diagnosis;
         }else{
-            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
+            Object[] diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(fieldValues), schemaName});
             diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
             return diagnosis;                         
         }
@@ -990,8 +1015,7 @@ if (1==1)return;
             setTimeout(rdbms.getTimeout());            
             if (valoresinterrogaciones != null){
                 buildPreparedStatement(valoresinterrogaciones, prep);}
-            return prep.executeUpdate();
-                
+            return prep.executeUpdate();                
         }catch (SQLException ex){
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
@@ -1010,7 +1034,7 @@ if (1==1)return;
             PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS);            
             setTimeout(rdbms.getTimeout());
             buildPreparedStatement(valoresinterrogaciones, prep);         
-            prep.executeUpdate();        
+            prep.executeUpdate();    
             ResultSet rs = prep.getGeneratedKeys();
             if (rs.next()) {
                 String newId = rs.getString(indexposition);
