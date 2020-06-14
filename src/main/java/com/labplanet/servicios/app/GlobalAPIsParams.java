@@ -240,14 +240,21 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_SOP_FIELD_TO_DISPLAY = "sopFieldsToDisplay";
-
+    
+    public static final String REQUEST_PARAM_GROUPER_NAME = "grouperName";
+    
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE = "sampleFieldToRetrieve";
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY = "sampleFieldsToDisplay";
+    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME = "sampleWhereFieldsName"; 
+    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";   
+    public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";
 
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE = "batchFieldToRetrieve";
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
+    public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
+    public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";    
@@ -359,10 +366,6 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_WHERE_FIELDS_NAME = "whereFieldsName"; 
-
-    /**
-     *
-     */
     public static final String REQUEST_PARAM_WHERE_FIELDS_VALUE = "whereFieldsValue";
     
     /**

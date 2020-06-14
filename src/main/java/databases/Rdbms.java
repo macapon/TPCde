@@ -836,13 +836,17 @@ if (1==1)return;
            Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_NOT_FILTER_SPECIFIED, new Object[]{tableName, schemaName});                         
            return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);               
         }
-        SqlStatement sql = new SqlStatement(); 
-        
+        SqlStatement sql = new SqlStatement();         
         HashMap<String, Object[]> hmQuery = sql.buildSqlStatementCounter(schemaName, tableName,
                 whereFieldNames, whereFieldValues,fieldsToGroup, orderBy);            
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
-        fieldsToGroup=LPArray.addValueToArray1D(fieldsToGroup, "COUNTER");
+        String fieldsToGroupConcat=Arrays.toString(fieldsToGroup);
+        Integer fieldsToGroupContItem=fieldsToGroup.length;
+        String[] fieldsToGroupAltered=new String[0];
+        fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, fieldsToGroup);
+        Object[] fieldsToGroupValues= new Object[fieldsToGroupContItem];
+        fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, "COUNTER");
         try{            
             ResultSet res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
@@ -850,23 +854,30 @@ if (1==1)return;
                 return LPArray.array1dTo2d(errorLog, 1);
             }               
             res.last();
-
             if (res.getRow()>0){
-             Integer totalLines = res.getRow();
-             res.first();
-             Integer icurrLine = 0;   
-             
-             Object[][] diagnoses2 = new Object[totalLines][fieldsToGroup.length];
-             while(icurrLine<=totalLines-1) {
-                for (Integer icurrCol=0;icurrCol<fieldsToGroup.length;icurrCol++){
-                    Object currValue = res.getObject(icurrCol+1);
-                    diagnoses2[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
-                }        
-                res.next();
-                icurrLine++;
-             }
-                diagnoses2 = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToGroup, diagnoses2);
-                return diagnoses2;
+                Integer totalLines = res.getRow();
+                res.first();
+                Integer icurrLine = 0;
+                Object[][] entireArr = new Object[totalLines][fieldsToGroupAltered.length+1];
+                while(icurrLine<=totalLines-1) {
+                    for (Integer icurrCol=0;icurrCol<fieldsToGroupAltered.length;icurrCol++){
+                        Object currValue = res.getObject(icurrCol+1);
+                        entireArr[icurrLine][icurrCol] =  LPNulls.replaceNull(currValue);
+                        if (icurrCol<fieldsToGroupContItem) fieldsToGroupValues[icurrCol]=LPNulls.replaceNull(currValue);
+                    }
+                    if (fieldsToGroupContItem==1){
+                        entireArr[icurrLine][fieldsToGroupAltered.length]=entireArr[icurrLine][0];
+                    }else{                        
+                        entireArr[icurrLine][fieldsToGroupAltered.length]=
+                                LPArray.convertArrayToString(
+                                LPArray.joinTwo1DArraysInOneOf1DString(fieldsToGroup, fieldsToGroupValues, ": "),  ", ", "");
+                    }
+                    res.next();
+                    icurrLine++;
+                }
+                fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, "GROUPER");
+                entireArr = LPArray.decryptTableFieldArray(schemaName, tableName, fieldsToGroupAltered, entireArr);
+                return entireArr;
             }else{
                 Object[] diagnosesError = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{query, Arrays.toString(whereFieldValues), schemaName});                         
                 return LPArray.array1dTo2d(diagnosesError, diagnosesError.length);                

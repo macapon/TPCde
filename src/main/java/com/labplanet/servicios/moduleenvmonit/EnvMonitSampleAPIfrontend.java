@@ -19,6 +19,7 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.materialspec.ConfigSpecRule;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.Arrays;
@@ -34,6 +35,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import functionaljavaa.samplestructure.DataSampleStages;
 import static lbplanet.utilities.LPDate.dateStringFormatToLocalDateTime;
+import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPNulls;
 
 /**
@@ -45,6 +47,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
     /**
      *
      */
+    private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
 
     /**
@@ -87,7 +90,8 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                  
                     }                      
-                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                                                      
+                    String sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);  
+                    
                     Integer sampleId = Integer.parseInt(sampleIdStr);                           
                     String resultFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ANALYSIS_RESULT_FIELD_TO_RETRIEVE);
                     String[] resultFieldToRetrieveArr=null;
@@ -114,12 +118,12 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                       for (Object[] curRow: analysisResultList){
                         ConfigSpecRule specRule = new ConfigSpecRule();
                         String currRowLimitId=curRow[posicLimitIdFld-1].toString();
-                        Object[] resultLockData=sampleAnalysisResultLockData(resultFieldToRetrieveArr, curRow);
-                        if (resultLockData!=null){
-                            resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]);
-                            curRow=LPArray.addValueToArray1D(curRow, resultLockData[1]);
-                        }        
-                        JSONObject row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
+                        Object[] resultLockData=sampleAnalysisResultLockData(schemaPrefix, resultFieldToRetrieveArr, curRow);
+                        JSONObject row=new JSONObject();
+                        if (resultLockData!=null)
+                            row=LPJson.convertArrayRowToJSONObject(LPArray.addValueToArray1D(resultFieldToRetrieveArr, (String[]) resultLockData[0]), LPArray.addValueToArray1D(curRow, (Object[]) resultLockData[1]));
+                        else        
+                            row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
                         if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
                           specRule.specLimitsRule(schemaPrefix, Integer.valueOf(currRowLimitId) , null);                        
                           row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
@@ -130,8 +134,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                       LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     }                    
                     return;                  
-                  
-                  
                 case API_ENDPOINT_GET_MICROORGANISM_LIST:
                   String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()};
                   Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
@@ -268,16 +270,16 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     }                                                              
                     String batchName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_NAME);
                     String fieldsToRetrieveStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE);
-                    String fieldsToDisplayStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY);
+                    String prodLotfieldsToDisplayStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY);
                     String[] fieldToRetrieveArr=new String[0];
                     if ((fieldsToRetrieveStr!=null) && (fieldsToRetrieveStr.length()>0))
                         if ("ALL".equalsIgnoreCase(fieldsToRetrieveStr)) fieldToRetrieveArr=TblsEnvMonitData.IncubBatch.getAllFieldNames();
                         else fieldToRetrieveArr=fieldsToRetrieveStr.split("\\|");
                     fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, TblsEnvMonitData.IncubBatch.FLD_NAME.getName());
                     String[] fieldToDisplayArr=new String[0];
-                    if ((fieldsToDisplayStr!=null) && (fieldsToDisplayStr.length()>0))
-                        if ("ALL".equalsIgnoreCase(fieldsToDisplayStr)) fieldToDisplayArr=TblsEnvMonitData.IncubBatch.getAllFieldNames();                        
-                        else fieldToDisplayArr=fieldsToDisplayStr.split("\\|");
+                    if ((prodLotfieldsToDisplayStr!=null) && (prodLotfieldsToDisplayStr.length()>0))
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) fieldToDisplayArr=TblsEnvMonitData.IncubBatch.getAllFieldNames();                        
+                        else fieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
                     String[] batchTblAllFields=TblsEnvMonitData.IncubBatch.getAllFieldNames();
                     Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                             new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
@@ -338,6 +340,179 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);                    
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     break;                                        
+                case API_ENDPOINT_GET_PRODLOT_REPORT:
+                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_GET_PRODLOT_REPORT.split("\\|"));
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                        LPFrontEnd.servletReturnResponseError(request, response, 
+                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+                        return;                  
+                    }                                                              
+                    String lotName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME);
+                    String prodLotfieldsToRetrieveStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE);
+                    prodLotfieldsToDisplayStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY);
+                    String[] prodLotfieldToRetrieveArr=null;
+                    if ((prodLotfieldsToRetrieveStr!=null) && (prodLotfieldsToRetrieveStr.length()>0))
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                        else prodLotfieldToRetrieveArr=prodLotfieldsToRetrieveStr.split("\\|");
+                    if (prodLotfieldToRetrieveArr==null) prodLotfieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                    prodLotfieldToRetrieveArr=LPArray.addValueToArray1D(prodLotfieldToRetrieveArr, TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName());
+                    String[] prodLotfieldToDisplayArr=null;
+                    if ((prodLotfieldsToDisplayStr!=null) && (prodLotfieldsToDisplayStr.length()>0))
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) prodLotfieldToDisplayArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();                        
+                        else prodLotfieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
+                    if (prodLotfieldToDisplayArr==null) prodLotfieldToDisplayArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                    String[] prodLotTblAllFields=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                    Object[][] prodLotInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                            new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName}, 
+                            prodLotTblAllFields);                    
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
+                        LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(prodLotInfo[0]), schemaPrefix}));              
+                        return;}  
+                    JSONObject jObjProdLotInfo=new JSONObject();
+                    jObjMainObject=new JSONObject();
+                    jObjPieceOfInfo=new JSONObject();
+                    jArrPieceOfInfo=new JSONArray();
+                    for (int iFlds=0;iFlds<prodLotInfo[0].length;iFlds++){                      
+                        if (LPArray.valueInArray(prodLotfieldToRetrieveArr, prodLotTblAllFields[iFlds]))
+                            jObjProdLotInfo.put(prodLotTblAllFields[iFlds], prodLotInfo[0][iFlds].toString());
+                    }
+                    for (String fieldToDisplayArr1 : prodLotfieldToDisplayArr) {
+                        if (LPArray.valueInArray(prodLotTblAllFields, fieldToDisplayArr1)) {
+                            jObjPieceOfInfo=new JSONObject();
+                            jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
+                            jObjPieceOfInfo.put("field_value", prodLotInfo[0][LPArray.valuePosicInArray(prodLotTblAllFields, fieldToDisplayArr1)].toString());
+                            jArrPieceOfInfo.add(jObjPieceOfInfo);
+                        }
+                    }
+                    jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE, jObjProdLotInfo);
+                    jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY, jArrPieceOfInfo);
+
+                    String prodLotFieldToRetrieve = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE);
+                    String[] prodLotFieldToRetrieveArr=new String[0];
+                    if ((prodLotFieldToRetrieve!=null) && (prodLotFieldToRetrieve.length()>0))
+                        if ("ALL".equalsIgnoreCase(prodLotFieldToRetrieve)) prodLotFieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                        else prodLotFieldToRetrieveArr=prodLotFieldToRetrieve.split("\\|");
+                    if (prodLotFieldToRetrieve==null)
+                        prodLotFieldToRetrieveArr=TblsEnvMonitData.ProductionLot.getAllFieldNames();
+                    String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);                    
+                    String[] sampleFieldToRetrieveArr=new String[0];
+                    if ((sampleFieldToRetrieve!=null) && (sampleFieldToRetrieve.length()>0))
+                        if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                        else sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                    if (sampleFieldToRetrieve==null)
+                        sampleFieldToRetrieveArr=TblsEnvMonitData.Sample.getAllFieldNames();
+                    String sampleWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME); 
+                    String[] sampleWhereFieldsNameArr=new String[0];
+                    if (sampleWhereFieldsName!=null && sampleWhereFieldsName.length()>0)
+                        sampleWhereFieldsNameArr=sampleWhereFieldsName.split("\\|");
+                    String sampleWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE); 
+                    Object[] sampleWhereFieldsValueArr=new Object[0];
+                    if (sampleWhereFieldsValue!=null && sampleWhereFieldsValue.length()>0)
+                        sampleWhereFieldsValueArr=LPArray.convertStringWithDataTypeToObjectArray(sampleWhereFieldsValue.split("\\|"));
+                    //String[] sampleWhereFieldsNameArr=sampleWhereFieldsName.split("\\|");
+                    if (!LPArray.valueInArray(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.FLD_PRODUCTION_LOT.getName())){
+                        sampleWhereFieldsNameArr=LPArray.addValueToArray1D(sampleWhereFieldsNameArr, TblsEnvMonitData.Sample.FLD_PRODUCTION_LOT.getName());
+                        sampleWhereFieldsValueArr=LPArray.addValueToArray1D(sampleWhereFieldsValueArr, lotName);
+                    }
+/*                    Object[][] prodLotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProductionLot.TBL.getName(), 
+                            new String[]{TblsEnvMonitData.ProductionLot.FLD_LOT_NAME.getName()}, new Object[]{lotName}
+                            , prodLotFieldToRetrieveArr, new String[]{TblsEnvMonitData.ProductionLot.FLD_CREATED_ON.getName()+" desc"} ); 
+                    JSONObject jObj=new JSONObject();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(prodLotInfo[0][0].toString())){
+                         jObj= noRecordsInTableMessage();                    
+                    }else{
+                       for (Object[] curRec: prodLotInfo){
+                         jObj= LPJson.convertArrayRowToJSONObject(prodLotFieldToRetrieveArr, curRec);
+                       }
+                    }
+                    jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);*/
+                    
+                    sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                            sampleWhereFieldsNameArr, sampleWhereFieldsValueArr
+                            , sampleFieldToRetrieveArr , new String[]{TblsEnvMonitData.Sample.FLD_SAMPLE_ID.getName()+" desc"} ); 
+                    JSONObject jObj=new JSONObject();
+                    JSONArray sampleJsonArr = new JSONArray();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
+                         jObj= noRecordsInTableMessage();                    
+                    }else{     
+                        sampleJsonArr.add(jObj);
+                        for (Object[] curRec: sampleInfo){
+                            jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
+                            sampleJsonArr.add(jObj);
+                        }
+                    }    
+                    jObjMainObject.put(TblsEnvMonitData.Sample.TBL.getName(), sampleJsonArr);
+
+                    sampleJsonArr = new JSONArray();
+                    for (String fieldToDisplayArr1 : sampleFieldToRetrieveArr) {
+                        jObjPieceOfInfo=new JSONObject();
+                        jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
+                        sampleJsonArr.add(jObjPieceOfInfo);
+                    }                    
+                    //sampleJsonArr.add(jArrPieceOfInfo);
+                    jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, sampleJsonArr);
+                    
+                    
+                    String sampleGroups=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS);
+                    if (sampleGroups!=null){
+                        String[] sampleGroupsArr=sampleGroups.split("\\|");
+                        for (String currGroup: sampleGroupsArr){
+                            JSONArray sampleGrouperJsonArr = new JSONArray();
+                            String[] groupInfo = currGroup.split("\\*");
+                            String[] smpGroupFldsArr=groupInfo[0].split(",");
+                            Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
+                                    smpGroupFldsArr, new String[]{TblsEnvMonitData.Sample.FLD_PRODUCTION_LOT.getName()}, new Object[]{lotName}, 
+                                    null);
+                            smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
+                            smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "grouper");
+                            jObj=new JSONObject();
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
+                                jObj= noRecordsInTableMessage();                    
+                            }else{                       
+                                for (Object[] curRec: groupedInfo){
+                                    jObj= LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
+                                    sampleGrouperJsonArr.add(jObj);
+                                }
+                            } 
+                            jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
+                        }
+                    }                    
+                    
+                    //Object[] prodLotSamplingSamplesInfo=EnvMonIncubBatchAPIfrontend.incubBatchContentJson(prodLotTblAllFields, prodLotInfo[0]);
+                    //jObjMainObject.put("SAMPLES_ARRAY", prodLotSamplingSamplesInfo[0]);
+                    //jObjMainObject.put("NUM_SAMPLES", prodLotSamplingSamplesInfo[1]);     
+                    
+/*                    String lotName= prodLotInfo[0][LPArray.valuePosicInArray(TblsEnvMonitData.IncubBatch.getAllFieldNames(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName())].toString();
+                    Object incubStart= prodLotInfo[0][LPArray.valuePosicInArray(TblsEnvMonitData.IncubBatch.getAllFieldNames(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName())]; 
+                    Object incubEnd= prodLotInfo[0][LPArray.valuePosicInArray(TblsEnvMonitData.IncubBatch.getAllFieldNames(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName())];                     
+                    JSONArray jArrLastTempReadings = new JSONArray();
+                    if (lotName==null || incubStart==null || incubEnd==null){
+                        JSONObject jObj= new JSONObject();
+                        jObj.put("error", "This is not a completed batch so temperature readings cannot be");
+                        jArrLastTempReadings.add(jObj);
+                    }else{
+                        fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
+                                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
+                                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};   
+                        Object[][] instrReadings=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
+                                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()+" BETWEEN "}, 
+                                new Object[]{lotName, incubStart, incubEnd}, 
+                                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()});
+                        if ("LABPLANET_FALSE".equalsIgnoreCase(instrReadings[0][0].toString())){
+                            JSONObject jObj= new JSONObject();
+                            jObj.put("error", "No temperature readings found");
+                            jArrLastTempReadings.add(jObj);                            
+                        }else{
+                            for (Object[] currReading: instrReadings){
+                                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
+                                jArrLastTempReadings.add(jObj);
+                            }
+                        }
+                    }
+                    jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);    
+*/                    
+                    LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
+                    break;                                        
                 case API_ENDPOINT_GET_INCUBATOR_REPORT:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, EnvMonitAPIParams.MANDATORY_PARAMS_GET_INCUBATOR_REPORT.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -345,38 +520,38 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                  
                     }                                                              
-                    incubName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
-                    fieldsToRetrieveStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE);
-                    fieldsToDisplayStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY);
+                    lotName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_NAME);
+                    prodLotfieldsToRetrieveStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE);
+                    prodLotfieldsToDisplayStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY);
                     
                     String startDateStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DATE_START);
                     String endDateStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_DATE_END);                    
                     
-                    fieldToRetrieveArr=new String[0];
-                    if ((fieldsToRetrieveStr!=null) && (fieldsToRetrieveStr.length()>0))
-                        if ("ALL".equalsIgnoreCase(fieldsToRetrieveStr)) fieldToRetrieveArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();
-                        else fieldToRetrieveArr=fieldsToRetrieveStr.split("\\|");
-                    fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName());
-                    fieldToDisplayArr=new String[0];
-                    if ((fieldsToDisplayStr!=null) && (fieldsToDisplayStr.length()>0))
-                        if ("ALL".equalsIgnoreCase(fieldsToDisplayStr)) fieldToDisplayArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();                        
-                        else fieldToDisplayArr=fieldsToDisplayStr.split("\\|");
+                    prodLotfieldToRetrieveArr=new String[0];
+                    if ((prodLotfieldsToRetrieveStr!=null) && (prodLotfieldsToRetrieveStr.length()>0))
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();
+                        else prodLotfieldToRetrieveArr=prodLotfieldsToRetrieveStr.split("\\|");
+                    prodLotfieldToRetrieveArr=LPArray.addValueToArray1D(prodLotfieldToRetrieveArr, TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName());
+                    prodLotfieldToDisplayArr=new String[0];
+                    if ((prodLotfieldsToDisplayStr!=null) && (prodLotfieldsToDisplayStr.length()>0))
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToDisplayStr)) prodLotfieldToDisplayArr=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();                        
+                        else prodLotfieldToDisplayArr=prodLotfieldsToDisplayStr.split("\\|");
                     String[] incubTblAllFields=TblsEnvMonitConfig.InstrIncubator.getAllFieldNames();
                     Object[][] incubInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), 
-                            new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{incubName}, 
+                            new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()}, new Object[]{lotName}, 
                             incubTblAllFields);                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(incubInfo[0][0].toString())){
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Error on getting sample <*1*> in procedure <*2*>", new Object[]{Arrays.toString(incubInfo[0]), schemaPrefix}));              
                         return;}  
-                    jObjBatchInfo=new JSONObject();
+                    jObjProdLotInfo=new JSONObject();
                     jObjMainObject=new JSONObject();
                     jObjPieceOfInfo=new JSONObject();
                     jArrPieceOfInfo=new JSONArray();
                     for (int iFlds=0;iFlds<incubInfo[0].length;iFlds++){                      
-                        if (LPArray.valueInArray(fieldToRetrieveArr, incubTblAllFields[iFlds]))
-                            jObjBatchInfo.put(incubTblAllFields[iFlds], incubInfo[0][iFlds].toString());
+                        if (LPArray.valueInArray(prodLotfieldToRetrieveArr, incubTblAllFields[iFlds]))
+                            jObjProdLotInfo.put(incubTblAllFields[iFlds], incubInfo[0][iFlds].toString());
                     }
-                    for (String fieldToDisplayArr1 : fieldToDisplayArr) {
+                    for (String fieldToDisplayArr1 : prodLotfieldToDisplayArr) {
                         if (LPArray.valueInArray(incubTblAllFields, fieldToDisplayArr1)) {
                             jObjPieceOfInfo=new JSONObject();
                             jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
@@ -384,7 +559,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             jArrPieceOfInfo.add(jObjPieceOfInfo);
                         }
                     }
-                    jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE, jObjBatchInfo);
+                    jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_RETRIEVE, jObjProdLotInfo);
                     jObjMainObject.put(GlobalAPIsParams.INCUBATION_REPORT_JSON_TAG_NAME_FIELD_TO_DISPLAY, jArrPieceOfInfo);
     
                     String numPoints=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS);                     
@@ -396,20 +571,20 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     else numPointsInt=20;
                     Object[][] instrReadings =new Object[0][0]; 
                     if (startDateStr==null && endDateStr==null) 
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, incubName, numPointsInt);                    
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, lotName, numPointsInt);                    
                     if (startDateStr!=null && endDateStr==null){ 
                         
                         startDateStr=startDateStr.replace ( " " , "T" );
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, incubName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr));
                     }
                     if (startDateStr!=null && endDateStr!=null){
                         startDateStr=startDateStr.replace ( " " , "T" );
                         endDateStr=endDateStr.replace (" " , "T" );
-                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, incubName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr));
+                        instrReadings = DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, lotName, numPointsInt, dateStringFormatToLocalDateTime(startDateStr), dateStringFormatToLocalDateTime(endDateStr));
                     }
                     jArrLastTempReadings = new JSONArray();
                     for (Object[] currReading: instrReadings){
-                        JSONObject jObj= new JSONObject();
+                        jObj= new JSONObject();
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(currReading[0].toString())){
                             jObj.put("error", "No temperature readings found");
                         }else{
@@ -431,7 +606,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     }      
                     String[] whereFieldNames = new String[0];
                     Object[] whereFieldValues = new Object[0];
-                    fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
+                    prodLotfieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
                     String programName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME);  
                     if (programName!=null){
                         whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName()}; 
@@ -453,13 +628,13 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         whereFieldValues=new Object[]{"<<"};                        
                     }
                     Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
-                            fieldToRetrieveArr, 
+                            prodLotfieldToRetrieveArr, 
                             whereFieldNames, whereFieldValues,
                             new String[]{"COUNTER desc"});  
-                    fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, "COUNTER");
+                    prodLotfieldToRetrieveArr=LPArray.addValueToArray1D(prodLotfieldToRetrieveArr, "COUNTER");
                     jArr=new JSONArray();
                     for (Object[] curRec: samplesCounterPerStage){
-                      JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
+                      jObj= LPJson.convertArrayRowToJSONObject(prodLotfieldToRetrieveArr, curRec);
                       jArr.add(jObj);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jArr);
@@ -472,17 +647,17 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         return;                  
                     }    
                     String grouped=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_GROUPED);
-                    fieldsToRetrieveStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE);
-                    fieldToRetrieveArr=new String[0];
+                    prodLotfieldsToRetrieveStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE);
+                    prodLotfieldToRetrieveArr=new String[0];
                     Integer numTotalRecords=50;
                     String numTotalRecordsStr=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_TOTAL_OBJECTS);
                     if (numTotalRecordsStr==null) numTotalRecords=50;
                     else
                         numTotalRecords=Integer.valueOf(LPNulls.replaceNull(request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_TOTAL_OBJECTS)));
-                    if ((fieldsToRetrieveStr!=null) && (fieldsToRetrieveStr.length()>0)){
-                        if ("ALL".equalsIgnoreCase(fieldsToRetrieveStr)) fieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
-                        else fieldToRetrieveArr=fieldsToRetrieveStr.split("\\|");
-                    }else fieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                    if ((prodLotfieldsToRetrieveStr!=null) && (prodLotfieldsToRetrieveStr.length()>0)){
+                        if ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) prodLotfieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                        else prodLotfieldToRetrieveArr=prodLotfieldsToRetrieveStr.split("\\|");
+                    }else prodLotfieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
                     if (grouped==null || !Boolean.valueOf(grouped)){
                         whereFieldNames = new String[0];
                         whereFieldValues = new Object[0];                    
@@ -497,11 +672,11 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
 
                         Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                                 whereFieldNames, whereFieldValues, 
-                                fieldToRetrieveArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ENTERED_ON.getName()+" desc"});  
+                                prodLotfieldToRetrieveArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ENTERED_ON.getName()+" desc"});  
                         if (numTotalRecords>programLastResults.length) numTotalRecords=programLastResults.length;
                         jArr=new JSONArray();
                         for (int i=0;i<numTotalRecords;i++){
-                          JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, programLastResults[i]);
+                          jObj= LPJson.convertArrayRowToJSONObject(prodLotfieldToRetrieveArr, programLastResults[i]);
                           jArr.add(jObj);
                         }
                     }else{
@@ -515,8 +690,8 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName()};
                         String[] limitsFieldNamesToFilter=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SPEC_CODE.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SPEC_VARIATION_NAME.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ANALYSIS.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_METHOD_NAME.getName(), TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PARAMETER.getName()};
                         String[] fieldToRetrieveGroupedArr = new String[0];                        
-                        if ((fieldsToRetrieveStr==null) || ("ALL".equalsIgnoreCase(fieldsToRetrieveStr)) ) fieldToRetrieveGroupedArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
-                        else fieldToRetrieveGroupedArr=fieldsToRetrieveStr.split("\\|");
+                        if ((prodLotfieldsToRetrieveStr==null) || ("ALL".equalsIgnoreCase(prodLotfieldsToRetrieveStr)) ) fieldToRetrieveGroupedArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                        else fieldToRetrieveGroupedArr=prodLotfieldsToRetrieveStr.split("\\|");
                         Object[][] specLimits=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
                                 whereLimitsFieldNames, whereLimitsFieldValues, fieldToRetrieveLimitsArr, new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
                         jArr=new JSONArray();
@@ -531,7 +706,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                                 //whereLimitsFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PROGRAM_NAME.getName());
                                 //whereLimitsFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);                        
                             }                            
-                            JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveLimitsArr, currLimit);
+                            jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveLimitsArr, currLimit);
                             for (int i=0;i<limitsFieldNamesToFilter.length;i++){
                                 whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, limitsFieldNamesToFilter[i]);                                
                                 whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, currLimit[i]);
@@ -540,7 +715,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, "");                            
                             Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                                     whereFieldNames, whereFieldValues, 
-                                    fieldToRetrieveArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ENTERED_ON.getName()+" desc"});
+                                    prodLotfieldToRetrieveArr, new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_ENTERED_ON.getName()+" desc"});
                             JSONArray jArrSampleResults=new JSONArray();
                             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLastResults[0][0].toString())){
                                 if (numTotalRecords>programLastResults.length) numTotalRecords=programLastResults.length;
@@ -702,11 +877,27 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
     
     //return new Object[][]{{"hola", "adios"}};
 }
-    Object[] sampleAnalysisResultLockData(String[] resultFieldToRetrieveArr, Object[] curRow){
+    Object[] sampleAnalysisResultLockData(String schemaPrefix, String[] resultFieldToRetrieveArr, Object[] curRow){
         String[] fldNameArr=new String[0];
         Object[] fldValueArr=new Object[0];
-        fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
-        fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+        Integer resultFldPosic = LPArray.valuePosicInArray(resultFieldToRetrieveArr, TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName());
+        Integer resultId=(Integer) curRow[resultFldPosic];
+        Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+                new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
+                SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())){
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName());
+            fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
+            
+            JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(
+                    EnvMonSampleAPI.class.getSimpleName(),
+                    "resultLockedByProgramCorrectiveAction", notClosedProgramCorrreciveAction[0], null);                                
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
+        }
         return new Object[]{fldNameArr, fldValueArr};
         //return null;
     }

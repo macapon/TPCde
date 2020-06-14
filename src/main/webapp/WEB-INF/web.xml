@@ -224,6 +224,10 @@
         <servlet-name>TestingSamples</servlet-name>
         <servlet-class>com.labplanet.servicios.modulesample.TestingSamples</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>EnvMonAPIStats</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIStats</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
         <url-pattern>/testing/platform/DBActions</url-pattern>
@@ -438,6 +442,10 @@
     <servlet-mapping>
         <servlet-name>TestingSamples</servlet-name>
         <url-pattern>/testing/moduleSamples/TestingSamples</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EnvMonAPIStats</servlet-name>
+        <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
