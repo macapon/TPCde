@@ -105,6 +105,8 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                     }else{   
                         sortFieldsNameArr = SampleAPIParams.MANDATORY_FIELDS_FRONTEND_WHEN_SORT_NULL_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|");     
                     }  
+                    resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
+                    Integer posicRawValueFld=resultFieldToRetrieveArr.length;
                     resultFieldToRetrieveArr=LPArray.addValueToArray1D(resultFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LIMIT_ID.getName());
                     Integer posicLimitIdFld=resultFieldToRetrieveArr.length;
                     Object[][] analysisResultList = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(),
@@ -117,6 +119,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                       JSONArray jArr=new JSONArray();
                       for (Object[] curRow: analysisResultList){
                         ConfigSpecRule specRule = new ConfigSpecRule();
+                        String currRowRawValue=curRow[posicRawValueFld-1].toString();
                         String currRowLimitId=curRow[posicLimitIdFld-1].toString();
                         Object[] resultLockData=sampleAnalysisResultLockData(schemaPrefix, resultFieldToRetrieveArr, curRow);
                         JSONObject row=new JSONObject();
@@ -126,7 +129,15 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             row=LPJson.convertArrayRowToJSONObject(resultFieldToRetrieveArr, curRow);
                         if ((currRowLimitId!=null) && (currRowLimitId.length()>0) ){
                           specRule.specLimitsRule(schemaPrefix, Integer.valueOf(currRowLimitId) , null);                        
-                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, specRule.getRuleRepresentation());                          
+                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_DETAILED, LPNulls.replaceNull(specRule.getRuleRepresentation()).replace(("R"), "R ("+currRowRawValue+")"));
+                          Object[][] specRuleDetail=specRule.getRuleData();
+                          JSONArray specRuleDetailjArr=new JSONArray();
+                          JSONObject specRuleDetailjObj=new JSONObject();
+                          for (Object[] curSpcRlDet: specRuleDetail){
+                              specRuleDetailjObj.put(curSpcRlDet[0], curSpcRlDet[1]);                              
+                          }
+                          specRuleDetailjArr.add(specRuleDetailjObj);
+                          row.put(ConfigSpecRule.JSON_TAG_NAME_SPEC_RULE_INFO, specRuleDetailjArr);
                         }
                         jArr.add(row);
                       }                        
@@ -877,6 +888,7 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
     
     //return new Object[][]{{"hola", "adios"}};
 }
+    
     Object[] sampleAnalysisResultLockData(String schemaPrefix, String[] resultFieldToRetrieveArr, Object[] curRow){
         String[] fldNameArr=new String[0];
         Object[] fldValueArr=new Object[0];

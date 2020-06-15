@@ -19,6 +19,8 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class GlobalAPIsParams extends HttpServlet {
     
+    public static final String REQUEST_PARAM_IGNORE_ARGUMENT_WORD = "IGNORE";
+    
     // Por favor, agregar ordenado alfabeticamente para evitar duplicados
 
     /**
@@ -106,7 +108,6 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
-    public static final String REQUEST_PARAM_FIELD_TO_RETRIEVE = "fieldToRetrieve"; 
 
     /**
      *
@@ -241,13 +242,13 @@ public class GlobalAPIsParams extends HttpServlet {
      */
     public static final String REQUEST_PARAM_SOP_FIELD_TO_DISPLAY = "sopFieldsToDisplay";
     
-    public static final String REQUEST_PARAM_GROUPER_NAME = "grouperName";
     
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE = "sampleFieldToRetrieve";
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY = "sampleFieldsToDisplay";
     public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME = "sampleWhereFieldsName"; 
-    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";   
-    public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";
+    public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";  
+    public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";  
+    
 
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE = "batchFieldToRetrieve";
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
@@ -365,8 +366,17 @@ public class GlobalAPIsParams extends HttpServlet {
     /**
      *
      */
+    public static final String REQUEST_PARAM_OBJ_GROUP_NAME = "objGroupName";
+    public static final String REQUEST_PARAM_TABLE_CATEGORY = "tableCategory";
+    public static final String REQUEST_PARAM_TABLE_NAME = "tableName";
+
+    public static final String REQUEST_PARAM_FIELD_TO_RETRIEVE = "fieldToRetrieve"; 
     public static final String REQUEST_PARAM_WHERE_FIELDS_NAME = "whereFieldsName"; 
     public static final String REQUEST_PARAM_WHERE_FIELDS_VALUE = "whereFieldsValue";
+    public static final String REQUEST_PARAM_GROUPED = "dataGrouped"; 
+    public static final String REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING = "fieldsToRetrieveOrGrouping"; 
+    
+
     
     /**
      *

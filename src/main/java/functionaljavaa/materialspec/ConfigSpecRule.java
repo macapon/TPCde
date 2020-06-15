@@ -7,10 +7,10 @@ package functionaljavaa.materialspec;
 
 import databases.Rdbms;
 import databases.TblsCnfg;
-import lbplanet.utilities.LPArray;
-import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
 import java.util.Arrays;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPPlatform;
 
 /**
  *
@@ -18,11 +18,94 @@ import java.util.Arrays;
  */
 public class ConfigSpecRule {
 
-    /**
-     *
-     */
+    enum qualitativeRulesErrors{
+        RULE_ARG_IS_MANDATORY("specLimits_ruleMandatoryArgumentNull"), TEXT_SPEC_ARG_IS_MANDATORY("specLimits_textSpecMandatoryArgumentNull"),
+        QUALITATIVE_RULE_NOT_RECOGNIZED("specLimits_qualitativeRuleNotRecognized"), SEPARATOR_ARG_IS_MANDATORY(""),
+        ;
+        private qualitativeRulesErrors(String errCode){
+            this.errorCode=errCode;
+        }    
+        public String getErrorCode(){
+            return this.errorCode;
+        }        
+        private final String errorCode;        
+    }
+    enum qualitativeRules{EQUALTO("EQUALTO","specLimits_equalTo_Successfully"), NOTEQUALTO ("NOTEQUALTO", "specLimits_notEqualTo_Successfully"), 
+        CONTAINS ("CONTAINS", "specLimits_contains_Successfully"), NOTCONTAINS ("NOTCONTAINS", "specLimits_notContains_Successfully"), 
+        ISONEOF ("ISONEOF", "specLimits_isOneOf_Successfully"), ISNOTONEOF ("ISNOTONEOF", "specLimits_isNotOneOf_Successfully");
+        private qualitativeRules(String ruleName, String successCode){
+            this.ruleName=ruleName;
+            this.successCode=successCode;
+        }    
+        public String getRuleName(){
+            return this.ruleName;
+        }
+        public String getSuccessCode(){
+            return this.successCode;
+        }
+        public static String[] getAllRules(){
+            String[] tableFields=new String[0];
+            for (qualitativeRules obj: qualitativeRules.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getRuleName());
+                }
+            }           
+            return tableFields;
+        }   
+        private final String ruleName;
+        private final String successCode;
+    }
+    enum quantitativeRulesErrors{        
+        MIN_OR_MAX_MANDATORY("MinAndMaxSpecOneOfBothMandatory"),         
+        MINSPEC_MAXSPEC_MINSPEC_GREATEROREQUALTO_MAXSPEC("specLimits_quantitativeMinSpecMaxSpec_MinSpecGreaterOrEqualToMaxSpec"),
+        
+        MINCONTROLPRESENT_MINSPECMANDATORY("specLimits_MinControlPresent_MinSpecMandatory"), 
+        MAXCONTROLPRESENT_MAXSPECMANDATORY("specLimits_MaxControlPresent_MaxSpecMandatory"),
+        
+        MINCONTROL_GREATEROREQUALTO_MAXCONTROL("specLimits_minControlGreaterOrEqualToMaxControl"),
+        MINCONTROL_GREATEROREQUALTO_MAXSPEC("specLimits_minControlGreaterOrEqualToMaxSpec"),
+        MAXCONTROL_LESSEQUALTO_MINSPEC("specLimits_maxControlLessThanOrEqualToMinSpec"),
+        MINCONTROL_LESSEQUALTO_MINSPEC("specLimits_minControlLessThanOrEqualToMinSpec"),
+        MAXCONTROL_GREATEROREQUALTO_MAXSPEC("specLimits_MaxControlGreaterThanOrEqualToMaxSpec"),
+        MINCONTROL_MAXCONTROL_NOTLOGIC("specLimits_MinControlAndMaxControlOutOfLogicControl"),
+        ;
+        private quantitativeRulesErrors(String errCode){
+            this.errorCode=errCode;
+        }    
+        public String getErrorCode(){
+            return this.errorCode;
+        }        
+        private final String errorCode;        
+    }
+    enum quantitativeRules{
+        MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMaxSpec_Successfully"),
+        MIN_SPEC_SUCCESS("specLimits_quantitativeMinSpecSuccessfully"), 
+        MAX_SPEC_SUCCESS("specLimits_quantitativeMaxSpecSuccessfully"), 
+        MINSPEC_MINCONTROL_MAXCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMinControlMaxControlMaxSpec_Successfully"),
+        MINSPEC_MINCONTROL_MAXSPEC_SUCCESS("specLimits_quantitativeMinSpecMinControlMaxSpec_Successfully"),
+        ;
+        private quantitativeRules(String successCode){
+            this.successCode=successCode;
+        }    
+        public String getSuccessCode(){
+            return this.successCode;
+        }
+        public static String[] getAllRules(){
+            String[] tableFields=new String[0];
+            for (qualitativeRules obj: qualitativeRules.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.toString());
+                }
+            }           
+            return tableFields;
+        }   
+        private final String successCode;
+    }
     public static final String JSON_TAG_NAME_SPEC_RULE_DETAILED = "spec_rule_with_detail";
 
+    public static final String JSON_TAG_NAME_SPEC_RULE_INFO = "spec_rule_info";    
     String classVersion = "0.1";
     
     private Boolean ruleIsQuantitative=false;
@@ -64,7 +147,6 @@ public class ConfigSpecRule {
     /**
      *
      */
-    public static final  String MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS="specLimits_quantitativeMinSpecMaxSpec_Successfully";
     
     /**
      *
@@ -73,58 +155,51 @@ public class ConfigSpecRule {
      * @param separator
      * @return
      */
-    public Object[] specLimitIsCorrectQualitative(String rule, String textSpec, String separator){
-        String errorCode = "";
+    public Object[] specLimitIsCorrectQualitative(String rule, String textSpec, String separator){        
         Object[]  errorDetailVariables= new Object[0];
         
-        String[] expectedRules = new String[6];
-        expectedRules[0] = "EQUALTO";
-        expectedRules[1] = "NOTEQUALTO";
-        expectedRules[2] = "CONTAINS";
-        expectedRules[3] = "NOTCONTAINS";
-        expectedRules[4] = "ISONEOF";
-        expectedRules[5] = "ISNOTONEOF";
-                
         if ((rule==null) || (rule.length()==0)){
-           errorCode = "specLimits_ruleMandatoryArgumentNull";
-           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");          
-           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                                
+           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.RULE_ARG_IS_MANDATORY.getErrorCode(), LPArray.addValueToArray1D(errorDetailVariables, ""));}
         if ((textSpec==null) || (textSpec.length()==0)){
-            errorCode = "specLimits_textSpecMandatoryArgumentNull";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");          
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                                
-        switch (rule.toUpperCase()){
-            case "EQUALTO":  errorCode = "specLimits_equalTo_Successfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);                          
-            case "NOTEQUALTO": errorCode = "specLimits_notEqualTo_Successfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);
-            case "CONTAINS": errorCode = "specLimits_contains_Successfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);          
-            case "NOTCONTAINS": errorCode = "specLimits_notContains_Successfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);          
-            case "ISONEOF": 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.TEXT_SPEC_ARG_IS_MANDATORY.getErrorCode(), LPArray.addValueToArray1D(errorDetailVariables, ""));}
+        qualitativeRules qualitRule = null;
+        try{
+            qualitRule = qualitativeRules.valueOf(rule.toUpperCase());
+        }catch(Exception e){
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule);          
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitRule.getAllRules()));          
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED.getErrorCode(), errorDetailVariables);             
+        }
+
+        switch (qualitRule){
+            case EQUALTO:  
+            case NOTEQUALTO: 
+            case CONTAINS: 
+            case NOTCONTAINS: 
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);                                          
+            case ISONEOF: 
                 if ((separator==null) || (separator.length()==0)){
-                    errorCode = "specLimits_separatorMandatoryArgumentNull";
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule.toUpperCase());          
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");          
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                       
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.SEPARATOR_ARG_IS_MANDATORY.getErrorCode(), errorDetailVariables);}                       
                 else{
                     String[] textSpecArray = textSpec.split(separator);
-                    errorCode = "specLimits_isOneOf_Successfully";
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, textSpecArray.length);          
-                    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                       
-            case "ISNOTONEOF": 
+                    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);}                       
+            case ISNOTONEOF: 
                 if ((separator==null) || (separator.length()==0)){
-                    errorCode = "specLimits_separatorMandatoryArgumentNull";
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule.toUpperCase());          
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, "");          
-                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}    
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.SEPARATOR_ARG_IS_MANDATORY.getErrorCode(), errorDetailVariables);}    
                 else{
                     String[] textSpecArray = textSpec.split(separator);
-                    errorCode = "specLimits_isNotOneOf_Successfully";
                     errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, textSpecArray.length);          
-                    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                          
+                    return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);}                          
             default: 
-                errorCode = "specLimits_qualitativeRuleNotRecognized";
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule);          
-                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(expectedRules));          
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);    
+                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitRule.getAllRules()));          
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED.getErrorCode(), errorDetailVariables);    
         }
     }
 /**
@@ -134,26 +209,22 @@ public class ConfigSpecRule {
  * @param maxSpec Float - The maximum value
  * Bundle parameters:
  *          config-specLimits_MinAndMaxSpecBothMandatory, specLimits_quantitativeMinSpecSuccessfully, specLimits_quantitativeMaxSpecSuccessfully<br>
- *          MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS, specLimits_quantitativeMinSpecMaxSpec_MinSpecGreaterOrEqualToMaxSpec
+ *          quantitativeRules.MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS.getSuccessCode(), specLimits_quantitativeMinSpecMaxSpec_MinSpecGreaterOrEqualToMaxSpec
  * @return Object[] position 0 is a boolean to determine if the arguments are correct, when set to false then position 1 provides detail about the deficiency 
  */
     public Object[] specLimitIsCorrectQuantitative(Float minSpec, Float maxSpec){
-        String errorCode = "";
-        Object[]  errorDetailVariables= new Object[0];        
-        
+        Object[]  errorDetailVariables= new Object[0];                
         if ((minSpec==null) && (maxSpec==null)){
-            errorCode = "specLimits_MinAndMaxSpecBothMandatory"; return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                               
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MIN_OR_MAX_MANDATORY.getErrorCode(), errorDetailVariables);}                                               
         if ((minSpec!=null) && (maxSpec==null)){
-            errorCode = "specLimits_quantitativeMinSpecSuccessfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                    
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MIN_SPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                    
         if ((minSpec==null) && (maxSpec!=null)){
-            errorCode = "specLimits_quantitativeMaxSpecSuccessfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                           
-        if (minSpec<maxSpec){
-            errorCode = MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                    
-        
-        errorCode = "specLimits_quantitativeMinSpecMaxSpec_MinSpecGreaterOrEqualToMaxSpec"; 
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MAX_SPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                           
+        if (minSpec<maxSpec){            
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                            
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minSpec.toString());        
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxSpec.toString());
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                    
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINSPEC_MAXSPEC_MINSPEC_GREATEROREQUALTO_MAXSPEC.getErrorCode(), errorDetailVariables);                                    
     }
 
 /**
@@ -167,23 +238,20 @@ public class ConfigSpecRule {
  * @return Object[] position 0 is a boolean to determine if the arguments are correct, when set to false then position 1 provides detail about the deficiency 
  */
     public Object[] specLimitIsCorrectQuantitative(BigDecimal minSpec, BigDecimal maxSpec){
-        String errorCode = "";
         Object[]  errorDetailVariables= new Object[0];        
-                
         if ((minSpec==null) && (maxSpec==null)){
-            errorCode = "specLimits_MinAndMaxSpecBothMandatory"; return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                               
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MIN_OR_MAX_MANDATORY.getErrorCode(), errorDetailVariables);}                                               
         if ((minSpec!=null) && (maxSpec==null)){
-            errorCode = "specLimits_quantitativeMinSpecSuccessfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                    
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MIN_SPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                    
         if ((minSpec==null) && (maxSpec!=null)){
-            errorCode = "specLimits_quantitativeMaxSpecSuccessfully"; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                           
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MAX_SPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                           
         int comparsion = minSpec.compareTo(maxSpec);
-         if (comparsion!=1){
-            errorCode = MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                    
+        if (comparsion!=1){
+           return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                    
         
-        errorCode = "specLimits_quantitativeMinSpecMaxSpec_MinSpecGreaterOrEqualToMaxSpec"; 
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minSpec.toString());        
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxSpec.toString());
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                    
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINSPEC_MAXSPEC_MINSPEC_GREATEROREQUALTO_MAXSPEC.getErrorCode(), errorDetailVariables);                                    
     }
     
 /**
@@ -202,63 +270,52 @@ public class ConfigSpecRule {
  * @return Object[] position 0 is a boolean to determine if the arguments are correct, when set to false then position 1 provides detail about the deficiency 
  */    
     public Object[] specLimitIsCorrectQuantitative(Float minSpec, Float maxSpec, Float minControl1, Float maxControl1){
-        String errorCode = "";
         Object[]  errorDetailVariables= new Object[0];        
         Object[] isCorrectMinMaxSpec = this.specLimitIsCorrectQuantitative(minSpec, maxSpec);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isCorrectMinMaxSpec[0].toString())){
             return isCorrectMinMaxSpec;}
                 
-        if ((minControl1==null) && (maxControl1==null)){
-            errorCode = MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS; return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);}                                            
+        if ((minControl1==null) && (maxControl1==null)){            
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MESSAGE_CODE_QUANT_MINSPEC_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);}                                            
         if ((minControl1!=null) && (minSpec==null)){
-            errorCode = "specLimits_MinControlPresent_MinSpecMandatory"; 
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minControl1.toString());        
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                           
-        if ((maxControl1!=null) && (maxSpec==null)){
-            errorCode = "specLimits_MaxControlPresent_MaxSpecMandatory"; 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROLPRESENT_MINSPECMANDATORY.getErrorCode(), errorDetailVariables);}                                           
+        if ((maxControl1!=null) && (maxSpec==null)){            
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxControl1.toString());      
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                    
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MAXCONTROLPRESENT_MAXSPECMANDATORY.getErrorCode(), errorDetailVariables);}                                    
         if (((minControl1!=null) && (maxControl1!=null)) && (minControl1>=maxControl1)){
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minControl1.toString());        
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxControl1.toString());    
-            errorCode = "specLimits_minControlGreaterOrEqualToMaxControl"; 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                                    
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_GREATEROREQUALTO_MAXCONTROL.getErrorCode(), errorDetailVariables);}                                    
         if (((minControl1!=null) && (maxSpec!=null)) && (minControl1>=maxSpec)){
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minControl1.toString());        
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxSpec.toString());    
-            errorCode = "specLimits_minControlGreaterOrEqualToMaxSpec"; 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                      
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_GREATEROREQUALTO_MAXSPEC.getErrorCode(), errorDetailVariables);}                      
         if (((maxControl1!=null) && (minSpec!=null)) && (maxControl1<=minSpec)){
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxControl1.toString());        
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minSpec.toString());    
-            errorCode = "specLimits_MaxControlLessThanOrEqualToMinSpec"; 
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);}                      
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MAXCONTROL_LESSEQUALTO_MINSPEC.getErrorCode(), errorDetailVariables);}                      
         if (minControl1!=null){                        
             if (minControl1.compareTo(minSpec)<=0){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minControl1.toString());        
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minSpec.toString());    
-                errorCode = "specLimits_MinControlLessThanOrEqualToMinSpec"; 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                      
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_LESSEQUALTO_MINSPEC.getErrorCode(), errorDetailVariables);                                      
             }else{
-                errorCode = "specLimits_quantitativeMinSpecMinControlMaxSpec_Successfully"; 
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);   
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MINSPEC_MINCONTROL_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);   
             }
         }                      
         if ((maxControl1!=null)){
             if (maxControl1.compareTo(maxSpec)>=0){
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxControl1.toString());        
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxSpec.toString()); 
-                errorCode = "specLimits_MaxControlGreaterThanOrEqualToMaxSpec"; 
-                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);                                   
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MAXCONTROL_GREATEROREQUALTO_MAXSPEC.getErrorCode(), errorDetailVariables);                                   
             }else{
-                errorCode = "specLimits_quantitativeMinSpecMinControlMaxControlMaxSpec_Successfully"; 
-                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorDetailVariables);        
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, quantitativeRules.MINSPEC_MINCONTROL_MAXCONTROL_MAXSPEC_SUCCESS.getSuccessCode(), errorDetailVariables);        
             }    
         }
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, minControl1.toString());        
         errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, maxControl1.toString()); 
-        errorCode = "specLimits_MinControlAndMaxControlOutOfLogicControl"; 
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);              
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, quantitativeRulesErrors.MINCONTROL_MAXCONTROL_NOTLOGIC.getErrorCode(), errorDetailVariables);              
     }    
     
     /**
@@ -269,7 +326,6 @@ public class ConfigSpecRule {
      * @return
      */
     public Object[] specLimitsRule(String schemaPrefix, Integer limitId, String language){
-      String errorCode ="";
       Object[] errorDetailVariables= new Object[0];
       String specArgumentsSeparator = "\\*";
       StringBuilder ruleBuilder = new StringBuilder(0);
@@ -293,38 +349,55 @@ public class ConfigSpecRule {
           this.ruleRepresentation=this.qualitativeRuleRepresentation;
           break;
         case "quantitative":
-          this.ruleIsQuantitative=true;
-          String[] quantiSpecTestingArray = ruleVariables.split(specArgumentsSeparator);
-          for (Integer iField=0; iField<quantiSpecTestingArray.length;iField++){
+            this.ruleIsQuantitative=true;
+            String[] quantiSpecTestingArray = ruleVariables.split(specArgumentsSeparator);
+            for (Integer iField=0; iField<quantiSpecTestingArray.length;iField++){
               String curParam = quantiSpecTestingArray[iField];
 
               if (curParam.toUpperCase().contains("MINSPECSTRICT")){
                       curParam = curParam.replace("MINSPECSTRICT", "");       
-                      this.minSpec = BigDecimal.valueOf(Double.valueOf(curParam));   this.minSpecIsStrict=true;
+                      this.minSpec = BigDecimal.valueOf(Double.valueOf(curParam));   
+                      this.minSpecIsStrict=true;
               }        
               if (curParam.toUpperCase().contains("MINSPEC")){
                       curParam = curParam.replace("MINSPEC", "");    
                       //Long curParamLong=Long.valueOf(-2.5); 
-                      this.minSpec = BigDecimal.valueOf(Double.valueOf(curParam)); this.minSpecIsStrict=false;
+                      this.minSpec = BigDecimal.valueOf(Double.valueOf(curParam)); 
+                      this.minSpecIsStrict=false;
               }        
               if (curParam.toUpperCase().contains("MINCONTROLSTRICT")){
                       curParam = curParam.replace("MINCONTROLSTRICT", "");
-                      this.minControl = BigDecimal.valueOf(Double.valueOf(curParam)); this.minControlIsStrict=true; this.quantitativeHasControl=true;
+                      this.minControl = BigDecimal.valueOf(Double.valueOf(curParam)); 
+                      this.minControlIsStrict=true; 
+                      this.quantitativeHasControl=true;
               }        
               if (curParam.toUpperCase().contains("MINCONTROL")){
-                      curParam = curParam.replace("MINCONTROL", "");          this.minControl = BigDecimal.valueOf(Double.valueOf(curParam)); this.minControlIsStrict=false; this.quantitativeHasControl=true;
+                    curParam = curParam.replace("MINCONTROL", "");          
+                    this.minControl = BigDecimal.valueOf(Double.valueOf(curParam)); 
+                    this.minControlIsStrict=false; 
+                    this.quantitativeHasControl=true;
               }        
               if (curParam.toUpperCase().contains("MAXCONTROLTRICT")){
-                      curParam = curParam.replace("MAXCONTROLSTRICT", "");       this.maxControl = BigDecimal.valueOf(Double.valueOf(curParam));     this.maxControlIsStrict=true; this.quantitativeHasControl=true;
+                      curParam = curParam.replace("MAXCONTROLSTRICT", "");       
+                      this.maxControl = BigDecimal.valueOf(Double.valueOf(curParam));     
+                      this.maxControlIsStrict=true; 
+                      this.quantitativeHasControl=true;
               }        
               if (curParam.toUpperCase().contains("MAXCONTROL")){
-                      curParam = curParam.replace("MAXCONTROL", "");          this.maxControl = BigDecimal.valueOf(Double.valueOf(curParam)); this.maxControlIsStrict=false; this.quantitativeHasControl=true;
+                      curParam = curParam.replace("MAXCONTROL", "");          
+                      this.maxControl = BigDecimal.valueOf(Double.valueOf(curParam)); 
+                      this.maxControlIsStrict=false; 
+                      this.quantitativeHasControl=true;
               }        
               if (curParam.toUpperCase().contains("MAXSPECSTRICT")){
-                      curParam = curParam.replace("MAXSPECSTRICT", "");       this.maxSpec = BigDecimal.valueOf(Double.valueOf(curParam));    this.maxSpecIsStrict=true;
+                      curParam = curParam.replace("MAXSPECSTRICT", "");       
+                      this.maxSpec = BigDecimal.valueOf(Double.valueOf(curParam));    
+                      this.maxSpecIsStrict=true;
               }        
               if (curParam.toUpperCase().contains("MAXSPEC")){
-                      curParam = curParam.replace("MAXSPEC", "");              this.maxSpec =BigDecimal.valueOf(Double.valueOf(curParam)); this.maxSpecIsStrict=false;
+                      curParam = curParam.replace("MAXSPEC", "");              
+                      this.maxSpec =BigDecimal.valueOf(Double.valueOf(curParam)); 
+                      this.maxSpecIsStrict=false;
               }        
           }   
           StringBuilder ruleRepresentation = new StringBuilder(0);
@@ -354,9 +427,8 @@ public class ConfigSpecRule {
           this.ruleRepresentation=this.quantitativeRuleRepresentation;
           break;
         default:
-          errorCode = "DataSample_SampleAnalysisResult_SpecRuleNotImplemented";
           errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{limitId.toString(), LPPlatform.buildSchemaName(LPPlatform.SCHEMA_CONFIG, schemaPrefix), ruleType});
-          return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);        
+          return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_SpecRuleNotImplemented", errorDetailVariables);        
       }
       return new Object[]{LPPlatform.LAB_TRUE, ruleBuilder.toString()};
     }
@@ -480,6 +552,31 @@ public class ConfigSpecRule {
    */
   public String getRuleRepresentation() {
     return ruleRepresentation;
+  }
+  public Object[][] getRuleData(){
+        if (ruleIsQuantitative){
+            Object[][] quantiRuleInfo = new Object[9][2];
+            quantiRuleInfo[0]=new Object[]{"minSpec", minSpec};
+            quantiRuleInfo[1]=new Object[]{"minSpecIsStrict", minSpecIsStrict};
+            quantiRuleInfo[2]=new Object[]{"minControl", minControl};
+            quantiRuleInfo[3]=new Object[]{"minControlIsStrict", minControlIsStrict};
+            quantiRuleInfo[4]=new Object[]{"maxControl", maxControl};
+            quantiRuleInfo[5]=new Object[]{"maxControlIsStrict", maxControlIsStrict};
+            quantiRuleInfo[6]=new Object[]{"maxSpec", maxSpec};
+            quantiRuleInfo[7]=new Object[]{"maxSpecIsStrict", maxSpecIsStrict};
+            quantiRuleInfo[8]=new Object[]{"ruleRepresentation", ruleRepresentation};
+            return quantiRuleInfo;
+        }
+        if (ruleIsQualitative){
+            Object[][] qualitRuleInfo = new Object[5][2];
+            qualitRuleInfo[0]=new Object[]{"qualitativeRule", qualitativeRule};
+            qualitRuleInfo[1]=new Object[]{"qualitativeRuleValues", qualitativeRuleValues};
+            qualitRuleInfo[2]=new Object[]{"qualitativeRuleSeparator", qualitativeRuleSeparator};
+            qualitRuleInfo[3]=new Object[]{"qualitativeRuleListName", qualitativeRuleListName};
+            qualitRuleInfo[4]=new Object[]{"ruleRepresentation", ruleRepresentation};
+            return qualitRuleInfo;
+        }   
+        return new Object[][]{};
   }
   /**
    * @return the quantitativeRuleRepresentation

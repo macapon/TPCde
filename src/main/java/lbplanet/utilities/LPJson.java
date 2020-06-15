@@ -30,6 +30,12 @@ public class LPJson {
      * @param row
      * @return
      */
+     static String setAlias(String value){
+        if (!value.toUpperCase().contains("AS")) return value;
+        return 
+            value.substring(value.toUpperCase().indexOf("AS")+3);
+                //"hola";
+    }
     public static JSONObject convertArrayRowToJSONObject(String[] header, Object[] row){
         JSONObject jObj = new JSONObject();    
         if (header.length==0){return jObj;}
@@ -39,9 +45,9 @@ public class LPJson {
             }else{
                 String clase = row[iField].getClass().toString();
                 if ( (clase.toUpperCase().equalsIgnoreCase("class java.sql.Date")) || (clase.toUpperCase().equalsIgnoreCase("class java.sql.Timestamp")) ){
-                    jObj.put(header[iField], row[iField].toString());
+                    jObj.put(setAlias(header[iField]), row[iField].toString());
                 }else{
-                    jObj.put(header[iField], row[iField]);
+                    jObj.put(setAlias(header[iField]), row[iField]);
                 }
             }
         }                    

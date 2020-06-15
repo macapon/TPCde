@@ -6,8 +6,6 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -54,11 +52,14 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
                 //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }),
-        KPI_SAMPLES("KPI_SAMPLES", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPER_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 9),
+        KPIS("KPIS", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.BOOLEANARR.toString(), true, 11),
                 }),        
         ;
         private EnvMonAPIstatsEndpoints(String name, LPAPIArguments[] argums){
@@ -195,40 +196,51 @@ public class EnvMonAPIStats extends HttpServlet {
                     
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     return;
-                case KPI_SAMPLES: 
+                case KPIS: 
                     jObjMainObject=new JSONObject();
-                    String[] grouperName = LPNulls.replaceNull(argValues[0]).toString().split("\\*");
-                    String[] smpGroupFldsArr=argValues[1].toString().split("\\*");
-                    String[] sampleWhereFieldsNameArr=argValues[2].toString().split("\\*");
-                    String[] sampleWhereFieldsValueArr=argValues[3].toString().split("\\*");
-                    
-                    if (grouperName.length!=smpGroupFldsArr.length && grouperName.length!=sampleWhereFieldsNameArr.length 
-                            && grouperName.length!=sampleWhereFieldsValueArr.length){
+                    String[] objGroupName = LPNulls.replaceNull(argValues[0]).toString().split("\\/");
+                    String[] tblCategory=argValues[1].toString().split("\\/");
+                    String[] tblName=argValues[2].toString().split("\\/");
+                    String[] whereFieldsNameArr=argValues[3].toString().split("\\/");
+                    String[] whereFieldsValueArr=argValues[4].toString().split("\\/");
+                    String[] fldToRetrieve=argValues[5].toString().split("\\/");
+                    String[] dataGrouped=argValues[6].toString().split("\\/");
+                    if (objGroupName.length!=fldToRetrieve.length && objGroupName.length!=whereFieldsNameArr.length 
+                            && objGroupName.length!=whereFieldsValueArr.length){
                         LPFrontEnd.responseJSONDiagnosticLPFalse("KPI Definition is wrong", new Object[0]);
                         return;
                     }
-                    for (int i=0;i<grouperName.length;i++){
-                        String curgrouperName=grouperName[i];
-                        String[] cursmpGroupFldsArr=smpGroupFldsArr[i].toString().split("\\|");
-                        String[] cursampleWhereFieldsNameArr=sampleWhereFieldsNameArr[i].toString().split("\\|");
-                        Object[] cursampleWhereFieldsValueArr=sampleWhereFieldsValueArr[i].toString().split("\\|");
-
+                    for (int i=0;i<objGroupName.length;i++){
+                        String curgrouperName=giveMeString(objGroupName[i]); 
+                        String curtblCategory=giveMeString(tblCategory[i]);
+                        String curtblName=giveMeString(tblName[i]);
+                        String[] curWhereFieldsNameArr=giveMeStringArr(whereFieldsNameArr[i]);
+                        Object[] curWhereFieldsValueArr=giveMeObjectArr(whereFieldsValueArr[i]);                        
+                        String[] curFldsToRetrieveArr=giveMeStringArr(fldToRetrieve[i]);
+                        String curdataGrouped=giveMeString(dataGrouped[i]);
+                        
                         if (curgrouperName.toString().length()==0)curgrouperName=actionName.toLowerCase();
-                        Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
-                            cursmpGroupFldsArr, cursampleWhereFieldsNameArr, cursampleWhereFieldsValueArr, 
-                            null);
-                        cursmpGroupFldsArr=LPArray.addValueToArray1D(cursmpGroupFldsArr, "count");
+                        Object[][] dataInfo = new Object[][]{{}};
+                        if (Boolean.valueOf(curdataGrouped)){
+                            dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 
+                                curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
+                                null);
+                            curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
+                        }else{
+                            dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 
+                                curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr);
+                        }
                         jObj=new JSONObject();
-                        JSONArray sampleGrouperJsonArr = new JSONArray();
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())){
+                        JSONArray dataJSONArr = new JSONArray();
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())){
                             jObj= noRecordsInTableMessage();
                         }else{
-                            for (Object[] curRec: groupedInfo){
-                                jObj= LPJson.convertArrayRowToJSONObject(cursmpGroupFldsArr, curRec);
-                                sampleGrouperJsonArr.add(jObj);
+                            for (Object[] curRec: dataInfo){
+                                jObj= LPJson.convertArrayRowToJSONObject(curFldsToRetrieveArr, curRec);
+                                dataJSONArr.add(jObj);
                             }
                         } 
-                        jObjMainObject.put(curgrouperName, sampleGrouperJsonArr);
+                        jObjMainObject.put(curgrouperName, dataJSONArr);
                     }
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     return;
@@ -253,7 +265,24 @@ public class EnvMonAPIStats extends HttpServlet {
             } catch (Exception ignore) {
             }
         }      
-    }        
+    }     
+    String giveMeString(String value){
+        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
+            return "";
+        return value;
+    }
+    String[] giveMeStringArr(String value){
+        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
+            return new String[]{};
+        return value.split("\\|");
+    }    
+
+    Object[] giveMeObjectArr(String value){
+        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
+            return new Object[]{};
+        return LPArray.convertStringWithDataTypeToObjectArray(value.split("\\|"));
+    }    
+    
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.

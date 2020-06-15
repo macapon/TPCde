@@ -5,9 +5,12 @@
  */
 package functionaljavaa.materialspec;
 
+import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRules;
+import functionaljavaa.materialspec.ConfigSpecRule.qualitativeRulesErrors;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
 import java.math.BigDecimal;
+import java.util.Arrays;
 
 /**
  *
@@ -99,33 +102,7 @@ public class DataSpec {
     /**
      *
      */
-    public static final String QUALITATIVE_RULES_EQUAL_TO="EQUALTO";    
 
-    /**
-     *
-     */
-    public static final String QUALITATIVE_RULES_NOT_EQUAL_TO="NOTEQUALTO";
-
-    /**
-     *
-     */
-    public static final String QUALITATIVE_RULES_CONTAINS="CONTAINS";
-
-    /**
-     *
-     */
-    public static final String QUALITATIVE_RULES_NOT_CONTAINS="NOTCONTAINS";
-
-    /**
-     *
-     */
-    public static final String QUALITATIVE_RULES_IS_ONE_OF="ISONEOF";
-
-    /**
-     *
-     */
-    public static final String QUALITATIVE_RULES_IS_NOT_ONE_OF="ISNOTONEOF";
-    
     /**
      *
      */
@@ -304,9 +281,16 @@ public class DataSpec {
         Object[] isCorrectTheSpec = matQualit.specLimitIsCorrectQualitative( specRule, values, separator);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isCorrectTheSpec[0].toString())){
             return isCorrectTheSpec;}
-        
-        switch (specRule.toUpperCase()){
-            case QUALITATIVE_RULES_EQUAL_TO: 
+        qualitativeRules qualitRule = null;
+        try{
+            qualitRule = qualitativeRules.valueOf(specRule.toUpperCase());
+        }catch(Exception e){            
+            String[] errorDetailVariables=new String[]{specRule, Arrays.toString(qualitRule.getAllRules())};
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED.getErrorCode(), errorDetailVariables);             
+        }
+
+        switch (qualitRule){
+            case EQUALTO: 
                 if (result.equalsIgnoreCase(values)){
                     errorCode = EVALUATION_CODE_QUALITATIVE_IN;
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, null);
@@ -317,9 +301,8 @@ public class DataSpec {
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_OUT_EQUAL_TO, errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
                     return diagnoses;                                                           
-                }
-                
-            case QUALITATIVE_RULES_NOT_EQUAL_TO: 
+                }                
+            case NOTEQUALTO: 
                 if (result.equalsIgnoreCase(values)){ 
                     errorVariables = new Object[]{result, values};
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_NOT_EQUAL_TO, errorVariables);
@@ -330,7 +313,7 @@ public class DataSpec {
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
                     return diagnoses;                    
                 }
-            case QUALITATIVE_RULES_CONTAINS:                 
+            case CONTAINS:                 
                 if (values.toUpperCase().contains(result.toUpperCase())){
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_IN, null);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
@@ -341,7 +324,7 @@ public class DataSpec {
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
                     return diagnoses;                         
                 }
-            case QUALITATIVE_RULES_NOT_CONTAINS:                 
+            case NOTCONTAINS:                 
                 if (values.toUpperCase().contains(result.toUpperCase())){
                     errorVariables = new Object[]{result, values};
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_NOT_CONTAINS, errorVariables);
@@ -352,7 +335,7 @@ public class DataSpec {
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
                     return diagnoses;                    
                 }
-            case QUALITATIVE_RULES_IS_ONE_OF: 
+            case ISONEOF: 
                 if ((separator==null) || (separator.length()==0)){
                     errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SEPARATOR);
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
@@ -372,7 +355,7 @@ public class DataSpec {
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
                     return diagnoses;                                                                 
                 }
-            case QUALITATIVE_RULES_IS_NOT_ONE_OF: 
+            case ISNOTONEOF: 
                 if ((separator==null) || (separator.length()==0)){                    
                     errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SEPARATOR);
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
@@ -391,10 +374,9 @@ public class DataSpec {
                     return diagnoses;                    
                 }
             default:
-                errorCode = "DataSpec_resultCheck_UnhandledException";
                 String params = "Result: "+result+", Spec Rule: "+specRule+", values: "+values+", separator: "+separator+", listName: "+listName;
                 errorVariables = LPArray.addValueToArray1D(errorVariables, params);
-                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
+                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSpec_resultCheck_UnhandledException", errorVariables);
                 diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
                 return diagnoses;               
         }
@@ -409,7 +391,7 @@ public class DataSpec {
      * @param maxStrict
      * @return
      */
-    public Object[] resultCheckFloat(Float result, Float minSpec, Float maxSpec, Boolean minStrict, Boolean maxStrict){
+/*    public Object[] resultCheckFloat(Float result, Float minSpec, Float maxSpec, Boolean minStrict, Boolean maxStrict){
         
         ConfigSpecRule matQuant = new ConfigSpecRule();
         Object[] errorVariables = new Object[0];        
@@ -466,7 +448,7 @@ public class DataSpec {
         diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
         return diagnoses;        
     }
-
+*/
     /**
      *
      * @param result
@@ -551,6 +533,7 @@ public class DataSpec {
      * @param maxControlStrict
      * @return
      */
+/*    
     public Object[] resultCheckFloat(Float result, Float minSpec, Float maxSpec, Boolean minStrict, Boolean maxStrict, Float minControl, Float maxControl, Boolean minControlStrict, Boolean maxControlStrict){
         
         String errorCode = "";
@@ -667,7 +650,7 @@ public class DataSpec {
         diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
         return diagnoses;            
     }
-    
+  */  
     /**
      *
      * @param result
