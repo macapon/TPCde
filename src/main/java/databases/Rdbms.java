@@ -1327,6 +1327,31 @@ if (1==1)return;
             Logger.getLogger(Rdbms.class.getName()).log(Level.SEVERE, null, ex);
         }
      }
+    public static Object[] dbViewExists(String schemaName, String viewCategory, String viewName){
+        String schema=schemaName;
+        if (viewCategory.length()>0){
+            schema=schema+"-"+viewCategory;
+        }
+        String query="select table_schema from INFORMATION_SCHEMA.VIEWS where " +
+                    " table_name=? " + " and table_schema=?";
+        try{
+            ResultSet res = Rdbms.prepRdQuery(query, new String[]{viewName, schema});
+            if (res==null){
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{ERROR_TRAPPING_ARG_VALUE_RES_NULL, query + ERROR_TRAPPING_ARG_VALUE_LBL_VALUES+ Arrays.toString(new String[]{viewName, schema})});
+            }            
+            res.first();
+            Integer numRows=res.getRow();
+            if (numRows>0){
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rbdms_existsRecord_RecordFound", new Object[]{"", viewName, schemaName});                
+            }else{
+                return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_RECORD_NOT_FOUND, new Object[]{"",viewName, schemaName});                
+            }
+        }catch (SQLException er) {
+            Logger.getLogger(query).log(Level.SEVERE, null, er);     
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
+        }                    
+        
+    }
 /*
 private static final int CLIENT_CODE_STACK_INDEX;
     

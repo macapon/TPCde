@@ -77,7 +77,6 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
-      
 //            out.println(SomeEnumClass.getCell(1));
 //            out.println(OtherEnumClass.getCell(1));
 //            MyEnum m = null;            
@@ -124,7 +123,9 @@ if (1==1) return;
 
 if (1==1) return;
 */
+
 String schemaPrefix="em-demo-a";
+/*
         String tblCreateScript=TblsTesting.Script.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
         tblCreateScript=TblsTesting.ScriptSteps.createTableScript(schemaPrefix, new String[]{""});
@@ -145,7 +146,7 @@ schemaPrefix="genoma-1";
 
         tblCreateScript2=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaPrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
-
+*/
 String batchContentStr="";     
 Integer batchNumRows=5;
 Integer batchNumCols=3;
@@ -203,6 +204,14 @@ out.println("FIN");
             Object[] isConnected = new Object[0];
             isConnected=Rdbms.stablishDBConectionTester();
             //isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
+
+out.println("Hello");
+out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0].toString());
+out.println(Rdbms.dbViewExists("requirements", "", "pr_scheduled_locations")[0].toString());
+out.println(Rdbms.dbViewExists("em-demo-a", "data", "padsasr_scheduled_locationssss")[0].toString());
+out.println("Bye");
+if (1==1) return;
+
             if ((Boolean) isConnected[0]){out.println("Connected to the db !:)");
             }else{out.println("NOT Connected to the db :( "+ Arrays.toString(isConnected));}
             Token token = new Token("eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6Im1hbG90YSIsInVzZXJEQlBhc3N3b3JkIjoibGFzbGVjaHVnYXMiLCJ0eXAiOiJKV1QiLCJhcHBTZXNzaW9uSWQiOiIyOCIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlNhdCBBdWcgMTcgMDE6NTU6NTUgQ0VTVCAyMDE5IiwidXNlclJvbGUiOiJjb29yZGluYXRvciIsImFsZyI6IkhTMjU2IiwiaW50ZXJuYWxVc2VySUQiOiIxIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.TYIUehSPitkr4p7_fSYCNCcF8PzoxC24qsYg5V4rxQw");
@@ -276,7 +285,7 @@ out.println("FIN");
         
         JSONObject jsonObj = new JSONObject();
 
-
+/*
         String schemaNamePrefix="em-demo-a";
         tblCreateScript=TblsEnvMonitConfig.InstrIncubator.createTableScript(schemaNamePrefix, new String[]{""});
         tblCreateScript=TblsEnvMonitConfig.IncubBatch.createTableScript(schemaNamePrefix, new String[]{""});
@@ -291,7 +300,7 @@ out.println("FIN");
         //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsEnvMonitProcedure.IncubatorTempReadingViolations", tblCreateScript);
         out.println("TblsEnvMonitProcedure.IncubatorTempReadingViolations ");
-        
+*/        
 /*        tblCreateScript=TblsEnvMonitData.ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, new String[]{""});        
         //tblCreateScript=TblsEnvMonitData.IncubBatch.createTableScript(schemaNamePrefix, new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});        
@@ -321,6 +330,7 @@ String locationName="E01";
 String[] fieldName=new String[]{"day_of_week"};
 Object[] fieldValue=new Object[]{"TUESDAYS"};
 Object[] addRecDiag=new Object[]{};
+String schemaNamePrefix="";
 addRecDiag=ConfigProgramCalendar.addRecursiveScheduleForLocation(schemaNamePrefix, procName, calendarId, locationName, 
         fieldName, fieldValue);
 //out.println("Adding recursive schedule for location E01 on TUESDAYS: "+Arrays.toString(addRecDiag));
@@ -343,7 +353,7 @@ String holidaysCalendar="España Comunidad X 2019";
             //String tblCreateScript=TblsData.ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, new String[]{""});
             //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
 //             schemaNamePrefix="em-demo-a";
-             tblCreateScript=TblsEnvMonitData.ProductionLot.createTableScript(schemaNamePrefix, new String[]{""});
+             //tblCreateScript=TblsEnvMonitData.ProductionLot.createTableScript(schemaNamePrefix, new String[]{""});
 //            Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
 
 //Structured Batches. Begin

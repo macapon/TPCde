@@ -251,7 +251,7 @@ public class UserSop {
      */
         
     public static final Object[][] getUserProfileFieldValues(String[] filterFieldName, Object[] filterFieldValue, String[] fieldsToReturn, String[] schemaPrefix){                
-        String tableName = TblsData.ViewUserAndMetaDataSopView.TBL.getName();
+        String viewName = TblsData.ViewUserAndMetaDataSopView.TBL.getName();
         
         if (fieldsToReturn.length<=0){
             String[][] getUserProfileNEW = new String[1][2];
@@ -268,21 +268,24 @@ public class UserSop {
             return getUserProfileNEW;}       
                 
         StringBuilder query = new StringBuilder(0);
-        for(String currSchemaPrefix: schemaPrefix){                    
-            query.append("(select ");
-            for(String fRet: fieldsToReturn){
-                query.append(fRet).append(",");
-            }
-            query.deleteCharAt(query.length() - 1);
+        for(String currSchemaPrefix: schemaPrefix){ 
+            Object[] viewExistInSchema= Rdbms.dbViewExists(currSchemaPrefix, LPPlatform.SCHEMA_DATA, viewName);
+            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(viewExistInSchema[0].toString())){
+                query.append("(select ");
+                for(String fRet: fieldsToReturn){
+                    query.append(fRet).append(",");
+                }
+                query.deleteCharAt(query.length() - 1);
 
-            if (currSchemaPrefix.contains(LPPlatform.SCHEMA_DATA)){
-                query.append(" from \"").append(currSchemaPrefix).append("\".").append(tableName).append(" where 1=1");}
-            else{query.append(" from \"").append(currSchemaPrefix).append("-data\".").append(tableName).append(" where 1=1");}
-            for(String fFN: filterFieldName){
-                query.append(" and ").append(fFN); 
-                if (!fFN.contains("null")){query.append("= ?");}
+                if (currSchemaPrefix.contains(LPPlatform.SCHEMA_DATA)){
+                    query.append(" from \"").append(currSchemaPrefix).append("\".").append(viewName).append(" where 1=1");}
+                else{query.append(" from \"").append(currSchemaPrefix).append("-data\".").append(viewName).append(" where 1=1");}
+                for(String fFN: filterFieldName){
+                    query.append(" and ").append(fFN); 
+                    if (!fFN.contains("null")){query.append("= ?");}
+                }
+                query.append(") union ");
             }
-            query.append(") union ");
         }       
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         
