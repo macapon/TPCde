@@ -22,6 +22,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 
 /**
@@ -95,8 +96,9 @@ public class TestingConfigSpecQualitativeRuleFormat extends HttpServlet {
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
-                    Integer stepId=Integer.valueOf(testingContent[iLines][testingContent[0].length-1].toString());
-                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert));
+// Es necesario usar este publishEvalStep aqui? toca revisar a fondo! NO BORRAR A LA LIGERA!
+//                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][testingContent[0].length-1]).toString());
+//                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, new JSONArray(), tstAssert));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                     fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
                 }
