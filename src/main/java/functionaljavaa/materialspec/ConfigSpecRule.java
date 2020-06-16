@@ -20,7 +20,7 @@ public class ConfigSpecRule {
 
     enum qualitativeRulesErrors{
         RULE_ARG_IS_MANDATORY("specLimits_ruleMandatoryArgumentNull"), TEXT_SPEC_ARG_IS_MANDATORY("specLimits_textSpecMandatoryArgumentNull"),
-        QUALITATIVE_RULE_NOT_RECOGNIZED("specLimits_qualitativeRuleNotRecognized"), SEPARATOR_ARG_IS_MANDATORY(""),
+        QUALITATIVE_RULE_NOT_RECOGNIZED("specLimits_qualitativeRuleNotRecognized"), SEPARATOR_ARG_IS_MANDATORY("specLimits_separatorMandatoryArgumentNull"),
         ;
         private qualitativeRulesErrors(String errCode){
             this.errorCode=errCode;

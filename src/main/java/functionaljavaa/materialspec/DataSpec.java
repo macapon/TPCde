@@ -18,215 +18,47 @@ import java.util.Arrays;
  */
 public class DataSpec {
     String classVersion = "0.1";
-    
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS="resultCheck_StrictDoesNotAllowPairOfSameValue";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD="resultCheck_mandatoryFieldIsNull";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_RESULT="Result";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SPEC_RULE="specRule";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_VALUES="values";
-
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SEPARATOR="Separator";
-                
-    /**
-     *
-     */
-    public static final String ERROR_TRAPPING_RESULT_CHECK_QUANT_OUT_MIN_CONTROL_IN_SPEC="resultCheck_quantitativeOutMinControlInSpec";
-    
-    /**
-     *
-     */
-    public enum RangeRules{ // Aun no convertido a enum, pero debería !!!
-
-        /**
-         *
-         */
-        QUALITATIVE_RULES_EQUAL_TO("EQUALTO"),
-
-        /**
-         *
-         */
-        QUALITATIVE_RULES_NOT_EQUAL_TO("NOTEQUALTO"),
-
-        /**
-         *
-         */
-        QUALITATIVE_RULES_CONTAINS("CONTAINS"),
-
-        /**
-         *
-         */
-        QUALITATIVE_RULES_NOT_CONTAINS("NOTCONTAINS"),
-
-        /**
-         *
-         */
-        QUALITATIVE_RULES_IS_ONE_OF("ISONEOF"),
-
-        /**
-         *
-         */
-        QUALITATIVE_RULES_IS_NOT_ONE_OF("ISNOTONEOF")
+    enum ResultCheckErrors{
+        STRICT_DOES_NOT_ALLOW_EQUALS("resultCheck_StrictDoesNotAllowPairOfSameValue"), NULL_MANDATORY_FIELD("resultCheck_mandatoryFieldIsNull"),
+        MANDATORY_FIELD_ARGUMENT_RESULT("Result"), MANDATORY_FIELD_ARGUMENT_SPEC_RULE("specRule"),
+        MANDATORY_FIELD_ARGUMENT_VALUES("values"), MANDATORY_FIELD_ARGUMENT_SEPARATOR("Separator"),
+        QUANT_OUT_MIN_CONTROL_IN_SPEC("resultCheck_quantitativeOutMinControlInSpec"),
+        EVALUATION_WRONG_RULE("OUT_WRONG_RULE"), EVALUATION_OUT("OUT"),
+        QUALITATIVE_OUT_EQUAL_TO("DataSpec_resultCheck_qualitativeEqualToOUT"), QUALITATIVE_OUT_NOT_EQUAL_TO("DataSpec_resultCheck_qualitativeNotEqualToOUT"),
+        QUALITATIVE_OUT_CONTAINS("DataSpec_resultCheck_qualitativeContainsOUT"), QUALITATIVE_OUT_NOT_CONTAINS("DataSpec_resultCheck_qualitativeNotContainsOUT"),
+        QUALITATIVE_OUT_IS_ONE_OF("DataSpec_resultCheck_qualitativeIsOneOfOUT"), QUALITATIVE_OUT_IS_NOT_ONE_OF("DataSpec_resultCheck_qualitativeIsNotOneOfOUT"),
+        QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT("resultCheck_quantitativeOutSpecByMinStrict"), QUANTITATIVE_OUT_SPEC_BY_MIN("resultCheck_quantitativeOutSpecByMin"),
+        QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT("resultCheck_quantitativeOutSpecByMaxStrict"), QUANTITATIVE_OUT_SPEC_BY_MAX("resultCheck_quantitativeOutSpecByMax"),
+        OUT_SPEC_MIN("OUT_SPEC_MIN"), OUT_SPEC_MAX("OUT_SPEC_MAX"),
+        QUANTITATIVE_OUT_ARGUMENT_MIN_SPEC_MIN_CONTROL("Min Spec and Min Control"), QUANTITATIVE_OUT_ARGUMENT_MAX_SPEC_MAX_CONTROL("Max Spec and Control"),        
         ;
-        RangeRules(String r){}
-
-        /**
-         *
-         * @return
-         */
-        public String getName(){return this.ruleText;}
-        String ruleText;
+        private ResultCheckErrors(String errCode){
+            this.errorCode=errCode;
+        }    
+        public String getErrorCode(){
+            return this.errorCode;
+        }        
+        private final String errorCode;        
     }
-
-    /**
-     *
-     */
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_IN="resultCheck_quantitativeIn";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT="resultCheck_quantitativeOutSpecByMinStrict";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MIN="resultCheck_quantitativeOutSpecByMin";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT="resultCheck_quantitativeOutSpecByMaxStrict";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MAX="resultCheck_quantitativeOutSpecByMax";   
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL="resultCheck_quantitativeOutMaxControlInSpec";   
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MIN_CONTROL="resultCheck_quantitativeOutMinControlInSpec";   
     
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_OUT_ARGUMENT_MIN_SPEC_MIN_CONTROL="Min Spec and Min Control";
+    enum ResultCheckSuccess{
+        QUANT_OUT_MIN_CONTROL_IN_SPEC("resultCheck_quantitativeOutMinControlInSpec"),
+        EVALUATION_IN("IN"), 
+        QUANTITATIVE_IN("DataSpec_resultCheck_quantitativeIN"), QUALITATIVE_IN("DataSpec_resultCheck_qualitativeIN"),
+        QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL("resultCheck_quantitativeOutMaxControlInSpec"),
+        QUANTITATIVE_IN_SPEC_BUT_OUT_MIN_CONTROL("resultCheck_quantitativeOutMinControlInSpec"),
+        EVALUATION_UPON_CONTROL_MIN("UPON_CONTROL_MIN"), EVALUATION_UPON_CONTROL_MAX("UPON_CONTROL_MAX"),
+        ;
+        private ResultCheckSuccess(String successCode){
+            this.successCode=successCode;
+        }    
+        public String getSuccessCode(){
+            return this.successCode;
+        }        
+        private final String successCode;        
+    }
+                
 
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUANTITATIVE_OUT_ARGUMENT_MAX_SPEC_MAX_CONTROL="Max Spec and Control";    
-    
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_IN="DataSpec_resultCheck_qualitativeIN";    
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_OUT_EQUAL_TO="DataSpec_resultCheck_qualitativeEqualToOUT"; 
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_OUT_NOT_EQUAL_TO="DataSpec_resultCheck_qualitativeNotEqualToOUT"; 
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_OUT_CONTAINS="DataSpec_resultCheck_qualitativeContainsOUT"; 
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_OUT_NOT_CONTAINS="DataSpec_resultCheck_qualitativeNotContainsOUT"; 
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_OUT_IS_ONE_OF="DataSpec_resultCheck_qualitativeIsOneOfOUT";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CODE_QUALITATIVE_OUT_IS_NOT_ONE_OF="DataSpec_resultCheck_qualitativeIsNotOneOfOUT";
-    
-    /**
-     *
-     */
-    public static final String EVALUATION_CONTROL_MIN="CONTROL_MIN";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_CONTROL_MAX="CONTROL_MAX";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_WRONG_RULE= "OUT_WRONG_RULE";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_OUT= "OUT";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_UPON_CONTROL_MIN= "UPON_MIN_CONTROL";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_UPON_CONTROL_MAX= "UPON_MAX_CONTROL";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_OUT_SPEC_MIN= "OUT_SPEC_MIN";
-
-    /**
-     *
-     */
-    public static final String EVALUATION_OUT_SPEC_MAX= "OUT_SPEC_MAX";
-    
-    /**
-     *
-     */
-    public static final String EVALUATION_IN= "IN";
     
    
 /**
@@ -263,19 +95,19 @@ public class DataSpec {
 
         String errorCode = "";        
         if (result==null || "".equals(result)){
-            errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_RESULT);
-            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+            errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_RESULT.getErrorCode());
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
             return diagnoses;}               
         if (specRule==null || "".equals(specRule)){
-            errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SPEC_RULE);            
-            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+            errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_SPEC_RULE.getErrorCode());            
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
             return diagnoses;}        
         if (values==null || "".equals(values)){
-            errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_VALUES);            
-            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+            errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_VALUES.getErrorCode());            
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
             return diagnoses;}        
         
         Object[] isCorrectTheSpec = matQualit.specLimitIsCorrectQualitative( specRule, values, separator);
@@ -292,92 +124,92 @@ public class DataSpec {
         switch (qualitRule){
             case EQUALTO: 
                 if (result.equalsIgnoreCase(values)){
-                    errorCode = EVALUATION_CODE_QUALITATIVE_IN;
+                    errorCode = ResultCheckSuccess.QUALITATIVE_IN.getSuccessCode();
                     Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, null);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
                     return diagnoses;                    
                 }else{
                     errorVariables = new Object[]{result, values};
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_OUT_EQUAL_TO, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckErrors.QUALITATIVE_OUT_EQUAL_TO.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                                                           
                 }                
             case NOTEQUALTO: 
                 if (result.equalsIgnoreCase(values)){ 
                     errorVariables = new Object[]{result, values};
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_NOT_EQUAL_TO, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUALITATIVE_OUT_NOT_EQUAL_TO.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                                                                               
                 }else{                    
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_IN, null);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUALITATIVE_IN.getSuccessCode(), null);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
                     return diagnoses;                    
                 }
             case CONTAINS:                 
                 if (values.toUpperCase().contains(result.toUpperCase())){
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_IN, null);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUALITATIVE_IN.getSuccessCode(), null);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
                     return diagnoses;                    
                 }else{                    
                     errorVariables = new Object[]{result, values};
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_CONTAINS, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUALITATIVE_OUT_CONTAINS.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                         
                 }
             case NOTCONTAINS:                 
                 if (values.toUpperCase().contains(result.toUpperCase())){
                     errorVariables = new Object[]{result, values};
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_NOT_CONTAINS, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUALITATIVE_OUT_NOT_CONTAINS.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                                             
                 }else{
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_IN, null);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUALITATIVE_IN.getSuccessCode(), null);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
                     return diagnoses;                    
                 }
             case ISONEOF: 
                 if ((separator==null) || (separator.length()==0)){
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SEPARATOR);
-                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_SEPARATOR.getErrorCode());
+                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
                 }else{
                     String[] textSpecArray = values.split(separator);
                     for (Integer itextSpecArrayLen=0;itextSpecArrayLen<textSpecArray.length;itextSpecArrayLen++){
                         if (result.equalsIgnoreCase(textSpecArray[itextSpecArrayLen])){                            
-                            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_IN, null);
-                            diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+                            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUALITATIVE_IN.getSuccessCode(), null);
+                            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
                             return diagnoses;                    
                         }
                     }                
                     errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length+1), values};
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_IS_ONE_OF, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUALITATIVE_OUT_IS_ONE_OF.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_OUT.getErrorCode());
                     return diagnoses;                                                                 
                 }
             case ISNOTONEOF: 
                 if ((separator==null) || (separator.length()==0)){                    
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_SEPARATOR);
-                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_SEPARATOR.getErrorCode());
+                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
                 }else{
                     String[] textSpecArray = values.split(separator);
                     if (!LPArray.valueInArray(textSpecArray, result)){
                         errorVariables = new Object[]{result, String.valueOf((Integer)textSpecArray.length+1), values};                        
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUALITATIVE_OUT_IS_NOT_ONE_OF, errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT);
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUALITATIVE_OUT_IS_NOT_ONE_OF.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_OUT.getErrorCode());
                         return diagnoses;
                     }
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUALITATIVE_IN, null);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUALITATIVE_IN.getSuccessCode(), null);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
                     return diagnoses;                    
                 }
             default:
                 String params = "Result: "+result+", Spec Rule: "+specRule+", values: "+values+", separator: "+separator+", listName: "+listName;
                 errorVariables = LPArray.addValueToArray1D(errorVariables, params);
                 Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSpec_resultCheck_UnhandledException", errorVariables);
-                diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                 return diagnoses;               
         }
     }
@@ -397,10 +229,10 @@ public class DataSpec {
         Object[] errorVariables = new Object[0];        
         
         if (result==null){
-            String errorCode = ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD;
-            errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_RESULT);
-            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+            String successCode = ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode();
+            errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode()_ARGUMENT_RESULT);
+            Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, successCode, errorVariables);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
             return diagnoses;
         }
         Object[] isCorrectMinMaxSpec = matQuant.specLimitIsCorrectQuantitative(minSpec, maxSpec);
@@ -413,14 +245,14 @@ public class DataSpec {
             if (minStrict){
                 if (result<=minSpec){                                    
                     errorVariables = new Object[]{result.toString(), minSpec.toString()}; 
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT, errorVariables);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT.getErrorCode(), errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MIN);
                     return diagnoses;
                 }
             }else{
                 if (result<minSpec){
                     errorVariables = new Object[]{result.toString(), minSpec.toString()}; 
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MIN, errorVariables);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MIN.getErrorCode(), errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MIN);
                     return diagnoses;
                 }
@@ -430,22 +262,22 @@ public class DataSpec {
             if (maxStrict){
                 if (result>=maxSpec){
                     errorVariables = new Object[]{result.toString(), maxSpec.toString()}; 
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT, errorVariables);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT.getErrorCode(), errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MAX);
                     return diagnoses;
                 }
             }else{
                 if (result>maxSpec){
                     errorVariables = new Object[]{result.toString(), maxSpec.toString()}; 
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MAX, errorVariables);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MAX.getErrorCode(), errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MAX);
                     return diagnoses;
                 }
             }
         }        
-        String errorCode = EVALUATION_CODE_QUANTITATIVE_IN;
-        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, null);
-        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+        String successCode = ResultCheckSuccess.QUANTITATIVE_IN.getSuccessCode();
+        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, successCode, null);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
         return diagnoses;        
     }
 */
@@ -465,10 +297,10 @@ public class DataSpec {
         Object [] errorVariables = new Object[0];        
         
         if (result==null){
-            String errorCode = ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD;
-            errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_RESULT);
+            String errorCode = ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode();
+            errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_RESULT.getErrorCode());
             Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-            diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
             return diagnoses;
         }
         Object[] isCorrectMinMaxSpec = matQuant.specLimitIsCorrectQuantitative(minSpec, maxSpec);
@@ -483,15 +315,15 @@ public class DataSpec {
             if (minStrict){
                 if ( comparingMIN==1 || comparingMIN==0 ) {
                         errorVariables = new Object[]{result.toString(), minSpec.toString()}; 
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT, errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT_SPEC_MIN);
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MIN_STRICT.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.OUT_SPEC_MIN.getErrorCode());
                         return diagnoses;                
                 }
             }else{
                 if ( (comparingMIN==1) ) {
                         errorVariables = new Object[]{result.toString(), minSpec.toString()}; 
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MIN, errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT_SPEC_MIN);
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MIN.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.OUT_SPEC_MIN.getErrorCode());
                         return diagnoses;                
                 }                
             }
@@ -501,22 +333,22 @@ public class DataSpec {
             if (maxStrict){
                 if ( (comparingMAX==1) || (comparingMAX==0) ) {
                         errorVariables = new Object[]{result.toString(), maxSpec.toString()}; 
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT, errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT_SPEC_MAX);
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MAX_STRICT.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.OUT_SPEC_MAX.getErrorCode());
                         return diagnoses;            
                 }
             }else{
                 if (comparingMAX==1) {
                         errorVariables = new Object[]{result.toString(), maxSpec.toString()}; 
-                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_OUT_SPEC_BY_MAX, errorVariables);
-                        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_OUT_SPEC_MAX);
+                        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.QUANTITATIVE_OUT_SPEC_BY_MAX.getErrorCode(), errorVariables);
+                        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.OUT_SPEC_MAX.getErrorCode());
                         return diagnoses;            
                 }
             }
         }    
-        String errorCode = EVALUATION_CODE_QUANTITATIVE_IN;
+        String errorCode = ResultCheckSuccess.QUANTITATIVE_IN.getSuccessCode();
         Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, null);
-        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
         return diagnoses;        
     }
     
@@ -536,14 +368,14 @@ public class DataSpec {
 /*    
     public Object[] resultCheckFloat(Float result, Float minSpec, Float maxSpec, Boolean minStrict, Boolean maxStrict, Float minControl, Float maxControl, Boolean minControlStrict, Boolean maxControlStrict){
         
-        String errorCode = "";
+        String successCode = "";
         Object [] errorVariables = new Object[0]; 
 
         if (result==null){
-                errorCode = ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD;
-                errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_RESULT);
-                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-                diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                successCode = ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode();
+                errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode()_ARGUMENT_RESULT);
+                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, successCode, errorVariables);
+                diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                 return diagnoses;
         }
         
@@ -553,7 +385,7 @@ public class DataSpec {
             return isCorrectMinMaxSpec;
         }
 
-        if (isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString().contains(EVALUATION_OUT)){
+        if (isCorrectMinMaxSpec[isCorrectMinMaxSpec.length-1].toString().contains(ResultCheckErrors.EVALUATION_OUT.getErrorCode())){
             return isCorrectMinMaxSpec;
         }
 
@@ -564,7 +396,7 @@ public class DataSpec {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec);
                     errorVariables = LPArray.addValueToArray1D(errorVariables, "Min Strict  is set to false.");                   
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
                 }
 
@@ -573,7 +405,7 @@ public class DataSpec {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec);
                     errorVariables = LPArray.addValueToArray1D(errorVariables, "both, min Spec & Control Strict, set to true");                   
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;                   
                 }                    
             }    
@@ -609,7 +441,7 @@ public class DataSpec {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec);
                     errorVariables = LPArray.addValueToArray1D(errorVariables, "max Strict is set to false.");                   
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;                    
                 }
 
@@ -618,7 +450,7 @@ public class DataSpec {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec);
                     errorVariables = LPArray.addValueToArray1D(errorVariables, "both, max Spec & Control Strict, set to true..");                   
                     Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;                    
                 }                    
             }            
@@ -628,7 +460,7 @@ public class DataSpec {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxControl.toString());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, " > "+result.toString()+" > ");
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL, errorVariables);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANTITATIVE_IN.getSuccessCode()_SPEC_BUT_OUT_MAX_CONTROL, errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_CONTROL_MAX);
                     return diagnoses;                                         
                 }
@@ -638,16 +470,16 @@ public class DataSpec {
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxControl.toString());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, " => "+result.toString()+" => ");
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL, errorVariables);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANTITATIVE_IN.getSuccessCode()_SPEC_BUT_OUT_MAX_CONTROL, errorVariables);
                     diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_CONTROL_MAX);
                     return diagnoses;                                         
                 }
             }                        
         }
         
-        errorCode = EVALUATION_CODE_QUANTITATIVE_IN;
-        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, null);
-        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+        successCode = ResultCheckSuccess.QUANTITATIVE_IN.getSuccessCode();
+        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, successCode, null);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
         return diagnoses;            
     }
   */  
@@ -666,14 +498,12 @@ public class DataSpec {
      */
     public Object[] resultCheck(BigDecimal result, BigDecimal minSpec, BigDecimal maxSpec, Boolean minStrict, Boolean maxStrict, BigDecimal minControl, BigDecimal maxControl, Boolean minControlStrict, Boolean maxControlStrict){
         
-        String errorCode = "";
         Object [] errorVariables = new Object[0]; 
 
         if (result==null){
-                errorCode = ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD;
-                errorVariables = LPArray.addValueToArray1D(errorVariables, ERROR_TRAPPING_RESULT_CHECK_NULL_MANDATORY_FIELD_ARGUMENT_RESULT);
-                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-                diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.MANDATORY_FIELD_ARGUMENT_RESULT.getErrorCode());
+                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.NULL_MANDATORY_FIELD.getErrorCode(), errorVariables);
+                diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                 return diagnoses;
         }
         
@@ -690,22 +520,20 @@ public class DataSpec {
         if (minControl!=null){
             if (minControl.equals(minSpec)) {                
                 if (!minStrict || minStrict==null){
-                    errorCode = ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS;
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, EVALUATION_CODE_QUANTITATIVE_OUT_ARGUMENT_MIN_SPEC_MIN_CONTROL);                   
+                    errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.QUANTITATIVE_OUT_ARGUMENT_MIN_SPEC_MIN_CONTROL.getErrorCode());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec);
                     errorVariables = LPArray.addValueToArray1D(errorVariables, "Min Strict  is set to false.");                   
-                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.STRICT_DOES_NOT_ALLOW_EQUALS.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;
                 }
 
                 if (minStrict && minControlStrict){
-                    errorCode = ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS;
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, EVALUATION_CODE_QUANTITATIVE_OUT_ARGUMENT_MIN_SPEC_MIN_CONTROL);                   
+                    errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.QUANTITATIVE_OUT_ARGUMENT_MIN_SPEC_MIN_CONTROL.getErrorCode());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec);
                     errorVariables = LPArray.addValueToArray1D(errorVariables, "both, min Spec & Control Strict, set to true");                   
-                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                    Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.STRICT_DOES_NOT_ALLOW_EQUALS.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                     return diagnoses;                   
                 }                    
             }    
@@ -714,12 +542,11 @@ public class DataSpec {
             
             int comparingMIN = minControl.compareTo(result);
             if ( (comparingMIN==1) || (comparingMIN==0 && minControlStrict) ) {
-                    errorCode = ERROR_TRAPPING_RESULT_CHECK_QUANT_OUT_MIN_CONTROL_IN_SPEC;
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec.toString());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, " < "+result.toString()+" < ");
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minControl.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_CONTROL_MIN);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckErrors.QUANT_OUT_MIN_CONTROL_IN_SPEC.getErrorCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_UPON_CONTROL_MIN.getSuccessCode());
                     return diagnoses;                    
             }                      
         }
@@ -727,22 +554,18 @@ public class DataSpec {
             int comparingMIN = result.compareTo(minControl);
             if (minControlStrict){
                 if ( comparingMIN==-1 || comparingMIN==0 ) {
-                    errorCode = EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL;
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec.toString());
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, " > "+result.toString()+" > ");
-                    errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MIN);
+                    errorVariables = LPArray.addValueToArray1D(errorVariables, new Object[]{minSpec.toString(), " > "+result.toString()+" > ", minSpec.toString()});
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANT_OUT_MIN_CONTROL_IN_SPEC.getSuccessCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_UPON_CONTROL_MIN.getSuccessCode());
                     return diagnoses;                                         
                 }                    
             }else{
                 if (comparingMIN==-1) {
-                    errorCode = EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL;
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec.toString());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, " > "+result.toString()+" > ");
                     errorVariables = LPArray.addValueToArray1D(errorVariables, minSpec.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MIN);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL.getSuccessCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_UPON_CONTROL_MAX.getSuccessCode());
                     return diagnoses;                                         
                 }                                    
             }
@@ -750,21 +573,19 @@ public class DataSpec {
 
         if (maxControl!=null){            
             if ( (maxControl.equals(maxSpec)) && (!maxStrict || maxStrict==null) ) {
-                errorCode = ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS;
-                errorVariables = LPArray.addValueToArray1D(errorVariables, EVALUATION_CODE_QUANTITATIVE_OUT_ARGUMENT_MAX_SPEC_MAX_CONTROL);                   
+                errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.QUANTITATIVE_OUT_ARGUMENT_MAX_SPEC_MAX_CONTROL.getErrorCode());
                 errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec);
                 errorVariables = LPArray.addValueToArray1D(errorVariables, "max Strict is set to false.");                   
-                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-                diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.STRICT_DOES_NOT_ALLOW_EQUALS.getErrorCode(), errorVariables);
+                diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                 return diagnoses;                    
             }
             if ( (maxControl.equals(maxSpec)) && (maxStrict && maxControlStrict) ){
-                errorCode = ERROR_TRAPPING_RESULT_CHECK_STRICT_DOES_NOT_ALLOW_EQUALS;
-                errorVariables = LPArray.addValueToArray1D(errorVariables, EVALUATION_CODE_QUANTITATIVE_OUT_ARGUMENT_MAX_SPEC_MAX_CONTROL);                   
+                errorVariables = LPArray.addValueToArray1D(errorVariables, ResultCheckErrors.QUANTITATIVE_OUT_ARGUMENT_MAX_SPEC_MAX_CONTROL.getErrorCode());                   
                 errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec);
                 errorVariables = LPArray.addValueToArray1D(errorVariables, "both, max Spec & Control Strict, set to true..");                   
-                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorVariables);
-                diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_WRONG_RULE);
+                Object[] diagnoses =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ResultCheckErrors.STRICT_DOES_NOT_ALLOW_EQUALS.getErrorCode(), errorVariables);
+                diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckErrors.EVALUATION_WRONG_RULE.getErrorCode());
                 return diagnoses;                    
             }                    
         }
@@ -772,30 +593,26 @@ public class DataSpec {
             int comparingMAX = result.compareTo(maxControl);
             if (maxControlStrict){
                 if (comparingMAX==1 || comparingMAX==0) {
-                    errorCode = EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL;
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxControl.toString());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, " > "+result.toString()+" > ");
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MAX);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL.getSuccessCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_UPON_CONTROL_MAX.getSuccessCode());
                     return diagnoses;                                         
                 }                            
             }else{
                 if (comparingMAX==1) {
-                    errorCode = EVALUATION_CODE_QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL;
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxControl.toString());
                     errorVariables = LPArray.addValueToArray1D(errorVariables, " > "+result.toString()+" > ");
                     errorVariables = LPArray.addValueToArray1D(errorVariables, maxSpec.toString());
-                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, errorVariables);
-                    diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_UPON_CONTROL_MAX);
+                    Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANTITATIVE_IN_SPEC_BUT_OUT_MAX_CONTROL.getSuccessCode(), errorVariables);
+                    diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_UPON_CONTROL_MAX.getSuccessCode());
                     return diagnoses;                                         
                 }                                            
             }
         }
-        
-        errorCode = EVALUATION_CODE_QUANTITATIVE_IN;
-        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, errorCode, null);
-        diagnoses = LPArray.addValueToArray1D(diagnoses, EVALUATION_IN);
+        Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ResultCheckSuccess.QUANTITATIVE_IN.getSuccessCode(), null);
+        diagnoses = LPArray.addValueToArray1D(diagnoses, ResultCheckSuccess.EVALUATION_IN.getSuccessCode());
         return diagnoses;            
     }
 }
