@@ -53,10 +53,15 @@ public class TestingResultCheckSpecQualitative extends HttpServlet {
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         
         Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-        
+
         StringBuilder fileContentBuilder = new StringBuilder(0);
         fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
         try (PrintWriter out = response.getWriter()) {
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(csvFileContent[0][0].toString())){
+                fileContentBuilder.append("Problem trying to extract file content for file "+csvPathName+csvFileContent[0][1].toString()); 
+                out.println(fileContentBuilder.toString());
+                return;            
+            }
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, LPTestingOutFormat.FILEHEADER_TAGS_SEPARATOR));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append(LPTestingOutFormat.ERROR_TRAPPING_FILEHEADER_MISSING_TAGS).append(csvHeaderTags.get(LPPlatform.LAB_FALSE));

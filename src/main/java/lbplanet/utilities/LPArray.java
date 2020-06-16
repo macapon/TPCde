@@ -275,8 +275,8 @@ public class  LPArray {
                 .onMalformedInput(CodingErrorAction.REPORT);
         Integer columnsInCsv=0;
         String[] myArray1D = new String[0];
+        if (url==null){return new String[0][0];}
         try {
-            if (url==null){return new String[0][0];}
             final InputStream in = url.openStream();
             final InputStreamReader reader = new InputStreamReader(in, decoder);
             BufferedReader bufin = new BufferedReader(reader);
@@ -298,8 +298,9 @@ public class  LPArray {
             return myArray;  
             
         } catch (IOException ex) {
+            myArray1D = addValueToArray1D(myArray1D, LPPlatform.LAB_FALSE);
             myArray1D = addValueToArray1D(myArray1D, ex.getMessage());
-            return array1dTo2d(myArray1D, 1);
+            return array1dTo2d(myArray1D, myArray1D.length);
         }
     }
         

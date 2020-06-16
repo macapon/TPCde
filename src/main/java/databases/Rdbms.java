@@ -987,10 +987,11 @@ if (1==1)return;
      * @return
      */
     public  static CachedRowSet prepRdQuery(String consultaconinterrogaciones, Object [] valoresinterrogaciones) {
-        try{
+        try{ //try(CachedRowSet  crs = RowSetProvider.newFactory().createCachedRowSet()){
             CachedRowSet  crs = RowSetProvider.newFactory().createCachedRowSet();
+            try(PreparedStatement prepareStatement = conn.prepareStatement(consultaconinterrogaciones)){
                 Object[] filteredValoresConInterrogaciones = new Object[0];
-                PreparedStatement prepareStatement = conn.prepareStatement(consultaconinterrogaciones);
+                //PreparedStatement prepareStatement = conn.prepareStatement(consultaconinterrogaciones);
                 prepareStatement.setQueryTimeout(rdbms.getTimeout());
                 if (valoresinterrogaciones!=null){
                     for (Object curVal: valoresinterrogaciones){
@@ -1005,7 +1006,7 @@ if (1==1)return;
                 ResultSet res = prepareStatement.executeQuery();
                 crs.populate(res);
                 return crs;
-            
+            }
         }catch(SQLException ex){
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
@@ -1021,8 +1022,8 @@ if (1==1)return;
   
 
     private static Integer prepUpQuery(String consultaconinterrogaciones, Object [] valoresinterrogaciones) {
-        try{
-            PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones);            
+        try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones)){
+            //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones);            
             setTimeout(rdbms.getTimeout());            
             if (valoresinterrogaciones != null){
                 buildPreparedStatement(valoresinterrogaciones, prep);}
@@ -1040,9 +1041,9 @@ if (1==1)return;
     }
     
     private static String[] prepUpQueryK(String consultaconinterrogaciones, Object [] valoresinterrogaciones, Integer indexposition) {
-        try{
+        try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS)){
             String pkValue = "";
-            PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS);            
+            //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS);            
             setTimeout(rdbms.getTimeout());
             buildPreparedStatement(valoresinterrogaciones, prep);         
             prep.executeUpdate();    
