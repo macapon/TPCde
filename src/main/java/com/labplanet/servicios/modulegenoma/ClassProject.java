@@ -96,6 +96,8 @@ public class ClassProject {
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, schemaPrefix});                    
                     this.messageDynamicData=new Object[]{projectName, studyName, schemaPrefix};
                     break;
+                default:
+                    break;
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;

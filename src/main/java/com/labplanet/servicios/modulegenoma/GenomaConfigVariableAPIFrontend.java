@@ -81,7 +81,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
                 return;                  
             }                                 
             Rdbms.stablishDBConection();
-            String variableSetName=request.getParameter(GenomaConfigVariableAPI.GenomaVariableAPIParamsList.variableSetName.toString());  
+            String variableSetName=request.getParameter(GenomaProjectAPI.GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());  
             Object[] varSetVariables=GenomaConfigVariablesQueries.getVariableSetVariablesId(schemaPrefix, variableSetName);            
             Rdbms.closeRdbms();  
             JSONArray jsonArr=new JSONArray();

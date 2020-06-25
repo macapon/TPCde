@@ -6,6 +6,7 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
@@ -28,8 +29,8 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
-    public enum  GenomaStudyObjectsVariablesAPIParamsList{
-        studyName, variableSetName, variableName, newValue, fieldsValues, userName, userRole, ownerTable, ownerId}
+//    public enum  GenomaStudyObjectsVariablesAPIParamsList{
+//        studyName, variableSetName, variableName, newValue, fieldsValues, userName, userRole, ownerTable, ownerId}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
             
     public enum  GenomaStudyObjectsVariablesAPIEndPoints{
@@ -216,10 +217,10 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                  
                     }                     
-                    String variableSetName=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.variableSetName.toString());
-                    String studyName=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.studyName.toString());
-                    String ownerTable=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.ownerTable.toString());
-                    String ownerId=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.ownerId.toString());
+                    String variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
+                    String studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
+                    String ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
+                    String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
                     dataSample =DataStudyObjectsVariableValues.addVariableSetToObject(schemaPrefix, token, studyName, variableSetName, ownerTable, ownerId);
                     break;                      
                 case "STUDY_OBJECT_SET_VARIABLE_VALUE":     
@@ -229,12 +230,12 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                  
                     }                     
-                    variableSetName=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.variableSetName.toString());
-                    studyName=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.studyName.toString());
-                    ownerTable=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.ownerTable.toString());
-                    ownerId=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.ownerId.toString());
-                    String variableName=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.variableName.toString());
-                    String newValue=request.getParameter(GenomaStudyObjectsVariablesAPIParamsList.newValue.toString());
+                    variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
+                    studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
+                    ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
+                    ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
+                    String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
+                    String newValue=request.getParameter(GenomaProjectAPIParamsList.NEW_VALUE.getParamName());
                     dataSample =DataStudyObjectsVariableValues.objectVariableSetValue(schemaPrefix, token, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
                     break;  
                 default:      

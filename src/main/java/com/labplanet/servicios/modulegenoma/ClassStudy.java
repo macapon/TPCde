@@ -244,6 +244,8 @@ public class ClassStudy {
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.StudySamplesSet.TBL.getName(), TblsGenomaData.StudySamplesSet.TBL.getName(), samplesSetName);                                    
                     break;
+                default:
+                    break;                    
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;

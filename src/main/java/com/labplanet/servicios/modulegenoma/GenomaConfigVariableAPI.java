@@ -6,6 +6,7 @@
 package com.labplanet.servicios.modulegenoma;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.modulegenoma.GenomaConfigVariables;
@@ -29,8 +30,6 @@ import org.json.simple.JSONObject;
  */
 public class GenomaConfigVariableAPI extends HttpServlet {
 
-    public enum  GenomaVariableAPIParamsList{
-        variableSetName, variableName, fieldsValues, userName, userRole}
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
             
     public enum  GenomaVariableAPIEndPoints{
@@ -216,8 +215,8 @@ public class GenomaConfigVariableAPI extends HttpServlet {
                                 LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                         return;                  
                     }                     
-                    String variableSetName=request.getParameter(GenomaVariableAPIParamsList.variableSetName.toString());
-                    String variableName=request.getParameter(GenomaVariableAPIParamsList.variableName.toString());
+                    String variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
+                    String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
                     if ("VARIABLE_SET_ADD_VARIABLE".equalsIgnoreCase(actionName))
                         dataSample =GenomaConfigVariables.variableSetAddVariable(schemaPrefix, token, variableSetName, variableName);
                     else if ("VARIABLE_SET_REMOVE_VARIABLE".equalsIgnoreCase(actionName))
