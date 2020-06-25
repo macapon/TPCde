@@ -15,6 +15,10 @@ import static databases.TblsCnfg.TABLETAG;
 import static databases.TblsCnfg.OWNERTAG;
 import static databases.TblsCnfg.TABLESPACETAG;
 import static databases.TblsCnfg.FIELDSTAG;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -47,6 +51,10 @@ public class TblsGenomaData {
         public String getName(){
             return this.dbObjName;
         }
+        private String[] getDbFieldDefinition(){
+            return getDbFieldDefinitionPostgres();
+        }
+
         private String[] getDbFieldDefinitionPostgres(){
             return new String[]{this.dbObjName, this.dbObjTypePostgres};
         }
@@ -83,7 +91,17 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }     
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (Project obj: Project.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                     
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -179,6 +197,9 @@ public class TblsGenomaData {
         public String getName(){
             return this.dbObjName;
         }
+        private String[] getDbFieldDefinition(){
+            return getDbFieldDefinitionPostgres();
+        }
         private String[] getDbFieldDefinitionPostgres(){
             return new String[]{this.dbObjName, this.dbObjTypePostgres};
         }
@@ -215,7 +236,64 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }   
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (Study obj: Study.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }  
+        public static String[][] getAllFieldNamesAndType(){
+            String[] tableFields=new String[0];
+            for (Study obj: Study.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    //tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getDbFieldDefinition());
+                }
+            }           
+            return LPArray.array1dTo2d(tableFields, 2);
+        }  
+        public static Object[] convertStringWithDataTypeToObjectArray(String[] flds, String[] myStringsArray){
+            String[][] fldNameAndType=getAllFieldNamesAndType();
+            Object[] fldName=LPArray.getColumnFromArray2D(fldNameAndType, 0);
+            Object[] myObjectsArray = new Object[myStringsArray.length];            
+            for (Integer i=0;i<myStringsArray.length;i++){
+                Integer tblFldPosic = LPArray.valuePosicInArray(fldName, flds[i]);                
+                if (fldNameAndType[tblFldPosic][1].toUpperCase().contains("BOOLEAN"))
+                    myObjectsArray[i]=Boolean.valueOf((String) myStringsArray[i]);
+                if (fldNameAndType[tblFldPosic][1].toUpperCase().contains("INTEGER"))
+                    myObjectsArray[i]=Integer.parseInt((String) myStringsArray[i]);
+                if (fldNameAndType[tblFldPosic][1].toUpperCase().contains("REAL"))
+                    myObjectsArray[i]=Float.parseFloat((String) myStringsArray[i]);
+                if (fldNameAndType[tblFldPosic][1].toUpperCase().contains("DATE")){
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd");
+                        try {
+                            myObjectsArray[i]= format.parse((String) myStringsArray[i]);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                }
+                if (fldNameAndType[tblFldPosic][1].toUpperCase().contains("TIMESTAMP")){
+                    SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+                        try {
+                            myObjectsArray[i]= format.parse((String) myStringsArray[i]);
+                        } catch (ParseException ex) {
+                            Logger.getLogger(LPArray.class.getName()).log(Level.SEVERE, null, ex);
+                        }
+                }
+                if (fldNameAndType[tblFldPosic][1].toUpperCase().contains("CHARACTER"))
+                    myObjectsArray[i]=myStringsArray[i];
+//                else
+//                    myObjectsArray[i]=myStringsArray[i];
+            }                
+            return myObjectsArray;
+        }
+        
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -281,7 +359,17 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }   
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (StudyUsers obj: StudyUsers.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                                     
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -346,7 +434,17 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        } 
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (StudyIndividual obj: StudyIndividual.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                                             
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -411,7 +509,18 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (StudyIndividualSample obj: StudyIndividualSample.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                                             
+        
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -482,7 +591,17 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }    
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (StudySamplesSet obj: StudySamplesSet.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }         
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -557,7 +676,18 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        } 
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (StudyFamily obj: StudyFamily.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }         
+        
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
@@ -638,6 +768,16 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
+        }  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (StudyVariableValues obj: StudyVariableValues.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
         }                
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
@@ -706,7 +846,17 @@ public class TblsGenomaData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                
+        }  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (studyObjectsFiles obj: studyObjectsFiles.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                 
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }                

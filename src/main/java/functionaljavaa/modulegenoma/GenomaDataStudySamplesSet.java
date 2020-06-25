@@ -257,7 +257,7 @@ public Object[] studySamplesSetUpdate( String schemaPrefix, Token token, String 
     return diagnosesProj;      
 } 
 
-public static Object[] studySamplesSetAddSample(String schemaPrefix, Token token, String studyName, String sampleSetName, String sampleId) {
+public Object[] studySamplesSetAddSample(String schemaPrefix, Token token, String studyName, String sampleSetName, String sampleId) {
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(schemaPrefix, token, studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;
     
@@ -274,7 +274,7 @@ public static Object[] studySamplesSetAddSample(String schemaPrefix, Token token
     return updateSamplesSetSamples;
 }
 
-public static Object[] studySamplesSetRemoveSample(String schemaPrefix, Token token, String studyName, String sampleSetName, String sampleId) {
+public Object[] studySamplesSetRemoveSample(String schemaPrefix, Token token, String studyName, String sampleSetName, String sampleId) {
     
     Object[] isStudySamplesSetOpenToChanges=isStudySamplesSetOpenToChanges(schemaPrefix, token, studyName, sampleSetName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudySamplesSetOpenToChanges[0].toString())) return isStudySamplesSetOpenToChanges;

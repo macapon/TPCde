@@ -222,7 +222,7 @@ public Object[] createProject( String schemaPrefix, Token token, String projectN
 
 public Object[] projectActivate( String schemaPrefix, Token token, String projectName){
     Object[] projOpenToChanges=isProjectOpenToChanges(schemaPrefix, token, projectName);    
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
 
     String[] fieldsName=new String[]{TblsGenomaData.Project.FLD_ACTIVE.getName()};
     Object[] fieldsValue=new Object[]{true};

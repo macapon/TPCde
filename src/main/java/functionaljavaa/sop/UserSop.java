@@ -285,7 +285,9 @@ public class UserSop {
                     if (!fFN.contains("null")){query.append("= ?");}
                 }
                 query.append(") union ");
-            }
+            }else
+                LPPlatform.saveMessageInDbErrorLog("", new Object[]{currSchemaPrefix, LPPlatform.SCHEMA_DATA, viewName}, 
+                        new Object[]{"UserSop", "UserSop", "getUserProfileFieldValues", 290}, "view not exist in this given schema", new Object[0]);
         }       
         for (int i=0;i<6;i++){query.deleteCharAt(query.length() - 1);}
         

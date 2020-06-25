@@ -174,7 +174,7 @@
     </servlet>
     <servlet>
         <servlet-name>ProjectAPI</servlet-name>
-        <servlet-class>com.labplanet.servicios.modulegenoma.ProjectAPI</servlet-class>
+        <servlet-class>com.labplanet.servicios.modulegenoma.GenomaProjectAPI</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>ProjectAPIFrontend</servlet-name>

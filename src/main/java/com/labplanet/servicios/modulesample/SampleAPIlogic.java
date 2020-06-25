@@ -6,7 +6,6 @@
 package com.labplanet.servicios.modulesample;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.modulegenoma.GenomaStudyAPI.GenomaStudyAPIParamsList.sampleId;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
@@ -31,6 +30,7 @@ public class SampleAPIlogic {
         int testId = Integer.parseInt(objectIdStr);     
                     String newAnalyst = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_NEW_ANALYST);
         Object[] dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
+        Object sampleId=null;
                    rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);                            
         Object[] messageDynamicData = new Object[]{sampleId}; 
                     //break;                               

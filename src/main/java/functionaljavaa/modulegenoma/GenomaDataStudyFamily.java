@@ -258,7 +258,7 @@ public Object[] studyFamilyIndividualUpdate( String schemaPrefix, Token token, S
     return diagnosesProj;      
 } 
 
-public static Object[] studyFamilyAddIndividual(String schemaPrefix, Token token, String studyName, String familyName, String individualId) {
+public Object[] studyFamilyAddIndividual(String schemaPrefix, Token token, String studyName, String familyName, String individualId) {
     Object[] isStudyFamilyOpenToChanges=isStudyFamilyOpenToChanges(schemaPrefix, token, studyName, familyName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyFamilyOpenToChanges[0].toString())) return isStudyFamilyOpenToChanges;
     
@@ -275,7 +275,7 @@ public static Object[] studyFamilyAddIndividual(String schemaPrefix, Token token
     return updateFamilyIndividuals;
 }
 
-public static Object[] studyFamilyRemoveIndividual(String schemaPrefix, Token token, String studyName, String familyName, String individualId) {
+public Object[] studyFamilyRemoveIndividual(String schemaPrefix, Token token, String studyName, String familyName, String individualId) {
     
     Object[] isStudyFamilyOpenToChanges=isStudyFamilyOpenToChanges(schemaPrefix, token, studyName, familyName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyFamilyOpenToChanges[0].toString())) return isStudyFamilyOpenToChanges;
