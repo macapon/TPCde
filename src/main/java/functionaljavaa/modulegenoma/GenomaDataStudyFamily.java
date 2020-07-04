@@ -6,7 +6,6 @@
 package functionaljavaa.modulegenoma;
 
 import com.labplanet.servicios.modulegenoma.TblsGenomaData;
-import static functionaljavaa.modulegenoma.GenomaUtilities.*;
 import databases.DataDataIntegrity;
 import databases.Rdbms;
 import databases.Token;
@@ -14,7 +13,6 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -259,39 +257,52 @@ public Object[] studyFamilyIndividualUpdate( String schemaPrefix, Token token, S
 } 
 
 public Object[] studyFamilyAddIndividual(String schemaPrefix, Token token, String studyName, String familyName, String individualId) {
+    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
+    
     Object[] isStudyFamilyOpenToChanges=isStudyFamilyOpenToChanges(schemaPrefix, token, studyName, familyName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyFamilyOpenToChanges[0].toString())) return isStudyFamilyOpenToChanges;
+
+    Object[] projStudyIndividualToChanges=GenomaDataStudyIndividuals.isStudyIndividualOpenToChanges(schemaPrefix, token, studyName, Integer.valueOf(individualId));    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyIndividualToChanges[0].toString())) return projStudyIndividualToChanges;   
     
-    Object[] updateFamilyIndividuals=addObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName(), 
-            new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName}, 
-            TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName(), individualId, individualId);  
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
-        return updateFamilyIndividuals;
+    Object[] familyAndIndividualLinked=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
+            new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
+                TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_LINKED_ON.getName()}, 
+            new Object[]{studyName, familyName, Integer.valueOf(individualId), LPDate.getCurrentTimeStamp()});
+    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) {
+        return familyAndIndividualLinked;
     }
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) {
         GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL.toString(), TblsGenomaData.StudyFamily.TBL.getName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName()}, new Object[]{updateFamilyIndividuals[updateFamilyIndividuals.length-1]}, ":"), null);
+            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName()}, 
+                    new Object[]{familyAndIndividualLinked[familyAndIndividualLinked.length-1]}, ":"), null);
     }
-    return updateFamilyIndividuals;
+    return familyAndIndividualLinked;
 }
 
 public Object[] studyFamilyRemoveIndividual(String schemaPrefix, Token token, String studyName, String familyName, String individualId) {
+    Object[] projStudyToChanges=GenomaDataStudy.isStudyOpenToChanges(schemaPrefix, token, studyName);    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyToChanges[0].toString())) return projStudyToChanges;
     
     Object[] isStudyFamilyOpenToChanges=isStudyFamilyOpenToChanges(schemaPrefix, token, studyName, familyName);
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isStudyFamilyOpenToChanges[0].toString())) return isStudyFamilyOpenToChanges;
 
-    Object[] updateFamilyIndividuals=removeObjectToUnstructuredField(schemaPrefix, LPPlatform.SCHEMA_DATA, TblsGenomaData.StudyFamily.TBL.getName(), 
-            new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName(), TblsGenomaData.StudyFamily.FLD_NAME.getName()}, new Object[]{studyName, familyName}, 
-            TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName(), TblsGenomaData.StudyIndividual.TBL.getName(), individualId, individualId);  
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
-        return updateFamilyIndividuals;
-    }
+    Object[] projStudyIndividualToChanges=GenomaDataStudyIndividuals.isStudyIndividualOpenToChanges(schemaPrefix, token, studyName, Integer.valueOf(individualId));    
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyIndividualToChanges[0].toString())) return projStudyIndividualToChanges;   
     
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateFamilyIndividuals[0].toString())) {
+    Object[] familyAndIndividualUnLinked=Rdbms.removeRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
+            new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
+                TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()}, 
+            new Object[]{studyName, familyName, Integer.valueOf(individualId)});
+    
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualUnLinked[0].toString())) {
         GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_REMOVED_INDIVIDUAL.toString(), TblsGenomaData.StudyFamily.TBL.getName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName()}, new Object[]{updateFamilyIndividuals[updateFamilyIndividuals.length-1]}, ":"), null);
+            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName()}, 
+                    new Object[]{familyAndIndividualUnLinked[familyAndIndividualUnLinked.length-1]}, ":"), null);
     }
-    return updateFamilyIndividuals;
+    return familyAndIndividualUnLinked;
 }
 
 public static Object[] isStudyFamilyOpenToChanges(String schemaPrefix, Token token, String studyName, String familyName){

@@ -30,6 +30,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
             
     public enum  GenomaVariableAPIFrontEndEndPoints{
             GET_VARIABLE_SET_VARIABLES_ID("GET_VARIABLE_SET_VARIABLES_ID", "variableSetName"),
+            GET_ACTIVE_CONFIG_VARIABLE_SET("GET_ACTIVE_CONFIG_VARIABLE_SET", ""),
 //          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
 //          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
 //          VARIABLE_SET_ADD_VARIABLE("VARIABLE_SET_ADD_VARIABLE", "variableSetName|variableName"), VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),
@@ -68,12 +69,23 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
         String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
 
+        GenomaVariableAPIFrontEndEndPoints endPoint = null;
+//        Object[] actionDiagnoses = null;
+        try{
+            endPoint = GenomaVariableAPIFrontEndEndPoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            return;                   
+        }        
         //Token token = new Token(finalToken);
 
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
-        switch (actionName.toUpperCase()){
-        case "GET_VARIABLE_SET_VARIABLES_ID": 
+        switch (endPoint){
+        case GET_ACTIVE_CONFIG_VARIABLE_SET:
+            Rdbms.stablishDBConection();
+            
+        case GET_VARIABLE_SET_VARIABLES_ID: 
             areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPIFrontend.GenomaVariableAPIFrontEndEndPoints.GET_VARIABLE_SET_VARIABLES_ID.getMandatoryFields().split("\\|"));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response, 

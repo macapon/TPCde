@@ -136,7 +136,7 @@ public class ClassEnvMon {
                     actionDiagnoses=DataBatchIncubator.batchEnded(schemaPrefix, token, batchName, incubName, batchTemplateId, batchTemplateVersion);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});
-                    this.messageDynamicData=new Object[]{incubationName, batchName};
+                    this.messageDynamicData=new Object[]{batchName, incubationName};
                     break;
                 case EM_LOGSAMPLE_SCHEDULER:
                     LocalDateTime dateStart=(LocalDateTime) argValues[0];

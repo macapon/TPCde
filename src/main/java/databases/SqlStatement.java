@@ -13,6 +13,8 @@ import java.util.HashMap;
  * @author Administrator
  */
 public class SqlStatement {
+    enum WHERE_FLDVALUES_ARRAY_TYPES{NUMBER, INTEGER, BOOLEAN}
+    
     enum WHERECLAUSE_TYPES{NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), LIKE("LIKE"), BETWEEN("BETWEEN"),
         LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">=");
         private final String clause;
@@ -139,23 +141,23 @@ public class SqlStatement {
                 String separator = inNotInSeparator(fn);
                 String textSpecs = (String) whereFieldValues[iwhereFieldNames];
                 String[] textSpecArray = textSpecs.split("\\" + separator);
-                Integer posicINClause = fn.toUpperCase().indexOf(WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
-                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length())).append(" (");
+                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length())).append(" (");                
                 for (String f : textSpecArray) {
                     queryWhere.append("?,");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, f);
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
-                queryWhere.append(")");
+                queryWhere.append(")");                
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
                 String textSpecs = (String) whereFieldValues[iwhereFieldNames];
                 String[] textSpecArray = textSpecs.split("\\" + separator);
-                Integer posicINClause = fn.toUpperCase().indexOf(WHERECLAUSE_TYPES.IN.getSqlClause());
-                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.IN.getSqlClause().length())).append(" (");
+                Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.IN.getSqlClause());
+                queryWhere.append(fn.substring(0, posicINClause+ (" "+WHERECLAUSE_TYPES.IN.getSqlClause()).length())).append(" (");
                 for (String f : textSpecArray) {
                     queryWhere.append("?,");
-                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, f);
+                    whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));
                 }
                 queryWhere.deleteCharAt(queryWhere.length() - 1);
                 queryWhere.append(")");
@@ -175,6 +177,13 @@ public class SqlStatement {
             }
         }
         return new Object[]{queryWhere.toString(), whereFieldValuesNew};
+    }
+    Object whereFldValuesGetCurrArrValue(String textSpecs, String f){
+        if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*")) return Float.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.NUMBER.toString()+"*", ""));
+        if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*")) return Integer.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*", ""));
+        if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*")) return Boolean.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*", ""));
+        
+        return f.toString();
     }
     private String  buildUpdateSetFields(String[] setFieldNames) {
         StringBuilder updateSetSectionStr = new StringBuilder(0);
@@ -269,19 +278,19 @@ public class SqlStatement {
      * @return
      */
     public String inNotInSeparator(String fn){
-        Integer posicNOTINClause = fn.toUpperCase().indexOf("NOT IN");
-        Integer posicINClause = fn.toUpperCase().indexOf("IN");
+        Integer posicNOTINClause = fn.toUpperCase().indexOf(" NOT IN");
+        Integer posicINClause = fn.toUpperCase().indexOf(" IN");
         String separator = fn;
         if (posicNOTINClause==-1){
             if (fn.length()<posicINClause + 3) return "|";
-            separator = separator.substring(posicINClause + 2, posicINClause + 3);
+            separator = separator.substring(posicINClause + 3, posicINClause + 4);
             separator = separator.trim();
             separator = separator.replace(" IN", "");
         }else{
             if (fn.length()<posicNOTINClause + 7) return "|";
             separator = separator.substring(posicNOTINClause + 6, posicNOTINClause + 7);
             separator = separator.trim();
-            separator = separator.replace("NOT IN", "");
+            separator = separator.replace(" NOT IN", "");
         }
         if (separator.length() == 0) {
             separator = "|";

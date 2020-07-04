@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.Arrays;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -89,58 +90,13 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                             JSONObject curProjStudyJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.Study.getAllFieldNames(), curProjStudy);
 
                             String curStudyName=curProjStudy[LPArray.valuePosicInArray(TblsGenomaData.Study.getAllFieldNames(), TblsGenomaData.Study.FLD_NAME.getName())].toString();
-
-                            Object[][] studySamplesSetInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudySamplesSet.TBL.getName(), 
-                                new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
-                                TblsGenomaData.StudySamplesSet.getAllFieldNames(), new String[]{TblsGenomaData.StudySamplesSet.FLD_NAME.getName()});
-                            JSONArray studySamplesSetJsonArr = new JSONArray();     
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studySamplesSetInfo[0][0].toString())){
-                                for (Object[] curStudySamplesSet: studySamplesSetInfo){
-                                    JSONObject curStudySamplesSetJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudySamplesSet.getAllFieldNames(), curStudySamplesSet);
-                                    studySamplesSetJsonArr.add(curStudySamplesSetJson);
-                                }
-                            }
-                            curProjStudyJson.put(TblsGenomaData.StudySamplesSet.TBL.getName(), studySamplesSetJsonArr);                                
+                            curProjStudyJson=StudyIndividualSamplesJson(schemaPrefix, curProjStudyJson, curStudyName, null, null);
+                            curProjStudyJson=StudyIndividualJson(schemaPrefix, curProjStudyJson, curStudyName, null);
+                            curProjStudyJson=StudySamplesSetJson(schemaPrefix, curProjStudyJson, curStudyName);
+                            curProjStudyJson=StudyFamilyJson(schemaPrefix, curProjStudyJson, curStudyName);
+                            curProjStudyJson=StudyVariableValuesJson(schemaPrefix, curProjStudyJson, TblsGenomaData.Study.TBL.getName(), 
+                                curStudyName, null, null, null);
                             
-                            Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyFamily.TBL.getName(), 
-                                new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
-                                TblsGenomaData.StudyFamily.getAllFieldNames(), new String[]{TblsGenomaData.StudyFamily.FLD_NAME.getName()});
-                            JSONArray studyFamiliesJsonArr = new JSONArray();     
-                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())){
-                                for (Object[] curStudyFamily: studyFamilyInfo){
-                                    JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyFamily.getAllFieldNames(), curStudyFamily);
-                                    studyFamiliesJsonArr.add(curStudyFamilyJson);
-                                }
-                                curProjStudyJson.put(TblsGenomaData.StudyFamily.TBL.getName(), studyFamiliesJsonArr);
-
-                                Object[][] studyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyIndividual.TBL.getName(), 
-                                    new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
-                                    TblsGenomaData.StudyIndividual.getAllFieldNames(), new String[]{TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()});
-                                JSONArray studyIndividualJsonArr = new JSONArray();     
-                                if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualInfo[0][0].toString())){
-                                    for (Object[] curStudyIndividual: studyIndividualInfo){
-                                        JSONObject curStudyIndividualJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividual.getAllFieldNames(), curStudyIndividual);
-
-                                        Integer curStudyIndividualId=Integer.valueOf(curStudyIndividual[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividual.getAllFieldNames(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName())].toString());
-                                        
-                                        curProjStudyJson.put(TblsGenomaData.StudyFamily.TBL.getName(), studyFamiliesJsonArr);
-                                        Object[][] studyIndividualSampleInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
-                                            new String[]{TblsGenomaData.StudyIndividualSample.FLD_STUDY.getName(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName()}, new Object[]{curStudyName, curStudyIndividualId}, 
-                                            TblsGenomaData.StudyIndividualSample.getAllFieldNames(), new String[]{TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName()});
-                                        JSONArray studyIndividualSampleJsonArr = new JSONArray();     
-                                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualSampleInfo[0][0].toString())){
-                                            for (Object[] curStudyIndividualSample: studyIndividualSampleInfo){
-                                                JSONObject curStudyIndividualSampleJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), curStudyIndividualSample);
-                                                studyIndividualSampleJsonArr.add(curStudyIndividualSampleJson);
-                                            }
-                                            curStudyIndividualJson.put(TblsGenomaData.StudyIndividualSample.TBL.getName(), studyIndividualSampleJsonArr);
-                                        }
-                                        studyIndividualJsonArr.add(curStudyIndividualJson);
-                                    }
-                                    curProjStudyJson.put(TblsGenomaData.StudyIndividual.TBL.getName(), studyIndividualJsonArr);
-                                }
-
-                            }
                             projStudiesJsonArr.add(curProjStudyJson);
                         }
                     }
@@ -153,257 +109,6 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                 response.getWriter().write(projectsListObj.toString());
                 Response.ok().build();
                 return;                 
-/*                
-                String programFldNameList = request.getParameter("programFldNameList");   
-                  if (programFldNameList==null) programFldNameList = DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_TO_GET;
-                String[] programFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldNameList);
-
-                String programFldSortList = request.getParameter("programFldSortList");   
-                  if (programFldSortList==null) programFldSortList = DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_SORT_FLDS;                     
-                String[] programFldSortArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldSortList);
-
-                String programLocationFldNameList = request.getParameter("programLocationFldNameList");   
-                  if (programLocationFldNameList==null) programLocationFldNameList = DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_TO_GET;                     
-                String[] programLocationFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programLocationFldNameList);
-
-                String programLocationFldSortList = request.getParameter("programLocationFldSortList");   
-                if (programLocationFldSortList==null)programLocationFldSortList = DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_LOCATION_SORT_FLDS;                     
-                String[] programLocationFldSortArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programLocationFldSortList);
-                
-                if (LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName())==-1){
-                    programLocationFldNameArray = LPArray.addValueToArray1D(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName());
-                }                    
-                if (LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName())==-1){
-                    programLocationFldNameArray = LPArray.addValueToArray1D(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName());
-                }
-                String programLocationCardInfoFldNameList = request.getParameter("programLocationCardInfoFldNameList");   
-                  if (programLocationCardInfoFldNameList==null) programLocationCardInfoFldNameList = DEFAULT_PARAMS_PROGRAMS_LIST_CARD_FIELDS;
-                String[] programLocationCardInfoFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programLocationCardInfoFldNameList);
-
-                String programLocationCardInfoFldSortList = request.getParameter("programLocationCardInfoFldSortList");   
-                  if (programLocationCardInfoFldSortList==null) programLocationCardInfoFldSortList = DEFAULT_PARAMS_PROGRAMS_LIST_CARD_SORT_FLDS;                     
-                String[] programLocationCardInfoFldSortArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programLocationCardInfoFldSortList);
-                
-                if (LPArray.valuePosicInArray(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName())==-1){
-                    programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName());
-                }                    
-                if (LPArray.valuePosicInArray(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName())==-1){
-                    programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName());
-                }
-                Object[] statusList = DataSampleUtilities.getSchemaSampleStatusList(schemaPrefix);
-                Object[] statusListEn = DataSampleUtilities.getSchemaSampleStatusList(schemaPrefix, LPPlatform.REQUEST_PARAM_LANGUAGE_ENGLISH);
-                Object[] statusListEs = DataSampleUtilities.getSchemaSampleStatusList(schemaPrefix, LPPlatform.REQUEST_PARAM_LANGUAGE_SPANISH);
-
-                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}                    
-                Object[][] programInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.Program.TBL.getName(), 
-                    new String[]{TblsEnvMonitData.Program.FLD_ACTIVE.getName()}, new Object[]{true}, programFldNameArray, programFldSortArray);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programInfo[0][0].toString())){
-                    Rdbms.closeRdbms();                                           
-                    Object[] errMsg = LPFrontEnd.responseError(programInfo, language, null);
-                    response.sendError((int) errMsg[0], (String) errMsg[1]);    
-                    return;
-                }
-                JSONArray programsJsonArr = new JSONArray();     
-                for (Object[] curProgram: programInfo){
-                    JSONObject programJsonObj = new JSONObject();  
-                    String currProgram = curProgram[0].toString();
-
-                    String[] programSampleSummaryFldNameArray = new String[]{TblsEnvMonitData.Sample.FLD_STATUS.getName(), TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName()};
-                    String[] programSampleSummaryFldSortArray = new String[]{TblsEnvMonitData.Sample.FLD_STATUS.getName()};
-                    Object[][] programSampleSummary = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.Sample.TBL.getName(), 
-                            new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), }, new String[]{currProgram}, programSampleSummaryFldNameArray, programSampleSummaryFldSortArray);
-
-                    for (int yProc=0; yProc<programInfo[0].length; yProc++){              
-                        programJsonObj.put(programFldNameArray[yProc], curProgram[yProc]);
-                    }
-                    programJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TREE_LIST); 
-                    programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
-                    // Program Location subStructure. Begin
-                    Object[][] programLocations = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-                            new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
-                            programLocationFldNameArray, programLocationFldSortArray);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){
-//                            programJsonObj.put("program_location_error", programLocations[0][programLocations[0].length-1]);        
-                        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}                           
-                        programLocations = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-                                                       new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
-                                                       programLocationFldNameArray, programLocationFldSortArray);                            
-                    }
-                    String[] fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
-                    String[] whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName()}; 
-                    Object[] whereFieldValues=new Object[]{currProgram};
-                    Object[][] samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
-                            fieldToRetrieveArr, 
-                            whereFieldNames, whereFieldValues,
-                            new String[]{"COUNTER desc"}); 
-                    fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, "COUNTER");                            
-                    JSONArray programSampleSummaryByStageJsonArray=new JSONArray();
-                    for (Object[] curRec: samplesCounterPerStage){
-                      JSONObject jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
-                      programSampleSummaryByStageJsonArray.add(jObj);
-                    }    
-                    programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray); 
-                    
-                    JSONObject jObj= new JSONObject();
-                    String[] fieldsToRetrieve = new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName(),
-                        TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_ID.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName(),
-                        TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SAMPLE_CONFIG_CODE_VERSION.getName(),
-                        TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName(),            
-                        TblsEnvMonitData.ViewProgramScheduledLocations.FLD_AREA.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_CODE.getName(), 
-                        TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_CODE_VERSION.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_AREA.getName(), 
-                        TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_ANALYSIS_VARIATION.getName() 
-                    };                            
-                    Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
-                            new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName()+" IS NOT NULL"}, new Object[]{}, 
-                            fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName()});
-                    JSONArray programConfigScheduledPointsJsonArray=new JSONArray();
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())){
-                        jObj.put("message", "Nothing pending in procedure "+schemaPrefix+" for the filter "+programCalendarDatePending[0][6].toString());
-                        programConfigScheduledPointsJsonArray.add(jObj);
-                    }
-                    for (Object[] curRecord: programCalendarDatePending){
-                        jObj= new JSONObject();
-                        for (int i=0;i<curRecord.length;i++){ jObj.put(fieldsToRetrieve[i], curRecord[i].toString());}
-                        jObj.put("title", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
-                        jObj.put("content", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
-                        jObj.put("date",curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName())].toString());
-                        jObj.put("category","orange");
-                        jObj.put("color","#000");
-                        programConfigScheduledPointsJsonArray.add(jObj);
-                    }    
-                    programJsonObj.put(JSON_TAG_GROUP_NAME_CONFIG_CALENDAR, programConfigScheduledPointsJsonArray); 
-                    
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){     
-                        JSONArray programLocationsJsonArray = new JSONArray();                              
-                        for (Object[] programLocations1 : programLocations) {
-                            String locationName = programLocations1[LPArray.valuePosicInArray(programLocationFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName())].toString();
-
-                            JSONObject programLocationJsonObj = new JSONObject();     
-                            for (int yProcEv = 0; yProcEv<programLocations[0].length; yProcEv++) {
-                                programLocationJsonObj.put(programLocationFldNameArray[yProcEv], programLocations1[yProcEv]);
-                            }
-                            Object[][] programLocationCardInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
-                                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, new String[]{currProgram, locationName}, 
-                                    programLocationCardInfoFldNameArray, programLocationCardInfoFldSortArray);
-                            JSONArray programLocationCardInfoJsonArr = new JSONArray(); 
-
-                            JSONObject programLocationCardInfoJsonObj = new JSONObject();  
-                            for (int xProc=0; xProc<programLocationCardInfo.length; xProc++){   
-                                for (int yProc=0; yProc<programLocationCardInfo[0].length; yProc++){              
-                                    programLocationCardInfoJsonObj = new JSONObject();
-                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_NAME, programLocationCardInfoFldNameArray[yProc]);
-                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_LABEL_EN, programLocationCardInfoFldNameArray[yProc]);
-                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_LABEL_ES, programLocationCardInfoFldNameArray[yProc]);
-                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_VALUE, programLocationCardInfo[xProc][yProc]);
-                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
-                                    String fieldName=programLocationCardInfoFldNameArray[yProc];
-                                    Integer posicInArray=LPArray.valuePosicInArray(PROGRAM_LOCATION_CARD_FIELDS_INTEGER, fieldName);
-                                    if (posicInArray>-1){
-                                        programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_INTEGER);
-                                    }else{ 
-                                        posicInArray=LPArray.valuePosicInArray(PROGRAM_LOCATION_CARD_FIELDS_NO_DBTYPE, fieldName);
-                                        if (posicInArray==-1){
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_STRING);
-                                        }else{
-                                            programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, "");
-                                        }
-                                    }
-                                    programLocationCardInfoJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
-                                    // programLocationCardInfoJsonObj.put(programLocationCardInfoFldNameArray[yProcEv], "test"); //programLocations1[yProcEv]);
-                                    programLocationCardInfoJsonArr.add(programLocationCardInfoJsonObj);                                    
-                                }    
-                            }
-                            programLocationJsonObj.put(JSON_TAG_GROUP_NAME_CARD_INFO, programLocationCardInfoJsonArr);  
-                            Object[] samplesStatusCounter = new Object[0];
-                            for (Object statusList1 : statusList) {
-                                String currStatus = statusList1.toString();
-                                Integer contSmpStatus=0;
-                                for (Object[] smpStatus: programSampleSummary){
-                                    if (currStatus.equalsIgnoreCase(smpStatus[0].toString()) && 
-                                            ( smpStatus[1]!=null) && locationName.equalsIgnoreCase(smpStatus[1].toString()) ){contSmpStatus++;}
-                                }
-                                samplesStatusCounter = LPArray.addValueToArray1D(samplesStatusCounter, contSmpStatus);
-                            }
-                            JSONArray programSampleSummaryJsonArray = new JSONArray();  
-                            for (int iStatuses=0; iStatuses < statusList.length; iStatuses++){
-                                JSONObject programSampleSummaryJsonObj = new JSONObject();  
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_NAME, statusList[iStatuses]);
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_LABEL_EN, statusListEn[iStatuses]);
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_LABEL_ES, statusListEs[iStatuses]);
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, samplesStatusCounter[iStatuses]);
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
-                                programSampleSummaryJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
-                                programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
-                            }
-                            programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray); 
-                            fieldToRetrieveArr=new String[]{TblsEnvMonitData.Sample.FLD_CURRENT_STAGE.getName()};
-                            whereFieldNames=new String[]{TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.Sample.FLD_LOCATION_NAME.getName()}; 
-                            whereFieldValues=new Object[]{currProgram, locationName};
-                            samplesCounterPerStage=Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
-                                    fieldToRetrieveArr, 
-                                    whereFieldNames, whereFieldValues,
-                                    new String[]{"COUNTER desc"}); 
-                            fieldToRetrieveArr=LPArray.addValueToArray1D(fieldToRetrieveArr, "COUNTER");                            
-                            programSampleSummaryByStageJsonArray=new JSONArray();
-                            for (Object[] curRec: samplesCounterPerStage){
-                              jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
-                              programSampleSummaryByStageJsonArray.add(jObj);
-                            }    
-                            programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray); 
-                            programLocationsJsonArray.add(programLocationJsonObj);
-                        }                    
-                        programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLE_POINTS, programLocationsJsonArray);   
-                    }
-                    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){     
-                        JSONArray programSampleSummaryJsonArray = new JSONArray();   
-                        Object[] samplesStatusCounter = new Object[0];
-                        for (Object statusList1 : statusList) {
-                            String currStatus = statusList1.toString();
-                            Integer contSmpStatus=0;
-                            for (Object[] smpStatus: programSampleSummary){
-                                if (currStatus.equalsIgnoreCase(smpStatus[0].toString())){contSmpStatus++;}
-                            }
-                            samplesStatusCounter = LPArray.addValueToArray1D(samplesStatusCounter, contSmpStatus);
-                        }
-                        for (int iStatuses=0; iStatuses < statusList.length; iStatuses++){
-                            JSONObject programSampleSummaryJsonObj = new JSONObject();  
-                            programSampleSummaryJsonObj.put(JSON_TAG_NAME_NAME, LPNulls.replaceNull(statusList[iStatuses]));
-                            programSampleSummaryJsonObj.put(JSON_TAG_NAME_LABEL_EN, LPNulls.replaceNull(statusListEn[iStatuses]));
-                            programSampleSummaryJsonObj.put(JSON_TAG_NAME_LABEL_ES, LPNulls.replaceNull(statusListEs[iStatuses]));
-                            programSampleSummaryJsonObj.put(JSON_TAG_NAME_VALUE, LPNulls.replaceNull(samplesStatusCounter[iStatuses]));
-                            programSampleSummaryJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
-                            programSampleSummaryJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
-                            programSampleSummaryJsonArray.add(programSampleSummaryJsonObj);
-                        }
-                        programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY, programSampleSummaryJsonArray);                             
-                    }
-                    programsJsonArr.add(programJsonObj);
-                    JSONObject programDataTemplateDefinition = new JSONObject();
-                    JSONObject templateProgramInfo=EnvMonFrontEndUtilities.dataProgramInfo(schemaPrefix, currProgram, null, null);
-                    programDataTemplateDefinition.put(TblsEnvMonitData.Program.TBL.getName(), templateProgramInfo);
-                    JSONArray templateProgramLocationInfo=EnvMonFrontEndUtilities.dataProgramLocationInfo(schemaPrefix, currProgram, null, null);
-                    programDataTemplateDefinition.put(TblsEnvMonitData.ProgramLocation.TBL.getName(), templateProgramLocationInfo);
-                    programJsonObj.put(JSON_TAG_PROGRAM_DATA_TEMPLATE_DEFINITION, programDataTemplateDefinition); 
-                    Object specCode = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CODE.getName());
-                    Object specConfigVersion = templateProgramInfo.get(TblsEnvMonitData.Program.FLD_SPEC_CONFIG_VERSION.getName());                    
-                    JSONObject specDefinition = new JSONObject();
-                    if (!(specCode==null || specCode=="" || specConfigVersion==null || "".equals(specConfigVersion.toString()))){
-                      JSONObject specInfo=SpecFrontEndUtilities.configSpecInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
-                              null, null);
-                      specDefinition.put(TblsCnfg.Spec.TBL.getName(), specInfo);
-                      JSONArray specLimitsInfo=SpecFrontEndUtilities.configSpecLimitsInfo(schemaPrefix, (String) specCode, (Integer) specConfigVersion, 
-                              null, new String[]{TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), 
-                              TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()});
-                      specDefinition.put(TblsCnfg.SpecLimits.TBL.getName(), specLimitsInfo);
-                    }
-                    programJsonObj.put(JSON_TAG_SPEC_DEFINITION, specDefinition); 
-                }          
-                JSONObject programsListObj = new JSONObject();
-                programsListObj.put(JSON_TAG_GROUP_NAME_CARD_PROGRAMS_LIST, programsJsonArr);
-                response.getWriter().write(programsListObj.toString());
-                Rdbms.closeRdbms();                    
-                Response.ok().build();
-                return;  */
             default:      
                 Rdbms.closeRdbms(); 
                 //RequestDispatcher rd = request.getRequestDispatcher(SampleAPIParams.SERVLET_FRONTEND_URL);
@@ -422,7 +127,166 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
             }
         } 
     }
+    
+JSONObject StudyFamilyJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
+    String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyFamily.TBL.getName(), 
+        new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
+        TblsGenomaData.StudyFamily.getAllFieldNames(), new String[]{TblsGenomaData.StudyFamily.FLD_NAME.getName()});
+    JSONArray studyFamiliesJsonArr = new JSONArray();     
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyInfo[0][0].toString())){
+        for (Object[] curStudyFamily: studyFamilyInfo){
+            JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyFamily.getAllFieldNames(), curStudyFamily);
+            String curFamilyName=curStudyFamily[LPArray.valuePosicInArray(TblsGenomaData.StudyFamily.getAllFieldNames(), TblsGenomaData.StudyFamily.FLD_NAME.getName())].toString();
+            curStudyFamilyJson=StudyVariableValuesJson(schemaPrefix, curStudyFamilyJson, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+                curStudyName, null, null, curFamilyName);
+            curStudyFamilyJson=StudyIndividualJson(schemaPrefix, curStudyFamilyJson, curStudyName, curFamilyName);
+            studyFamiliesJsonArr.add(curStudyFamilyJson);
+        }
+        curProjStudyJson.put(TblsGenomaData.StudyFamily.TBL.getName(), studyFamiliesJsonArr);
+    }    
+    return curProjStudyJson;
+}    
 
+JSONObject StudyIndividualJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, String familyName){
+    String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()};
+    String[] whereFldValues=new String[]{curStudyName};
+    if (familyName!=null && familyName.length()>0){
+        Object[][] studyFamilyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyFamilyIndividual.TBL.getName(), 
+            LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName()),
+            LPArray.addValueToArray1D(whereFldValues, familyName),
+            new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()}, new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyIndividualInfo[0][0].toString()))
+            return curProjStudyJson;    
+        String familyIndivsStr="";
+        for (Object[] curVal: studyFamilyIndividualInfo){
+            familyIndivsStr=familyIndivsStr+curVal[0].toString()+"|";
+        }        
+        if (familyIndivsStr.endsWith("|")) familyIndivsStr=familyIndivsStr.substring(0, familyIndivsStr.length()-1);
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()+" IN|");
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, "INTEGER*"+familyIndivsStr);
+    }
+    Object[][] studyIndividualInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyIndividual.TBL.getName(), 
+        whereFldNames, whereFldValues, 
+        TblsGenomaData.StudyIndividual.getAllFieldNames(), new String[]{TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()});
+    JSONArray studyIndividualJsonArr = new JSONArray();     
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualInfo[0][0].toString())){
+        for (Object[] curStudyIndividual: studyIndividualInfo){
+            JSONObject curStudyIndividualJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividual.getAllFieldNames(), curStudyIndividual);
+
+            Integer curStudyIndividualId=Integer.valueOf(curStudyIndividual[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividual.getAllFieldNames(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName())].toString());
+            curStudyIndividualJson=StudyVariableValuesJson(schemaPrefix, curStudyIndividualJson, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+                    curStudyName, curStudyIndividualId, null, null);
+
+            curStudyIndividualJson=StudyIndividualSamplesJson(schemaPrefix, curStudyIndividualJson, curStudyName, curStudyIndividualId, null);
+            studyIndividualJsonArr.add(curStudyIndividualJson);
+        }
+        curProjStudyJson.put(TblsGenomaData.StudyIndividual.TBL.getName(), studyIndividualJsonArr);
+    }    
+    return curProjStudyJson;
+}
+
+JSONObject StudyIndividualSamplesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId, String familyName){
+    String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()};
+    Object[] whereFldValues=new Object[]{curStudyName};
+    if (individualId!=null){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, individualId);
+    }
+    Object[][] studyIndividualSampleInfo=new Object[0][0];
+//    if (familyName==null || familyName.length()==0){
+        studyIndividualSampleInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+            whereFldNames, whereFldValues, 
+        TblsGenomaData.StudyIndividualSample.getAllFieldNames(), new String[]{TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName()});        
+//    }else{        
+//       // whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividualSample..getName());
+//       // whereFldValues=LPArray.addValueToArray1D(whereFldValues, familyName);
+//    }
+
+    JSONArray studyIndividualSampleJsonArr = new JSONArray();     
+    JSONObject curStudyIndividualJson=new JSONObject();
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyIndividualSampleInfo[0][0].toString())){
+        for (Object[] curStudyIndividualSample: studyIndividualSampleInfo){
+            JSONObject curStudyIndividualSampleJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), curStudyIndividualSample);
+                    Integer curSampleId=Integer.valueOf(curStudyIndividualSample[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName())].toString());
+                    curStudyIndividualSampleJson=StudyVariableValuesJson(schemaPrefix, curStudyIndividualSampleJson, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+                            curStudyName, null, curSampleId, null);
+            studyIndividualSampleJsonArr.add(curStudyIndividualSampleJson);
+        }
+        curProjStudyJson.put(TblsGenomaData.StudyIndividualSample.TBL.getName(), studyIndividualSampleJsonArr);
+    }
+    return curProjStudyJson;
+}
+
+JSONObject StudyVariableValuesJson(String schemaPrefix, JSONObject curProjStudyJson, String objectTable, String curStudyName, Integer individualId, Integer SampleId, String familyName){
+    String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()};
+    Object[] whereFldValues=new Object[]{curStudyName};
+    if (individualId!=null){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyVariableValues.FLD_INDIVIDUAL.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, individualId);
+    }
+    if (SampleId!=null){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyVariableValues.FLD_SAMPLE.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, SampleId);
+    }
+    if (familyName!=null && familyName.length()>0){
+        whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyVariableValues.FLD_FAMILY.getName());
+        whereFldValues=LPArray.addValueToArray1D(whereFldValues, familyName);
+    }
+
+    Object[][] studyVariableValueInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyVariableValues.TBL.getName(), 
+        whereFldNames, whereFldValues, 
+        TblsGenomaData.StudyVariableValues.getAllFieldNames(), new String[]{TblsGenomaData.StudyVariableValues.FLD_INDIVIDUAL.getName()});
+    JSONArray studyIndividualSampleJsonArr = new JSONArray();     
+    JSONObject curStudyIndividualJson=new JSONObject();
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studyVariableValueInfo[0][0].toString())){
+        for (Object[] curStudyVariableValues: studyVariableValueInfo){
+            JSONObject curStudyVariableValuesJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyVariableValues.getAllFieldNames(), curStudyVariableValues);
+            studyIndividualSampleJsonArr.add(curStudyVariableValuesJson);
+        }
+        curProjStudyJson.put(TblsGenomaData.StudyVariableValues.TBL.getName(), studyIndividualSampleJsonArr);
+    }
+    return curProjStudyJson;
+}
+
+
+JSONObject StudySamplesSetJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
+    String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
+    Object[][] studySamplesSetInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudySamplesSet.TBL.getName(), 
+        new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
+        TblsGenomaData.StudySamplesSet.getAllFieldNames(), new String[]{TblsGenomaData.StudySamplesSet.FLD_NAME.getName()});
+    JSONArray studySamplesSetJsonArr = new JSONArray();     
+    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(studySamplesSetInfo[0][0].toString())){
+        for (Object[] curStudySamplesSet: studySamplesSetInfo){
+            JSONObject curStudySamplesSetJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudySamplesSet.getAllFieldNames(), curStudySamplesSet);
+            //studySamplesSetJsonArr.add(curStudySamplesSetJson);
+            String curStudySamplesSetSamplesContent=curStudySamplesSet[LPArray.valuePosicInArray(TblsGenomaData.StudySamplesSet.getAllFieldNames(), TblsGenomaData.StudySamplesSet.FLD_UNSTRUCT_CONTENT.getName())].toString();
+            JSONArray studySamplesSetContentJsonArr = new JSONArray();  
+            JSONObject curSampleSetContentJson = new JSONObject();
+            if (curStudySamplesSetSamplesContent.length()>0){
+                Object[][] SamplesSetSamplesContentInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+                    new String[]{TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName()+" in "}, new Object[]{"INTEGER*"+curStudySamplesSetSamplesContent}, 
+                    TblsGenomaData.StudyIndividualSample.getAllFieldNames(), new String[]{TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName()});            
+                for (Object[] curStudySamplesSetContent: SamplesSetSamplesContentInfo){
+                    JSONObject curSamplesSetContentJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), 
+                            curStudySamplesSetContent);
+                    Integer curSampleId=Integer.valueOf(curStudySamplesSetContent[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName())].toString());
+                    curSamplesSetContentJson=StudyVariableValuesJson(schemaPrefix, curSamplesSetContentJson, TblsGenomaData.StudyIndividualSample.TBL.getName(), 
+                            curStudyName, null, curSampleId, null);
+                    studySamplesSetContentJsonArr.add(curSamplesSetContentJson);                
+                }
+            }
+            curStudySamplesSetJson.put("samples", studySamplesSetContentJsonArr);
+            studySamplesSetJsonArr.add(curStudySamplesSetJson);
+        }                                
+    }
+    curProjStudyJson.put(TblsGenomaData.StudySamplesSet.TBL.getName(), studySamplesSetJsonArr);                                
+    return curProjStudyJson;
+}
+        
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
