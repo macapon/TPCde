@@ -153,308 +153,313 @@ public class TstDataSample extends HttpServlet {
                 try{
                     endPoint = SampleAPIEndpoints.valueOf(actionName.toUpperCase());
                 }catch(Exception e){
-                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-                    return;                   
+//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                    //return;                   
+                            dataSample[0] = "LABPLANET_FALSE";
+                            dataSample[1] = "function "+actionName+" not recognized"; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "function "+actionName+" not recognized"; 
+                            //break;
                 }
-                Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                    LPFrontEnd.servletReturnResponseError(request, response,
-                            LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
-                    return;
-                }
-                Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(schemaPrefix, userRole, actionName);
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
-                    if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
-                            dataSample2D[0][0] = actionEnabledForRole[0];
-                            dataSample2D[0][1] = actionEnabledForRole[1]; dataSample2D[0][2] = actionEnabledForRole[2]; 
-                            dataSample2D[0][3] = actionEnabledForRole[3]; dataSample2D[0][4] = actionEnabledForRole[4]; 
-                            dataSample2D[0][5] = actionEnabledForRole[5]; 
-                    }else{        
-                            dataSample[0] = actionEnabledForRole[0]; dataSample[1] = actionEnabledForRole[1]; dataSample[2] = actionEnabledForRole[2];
-                            dataSample[3] = actionEnabledForRole[3]; dataSample[4] = actionEnabledForRole[4]; dataSample[5] = actionEnabledForRole[5]; 
-                    }                      
-                }else{                
-                    switch (endPoint){
-                        case LOGSAMPLE:                            
-                            String sampleTemplate=null;
-                            Integer sampleTemplateVersion=null;
-                            String[] sampleTemplateInfo = new String[0];
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleTemplateInfo = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+4]);
-                            sampleTemplate = sampleTemplateInfo[0];
-                            sampleTemplateVersion = Integer.parseInt(sampleTemplateInfo[1]);
-                            String[] fieldName = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
-                            String[] fieldValue = null;
-                            if (lineNumCols>=numEvaluationArguments+6)                
-                                fieldValue = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"templateName, templateVersion, fieldNames, fieldValues", 
-                                    sampleTemplate+", "+sampleTemplateVersion.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValue)}));                              
-                            dataSample = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldName, fieldValue, null);
-                            break;
-                        case RECEIVESAMPLE:  
-                            Integer sampleId = null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, receiver", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
-                            dataSample = smp.sampleReception(schemaPrefix, token, sampleId);
-                            break;       
-                        case CHANGESAMPLINGDATE:
-                            sampleId = null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            Date newDate = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                newDate = LPTestingOutFormat.csvExtractFieldValueDate(csvFileContent[iLines][numEvaluationArguments+5]);                            
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, userName, newDate", 
-                                    LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+LPNulls.replaceNull(newDate).toString()}));                              
-                            dataSample = smp.changeSamplingDate(schemaPrefix, token, sampleId, newDate);
-                            break;       
-                        case SAMPLINGCOMMENTADD:
-                            sampleId = null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            String comment=null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                comment = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+comment}));                              
-                            dataSample = smp.sampleReceptionCommentAdd(schemaPrefix, token, sampleId, comment);
-                            break;       
-                        case SAMPLINGCOMMENTREMOVE:
-                            sampleId = null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
-                            dataSample = smp.sampleReceptionCommentRemove(schemaPrefix, token, sampleId);
-                            break;       
-                        case INCUBATIONSTART:
-                            sampleId = null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                   
-                            String incubName=null;
-                            BigDecimal tempReading=null;
-                            dataSample = DataSampleIncubation.setSampleStartIncubationDateTime(schemaPrefix, token, sampleId, 1, incubName, tempReading);
-                            break;       
-                        case INCUBATIONEND:
-                            sampleId = null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName})); 
-                            incubName=null;
-                            tempReading=null;
-                            dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(schemaPrefix, token, sampleId, 1, incubName, tempReading);
-                            break;       
-                        case SAMPLEANALYSISADD:
-                            sampleId=null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fieldName=null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
-                            String[] fieldValueStrArr=null;
-                            if (lineNumCols>=numEvaluationArguments+6)
-                                 fieldValueStrArr = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
-                            Object[] fieldValueObjArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValueStrArr);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, userName, fieldNames, fieldValues", 
-                                    LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueObjArr)}));                              
-                            dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldName, fieldValueObjArr, null);
-                            break;              
-                        case ENTERRESULT:
-                            Integer resultId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            String rawValueResult=null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                rawValueResult=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));                              
-                            dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
-                            break;  
-                        case REVIEWRESULT:
-                            Integer objectId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            String objectLevel="";
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                objectLevel=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{LBL_OBJECT_USER_NAME+", "+LBL_OBJECT_FIELD_NAMES+", "+LBL_OBJECT_LEVEL+", "+LBL_OBJECT_ID, userName+", "+objectLevel+", "+objectId.toString()}));                              
-                            sampleId = null; Integer testId = null; resultId = null;
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId=objectId;}
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId=objectId;}
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId=objectId;}
-                            dataSample = smpAnaRes.sampleResultReview(schemaPrefix, token, sampleId, testId, resultId);
-                            break;                                     
-                        case CANCELRESULT:
-                            objectId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            objectLevel="";
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                objectLevel=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{LBL_OBJECT_USER_NAME+", "+LBL_OBJECT_FIELD_NAMES+", "+LBL_OBJECT_LEVEL+", "+LBL_OBJECT_ID, userName+", "+objectLevel+", "+objectId.toString()}));                              
-                            sampleId = null; testId = null; resultId = null;
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId = objectId;}
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
-                            dataSample = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, sampleId, testId, resultId);
-                            break;                            
-                        case UNCANCELRESULT: 
-                            objectId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            objectLevel="";
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                objectLevel=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{LBL_OBJECT_USER_NAME+", "+LBL_OBJECT_FIELD_NAMES+", "+LBL_OBJECT_LEVEL+", "+LBL_OBJECT_ID, userName+", "+objectLevel+", "+objectId.toString()}));                              
-                            sampleId = null; testId = null; resultId = null;
+                if (endPoint!=null){                
+                    Object[] areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                            dataSample[0] = areMandatoryParamsInResponse[1].toString();
+                            dataSample[1] = ""; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = "";                         
+                    }else{
+                        Object[] actionEnabledForRole = LPPlatform.procUserRoleActionEnabled(schemaPrefix, userRole, actionName);
+                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabledForRole[0].toString())){
+                            if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName)){                
+                                    dataSample2D[0][0] = actionEnabledForRole[0];
+                                    dataSample2D[0][1] = actionEnabledForRole[1]; dataSample2D[0][2] = actionEnabledForRole[2]; 
+                                    dataSample2D[0][3] = actionEnabledForRole[3]; dataSample2D[0][4] = actionEnabledForRole[4]; 
+                                    dataSample2D[0][5] = actionEnabledForRole[5]; 
+                            }else{        
+                                    dataSample[0] = actionEnabledForRole[0]; dataSample[1] = actionEnabledForRole[1]; dataSample[2] = actionEnabledForRole[2];
+                                    dataSample[3] = actionEnabledForRole[3]; dataSample[4] = actionEnabledForRole[4]; dataSample[5] = actionEnabledForRole[5]; 
+                            }                      
+                        }else{  
+                            switch (endPoint){
+                                case LOGSAMPLE:                            
+                                    String sampleTemplate=null;
+                                    Integer sampleTemplateVersion=null;
+                                    String[] sampleTemplateInfo = new String[0];
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleTemplateInfo = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    sampleTemplate = sampleTemplateInfo[0];
+                                    sampleTemplateVersion = Integer.parseInt(sampleTemplateInfo[1]);
+                                    String[] fieldName = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    String[] fieldValue = null;
+                                    if (lineNumCols>=numEvaluationArguments+6)                
+                                        fieldValue = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"templateName, templateVersion, fieldNames, fieldValues", 
+                                            sampleTemplate+", "+sampleTemplateVersion.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValue)}));                              
+                                    dataSample = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldName, fieldValue, null);
+                                    break;
+                                case RECEIVESAMPLE:  
+                                    Integer sampleId = null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, receiver", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
+                                    dataSample = smp.sampleReception(schemaPrefix, token, sampleId);
+                                    break;       
+                                case CHANGESAMPLINGDATE:
+                                    sampleId = null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    Date newDate = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        newDate = LPTestingOutFormat.csvExtractFieldValueDate(csvFileContent[iLines][numEvaluationArguments+5]);                            
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, userName, newDate", 
+                                            LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+LPNulls.replaceNull(newDate).toString()}));                              
+                                    dataSample = smp.changeSamplingDate(schemaPrefix, token, sampleId, newDate);
+                                    break;       
+                                case SAMPLINGCOMMENTADD:
+                                    sampleId = null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    String comment=null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        comment = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+comment}));                              
+                                    dataSample = smp.sampleReceptionCommentAdd(schemaPrefix, token, sampleId, comment);
+                                    break;       
+                                case SAMPLINGCOMMENTREMOVE:
+                                    sampleId = null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, userName, comment", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                              
+                                    dataSample = smp.sampleReceptionCommentRemove(schemaPrefix, token, sampleId);
+                                    break;       
+                                case INCUBATIONSTART:
+                                    sampleId = null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName}));                   
+                                    String incubName=null;
+                                    BigDecimal tempReading=null;
+                                    dataSample = DataSampleIncubation.setSampleStartIncubationDateTime(schemaPrefix, token, sampleId, 1, incubName, tempReading);
+                                    break;       
+                                case INCUBATIONEND:
+                                    sampleId = null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, userName", LPNulls.replaceNull(sampleId).toString()+", "+userName})); 
+                                    incubName=null;
+                                    tempReading=null;
+                                    dataSample = DataSampleIncubation.setSampleEndIncubationDateTime(schemaPrefix, token, sampleId, 1, incubName, tempReading);
+                                    break;       
+                                case SAMPLEANALYSISADD:
+                                    sampleId=null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fieldName=null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    String[] fieldValueStrArr=null;
+                                    if (lineNumCols>=numEvaluationArguments+6)
+                                         fieldValueStrArr = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
+                                    Object[] fieldValueObjArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValueStrArr);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, userName, fieldNames, fieldValues", 
+                                            LPNulls.replaceNull(sampleId).toString()+", "+userName+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueObjArr)}));                              
+                                    dataSample = DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldName, fieldValueObjArr, null);
+                                    break;              
+                                case ENTERRESULT:
+                                    Integer resultId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    String rawValueResult=null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        rawValueResult=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"resultId, userName, fieldNames, rawValueResult", resultId.toString()+", "+userName+", "+rawValueResult}));                              
+                                    dataSample = smpAnaRes.sampleAnalysisResultEntry(schemaPrefix, token, resultId, rawValueResult, smp);
+                                    break;  
+                                case REVIEWRESULT:
+                                    Integer objectId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    String objectLevel="";
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        objectLevel=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{LBL_OBJECT_USER_NAME+", "+LBL_OBJECT_FIELD_NAMES+", "+LBL_OBJECT_LEVEL+", "+LBL_OBJECT_ID, userName+", "+objectLevel+", "+objectId.toString()}));                              
+                                    sampleId = null; Integer testId = null; resultId = null;
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId=objectId;}
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId=objectId;}
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId=objectId;}
+                                    dataSample = smpAnaRes.sampleResultReview(schemaPrefix, token, sampleId, testId, resultId);
+                                    break;                                     
+                                case CANCELRESULT:
+                                    objectId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    objectLevel="";
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        objectLevel=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{LBL_OBJECT_USER_NAME+", "+LBL_OBJECT_FIELD_NAMES+", "+LBL_OBJECT_LEVEL+", "+LBL_OBJECT_ID, userName+", "+objectLevel+", "+objectId.toString()}));                              
+                                    sampleId = null; testId = null; resultId = null;
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId = objectId;}
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
+                                    dataSample = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, sampleId, testId, resultId);
+                                    break;                            
+                                case UNCANCELRESULT: 
+                                    objectId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        objectId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    objectLevel="";
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        objectLevel=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{LBL_OBJECT_USER_NAME+", "+LBL_OBJECT_FIELD_NAMES+", "+LBL_OBJECT_LEVEL+", "+LBL_OBJECT_ID, userName+", "+objectLevel+", "+objectId.toString()}));                              
+                                    sampleId = null; testId = null; resultId = null;
 
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId = objectId;}
-                            if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
-                            dataSample = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, sampleId, testId, resultId, smp);
-                            break;       
-                        case TESTASSIGNMENT: 
-                            testId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                testId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            String newAnalyst=null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                newAnalyst=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"testId, userName, newAnalyst", testId.toString()+", "+userName+", "+newAnalyst}));                              
-                            dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
-                            break;   
-                        case GETSAMPLEINFO:                            
-                            String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);                     
-                            sampleId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            String[] fieldsToGet=null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                fieldsToGet=LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{Arrays.toString(fieldsToGet), sampleId}));
-                            dataSample2D = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
-                                    new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToGet);
-                            break;
-                        case ENTERRESULT_LOD:
-                             Integer firstParameter=null;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                firstParameter=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            Integer secondParameter = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                secondParameter=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+5]);                            
-                            ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
-                                engine.eval(new FileReader(LOD_JAVASCRIPT_FORMULA));
-                                Invocable invocable = (Invocable) engine;
-                                Object result;
-                                result = invocable.invokeFunction("lossOnDrying", firstParameter, secondParameter);
-                                dataSample=LPArray.addValueToArray1D(dataSample, result);
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_TEST)){testId = objectId;}
+                                    if (objectLevel.equalsIgnoreCase(OBJECT_LEVEL_RESULT)){resultId = objectId;}
+                                    dataSample = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, sampleId, testId, resultId, smp);
+                                    break;       
+                                case TESTASSIGNMENT: 
+                                    testId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        testId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    String newAnalyst=null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        newAnalyst=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"testId, userName, newAnalyst", testId.toString()+", "+userName+", "+newAnalyst}));                              
+                                    dataSample = DataSampleAnalysis.sampleAnalysisAssignAnalyst(schemaPrefix, token, testId, newAnalyst, smp);
+                                    break;   
+                                case GETSAMPLEINFO:                            
+                                    String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);                     
+                                    sampleId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    String[] fieldsToGet=null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        fieldsToGet=LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(new Object[]{Arrays.toString(fieldsToGet), sampleId}));
+                                    dataSample2D = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                                            new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, fieldsToGet);
+                                    break;
+                                case ENTERRESULT_LOD:
+                                     Integer firstParameter=null;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        firstParameter=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    Integer secondParameter = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        secondParameter=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+5]);                            
+                                    ScriptEngine engine = new ScriptEngineManager().getEngineByName("nashorn");
+                                        engine.eval(new FileReader(LOD_JAVASCRIPT_FORMULA));
+                                        Invocable invocable = (Invocable) engine;
+                                        Object result;
+                                        result = invocable.invokeFunction("lossOnDrying", firstParameter, secondParameter);
+                                        dataSample=LPArray.addValueToArray1D(dataSample, result);
 
-                            break;
-                        case COC_STARTCHANGE:
-                            String custodianCandidate=null;
-                            sampleId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            custodianCandidate = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                custodianCandidate=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, custodianCandidate", sampleId.toString()+", "+custodianCandidate}));                              
-                            ChangeOfCustody coc =  new ChangeOfCustody();
-                            dataSample = coc.cocStartChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, 
-                                    custodianCandidate, token);
-                            break;
-                        case COC_CONFIRMCHANGE:
-                            sampleId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            comment = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                comment=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
-                            coc =  new ChangeOfCustody();
-                            dataSample = coc.cocConfirmedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, comment);
-                            break;
-                        case COC_ABORTCHANGE:
-                            sampleId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            comment = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                comment=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
-                            coc =  new ChangeOfCustody();
-                            dataSample = coc.cocAbortedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, comment);
-                            break;
-                        case RESULT_CHANGE_UOM:
-                            resultId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                resultId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            String newUOM = null;
-                            if (lineNumCols>=numEvaluationArguments+5)                
-                                newUOM=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"resultId, newUOM", resultId.toString()+", "+newUOM}));                                  
-                            dataSample = smpAnaRes.sarChangeUom(schemaPrefix, token, resultId, newUOM, smp);
-                            break;
-                        case LOGALIQUOT:
-                            sampleId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fieldName=null;
-                            if (lineNumCols>=numEvaluationArguments+6)                
-                                fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
-                            fieldValueStrArr=null;
-                            if (lineNumCols>=numEvaluationArguments+7)
-                                 fieldValueStrArr = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+7]);
-                            fieldValueObjArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValueStrArr);
-                            
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"sample_id, fieldNames, fieldValues", sampleId.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueStrArr)}));                                                                                      
-                            dataSample = smp.logSampleAliquot(schemaPrefix, token, sampleId, 
-                                    // sampleTemplate, sampleTemplateVersion, 
-                                    fieldName, fieldValueObjArr);
-                            break;                     
-                        case LOGSUBALIQUOT:
-                            Integer aliquotId = 0;
-                            if (lineNumCols>=numEvaluationArguments+4)                
-                                aliquotId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
-                            fieldName=null;
-                            if (lineNumCols>=numEvaluationArguments+6)                
-                                fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
-                            fieldValueStrArr=null;
-                            if (lineNumCols>=numEvaluationArguments+7)
-                                 fieldValueStrArr = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+7]);
-                            fieldValueObjArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValueStrArr);
-                            
-                            fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
-                                new Object[]{"aliquot_id, fieldNames, fieldValues", aliquotId.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueStrArr)}));                                                                                                                  
-                            dataSample = smp.logSampleSubAliquot(schemaPrefix, token, aliquotId, 
-                                    // sampleTemplate, sampleTemplateVersion, 
-                                    fieldName, fieldValueObjArr);
-                            break;                     
-                        default:                       
-                            dataSample[0] = "function "+actionName+" not recognized";
-                            dataSample[1] = ""; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = ""; 
+                                    break;
+                                case COC_STARTCHANGE:
+                                    String custodianCandidate=null;
+                                    sampleId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    custodianCandidate = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        custodianCandidate=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, custodianCandidate", sampleId.toString()+", "+custodianCandidate}));                              
+                                    ChangeOfCustody coc =  new ChangeOfCustody();
+                                    dataSample = coc.cocStartChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, 
+                                            custodianCandidate, token);
+                                    break;
+                                case COC_CONFIRMCHANGE:
+                                    sampleId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    comment = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        comment=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
+                                    coc =  new ChangeOfCustody();
+                                    dataSample = coc.cocConfirmedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, comment);
+                                    break;
+                                case COC_ABORTCHANGE:
+                                    sampleId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    comment = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        comment=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sampleId, comment", sampleId.toString()+", "+comment}));                                                          
+                                    coc =  new ChangeOfCustody();
+                                    dataSample = coc.cocAbortedChange(schemaPrefix, TblsData.Sample.TBL.getName(), TblsData.Sample.FLD_SAMPLE_ID.getName(), sampleId, token, comment);
+                                    break;
+                                case RESULT_CHANGE_UOM:
+                                    resultId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        resultId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    String newUOM = null;
+                                    if (lineNumCols>=numEvaluationArguments+5)                
+                                        newUOM=LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"resultId, newUOM", resultId.toString()+", "+newUOM}));                                  
+                                    dataSample = smpAnaRes.sarChangeUom(schemaPrefix, token, resultId, newUOM, smp);
+                                    break;
+                                case LOGALIQUOT:
+                                    sampleId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        sampleId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fieldName=null;
+                                    if (lineNumCols>=numEvaluationArguments+6)                
+                                        fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
+                                    fieldValueStrArr=null;
+                                    if (lineNumCols>=numEvaluationArguments+7)
+                                         fieldValueStrArr = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+7]);
+                                    fieldValueObjArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValueStrArr);
 
-                            break;
-                    }        
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"sample_id, fieldNames, fieldValues", sampleId.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueStrArr)}));                                                                                      
+                                    dataSample = smp.logSampleAliquot(schemaPrefix, token, sampleId, 
+                                            // sampleTemplate, sampleTemplateVersion, 
+                                            fieldName, fieldValueObjArr);
+                                    break;                     
+                                case LOGSUBALIQUOT:
+                                    Integer aliquotId = 0;
+                                    if (lineNumCols>=numEvaluationArguments+4)                
+                                        aliquotId=LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+4]);
+                                    fieldName=null;
+                                    if (lineNumCols>=numEvaluationArguments+6)                
+                                        fieldName = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+6]);
+                                    fieldValueStrArr=null;
+                                    if (lineNumCols>=numEvaluationArguments+7)
+                                         fieldValueStrArr = LPTestingOutFormat.csvExtractFieldValueStringArr(csvFileContent[iLines][numEvaluationArguments+7]);
+                                    fieldValueObjArr=LPArray.convertStringWithDataTypeToObjectArray(fieldValueStrArr);
+
+                                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
+                                        new Object[]{"aliquot_id, fieldNames, fieldValues", aliquotId.toString()+", "+Arrays.toString(fieldName)+", "+Arrays.toString(fieldValueStrArr)}));                                                                                                                  
+                                    dataSample = smp.logSampleSubAliquot(schemaPrefix, token, aliquotId, 
+                                            // sampleTemplate, sampleTemplateVersion, 
+                                            fieldName, fieldValueObjArr);
+                                    break;                     
+                                default:                       
+                                    dataSample[0] = "function "+actionName+" not recognized";
+                                    dataSample[1] = ""; dataSample[2] = ""; dataSample[3] = ""; dataSample[4] = ""; dataSample[5] = ""; 
+
+                                    break;
+                            }
+                        }
+                    }
                 }                
                 if (SampleAPIEndpoints.GETSAMPLEINFO.getName().equalsIgnoreCase(actionName))  dataSample = LPArray.array2dTo1d(dataSample2D);
 

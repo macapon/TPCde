@@ -10,14 +10,18 @@ import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIPar
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.moduleenvironmentalmonitoring.DataStudyObjectsVariableValues;
+import functionaljavaa.responserelatedobjects.RelatedObjects;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -29,32 +33,58 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
-//    public enum  GenomaStudyObjectsVariablesAPIParamsList{
-//        studyName, variableSetName, variableName, newValue, fieldsValues, userName, userRole, ownerTable, ownerId}
+
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
-            
-    public enum  GenomaStudyObjectsVariablesAPIEndPoints{
-//          PROJECT_NEW("PROJECT_NEW", "projectName"), PROJECT_UPDATE("PROJECT_UPDATE", "projectName|fieldsNames|fieldsValues"),
-//          PROJECT_ACTIVATE("PROJECT_ACTIVATE", "projectName"), PROJECT_DEACTIVATE("PROJECT_DEACTIVATE", "projectName"),
-        ADD_VARIABLE_SET_TO_STUDY_OBJECT("ADD_VARIABLE_SET_TO_STUDY_OBJECT", "studyName|variableSetName|ownerTable|ownerId"), 
-        STUDY_OBJECT_SET_VARIABLE_VALUE("STUDY_OBJECT_SET_VARIABLE_VALUE", "studyName|variableSetName|ownerTable|ownerId|variableName|newValue"), 
-          //VARIABLE_SET_REMOVE_VARIABLE("VARIABLE_SET_REMOVE_VARIABLE", "variableSetName|variableName"),
-//          PROJECT_CHANGE_USER_ROLE("PROJECT_CHANGE_USER_ROLE", "projectName|userName|userRole"), PROJECT_USER_ACTIVATE("PROJECT_USER_ACTIVATE", "projectName|userName|userRole"),
-//          PROJECT_USER_DEACTIVATE("PROJECT_USER_DEACTIVATE", "projectName|userName|userRole"),
-          ;
-        private GenomaStudyObjectsVariablesAPIEndPoints(String name, String mandatoryFields){
-            this.endPointName=name;
-            this.endPointMandatoryFields=mandatoryFields;
-        }
+
+    public enum GenomaStudyObjectsVariablesAPIEndPoints{ 
+        ADD_VARIABLE_SET_TO_STUDY_OBJECT("ADD_VARIABLE_SET_TO_STUDY_OBJECT", "variablesSetAdded_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9)}),
+        STUDY_OBJECT_SET_VARIABLE_VALUE("STUDY_OBJECT_SET_VARIABLE_VALUE", "variableValueEntered_success", 
+                new LPAPIArguments[]{new LPAPIArguments(GenomaProjectAPIParamsList.STUDY_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 7),
+                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 8),
+                new LPAPIArguments(GenomaProjectAPIParamsList.OWNER_ID.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 9),
+                new LPAPIArguments(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 10),
+                new LPAPIArguments(GenomaProjectAPIParamsList.NEW_VALUE.getParamName(), LPAPIArguments.ArgumentType.STRING.toString(), true, 11)}),
+        ;
+        private GenomaStudyObjectsVariablesAPIEndPoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
+        } 
+        public HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
-            return this.endPointName;
+            return this.name;
         }
-        public String getMandatoryFields(){
-            return this.endPointMandatoryFields;
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+        private String[] getEndpointDefinition(){
+            return new String[]{this.name, this.successMessageCode};
         }
-      String endPointName="";
-      String endPointMandatoryFields="";
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;  
+        public  LPAPIArguments[] arguments;
     }
+
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -106,8 +136,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                return;                   
             }     
-        }
-        
+        }        
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
              (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
 
@@ -150,108 +179,64 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
                 return ;                           
             }            
             
-            Object[] dataSample = null;
-            
-            switch (actionName.toUpperCase()){
-/*                case "PROJECT_NEW":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaProjectAPIEndPoints.PROJECT_NEW.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
-                    String fieldName=request.getParameter(GenomaProjectAPIParamsList.fieldsNames.toString());                                        
-                    String fieldValue=request.getParameter(GenomaProjectAPIParamsList.fieldsValues.toString());                    
-                    String[] fieldNames=null;
-                    Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                            
-                    String projectName=request.getParameter(GenomaProjectAPIParamsList.projectName.toString());
-                    if (projectName.length()==0)
-                        projectName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsGenomaData.Project.FLD_NAME.getName())].toString();
-
-                    dataSample =cnfVar.createProject(schemaPrefix, token, projectName, fieldNames, fieldValues,  false);
-                    //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
-                    break;
-                case "PROJECT_UPDATE":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaProjectAPIEndPoints.PROJECT_UPDATE.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
-                    fieldName=request.getParameter(GenomaProjectAPIParamsList.fieldsNames.toString());                                        
-                    fieldValue=request.getParameter(GenomaProjectAPIParamsList.fieldsValues.toString());                    
-                    fieldNames=null;
-                    fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                            
-                    projectName=request.getParameter(GenomaProjectAPIParamsList.projectName.toString());
-                    if (projectName.length()==0)
-                        projectName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsGenomaData.Project.FLD_NAME.getName())].toString();
-
-                    dataSample =cnfVar.projectUpdate(schemaPrefix, token, projectName, fieldNames, fieldValues);
-                    //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
-                    break;
-                case "PROJECT_ACTIVATE":
-                case "PROJECT_DEACTIVATE":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaProjectAPIEndPoints.PROJECT_ACTIVATE.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
-                    projectName=request.getParameter(GenomaProjectAPIParamsList.projectName.toString());
-                    if ("PROJECT_ACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =cnfVar.projectActivate(schemaPrefix, token, projectName);
-                    else if ("PROJECT_DEACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =cnfVar.projectDeActivate(schemaPrefix, token, projectName);
-                    else
-                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-                    break;
-*/                
-                case "ADD_VARIABLE_SET_TO_STUDY_OBJECT":     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyObjectsVariablesAPIEndPoints.ADD_VARIABLE_SET_TO_STUDY_OBJECT.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+            Object[] diagnostic = null;
+            GenomaStudyObjectsVariablesAPIEndPoints endPoint = null;
+    //        Object[] actionDiagnoses = null;
+            try{
+                endPoint = GenomaStudyObjectsVariablesAPIEndPoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response,
+                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
+                return;
+            }  
+            Object[] messageDynamicData=new Object[]{};
+            RelatedObjects relatedObject=RelatedObjects.getInstance();
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());    
+            switch (endPoint){
+                case ADD_VARIABLE_SET_TO_STUDY_OBJECT:     
                     String variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     String studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     String ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     String ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
-                    dataSample =DataStudyObjectsVariableValues.addVariableSetToObject(schemaPrefix, token, studyName, variableSetName, ownerTable, ownerId);
+                    diagnostic =DataStudyObjectsVariableValues.addVariableSetToObject(schemaPrefix, token, studyName, variableSetName, ownerTable, ownerId);
+                    messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{variableSetName, ownerTable, ownerId});
+                    relatedObject.addSimpleNode(schemaPrefix, TblsGenomaConfig.VariablesSet.TBL.getName(),  TblsGenomaConfig.VariablesSet.TBL.getName(), variableSetName);
+                    relatedObject.addSimpleNode(schemaPrefix, ownerTable, ownerTable, ownerId);
                     break;                      
-                case "STUDY_OBJECT_SET_VARIABLE_VALUE":     
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaStudyObjectsVariablesAPIEndPoints.STUDY_OBJECT_SET_VARIABLE_VALUE.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
+                case STUDY_OBJECT_SET_VARIABLE_VALUE:     
                     variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());
                     studyName=request.getParameter(GenomaProjectAPIParamsList.STUDY_NAME.getParamName());
                     ownerTable=request.getParameter(GenomaProjectAPIParamsList.OWNER_TABLE.getParamName());
                     ownerId=request.getParameter(GenomaProjectAPIParamsList.OWNER_ID.getParamName());
                     String variableName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_NAME.getParamName());
                     String newValue=request.getParameter(GenomaProjectAPIParamsList.NEW_VALUE.getParamName());
-                    dataSample =DataStudyObjectsVariableValues.objectVariableSetValue(schemaPrefix, token, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
+                    diagnostic =DataStudyObjectsVariableValues.objectVariableSetValue(schemaPrefix, token, studyName, ownerTable, ownerId, variableSetName, variableName, newValue);
+                    messageDynamicData=LPArray.addValueToArray1D(messageDynamicData, new Object[]{newValue, variableName});
+                    relatedObject.addSimpleNode(schemaPrefix, TblsGenomaData.StudyVariableValues.TBL.getName(), TblsGenomaData.StudyVariableValues.TBL.getName(), variableName);
+                    relatedObject.addSimpleNode(schemaPrefix, ownerTable, ownerTable, ownerId);
                     break;  
                 default:      
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     return;                    
             }    
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
+            
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
                 if (!con.getAutoCommit()){
                     con.rollback();
                     con.setAutoCommit(true);}                */
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
+                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);   
+                relatedObject.killInstance();
             }else{
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(dataSample);
-                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
-            }            
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, relatedObject.getRelatedObject());                
+                relatedObject.killInstance();
+                LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
+            }   
         }catch(Exception e){   
  /*           try {
                 con.rollback();
@@ -266,6 +251,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
         } finally {
+            
             // release database resources
             try {
                 Rdbms.closeRdbms();   

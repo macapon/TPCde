@@ -340,7 +340,7 @@ public class LPTestingOutFormat {
      *
      * @return
      */
-    public static String tableStart(){        return "<table>";    }
+    public static String tableStart(String cssClassName){        return "<table class=\""+ cssClassName+"\">";    }
 
     /**
      *
@@ -504,6 +504,11 @@ public class LPTestingOutFormat {
         fileContent = fileContent + "<head>" + "";
         fileContent = fileContent + "<style>";
         ResourceBundle prop = ResourceBundle.getBundle(BUNDLE_FILE_NAME);
+        fileContent = fileContent + prop.getString("testingTableStyleSummary1");
+        fileContent = fileContent + prop.getString("testingTableStyleSummary2");
+        fileContent = fileContent + prop.getString("testingTableStyleSummary3");
+        fileContent = fileContent + prop.getString("testingTableStyleSummary4");
+        fileContent = fileContent + prop.getString("testingTableStyleSummary5");
         fileContent = fileContent + prop.getString("testingTableStyle1");
         fileContent = fileContent + prop.getString("testingTableStyle2");
         fileContent = fileContent + prop.getString("testingTableStyle3");
@@ -584,7 +589,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String createSummaryTable(TestingAssertSummary tstAssert, Integer numArguments){
-        String fileContentHeaderSummary = LPTestingOutFormat.tableStart()+rowStart();
+        String fileContentHeaderSummary = LPTestingOutFormat.tableStart("summary")+rowStart();
         String fileContentSummary =rowStart();
         if (numArguments>0){
             fileContentHeaderSummary=fileContentHeaderSummary+headerAddField("Total Tests");
@@ -616,7 +621,7 @@ public class LPTestingOutFormat {
      */
     public static String convertArrayInHtmlTable(Object[][] content){
         StringBuilder fileContentTable = new StringBuilder(0);
-        fileContentTable.append(LPTestingOutFormat.tableStart());    
+        fileContentTable.append(LPTestingOutFormat.tableStart(""));    
         fileContentTable.append(headerAddFields(content[0])).append(headerEnd());
         for (int iRows=1; iRows< content.length; iRows++){
             fileContentTable.append(rowStart()).append(rowAddFields(content[iRows])).append(rowEnd());
@@ -632,7 +637,7 @@ public class LPTestingOutFormat {
      * @return
      */
     public static String createTableWithHeader(String table1Header, Integer numEvaluationArguments){
-        String fileContentTable = LPTestingOutFormat.tableStart();            
+        String fileContentTable = LPTestingOutFormat.tableStart("");            
         fileContentTable=fileContentTable+headerAddFields(addUATColumns(table1Header.split(TESTING_FILES_FIELD_SEPARATOR), numEvaluationArguments));
         fileContentTable=fileContentTable+rowStart();        
         return fileContentTable;

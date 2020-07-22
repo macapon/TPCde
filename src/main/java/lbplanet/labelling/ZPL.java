@@ -5,17 +5,132 @@
  */
 package lbplanet.labelling;
 
+import fr.w3blog.zpl.constant.ZebraFont;
+
+import fr.w3blog.zpl.model.ZebraLabel;
+import fr.w3blog.zpl.model.ZebraPrintException;
+import fr.w3blog.zpl.model.ZebraUtils;
+import fr.w3blog.zpl.model.element.ZebraBarCode39;
+import fr.w3blog.zpl.model.element.ZebraText;
+import functionaljavaa.parameter.Parameter;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+import java.net.http.HttpResponse.BodyHandlers;
+import java.util.Arrays;
+import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
+import javax.servlet.RequestDispatcher;
+
 /**
  *
  * @author Administrator
  */
 public class ZPL {
+
+    enum ContentType{TEXT, BARCODE39};
+    public static void zplLabel(String ip, int port, Object[][] lblContent){
+        try {
+            
+            ResourceBundle propValue = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
+            //final String username = propValue.getString("zpl.labelling.withDots");
+            
+            ZebraLabel zebraLabel = new ZebraLabel(Integer.valueOf(propValue.getString("zpl.labelling.widthDots")), Integer.valueOf(propValue.getString("zpl.labelling.heightDots")));
+            zebraLabel.setDefaultZebraFont(ZebraFont.valueOf(propValue.getString("zpl.labelling.ZebraFont")));
+            
+            for (Object[] curCont:lblContent){            
+                ContentType cType = null;
+                try{
+//                    zebraLabel.addElement(new ZebraText(10, 84, "Product:", 14));
+//                    zebraLabel.addElement(new ZebraBarCode39(10, 297, "CA201212AA", 118, 2, 2));
+                    cType = ContentType.valueOf(curCont[0].toString());
+                    switch (cType){
+                        case TEXT:
+                            zebraLabel.addElement(new ZebraText(
+                                (int) curCont[2], (int) curCont[3], 
+                                curCont[1].toString(), (int) curCont[4]));
+                            break;
+                        case BARCODE39:
+                            zebraLabel.addElement(new ZebraBarCode39((int) curCont[2], (int) curCont[3], 
+                                Arrays.toString(lblContent[1]), (int) curCont[4], (int) curCont[5], (int) curCont[6] ));
+                            break;
+                        default:
+                            break;
+                    }                        
+                        
+                }catch(NumberFormatException e){
+//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+//                    return;                   
+                }
+                
+            }
+            String command = "curl -X POST https://postman-echo.com/post --data foo1=bar1&foo2=bar2";
+            command="curl --get http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/ --data-urlencode \""
+                    + zebraLabel.getZplCode()
+                    + "\" > label.png";
+/*
+var request = HttpRequest.newBuilder(uri)
+    .header("Accept", "application/pdf") // omit this line to get PNG images back
+    .POST(BodyPublishers.ofString(zpl))
+    .build();
+var client = HttpClient.newHttpClient();
+var response = client.send(request, BodyHandlers.ofByteArray());
+var body = response.body();
+
+if (response.statusCode() == 200) {
+    var file = new File("label.pdf"); // change file name for PNG images
+    Files.write(file.toPath(), body);
+} else {
+    var errorMessage = new String(body, StandardCharsets.UTF_8);
+    System.out.println(errorMessage);
+}            
+*/
+            try {
+                Process process = Runtime.getRuntime().exec(command);
+            } catch (IOException ex) {
+                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            URI ur=null;
+            try {
+                ur = new URI(command);
+            } catch (URISyntaxException ex) {
+                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            HttpRequest request = HttpRequest.newBuilder(ur)
+    .header("Accept", "application/pdf") // omit this line to get PNG images back
+    .POST(BodyPublishers.ofString(command))
+    .build();
+HttpClient client = HttpClient.newHttpClient();
+HttpResponse response = null;
+            try {
+                response = client.send(request, BodyHandlers.ofByteArray());
+            } catch (IOException ex) {
+                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (InterruptedException ex) {
+                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            
+ //           RequestDispatcher rd = request.getRequestDispatcher(command);
+ //           rd.forward(request,response);   
+                         
+                    
+            zebraLabel.getZplCode();
+            ZebraUtils.printZpl(zebraLabel, ip, port);
+        } catch (ZebraPrintException ex) {
+            Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
     
 // aca obtenemos la printer default  
 PrintService printService = PrintServiceLookup.lookupDefaultPrintService();  

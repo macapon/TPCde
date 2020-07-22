@@ -782,7 +782,7 @@ public class TblsGenomaData {
         FLD_STUDY(FIELDS_NAMES_STUDY, LPDatabase.stringNotNull()),
         FLD_INDIVIDUAL("individual", LPDatabase.integer()),
         FLD_FAMILY("family", LPDatabase.string()),
-        FLD_SAMPLE("sample", LPDatabase.string()),
+        FLD_SAMPLE("sample", LPDatabase.integer()),
         FLD_DESCRIPTION("description", LPDatabase.string()),
         FLD_VARIABLE_SET("variable_set", LPDatabase.stringNotNull()),
         FLD_NAME("name", LPDatabase.stringNotNull()),

@@ -83,7 +83,7 @@ public class TestingUOMFamilyTable extends HttpServlet {
                 UnitsOfMeasurement uom = new UnitsOfMeasurement();
 
                 Object[][] tableGet = uom.getAllUnitsPerFamily(schemaPrefix, familyName, fieldsToRetrieve);    
-                fileContentTable1Builder.append(LPTestingOutFormat.tableStart());
+                fileContentTable1Builder.append(LPTestingOutFormat.tableStart(""));
                 for (int iRows=0;iRows<tableGet.length;iRows++){
                    fileContentTable1Builder.append(LPTestingOutFormat.rowStart()); 
                    fileContentTable1Builder.append(LPTestingOutFormat.rowAddField(String.valueOf(iRows)));     

@@ -55,7 +55,8 @@ public class TblsApp {
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.string());
+        FLD_ROLE_NAME("role_name", LPDatabase.string()),
+        FLD_IP_ADDRESS("ip_address", LPDatabase.string());
         
         private AppSession(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

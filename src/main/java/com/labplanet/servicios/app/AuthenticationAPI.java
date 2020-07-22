@@ -74,11 +74,10 @@ public class AuthenticationAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
-            }                
+            }                            
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
             switch (endPoint){
-                case AUTHENTICATE:                         
-                    
+                case AUTHENTICATE:                                             
                     String dbUserName = argValues[0].toString();
                     String dbUserPassword = argValues[1].toString();                 
                     String userIsCaseSensitive = prop.getString(BUNDLE_PARAMETER_CREDENTIALS_USER_IS_CASESENSITIVE);
@@ -134,7 +133,7 @@ public class AuthenticationAPI extends HttpServlet {
                     token = new Token(firstToken);
                     String[] fieldsName = new String[]{TblsApp.AppSession.FLD_PERSON.getName(), TblsApp.AppSession.FLD_ROLE_NAME.getName()};
                     Object[] fieldsValue = new Object[]{token.getPersonName(), userRole};
-                    Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue);                    
+                    Object[] newAppSession = LPSession.newAppSession(fieldsName, fieldsValue, request.getRemoteAddr());                    
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newAppSession[0].toString())){   
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_SESSION_ID_NOT_GENERATED, null, language);              
                         return;                                                         

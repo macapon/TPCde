@@ -58,11 +58,11 @@ public class DataProgramSample{
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
-            logProgramSamplerSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation);
+            logProgramSamplerSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[0].toString()));
         return newProjSample;
     }
 
-    public static Object[] logProgramSamplerSample(String schemaPrefix, Token token, String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation){        
+    public static Object[] logProgramSamplerSample(String schemaPrefix, Token token, String programTemplate, Integer programTemplateVersion, String[] fieldName, Object[] fieldValue, String programName, String programLocation, Integer programSampleId){        
         String samplerSmpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "samplerSampleTemplate", null);  
         
         Object[][] programLocationPersonalInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
@@ -89,6 +89,10 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, curArea);
             }else
                 fieldValue[samplerAreaPosic] = curArea;
+
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.Sample.FLD_SAMPLE_ID_RELATED.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, programSampleId);           
+            
             newProjSample = ds.logSample(schemaPrefix, token, samplerSmpTemplate, programTemplateVersion, fieldName, fieldValue);
         }
         return newProjSample;        

@@ -164,6 +164,9 @@ public class DataBatchIncubator {
         if (!Boolean.valueOf(templateInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Template <*1*> and version <*2*> is not active", new Object[]{bTemplateId, bTemplateVersion});
 
+        Object[] batchIsAvailableForChangingContent = batchIsAvailableForChangingContent(schemaPrefix, token, bName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchIsAvailableForChangingContent[0].toString())) return batchIsAvailableForChangingContent;
+        
         String batchType=templateInfo[0][1].toString();
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;
@@ -207,6 +210,10 @@ public class DataBatchIncubator {
             return LPArray.array2dTo1d(templateInfo);
         if (!Boolean.valueOf(templateInfo[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Template <*1*> and version <*2*> is not active", new Object[]{bTemplateId, bTemplateVersion});
+
+        Object[] batchIsAvailableForChangingContent = batchIsAvailableForChangingContent(schemaPrefix, token, bName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchIsAvailableForChangingContent[0].toString())) return batchIsAvailableForChangingContent;
+
         String[] sampleInfoFieldsToRetrieve=new String[]{TblsEnvMonitData.Sample.FLD_INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION2_PASSED.getName(),                    
                     TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName()};
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.Sample.TBL.getName(), 
@@ -247,6 +254,9 @@ public class DataBatchIncubator {
         String batchType=templateInfo[0][1].toString();
         Object[] batchTypeExist=batchTypeExists(batchType);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchTypeExist[0].toString())) return batchTypeExist;
+
+        Object[] batchIsAvailableForChangingContent = batchIsAvailableForChangingContent(schemaPrefix, token, bName);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(batchIsAvailableForChangingContent[0].toString())) return batchIsAvailableForChangingContent;
 
         String[] sampleInfoFieldsToRetrieve=new String[]{TblsEnvMonitData.Sample.FLD_INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION2_PASSED.getName(),                    
                     TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION2_BATCH.getName()};
@@ -476,5 +486,16 @@ public class DataBatchIncubator {
             IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, BatchAuditEvents.BATCH_UPDATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, batchName,
                 LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ": "), null);
         return updateDiagnostic;
+    }
+    
+    public static Object[] batchIsAvailableForChangingContent(String schemaPrefix, Token token, String batchName){
+        Object[][] batchInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
+                new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()});
+        if (batchInfo[0][0]==null || !Boolean.valueOf(batchInfo[0][0].toString())) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IncubatorBatchNotActiveToChangeItsContent", new Object[]{batchName}); 
+        if (batchInfo[0][1]!=null) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IncubatorBatchStartedToChangeItsContent", new Object[]{batchName}); 
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The Batch <*1*> is not available to alter its content", new Object[]{batchName}); 
     }
 }

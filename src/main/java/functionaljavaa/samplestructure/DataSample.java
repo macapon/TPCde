@@ -381,6 +381,9 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         String[] sampleFieldName = new String[]{TblsData.Sample.FLD_SAMPLING_DATE.getName()};
         Object[] sampleFieldValue = new Object[]{LPDate.getCurrentTimeStamp()};
 
+        sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, new String[]{TblsData.Sample.FLD_SAMPLER.getName(), TblsData.Sample.FLD_SAMPLE_ID_RELATED.getName()});
+        sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, new Object[]{token.getUserName(), sampleId});
+
         Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
             diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, DataSampleWithSuccess.SAMPLING_DATE_CHANGED.getErrorCode(), new Object[]{sampleId, schemaDataName, Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, ", "))});

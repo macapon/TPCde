@@ -135,14 +135,14 @@ public class SqlStatement {
             if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NULL.getSqlClause())) {
                 queryWhere.append(fn);
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
-                queryWhere.append(" ? ");
+                queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
             } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
                 String textSpecs = (String) whereFieldValues[iwhereFieldNames];
                 String[] textSpecArray = textSpecs.split("\\" + separator);
                 Integer posicINClause = fn.toUpperCase().indexOf(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
-                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length())).append(" (");                
+                queryWhere.append(fn.substring(0, posicINClause + WHERECLAUSE_TYPES.NOT_IN.getSqlClause().length()+1)).append(" (");                
                 for (String f : textSpecArray) {
                     queryWhere.append("?,");
                     whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFldValuesGetCurrArrValue(textSpecs, f));

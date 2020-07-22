@@ -32,8 +32,6 @@
             <form name="platform" action="/LabPLANET-API/">                
                 <input type="submit" value="Testing Server" formaction="/LabPLANET-API/app/TestingServer">
                 <input type="submit" value="Rdbms Class" formaction="/LabPLANET-API/testing/platform/DBActions">
-                <input type="submit" value="Procedure, From Definition to Instance" formaction="/LabPLANET-API/ProcedureDefinitionToInstance">                
-                <input type="submit" value="Deploy Procedure" formaction="/LabPLANET-API/testing/platform/ProcedureDeployment">
             </form>              
        </div>    
     
@@ -44,10 +42,11 @@
              <input type="submit" value="Text Rule Format" formaction="/LabPLANET-API/testing/config/testingConfigSpecQualitativeRuleFormat">
              <input type="submit" value="Check Text Result against spec" formaction="/LabPLANET-API/testing/config/ResultCheckSpecQualitative">
              <input type="submit" value="Check Numeric Result against spec" formaction="/LabPLANET-API/testing/config/ResultCheckSpecQuantitative">
-             <input type="submit" value="SOPs" formaction="/LabPLANET-API/testing/config/Sop">
+             
              <input type="submit" value="UOM Conversion Table" formaction="/LabPLANET-API/testing/config/UOMConversionTable">
              <input type="submit" value="UOM Family Table" formaction="/LabPLANET-API/testing/config/UOMFamilyTable">                      
-             <input class="vw_aqua_button" type="submit" value="Sampling Plan Structure (Not Released)" formaction="/LabPLANET-API/testing/config/SamplingPlanStructure">             
+             <!-- <input class="vw_aqua_button" type="submit" value="Sampling Plan Structure (Not Released)" formaction="/LabPLANET-API/testing/config/SamplingPlanStructure">             
+             <input type="submit" value="SOPs" formaction="/LabPLANET-API/testing/config/Sop"> -->
             <h1>Config DB</h1> 
              <input type="submit" value="Check Numeric Result against spec" formaction="/LabPLANET-API/testing/config/db/QuantitativeLimitAndResult">
             
@@ -57,18 +56,21 @@
        <div class="btn-group">
            <h1>Data</h1>
            <form name="platform" action="/LabPLANET-API/">
-            <input type="submit" value="Sample Structure" formaction="/LabPLANET-API/Testing/DB/TstDataSample">
-             <input type="submit" value="Batch Array" formaction="/LabPLANET-API/Testing/DB/TstDataBatchArr">
-             <input type="submit" value="Batch Array Sequence" formaction="/LabPLANET-API/Testing/DB/TstDataBatchArrSequence">
+            <input type="submit" value="Sample from Module Sample" formaction="/LabPLANET-API/testing/db/TstDataSample">
+            <input type="submit" value="Sample from Module Env. Monitoring" formaction="/LabPLANET-API/testing/moduleEnvMonit/TestingEnvMonitSamples">
            </form>              
        </div>   
 
-       <div class="btn-group">
+<!--       <div class="btn-group">
            <h1>Modules-Genome</h1>
            <form name="platform" action="/LabPLANET-API/">
+            <input type="submit" value="Procedure, From Definition to Instance" formaction="/LabPLANET-API/ProcedureDefinitionToInstance">                
+            <input type="submit" value="Deploy Procedure" formaction="/LabPLANET-API/testing/platform/ProcedureDeployment">
+
             <input type="submit" value="Tables Deployment" formaction="/LabPLANET-API//modulegenome/TablesDeployment">
+
            </form>              
-       </div>   
+       </div>   -->
     
     
 </body>

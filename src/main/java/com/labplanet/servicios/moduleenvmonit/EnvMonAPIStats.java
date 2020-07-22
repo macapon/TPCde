@@ -22,6 +22,7 @@ import lbplanet.utilities.LPFrontEnd;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
+import static lbplanet.utilities.LPKPIs.getKPIs;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
@@ -205,43 +206,9 @@ public class EnvMonAPIStats extends HttpServlet {
                     String[] whereFieldsValueArr=argValues[4].toString().split("\\/");
                     String[] fldToRetrieve=argValues[5].toString().split("\\/");
                     String[] dataGrouped=argValues[6].toString().split("\\/");
-                    if (objGroupName.length!=fldToRetrieve.length && objGroupName.length!=whereFieldsNameArr.length 
-                            && objGroupName.length!=whereFieldsValueArr.length){
-                        LPFrontEnd.responseJSONDiagnosticLPFalse("KPI Definition is wrong", new Object[0]);
-                        return;
-                    }
-                    for (int i=0;i<objGroupName.length;i++){
-                        String curgrouperName=giveMeString(objGroupName[i]); 
-                        String curtblCategory=giveMeString(tblCategory[i]);
-                        String curtblName=giveMeString(tblName[i]);
-                        String[] curWhereFieldsNameArr=giveMeStringArr(whereFieldsNameArr[i]);
-                        Object[] curWhereFieldsValueArr=giveMeObjectArr(whereFieldsValueArr[i]);                        
-                        String[] curFldsToRetrieveArr=giveMeStringArr(fldToRetrieve[i]);
-                        String curdataGrouped=giveMeString(dataGrouped[i]);
-                        
-                        if (curgrouperName.toString().length()==0)curgrouperName=actionName.toLowerCase();
-                        Object[][] dataInfo = new Object[][]{{}};
-                        if (Boolean.valueOf(curdataGrouped)){
-                            dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 
-                                curFldsToRetrieveArr, curWhereFieldsNameArr, curWhereFieldsValueArr, 
-                                null);
-                            curFldsToRetrieveArr=LPArray.addValueToArray1D(curFldsToRetrieveArr, "count");
-                        }else{
-                            dataInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 
-                                curWhereFieldsNameArr, curWhereFieldsValueArr, curFldsToRetrieveArr);
-                        }
-                        jObj=new JSONObject();
-                        JSONArray dataJSONArr = new JSONArray();
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataInfo[0][0].toString())){
-                            jObj= noRecordsInTableMessage();
-                        }else{
-                            for (Object[] curRec: dataInfo){
-                                jObj= LPJson.convertArrayRowToJSONObject(curFldsToRetrieveArr, curRec);
-                                dataJSONArr.add(jObj);
-                            }
-                        } 
-                        jObjMainObject.put(curgrouperName, dataJSONArr);
-                    }
+
+                    jObjMainObject=getKPIs(schemaPrefix, objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
+                        fldToRetrieve, dataGrouped);
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     return;
             }
@@ -266,22 +233,7 @@ public class EnvMonAPIStats extends HttpServlet {
             }
         }      
     }     
-    String giveMeString(String value){
-        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
-            return "";
-        return value;
-    }
-    String[] giveMeStringArr(String value){
-        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
-            return new String[]{};
-        return value.split("\\|");
-    }    
 
-    Object[] giveMeObjectArr(String value){
-        if (value==null || GlobalAPIsParams.REQUEST_PARAM_IGNORE_ARGUMENT_WORD.equalsIgnoreCase(value))
-            return new Object[]{};
-        return LPArray.convertStringWithDataTypeToObjectArray(value.split("\\|"));
-    }    
     
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**

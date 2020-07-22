@@ -153,7 +153,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary)).append("<br>");
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 
             out.println(fileContentBuilder.toString());            

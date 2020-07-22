@@ -32,6 +32,7 @@ import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPKPIs;
 /**
  *
  * @author Administrator
@@ -269,6 +270,35 @@ public class EnvMonAPIfrontend extends HttpServlet {
                   if (programLocationCardInfoFldSortList==null) programLocationCardInfoFldSortList = DEFAULT_PARAMS_PROGRAMS_LIST_CARD_SORT_FLDS;                     
                 String[] programLocationCardInfoFldSortArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programLocationCardInfoFldSortList);
                 
+                String[] programKPIGroupNameArr = new String[0];
+                String programKPIGroupName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME);   
+                if (programKPIGroupName!=null) 
+                    programKPIGroupNameArr = programKPIGroupName.split("\\/");
+                String[] programKPITableCategoryArr = new String[0];
+                String programKPITableCategory = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY);   
+                if (programKPITableCategory!=null) 
+                    programKPITableCategoryArr = programKPITableCategory.split("\\/");
+                String[] programKPITableNameArr = new String[0];
+                String programKPITableName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME);   
+                if (programKPITableName!=null) 
+                    programKPITableNameArr = programKPITableName.split("\\/");
+                String[] programKPIWhereFieldsNameArr = new String[0];
+                String programKPIWhereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME);   
+                if (programKPIWhereFieldsName!=null) 
+                    programKPIWhereFieldsNameArr = programKPIWhereFieldsName.split("\\/");
+                String[] programKPIWhereFieldsValueArr = new String[0];
+                String programKPIWhereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE);   
+                if (programKPIWhereFieldsValue!=null) 
+                    programKPIWhereFieldsValueArr = programKPIWhereFieldsValue.split("\\/");
+                String[] programKPIRetrieveOrGroupingArr = new String[0];
+                String programKPIRetrieveOrGrouping = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING);   
+                if (programKPIRetrieveOrGrouping!=null) 
+                    programKPIRetrieveOrGroupingArr = programKPIRetrieveOrGrouping.split("\\/");
+                String[] programKPIGroupedArr = new String[0];
+                String programKPIGrouped = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_GROUPED);   
+                if (programKPIGrouped!=null) 
+                    programKPIGroupedArr = programKPIGrouped.split("\\/");
+
                 if (LPArray.valuePosicInArray(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName())==-1){
                     programLocationCardInfoFldNameArray = LPArray.addValueToArray1D(programLocationCardInfoFldNameArray, TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName());
                 }                    
@@ -303,6 +333,17 @@ public class EnvMonAPIfrontend extends HttpServlet {
                     }
                     programJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TREE_LIST); 
                     programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
+                    
+                    String[] curProgramKPIWhereFieldsNameArr = programKPIWhereFieldsName.split("\\/");
+                    String[] curProgramKPIWhereFieldsValueArr = programKPIWhereFieldsValue.split("\\/");
+                    for (int i=0;i<curProgramKPIWhereFieldsNameArr.length;i++){
+                        curProgramKPIWhereFieldsNameArr[i]=curProgramKPIWhereFieldsNameArr[i]+"|"+TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName();
+                        curProgramKPIWhereFieldsValueArr[i]=curProgramKPIWhereFieldsValueArr[i]+"|"+currProgram;
+                    }
+                    JSONObject programkpIsObj = LPKPIs.getKPIs(schemaPrefix, programKPIGroupNameArr, programKPITableCategoryArr, programKPITableNameArr, 
+                            curProgramKPIWhereFieldsNameArr, curProgramKPIWhereFieldsValueArr, programKPIRetrieveOrGroupingArr, programKPIGroupedArr);
+                    programJsonObj.put("KPI", programkpIsObj);   
+                    
                     // Program Location subStructure. Begin
                     Object[][] programLocations = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
@@ -409,6 +450,8 @@ public class EnvMonAPIfrontend extends HttpServlet {
                                 }
                                 samplesStatusCounter = LPArray.addValueToArray1D(samplesStatusCounter, contSmpStatus);
                             }
+
+        
                             JSONArray programSampleSummaryJsonArray = new JSONArray();  
                             for (int iStatuses=0; iStatuses < statusList.length; iStatuses++){
                                 JSONObject programSampleSummaryJsonObj = new JSONObject();  
@@ -433,8 +476,9 @@ public class EnvMonAPIfrontend extends HttpServlet {
                             for (Object[] curRec: samplesCounterPerStage){
                               jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveArr, curRec);
                               programSampleSummaryByStageJsonArray.add(jObj);
-                            }    
-                            programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray); 
+                            }                                
+                            programLocationJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLES_SUMMARY_BY_STAGE, programSampleSummaryByStageJsonArray);
+                            
                             programLocationsJsonArray.add(programLocationJsonObj);
                         }                    
                         programJsonObj.put(JSON_TAG_GROUP_NAME_SAMPLE_POINTS, programLocationsJsonArray);   

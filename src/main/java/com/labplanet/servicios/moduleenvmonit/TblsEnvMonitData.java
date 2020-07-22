@@ -384,7 +384,9 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_SAMPLER_AREA("sampler_area",LPDatabase.stringNotNull()),
+        FLD_SAMPLER_AREA("sampler_area",LPDatabase.string()),
+        FLD_SAMPLER("sampler",LPDatabase.string()),
+        FLD_SAMPLE_ID_RELATED("sample_id_related",LPDatabase.integer()),        
         FLD_SAMPLING_DATE("sampling_date", dateTime())
         ,
 
@@ -1085,13 +1087,13 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         /**
          *
          */
-        FLD_INCUBATION_START(FIELDS_NAMES_INCUBATION_START, dateTime())
+        FLD_INCUBATION_START(FIELDS_NAMES_INCUBATION_START, LPDatabase.dateTime())
         ,        
 
         /**
          *
          */
-        FLD_INCUBATION_END(FIELDS_NAMES_INCUBATION_END, dateTime())        
+        FLD_INCUBATION_END(FIELDS_NAMES_INCUBATION_END, LPDatabase.dateTime())        
         ,
 
         /**

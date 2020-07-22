@@ -266,18 +266,21 @@ public Object[] studyFamilyAddIndividual(String schemaPrefix, Token token, Strin
     Object[] projStudyIndividualToChanges=GenomaDataStudyIndividuals.isStudyIndividualOpenToChanges(schemaPrefix, token, studyName, Integer.valueOf(individualId));    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projStudyIndividualToChanges[0].toString())) return projStudyIndividualToChanges;   
     
-    Object[] familyAndIndividualLinked=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
-            new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
-                TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_LINKED_ON.getName()}, 
-            new Object[]{studyName, familyName, Integer.valueOf(individualId), LPDate.getCurrentTimeStamp()});
-    
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) {
-        return familyAndIndividualLinked;
-    }
-    if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) {
-        GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL.toString(), TblsGenomaData.StudyFamily.TBL.getName(), familyName, 
-            studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName()}, 
-                    new Object[]{familyAndIndividualLinked[familyAndIndividualLinked.length-1]}, ":"), null);
+    String[] indivList=individualId.split("\\|");
+    Object[] familyAndIndividualLinked=new Object[0];
+    for (String curIndiv: indivList){
+        Object[] curFamilyAndIndividualLinked=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyFamilyIndividual.TBL.getName(),
+                new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_FAMILY_NAME.getName(),
+                    TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_LINKED_ON.getName()}, 
+                new Object[]{studyName, familyName, Integer.valueOf(curIndiv), LPDate.getCurrentTimeStamp()});
+
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) return familyAndIndividualLinked;        
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(familyAndIndividualLinked[0].toString())) {
+            GenomaDataAudit.studyAuditAdd(schemaPrefix, token, GenomaDataAudit.StudyAuditEvents.STUDY_FAMILY_ADDED_INDIVIDUAL.toString(), TblsGenomaData.StudyFamily.TBL.getName(), familyName, 
+                studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(new String[]{TblsGenomaData.StudyFamily.FLD_UNSTRUCT_CONTENT.getName()}, 
+                        new Object[]{familyAndIndividualLinked[familyAndIndividualLinked.length-1]}, ":"), null);
+        }
+        familyAndIndividualLinked=LPArray.addValueToArray1D(familyAndIndividualLinked, curFamilyAndIndividualLinked);
     }
     return familyAndIndividualLinked;
 }

@@ -24,7 +24,7 @@ public class LPSession {
      * @param fieldsValue
      * @return
      */
-    public static Object[] newAppSession( String[] fieldsName, Object[] fieldsValue){        
+    public static Object[] newAppSession( String[] fieldsName, Object[] fieldsValue, String remoteAddr){        
 //        Date nowLocalDate = LPDate.getTimeStampLocalDate();
         LocalDateTime localDateTime=LPDate.getCurrentTimeStamp();
         //localDateTime = null;
@@ -35,6 +35,10 @@ public class LPSession {
         fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.FLD_DATE_STARTED.getName());
         fieldsValue = LPArray.addValueToArray1D(fieldsValue, localDateTime);
 
+        fieldsName = LPArray.addValueToArray1D(fieldsName, TblsApp.AppSession.FLD_IP_ADDRESS.getName());
+        fieldsValue = LPArray.addValueToArray1D(fieldsValue, remoteAddr);
+                
+                
         return Rdbms.insertRecordInTable(LPPlatform.SCHEMA_APP, tableName, fieldsName, fieldsValue);            
     }
     

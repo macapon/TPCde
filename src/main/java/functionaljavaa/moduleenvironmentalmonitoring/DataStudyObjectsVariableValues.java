@@ -25,6 +25,19 @@ public class DataStudyObjectsVariableValues {
     
     public enum VariableTypes{CATEGORICAL, INTEGER}
     
+    private static Object[][] objectFieldExtraFields(String schemaPrefix, Token token, String studyName, String variableSetName, String ownerTable, String ownerId){
+        Object[] fields=new Object[0];        
+        switch(ownerTable){
+            case "study_individual_sample":
+                
+                fields=LPArray.addValueToArray1D(fields, TblsGenomaData.StudyVariableValues.FLD_SAMPLE.getName());
+                fields=LPArray.addValueToArray1D(fields, Integer.valueOf(ownerId));
+                break;
+            default:
+                return new Object[0][0];
+        }    
+        return LPArray.array1dTo2d(fields, 2);
+    }
     public static Object[] addVariableSetToObject(String schemaPrefix, Token token, String studyName, String variableSetName, String ownerTable, String ownerId){
         Object[] diagn=new Object[0];
         Object[] isStudyOpenToChanges=isStudyOpenToChanges(schemaPrefix, token, studyName);
@@ -47,6 +60,13 @@ public class DataStudyObjectsVariableValues {
                 fieldsName=LPArray.addValueToArray1D(fieldsName, fieldHeaders);
                 Object[] fieldsValue=new Object[]{studyName, ownerTable, ownerId, variableSetName};
                 fieldsValue=LPArray.addValueToArray1D(fieldsValue, fieldVarProperties);
+                Object[][] extraFields=objectFieldExtraFields(schemaPrefix, token, studyName, variableSetName, ownerTable, ownerId);
+                if (extraFields!=null && extraFields.length>0){
+                    for (Object[] curFld: extraFields){
+                        fieldsName=LPArray.addValueToArray1D(fieldsName, curFld[0].toString());
+                        fieldsValue=LPArray.addValueToArray1D(fieldsValue, curFld[1]);
+                    }
+                }
                 diagn=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyVariableValues.TBL.getName(), 
                     fieldsName, fieldsValue);            
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) 
