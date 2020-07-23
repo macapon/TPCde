@@ -11,10 +11,8 @@ import java.io.UnsupportedEncodingException;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import javax.activation.*;
 import javax.mail.*;
 import javax.mail.internet.*;
-import javax.naming.*;
 
 //import javax.mail.internet.*;
 /**
@@ -72,6 +70,7 @@ public static void main(String[] args) {
 
         Session session = Session.getInstance(prop,
                 new javax.mail.Authenticator() {
+                    @Override
                     protected PasswordAuthentication getPasswordAuthentication() {
                         return new PasswordAuthentication(username, password);
                     }
@@ -91,10 +90,8 @@ public static void main(String[] args) {
 
             Transport.send(message);
 
-            System.out.println("Done");
-
         } catch (MessagingException e) {
-            e.printStackTrace();
+            Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, e);
         }    
 }
     public static void otroMailViaSSL(){    
@@ -118,6 +115,7 @@ public static void main(String[] args) {
                 // Create a Session object to represent a mail session with the specified properties.
             Session session = Session.getInstance(props,
                     new javax.mail.Authenticator() {
+                        @Override
                         protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(username, password);
                         }
@@ -147,12 +145,10 @@ public static void main(String[] args) {
             
             Transport.send(message);
 
-            System.out.println("Done");
+            Logger.getLogger("Done");
             
 
-        } catch (MessagingException ex) {
-            Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
+        } catch (MessagingException | IOException ex) {
             Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
         }
         
@@ -175,6 +171,7 @@ public static void main(String[] args) {
             prop.put("mail.password", password); //TLS
 //        Session session = Session.getInstance(prop, null);
             Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+                            @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(username, password);
                             }
@@ -202,6 +199,7 @@ public static void main(String[] args) {
             
 //        Session session = Session.getInstance(prop, null);
             Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
+                            @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(username, password);
                             }
@@ -258,11 +256,8 @@ public static void main(String[] args) {
     
     Transport.send(message);
     
-    System.out.println("Done");
-    
-} catch (MessagingException e) {
-    e.printStackTrace();
-} catch (UnsupportedEncodingException ex) {
+    Logger.getLogger("Done");
+} catch (UnsupportedEncodingException|MessagingException ex) {
     Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
 }           catch (IOException ex) {
                 Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
@@ -271,58 +266,6 @@ public static void main(String[] args) {
             Logger.getLogger(LPMailing.class.getName()).log(Level.SEVERE, null, ex);
         }
     }    
-    
-    public static void send(String from,String password,String to,String msgSubject,String msgRecipient) throws NamingException, MessagingException{
-       
-       
-        InitialContext ic = new InitialContext();
-        String snName = "java:comp/env/mail/MyMailSession";
-        Session session = (Session)ic.lookup(snName);       
-        
-Message msg = new MimeMessage(session);
-msg.setSubject(msgSubject);
-msg.setSentDate(new Date());
-msg.setFrom();
-msg.setRecipients(Message.RecipientType.TO, 
-   InternetAddress.parse(msgRecipient, false));
-
-msg.setText(msgRecipient);
-
-Transport.send(msg);
-
-          //Get properties object    
-          Properties props = new Properties();    
-          props.put("mail.smtp.host", "smtp.gmail.com");    
-          props.put("mail.smtp.socketFactory.port", "465");  
-          props.put("mail.smtp.ssl.checkserveridentity", true); // Compliant
-          props.put("mail.smtp.socketFactory.class",    
-                    "javax.net.ssl.SSLSocketFactory");    
-          props.put("mail.smtp.auth", "true");    
-          props.put("mail.smtp.port", "465");    
-          
-          
-          //get Session   
-          //Session session;
-       session = Session.getDefaultInstance(props,    
-               new javax.mail.Authenticator() {
-                   @Override
-                   protected PasswordAuthentication getPasswordAuthentication() {
-                       return new PasswordAuthentication(from,password);
-                   }    
-               });
-
-          //compose message    
-          try {    
-           MimeMessage message = new MimeMessage(session);    
-           message.addRecipient(Message.RecipientType.TO,new InternetAddress(to));    
-           message.setSubject(msgSubject);    
-           message.setText(msgSubject);    
-         //send message  
-           Transport.send(message);    
-           System.out.println("message sent successfully");    
-          } catch (MessagingException e) {throw new RuntimeException(e);}    
-             
-    }  
 }      
 
 

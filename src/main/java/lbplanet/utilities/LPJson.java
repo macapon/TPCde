@@ -92,8 +92,8 @@ public class LPJson {
     
     public static JsonObject convertToJsonObjectStringedObject(String value){
         JsonParser parser = new JsonParser();
-        JsonObject JsonObject = parser.parse(value).getAsJsonObject();
-        return JsonObject;
+        return parser.parse(value).getAsJsonObject();
+        
     }
     
     public static JsonArray convertToJsonArrayStringedObject(String value){

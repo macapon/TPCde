@@ -186,11 +186,12 @@ public class DataIncubatorNoteBook {
         Integer pointsAdded=0;
         for (Object[] currReading: instrNotebook){
             String currEventType = currReading[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName())].toString();
-            if ( (EventType.ACTIVATE.toString().equalsIgnoreCase(currEventType)) || (EventType.DEACTIVATE.toString().equalsIgnoreCase(currEventType)) ) break;
+            if ( (EventType.ACTIVATE.toString().equalsIgnoreCase(currEventType)) || (EventType.DEACTIVATE.toString().equalsIgnoreCase(currEventType)) 
+                    || (EventType.TEMPERATURE_READING.toString().equalsIgnoreCase(currEventType) && (endDate==null) && (points!=null) && (points<=pointsAdded) )) break;
             if (EventType.TEMPERATURE_READING.toString().equalsIgnoreCase(currEventType)){                
                 pointsAdded++;
                 pointsFromLatestActivation=LPArray.addValueToArray1D(pointsFromLatestActivation, currReading);
-                if ((endDate==null) && (points!=null) && (points<=pointsAdded)) break;
+               // if ((endDate==null) && (points!=null) && (points<=pointsAdded)) break;
             }
         }
         if (pointsAdded==0){

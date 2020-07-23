@@ -12,6 +12,7 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ResourceBundle;
 import java.util.logging.Level;
+import lbplanet.utilities.LPNulls;
 
 /**
  *
@@ -26,6 +27,7 @@ public class RequirementLogFile {
         String logDir = prop.getString("logDirPath");
 
         String logFile = logDir + "/" + newLogFileName;
+        logFile=LPNulls.replaceNull(logFile);
         logFile.replace("/", "\\");        
     }
 

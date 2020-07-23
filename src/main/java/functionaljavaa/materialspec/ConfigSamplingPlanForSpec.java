@@ -157,28 +157,28 @@ public class ConfigSamplingPlanForSpec {
         return diagnoses;
     }
 
-    private Integer samplingAlgorithmFix(Integer val){
+    public Integer samplingAlgorithmFix(Integer val){
         return val;
     }
     
-    private Integer samplingAlgorithmRootNplus1(Integer n){
+    public Integer samplingAlgorithmRootNplus1(Integer n){
         double nthRoot =  nthroot(2, n, .001);      
         return Integer.getInteger(String.valueOf(nthRoot++));        
     }
     
-    private Integer samplingAlgorithmEachContainer(Integer val){
+    public Integer samplingAlgorithmEachContainer(Integer val){
         return val;
     }
 
-    private Integer samplingAlgorithmQuantityTable(Integer val){
+    public Integer samplingAlgorithmQuantityTable(Integer val){
         return val;
     }
     
-    private Integer samplingAlgorithmAQL(Integer val){
+    public Integer samplingAlgorithmAQL(Integer val){
         return val;
     }    
     
-    private Integer samplingAlgorithmQuantityDisable(Integer val){
+    public Integer samplingAlgorithmQuantityDisable(Integer val){
         return val-val;
     }    
         

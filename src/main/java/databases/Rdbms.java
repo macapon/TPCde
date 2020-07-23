@@ -153,13 +153,13 @@ public class Rdbms {
      */
     public static final Boolean stablishDBConection(){
         boolean isConnected = false;                               
-        isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
+        isConnected = Rdbms.getRdbms().startRdbms();      
         return isConnected;
     }    
 
     public static final Object[] stablishDBConectionTester(){
         Object[] isConnected;                               
-        isConnected = Rdbms.getRdbms().startRdbmsTester(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
+        isConnected = Rdbms.getRdbms().startRdbmsTester();      
         return isConnected;
     }    
 
@@ -168,15 +168,15 @@ public class Rdbms {
      * @return
      */
     public Boolean startRdbms(){
-        return startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);
+        return startRdbmsInternal();
     }
-    public Boolean startRdbms(String us, String pw){
+    public Boolean startRdbmsInternal(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbDriver = prop.getString(BUNDLE_PARAMETER_DBMANAGER);
         switch (dbDriver.toUpperCase()){
             case BUNDLE_PARAMETER_DBMANAGER_VALUE_TOMCAT:
                 if (DB_CONNECTIVITY_POOLING_MODE)
-                    return startRdbmsTomcatWithPool(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);                
+                    return startRdbmsTomcatWithPool();                
                 else
                     return startRdbmsTomcatWithNoPool(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);                
             case BUNDLE_PARAMETER_DBMANAGER_VALUE_GLASSFISH:
@@ -218,7 +218,7 @@ public class Rdbms {
             return Boolean.FALSE;
         }        
     }    
-    public Boolean startRdbmsTomcatWithPool(String user, String pass) {        
+    public Boolean startRdbmsTomcatWithPool() {        
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         Integer conTimeOut = Integer.valueOf(prop.getString(BUNDLE_PARAMETER_DBTIMEOUT));
         PoolC3P0 pool = PoolC3P0.getInstance();
@@ -248,12 +248,12 @@ public class Rdbms {
             return Boolean.FALSE;
         }        
     }    
-    public Boolean startRdbmsOld(String us, String pw){
+    public Boolean startRdbmsOld(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbDriver = prop.getString(BUNDLE_PARAMETER_DBMANAGER);
         switch (dbDriver.toUpperCase()){
             case BUNDLE_PARAMETER_DBMANAGER_VALUE_TOMCAT:
-                return startRdbmsTomcatWithPool(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);                
+                return startRdbmsTomcatWithPool();                
             case BUNDLE_PARAMETER_DBMANAGER_VALUE_GLASSFISH:
                 return startRdbmsGlassfish(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);
             default:
@@ -261,7 +261,7 @@ public class Rdbms {
         }
     }    
 
-    public Object[] startRdbmsTester(String us, String pw){
+    public Object[] startRdbmsTester(){
         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
         String dbDriver = prop.getString(BUNDLE_PARAMETER_DBMANAGER);
         switch (dbDriver.toUpperCase()){
@@ -1298,7 +1298,7 @@ if (1==1)return;
      *
      * @return
      */
-    private static Connection createTransactionWithSavePoint(){        
+    public static Connection createTransactionWithSavePoint_NOUSADO(){        
         try {
             conn.setAutoCommit(false);
             rdbms.savepoint = conn.setSavepoint();
@@ -1320,7 +1320,7 @@ if (1==1)return;
     /**
      *
      */
-    private static void rollbackWithSavePoint(){
+    public static void rollbackWithSavePoint_NOUSADO(){
         try {
             conn.rollback(rdbms.savepoint);
         } catch (SQLException ex) {

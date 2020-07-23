@@ -200,9 +200,7 @@ public class TblsEnvMonitConfig {
         public String getName(){
             return this.dbObjName;
         }
-        private String[] getDbFieldDefinitionPostgres(){
-            return new String[]{this.dbObjName, this.dbObjTypePostgres};
-        }
+
 
         /**
          *

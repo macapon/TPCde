@@ -45,7 +45,7 @@ public class LogTransac {
      * @param mainOutput
      * @param level
  */
-    public void addCall(String methodName, String[] mainInputArguments, Object[] mainOutput, Integer level){        
+    public void addCall(String methodName, String[] mainInputArguments, Object[] mainOutput){        
         
         Object[] newCalledFunctions = new Object[1];
 //        JSONArray mJSONArray;

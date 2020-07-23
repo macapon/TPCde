@@ -31,10 +31,7 @@ public class DataBatchIncubatorStructured {
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName()});
-        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(batchInfo[0][0]).toString())){
-            if ("0".equals(LPNulls.replaceNull(batchInfo[0][0]).toString())) return true;
-        }
-        return false;
+        return (!LPPlatform.LAB_FALSE.equalsIgnoreCase(LPNulls.replaceNull(batchInfo[0][0]).toString())) && ("0".equals(LPNulls.replaceNull(batchInfo[0][0]).toString()));
     }
     
     public static Object[][] dbGetBatchArray(String schemaPrefix, String batchName){
@@ -116,7 +113,7 @@ public class DataBatchIncubatorStructured {
         }                 
         Object[] createBatchDiagn = Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), fldName, fldValue);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(createBatchDiagn[0].toString())) {
-            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), bName, bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, ":"), null);
+            IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_CREATED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), bName, LPArray.joinTwo1DArraysInOneOf1DString(fldName, fldValue, ":"), null);
         }
         return createBatchDiagn;        
     }
@@ -186,9 +183,9 @@ public class DataBatchIncubatorStructured {
         
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString())) {
             if (byMovement!=null && !byMovement) 
-                IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
+                IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_ADDED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
             else
-                IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_MOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
+                IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_MOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         }
         String batchFldName = "";
         if (null == pendingIncubationStage) {
@@ -245,7 +242,7 @@ public class DataBatchIncubatorStructured {
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName});       
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(updateBatchContentDiagn[0].toString())) 
             return updateBatchContentDiagn;
-        IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, sampleId.toString(), LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
+        IncubBatchAudit.incubBatchAuditAdd(schemaPrefix, token, DataBatchIncubator.BatchAuditEvents.BATCH_SAMPLE_REMOVED.toString(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName, LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), null);
         
         String batchFldName = "";
         if (null == pendingIncubationStage) {
@@ -324,7 +321,7 @@ public class DataBatchIncubatorStructured {
         if (pendingIncubationStage==null)return sampleId.toString()+POSITIONVALUESEPARATORSTRUCTUREDBATCH;
         return sampleId.toString()+POSITIONVALUESEPARATORSTRUCTUREDBATCH+pendingIncubationStage.toString();
     }
-    private static String setLinesName(String[] names, Integer numRows){
+    public static String setLinesName_NOUSADO(String[] names, Integer numRows){
         //String[] linesName = new String[numRows];
         String valuesSeparator=BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
         String linesName="";
@@ -355,7 +352,7 @@ public class DataBatchIncubatorStructured {
         }
         return linesName; //names;        
     }
-    private static String setColumnsName(String[] names, Integer numCols){
+    public static String setColumnsName_NOUSADO(String[] names, Integer numCols){
         //String[] columnsName=new String[numCols];
         String valuesSeparator=BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
         String columnsName="";

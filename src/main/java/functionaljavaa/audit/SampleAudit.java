@@ -417,7 +417,7 @@ public class SampleAudit {
      * @param auditlog
      * @param parentAuditId
      */
-    public void sampleAliquotingAuditAdd( String schemaPrefix, Token token, String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog, Integer parentAuditId) {
+    public void sampleAliquotingAuditAdd( String schemaPrefix, Token token, String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
         
         String[] fieldNames = new String[]{TblsDataAudit.Sample.FLD_DATE.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_TABLE_NAME.getName(),
           TblsDataAudit.Sample.FLD_TABLE_ID.getName(), TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName(),

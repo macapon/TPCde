@@ -107,7 +107,7 @@ public class TstDataEnvMonit extends HttpServlet {
                 
         boolean isConnected = false;
         
-        isConnected = Rdbms.getRdbms().startRdbms(token.getUserName(), token.getUsrPw());
+        isConnected = Rdbms.getRdbms().startRdbms();
         if (!isConnected){
             errObject = LPArray.addValueToArray1D(errObject, TAG_NAME_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
 

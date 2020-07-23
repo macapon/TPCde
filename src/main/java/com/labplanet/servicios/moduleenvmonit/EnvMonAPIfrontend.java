@@ -93,12 +93,12 @@ public class EnvMonAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public static final String[] PROGRAM_LOCATION_CARD_FIELDS_INTEGER=new String[]{"spec_code_version"};
+    public String[] PROGRAM_LOCATION_CARD_FIELDS_INTEGER=new String[]{"spec_code_version"};
 
     /**
      *
      */
-    public static final String[] PROGRAM_LOCATION_CARD_FIELDS_NO_DBTYPE=new String[]{"description_en"};
+    public String[] PROGRAM_LOCATION_CARD_FIELDS_NO_DBTYPE=new String[]{"description_en"};
     
     /**
      *
@@ -550,8 +550,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
                 programFldNameList="";
                 for (TblsEnvMonitProcedure.ProgramCorrectiveAction obj: TblsEnvMonitProcedure.ProgramCorrectiveAction.values()){
                     String objName = obj.name();
-                    if (!"TBL".equalsIgnoreCase(objName))
-                      if (programFldNameList.length()>0) programFldNameList=programFldNameList+"|";
+                    if ( (!"TBL".equalsIgnoreCase(objName)) && (programFldNameList.length()>0) ) programFldNameList=programFldNameList+"|";
                       programFldNameList=programFldNameList+obj.getName();
                 }      
               }                  

@@ -57,11 +57,10 @@ public class RelatedObjects {
         jObj.put(RelatedObjectsElementNames.TABLE.getLabelName(),  table);
         jObj.put(RelatedObjectsElementNames.OBJECT_TYPE.getLabelName(),  objectType);
         jObj.put(RelatedObjectsElementNames.OBJECT.getLabelName(),  object);   
-        if (fldName!=null && fldValue!=null){            
-            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(LPArray.checkTwoArraysSameLength(fldValue, fldValue)[0]))
-                for (int iFld=0;iFld<fldName.length;iFld++){
-                    jObj.put(fldName[iFld],  fldValue[iFld]);}
-        }
+        if ( (fldName!=null && fldValue!=null) && (LPPlatform.LAB_TRUE.equalsIgnoreCase(LPArray.checkTwoArraysSameLength(fldValue, fldValue)[0])) )
+            for (int iFld=0;iFld<fldName.length;iFld++){
+                jObj.put(fldName[iFld],  fldValue[iFld]);}
+        
         mainStructureObject.jArrMainObject.add(jObj);
     }
 

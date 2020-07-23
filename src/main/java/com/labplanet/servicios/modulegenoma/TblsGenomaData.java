@@ -51,9 +51,7 @@ public class TblsGenomaData {
         public String getName(){
             return this.dbObjName;
         }
-        private String[] getDbFieldDefinition(){
-            return getDbFieldDefinitionPostgres();
-        }
+
 
         private String[] getDbFieldDefinitionPostgres(){
             return new String[]{this.dbObjName, this.dbObjTypePostgres};

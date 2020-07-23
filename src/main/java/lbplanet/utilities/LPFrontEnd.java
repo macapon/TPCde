@@ -59,7 +59,7 @@ public class LPFrontEnd {
     public static final Boolean servletStablishDBConection(HttpServletRequest request, HttpServletResponse response){
         
         boolean isConnected = false;                               
-        isConnected = Rdbms.getRdbms().startRdbms(LPTestingOutFormat.TESTING_USER, LPTestingOutFormat.TESTING_PW);      
+        isConnected = Rdbms.getRdbms().startRdbms();      
         if (!isConnected){      
             LPFrontEnd.servletReturnResponseError(request, response, 
                     LPPlatform.API_ERRORTRAPING_PROPERTY_DATABASE_NOT_CONNECTED, null, null);                                                                

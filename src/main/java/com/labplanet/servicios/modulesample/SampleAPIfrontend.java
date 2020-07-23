@@ -272,14 +272,12 @@ public class SampleAPIfrontend extends HttpServlet {
                 }                
                 whereFieldsNameArr = null;
                 whereFieldsValueArr = null; 
-                if (actionName.toUpperCase().equalsIgnoreCase(API_ENDPOINT_SAMPLES_INPROGRESS_LIST)){
-                  if (!whereFieldsName.contains(TblsData.Sample.FLD_STATUS.getName())){
-                      whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+" is not null");
-                      whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
-                      Object[] recEncrypted = LPPlatform.encryptString("RECEIVED");
-                      whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_STATUS.getName()+" in|");                
-                      whereFieldsValueArr=LPArray.addValueToArray1D(whereFieldsValueArr, "RECEIVED|"+recEncrypted[1]);                
-                  }
+                if (actionName.toUpperCase().equalsIgnoreCase(API_ENDPOINT_SAMPLES_INPROGRESS_LIST) && (!whereFieldsName.contains(TblsData.Sample.FLD_STATUS.getName())) ){
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+" is not null");
+                    whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
+                    Object[] recEncrypted = LPPlatform.encryptString("RECEIVED");
+                    whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_STATUS.getName()+" in|");                
+                    whereFieldsValueArr=LPArray.addValueToArray1D(whereFieldsValueArr, "RECEIVED|"+recEncrypted[1]);                                  
                 }
                 if ( (whereFieldsName!=null) && (whereFieldsValue!=null) ){
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));

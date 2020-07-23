@@ -11,7 +11,7 @@ import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
-import static java.lang.System.out;
+import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
@@ -65,7 +65,7 @@ if (1==1) return;*/
                 new String[]{TblsTesting.Script.FLD_TESTER_NAME.getName(), TblsTesting.Script.FLD_EVAL_NUM_ARGS.getName()},
                 new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(scriptTblInfo[0][0].toString())){
-            out.println("Script "+scriptId.toString()+" Not found"); 
+            Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
             return;
         }
         String testerName = scriptTblInfo[0][0].toString();
@@ -91,7 +91,7 @@ if (1==1) return;*/
             rd.forward(request,response);   
             return;                       
         default:
-            out.println("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
+            Logger.getLogger("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
             return;
         }
         

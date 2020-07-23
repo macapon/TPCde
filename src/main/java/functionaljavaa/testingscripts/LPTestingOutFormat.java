@@ -115,22 +115,20 @@ public class LPTestingOutFormat {
                 
         String[] updFldNames=new String[]{TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()};
         Object[] updFldValues=new Object[]{LPDate.getCurrentTimeStamp()};        
-        if (numEvaluationArguments>0){
-            if ("DB".equals(this.inputMode)){
-                Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
-                String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
-                updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName()});
-                updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_EVALUATION_POSIC], tstAssert.getEvalSyntaxisDiagnostic()});
-                if (numEvaluationArguments>1){
-                    updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(),
-                        TblsTesting.ScriptSteps.FLD_DYNAMIC_DATA.getName()});
-                    updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
-                        functionRelatedObjects.toJSONString()});                    
-                }
-                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
-                        updFldNames, updFldValues,
-                        new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});            
+        if (numEvaluationArguments>0 && ("DB".equals(this.inputMode)) ){
+            Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
+            String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
+            updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName()});
+            updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_EVALUATION_POSIC], tstAssert.getEvalSyntaxisDiagnostic()});
+            if (numEvaluationArguments>1){
+                updFldNames=LPArray.addValueToArray1D(updFldNames, new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(),
+                    TblsTesting.ScriptSteps.FLD_DYNAMIC_DATA.getName()});
+                updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
+                    functionRelatedObjects.toJSONString()});                    
             }
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
+                    updFldNames, updFldValues,
+                    new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});            
         }
         return fileContentBuilder;
     }   
@@ -338,6 +336,7 @@ public class LPTestingOutFormat {
 
     /**
      *
+     * @param cssClassName
      * @return
      */
     public static String tableStart(String cssClassName){        return "<table class=\""+ cssClassName+"\">";    }

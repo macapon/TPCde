@@ -760,47 +760,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
         }                
 }
 
-private Object[][] sampleStageDataArr(String schemaPrefix, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
-    if (sampleStageFldValue==null) return null; //new Object[][]{{}};
-    if (!LPArray.valueInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
-    String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
-    
-    switch (currentStage.toUpperCase()){
-        case "SAMPLING":
-            return new Object[][]{{TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName())].toString()}};
-        case "INCUBATION":
-            String[] incub1Flds=new String[]{TblsEnvMonitData.Sample.FLD_INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName(), 
-                TblsEnvMonitData.Sample.FLD_INCUBATION_START.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMPERATURE.getName(),
-                TblsEnvMonitData.Sample.FLD_INCUBATION_END.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_END_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_END_TEMPERATURE.getName()};
-            Object[] curFldArr=new Object[0];
-            for (String curFld: incub1Flds){
-                Integer fldPosic=LPArray.valuePosicInArray(sampleFldName, curFld);
-                if (fldPosic==-1){
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, "");
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, "");
-                }else{
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, curFld);
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, sampleFldValue[fldPosic].toString());
-                }
-                curFld.replace("incubation", "incubation2");
-                fldPosic=LPArray.valuePosicInArray(sampleFldName, curFld);
-                if (fldPosic==-1){
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, "");
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, "");
-                }else{
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, curFld);
-                    curFldArr=LPArray.addValueToArray1D(curFldArr, sampleFldValue[fldPosic].toString());
-                }                
-            }
-            return LPArray.array1dTo2d(curFldArr, 4);
-        case "PLATEREADING":
-            return null;
-        default: 
-            return null; //new Object[][]{{}};
-    }
-    
-    //return new Object[][]{{"hola", "adios"}};
-}
 
 private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
     if (sampleStageFldValue==null) return null; //new Object[][]{{}};

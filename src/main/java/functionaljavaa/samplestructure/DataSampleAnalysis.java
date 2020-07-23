@@ -379,8 +379,8 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
             }
         }
         // Spec Business Rule. Allow other analyses. End
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel + "Structure", actionName);
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel + "Structure", actionName);
+        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel + "Structure");
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel + "Structure");
         for (Integer inumLines = 0; inumLines < fieldName.length; inumLines++) {
             String currField = tableName + "." + fieldName[inumLines];
             boolean contains = Arrays.asList(specialFields).contains(currField);

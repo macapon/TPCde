@@ -30,7 +30,12 @@ public static class CellHelper<T> {
 
 public interface Indexed<E extends Enum> {
 
-    default public E getByIndexFran(int index) {
+    /**
+     *
+     * @param index
+     * @return
+     */
+    public default  E getByIndexFran(int index) {
         if (!this.getClass().isEnum()) {
             //not implemented on enum, you can do as you like here
         }

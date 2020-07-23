@@ -52,9 +52,7 @@ public class AppHeaderAPI extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
-        }
+
      
         private final String name;
         private final String mandatoryParams; 
@@ -127,8 +125,7 @@ public class AppHeaderAPI extends HttpServlet {
                     }                                 
                     token=null;
                     LPFrontEnd.servletReturnSuccess(request, response, personInfoJsonObj);
-                    return;  
-//                default:      
+//                default:
 //                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                      
             }            
         }catch(Exception e){            

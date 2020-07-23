@@ -183,7 +183,7 @@ public class SqlStatement {
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*")) return Integer.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.INTEGER.toString()+"*", ""));
         if (textSpecs.toUpperCase().startsWith(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*")) return Boolean.valueOf(f.replace(WHERE_FLDVALUES_ARRAY_TYPES.BOOLEAN.toString()+"*", ""));
         
-        return f.toString();
+        return f;
     }
     private String  buildUpdateSetFields(String[] setFieldNames) {
         StringBuilder updateSetSectionStr = new StringBuilder(0);

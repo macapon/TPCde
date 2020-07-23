@@ -74,9 +74,7 @@ public class AuthenticationAPIParams extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.successMessageCode};
-        }
+
         /**
          * @return the arguments
          */
@@ -86,7 +84,7 @@ public class AuthenticationAPIParams extends HttpServlet {
      
         private final String name;
         private final String successMessageCode;  
-        public  LPAPIArguments[] arguments;
+        private  LPAPIArguments[] arguments;
 
     }
     

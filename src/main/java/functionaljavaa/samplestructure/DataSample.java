@@ -133,12 +133,12 @@ public class DataSample {
     /**
      *
      */
-    public static String[] mandatoryFields = null;
+    public  String[] mandatoryFields = null;
 
     /**
      *
      */
-    public static Object[] mandatoryFieldsValue = null;
+    public  Object[] mandatoryFieldsValue = null;
 
     DataDataIntegrity labIntChecker = new DataDataIntegrity();
     DataSampleAnalysisStrategy smpAna;
@@ -248,8 +248,8 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                 new String[]{TblsCnfg.Sample.FLD_CODE.getName(), TblsCnfg.Sample.FLD_CODE_VERSION.getName()}, new Object[]{sampleTemplate, sampleTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_CONFIG_CODE.getErrorCode(), new Object[]{sampleTemplate, sampleTemplateVersion, schemaConfigName, diagnosis[5]});    
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName(), actionName);
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName(), actionName);
+        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName());
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, sampleLevel+DataSampleProperties.SUFFIX_SAMPLESTRUCTURE.getPropertyName());
         Integer specialFieldIndex = -1;
         
         for (Integer inumLines=0;inumLines<sampleFieldName.length;inumLines++){
@@ -583,7 +583,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @return
      */
     
-    private String specialFieldCheckSampleStatus( String schemaPrefix, String template, Integer templateVersion){                      
+    public String specialFieldCheckSampleStatus_NOUSADO( String schemaPrefix, String template, Integer templateVersion){                      
         String myDiagnoses = "";        
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
@@ -624,7 +624,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @param templateVersion
      * @return
      */
-    private String specialFieldCheckSampleSpecCode( String schemaPrefix, String template, Integer templateVersion){ 
+    public String specialFieldCheckSampleSpecCode_NOUSADO( String schemaPrefix, String template, Integer templateVersion){ 
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 
@@ -745,7 +745,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
 
         smpAudit.sampleAliquotingAuditAdd(schemaPrefix, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_ALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId,
                 sampleId, null, null, 
-                fieldsOnLogSample, null);
+                fieldsOnLogSample);
 
         return diagnoses;
     }
@@ -804,7 +804,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             SampleAudit smpAudit = new SampleAudit();
             smpAudit.sampleAliquotingAuditAdd(schemaPrefix, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliq.TBL.getName(), aliquotId, null, aliquotId, 
                     sampleId, null, null, 
-                    LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, ":"), null);        
+                    LPArray.joinTwo1DArraysInOneOf1DString(smpVolFldName, smpVolFldValue, ":"));        
         }
         if (!actionEnabledSampleSubAliquotVolumeRequired.toUpperCase().contains(LPPlatform.BUSINESS_RULES_VALUE_ENABLED)){
             Object[][] aliquotInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAliq.TBL.getName(), new String[] {TblsData.SampleAliq.FLD_ALIQUOT_ID.getName()}, new Object[]{aliquotId}, mandatoryAliquotFields);
@@ -829,7 +829,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         SampleAudit smpAudit = new SampleAudit();
         smpAudit.sampleAliquotingAuditAdd(schemaPrefix, token, SampleAudit.SampleAuditEvents.LOG_SAMPLE_SUBALIQUOT.toString(), TblsData.SampleAliqSub.TBL.getName(), subaliquotId, subaliquotId, aliquotId,
                 sampleId, null, null, 
-                fieldsOnLogSample, null);
+                fieldsOnLogSample);
 
         return diagnoses;
     }

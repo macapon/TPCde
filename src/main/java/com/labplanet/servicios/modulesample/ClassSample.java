@@ -186,7 +186,7 @@ public class ClassSample {
             case REVIEWRESULT:
                 Integer objectId = (Integer) argValues[0];
                 String objectLevel = argValues[1].toString();
-                sampleId = null; Integer testId = null; resultId = null;
+                Integer testId = null; resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
@@ -198,7 +198,7 @@ public class ClassSample {
             case CANCELRESULT:
                 objectId = (Integer) argValues[0];
                 objectLevel = argValues[1].toString();
-                sampleId = null; testId = null; resultId = null;
+                testId = null; resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
@@ -210,7 +210,7 @@ public class ClassSample {
             case UNCANCELRESULT:
                 objectId = (Integer) argValues[0];
                 objectLevel = argValues[1].toString();
-                sampleId = null; testId = null; resultId = null;
+                testId = null; resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}

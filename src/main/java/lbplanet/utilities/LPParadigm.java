@@ -14,16 +14,6 @@ import java.util.Arrays;
 public class LPParadigm {
     private LPParadigm(){    throw new IllegalStateException("Utility class");}    
     
-    public enum ListOfErrorTrapping{
-        
-        ;
-        private ListOfErrorTrapping(String cName, String eName){
-            this.className=cName;
-            this.enumName=eName;
-        }        
-        private final String className;
-        private final String enumName;
-    }
     
     
     public enum ParadigmErrorTrapping{ 

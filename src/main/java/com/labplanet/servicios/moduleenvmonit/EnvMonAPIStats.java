@@ -87,7 +87,7 @@ public class EnvMonAPIStats extends HttpServlet {
             return arguments;
         }     
         private final String name;
-        public  LPAPIArguments[] arguments;
+        private  LPAPIArguments[] arguments;
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {

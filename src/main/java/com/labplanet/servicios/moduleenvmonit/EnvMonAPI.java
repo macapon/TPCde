@@ -84,9 +84,7 @@ public class EnvMonAPI extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.successMessageCode};
-        }
+
         /**
          * @return the arguments
          */
@@ -95,7 +93,7 @@ public class EnvMonAPI extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode;  
-        public  LPAPIArguments[] arguments;
+        private  LPAPIArguments[] arguments;
     }
     
     public enum EnvMonQueriesAPIEndpoints{
@@ -131,9 +129,7 @@ public class EnvMonAPI extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.successMessageCode};
-        }
+
         /**
          * @return the arguments
          */
@@ -142,7 +138,7 @@ public class EnvMonAPI extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode; 
-        public  LPAPIArguments[] arguments;
+        private  LPAPIArguments[] arguments;
     }    
     
     /**

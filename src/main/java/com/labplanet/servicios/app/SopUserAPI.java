@@ -52,9 +52,7 @@ public class SopUserAPI extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
-        }
+
        /**
          * @return the arguments
          */
@@ -65,7 +63,7 @@ public class SopUserAPI extends HttpServlet {
         private final String mandatoryParams; 
         private final String optionalParams; 
         private final String successMessageCode;  
-        public  LPAPIArguments[] arguments;
+        private  LPAPIArguments[] arguments;
     }
     /**
      *

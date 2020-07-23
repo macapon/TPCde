@@ -25,7 +25,7 @@ public class PoolC3P0 {
  // Esta es la fuente de datos que conecta con la base de datos
  private final ComboPooledDataSource cpds;
     
-    transient boolean is_closed = false;   
+    transient boolean isClosed = false;   
  /**
   * Crea el constructor del pool, notara que este constructor es privado
   * esto con el fin de que podamos controlar cuando se crea el pool

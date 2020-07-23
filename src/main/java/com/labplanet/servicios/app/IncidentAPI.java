@@ -78,9 +78,7 @@ public class IncidentAPI extends HttpServlet {
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams, this.optionalParams, this.successMessageCode};
-        }
+
        /**
          * @return the arguments
          */
@@ -91,7 +89,7 @@ public class IncidentAPI extends HttpServlet {
         private final String mandatoryParams; 
         private final String optionalParams; 
         private final String successMessageCode;       
-        public  LPAPIArguments[] arguments;
+        private  LPAPIArguments[] arguments;
     }
     
     public enum IncidentAPIfrontendEndpoints{
@@ -110,9 +108,7 @@ public class IncidentAPI extends HttpServlet {
         public String getMandatoryParams(){
             return this.mandatoryParams;
         }
-        private String[] getEndpointDefinition(){
-            return new String[]{this.name, this.mandatoryParams};
-        }        
+   
         private final String name;
         private final String mandatoryParams; 
         private final String optionalParams; 

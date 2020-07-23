@@ -230,8 +230,8 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, tableName, new String[]{LPPlatform.SCHEMA_CONFIG,"config_version"}, new Object[]{projectTemplate, projectTemplateVersion});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString())) return diagnosis;
 
-        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure", actionName);
-        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, "projectStructure", actionName);
+        String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure");
+        String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, "projectStructure");
         
         String specialFieldsCheck = "";
         Integer specialFieldIndex = -1;

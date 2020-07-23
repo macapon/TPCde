@@ -29,7 +29,6 @@ import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import static lbplanet.utilities.LPPlatform.trapMessage;
-import org.json.simple.JSONArray;
 
 
 /**
@@ -39,7 +38,7 @@ import org.json.simple.JSONArray;
 
 public class DataSampleStages {
 
-String LABEL_MSG_ERROR="Error:";
+String labelMsgError="Error:";
     
 Boolean isSampleStagesEnable=false;
 Boolean isSampleStagesTimingCaptureEnable=false;
@@ -233,7 +232,7 @@ Object[][] firstStageData=new Object[0][0];
             engine.eval(new FileReader(fileName));
           } catch (ScriptException ex) {
             Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-            return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", LABEL_MSG_ERROR+ex.getMessage()};
+            return new Object[]{LPPlatform.LAB_FALSE, "FileNotFoundException", labelMsgError+ex.getMessage()};
           }
         } catch (FileNotFoundException ex) {
           try{
@@ -243,7 +242,7 @@ Object[][] firstStageData=new Object[0][0];
             engine.eval(new FileReader(fileName));              
           } catch (FileNotFoundException ex2) {              
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex2);
-          return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", LABEL_MSG_ERROR+ex2.getMessage()
+          return new Object[]{LPPlatform.LAB_TRUE, "FileNotFoundException", labelMsgError+ex2.getMessage()
                   +"(tried two paths: "+"/app/" + schemaPrefix + "-sample-stage.js"+" and "+LOD_JAVASCRIPT_LOCAL_FORMULA.replace(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX, schemaPrefix)+") "};          
           }
         }
@@ -253,21 +252,20 @@ Object[][] firstStageData=new Object[0][0];
           result = invocable.invokeFunction(functionName, sampleId, jsonarrayf);
         } catch (NoSuchMethodException ex) {
           Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);      
-          return new Object[]{LPPlatform.LAB_FALSE, "NoSuchMethodException", LABEL_MSG_ERROR+ex.getMessage()};
+          return new Object[]{LPPlatform.LAB_FALSE, "NoSuchMethodException", labelMsgError+ex.getMessage()};
         }
         if (result.toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)) return new Object[]{LPPlatform.LAB_TRUE};
         return new Object[]{LPPlatform.LAB_FALSE, result};
       } catch (ScriptException ex) {
         Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-        return new Object[]{LPPlatform.LAB_FALSE, "ScriptException", LABEL_MSG_ERROR+ex.getMessage()};
+        return new Object[]{LPPlatform.LAB_FALSE, "ScriptException", labelMsgError+ex.getMessage()};
       }
     }
 
     public Object[] dataSampleStagesTimingCapture(String schemaPrefix, Integer sampleId, String currStage, String phase) {
         if (!this.isSampleStagesTimingCaptureEnable)
            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The business rule <*1*> is not enable therefore stage change timing capture is not enabled for procedure <*2*>", new Object[]{BUSINESS_RULE_SAMPLE_STAGE_TIMING_CAPTURE_MODE, schemaPrefix});
-        if (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages)))
-            if ((LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1))
+        if ( (!("ALL".equalsIgnoreCase(this.isSampleStagesTimingCaptureStages))) && (LPArray.valuePosicInArray(this.isSampleStagesTimingCaptureStages.split("\\|"), currStage)==-1) )
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The stage <*1*> is not declared for timing capture for procedure <*2*>", new Object[]{currStage, schemaPrefix});
         if (SampleStageTimingCapturePhases.START.toString().equalsIgnoreCase(phase)){
             return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 

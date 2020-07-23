@@ -5,7 +5,6 @@
  */
 package lbplanet.labelling;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import com.google.zxing.BarcodeFormat;
@@ -16,6 +15,7 @@ import com.google.zxing.WriterException;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.UnsupportedEncodingException;
+import java.util.EnumMap;
 
 /**
  *
@@ -34,7 +34,7 @@ public class QRcode {
             String qrCodeData = "www.chillyfacts.com";
             //String filePath = "D:\\QRCODE\\chillyfacts.png";
             String charset = "UTF-8"; // or "ISO-8859-1"
-            Map < EncodeHintType, ErrorCorrectionLevel > hintMap = new HashMap < EncodeHintType, ErrorCorrectionLevel > ();
+            Map < EncodeHintType, ErrorCorrectionLevel > hintMap = new EnumMap < EncodeHintType, ErrorCorrectionLevel > (EncodeHintType.class);
             hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);
             BitMatrix matrix = new MultiFormatWriter().encode(
                 new String(qrCodeData.getBytes(charset), charset),

@@ -11,7 +11,6 @@ import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
 import java.io.PrintWriter;
-import static java.lang.System.out;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -57,7 +56,7 @@ public class TesterFromUploadFile extends HttpServlet {
                 HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeaderTester(headerInfo);
                 if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                     fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
-                    out.println(fileContentBuilder.toString()); 
+                    Logger.getLogger(fileContentBuilder.toString()); 
                     return;
                 }                        
                 String testerName = (String) csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TESTER_NAME_TAG_NAME);                           
@@ -77,7 +76,7 @@ public class TesterFromUploadFile extends HttpServlet {
                     rd.forward(request,response);   
                     return;                       
                 default:
-                    out.println("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
+                    Logger.getLogger("Tester name not recognized, "+testerName+". The tester cannot be completed"); 
                     return;
                 }
             }

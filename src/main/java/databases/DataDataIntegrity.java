@@ -62,7 +62,7 @@ public class DataDataIntegrity {
      * @param actionName
      * @return
      */
-    public String[] getStructureSpecialFields(String schemaName, String tableName, String actionName){
+    public String[] getStructureSpecialFields(String schemaName, String tableName){
         String[] myMandatoryFields = new String[0];
         String schemaDataName = LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
         
@@ -82,7 +82,7 @@ public class DataDataIntegrity {
      * @param actionName
      * @return
      */
-    public String[] getStructureSpecialFieldsFunction(String schemaName, String tableName, String actionName){
+    public String[] getStructureSpecialFieldsFunction(String schemaName, String tableName){
         String[] myMandatoryFields = new String[0];
         String schemaDataName = LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
         

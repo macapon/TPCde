@@ -121,7 +121,7 @@ public class ConfigSpecRule {
     private Boolean maxControlIsStrict=null;
     private Boolean quantitativeHasControl=false;  
     String ruleRepresentation=null;
-    private String quantitativeRuleRepresentation=null;        
+    private final String quantitativeRuleRepresentation=null;        
     private String qualitativeRuleRepresentation=null;
     
     private String qualitativeRule="";
@@ -168,7 +168,7 @@ public class ConfigSpecRule {
             qualitRule = qualitativeRules.valueOf(rule.toUpperCase());
         }catch(Exception e){
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule);          
-            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitRule.getAllRules()));          
+            errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitativeRules.getAllRules()));          
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED.getErrorCode(), errorDetailVariables);             
         }
 
@@ -198,7 +198,7 @@ public class ConfigSpecRule {
                     return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, qualitRule.getSuccessCode(), errorDetailVariables);}                          
             default: 
                 errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, rule);          
-                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitRule.getAllRules()));          
+                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, Arrays.toString(qualitativeRules.getAllRules()));          
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, qualitativeRulesErrors.QUALITATIVE_RULE_NOT_RECOGNIZED.getErrorCode(), errorDetailVariables);    
         }
     }
@@ -400,30 +400,30 @@ public class ConfigSpecRule {
                       this.maxSpecIsStrict=false;
               }        
           }   
-          StringBuilder ruleRepresentation = new StringBuilder(0);
+          StringBuilder ruleRepr = new StringBuilder(0);
           if (this.minSpec!=null){
-            if (this.minSpecIsStrict)ruleRepresentation.append("<");
-            ruleRepresentation.append(this.minSpec);
+            if (this.minSpecIsStrict)ruleRepr.append("<");
+            ruleRepr.append(this.minSpec);
           }
           if (this.minControl!=null){
-            ruleRepresentation.append(" ");
-            if (this.minControlIsStrict)ruleRepresentation.append("<");
-            ruleRepresentation.append(this.minControl);
+            ruleRepr.append(" ");
+            if (this.minControlIsStrict)ruleRepr.append("<");
+            ruleRepr.append(this.minControl);
           }
 
-          ruleRepresentation.append(" R ");
+          ruleRepr.append(" R ");
 
           if (this.maxControl!=null){
-            ruleRepresentation.append(" ");
-            if (this.maxControlIsStrict)ruleRepresentation.append(">");
-            ruleRepresentation.append(this.maxControl);
+            ruleRepr.append(" ");
+            if (this.maxControlIsStrict)ruleRepr.append(">");
+            ruleRepr.append(this.maxControl);
           }
           if (this.maxSpec!=null){
-            ruleRepresentation.append(" ");            
-            if (this.maxSpecIsStrict)ruleRepresentation.append(">");
-            ruleRepresentation.append(this.maxSpec);
+            ruleRepr.append(" ");            
+            if (this.maxSpecIsStrict)ruleRepr.append(">");
+            ruleRepr.append(this.maxSpec);
           }
-          this.quantitativeRuleRepresentation=ruleRepresentation.toString();
+          this.ruleRepresentation=ruleRepr.toString();
           this.ruleRepresentation=this.quantitativeRuleRepresentation;
           break;
         default:

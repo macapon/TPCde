@@ -22,7 +22,7 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class SampleAPIlogic {
-    public static JSONObject performAction  (HttpServletRequest request, Token token, String schemaPrefix, DataSample smp, String actionName, SampleAPIParams.SampleAPIEndpoints endPoint, RelatedObjects rObj)  {
+    public static JSONObject performAction  (HttpServletRequest request, Token token, String schemaPrefix, DataSample smp, SampleAPIParams.SampleAPIEndpoints endPoint, RelatedObjects rObj)  {
         
     
         //case TESTASSIGNMENT:
