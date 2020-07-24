@@ -79,7 +79,7 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode;  
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }
 
     /**
@@ -193,7 +193,6 @@ public class GenomaStudyObjectsVariablesAPI extends HttpServlet {
             }  
             Object[] messageDynamicData=new Object[]{};
             RelatedObjects relatedObject=RelatedObjects.getInstance();
-            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());    
             switch (endPoint){
                 case ADD_VARIABLE_SET_TO_STUDY_OBJECT:     
                     String variableSetName=request.getParameter(GenomaProjectAPIParamsList.VARIABLE_SET_NAME.getParamName());

@@ -9,13 +9,13 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.TblsDataAudit;
 import databases.TblsProcedure;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import java.util.Arrays;
-import javax.sql.rowset.CachedRowSet;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 
@@ -348,7 +348,7 @@ public class ProcedureDefinitionToInstance {
         JSONObject jsonObj = new JSONObject();
         String schemaNameDestinationProc=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE);
         Object[][] procEventSopsRecordsSource = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProc, TblsProcedure.ProcedureEvents.TBL.getName(), 
-                new String[]{TblsProcedure.ProcedureEvents.FLD_SOP.getName()+" is not null"}, new Object[]{""}, 
+                new String[]{TblsProcedure.ProcedureEvents.FLD_SOP.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{""}, 
                 FIELDS_TO_RETRIEVE_PROC_EVENT_DESTINATION.split("\\|"), new String[]{"sop"});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procEventSopsRecordsSource[0][0].toString())){
           jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procEventSopsRecordsSource));
@@ -403,7 +403,6 @@ public class ProcedureDefinitionToInstance {
         JSONObject jsonObj = new JSONObject();
         
         String methodName = "createDataBaseSchemas";       
-        String newEntry = "";
         String[] schemaNames = new String[]{LPPlatform.SCHEMA_CONFIG, LPPlatform.SCHEMA_DATA, LPPlatform.SCHEMA_DATA_AUDIT};
          jsonObj.put(JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION, schemaNames.length);     
         for (String fn:schemaNames){
@@ -415,7 +414,7 @@ public class ProcedureDefinitionToInstance {
             configSchemaName = LPPlatform.buildSchemaName(configSchemaName, fn);
             String configSchemaScript = "CREATE SCHEMA "+configSchemaName+"  AUTHORIZATION "+SCHEMA_AUTHORIZATION_ROLE+";"+
                     " GRANT ALL ON SCHEMA "+configSchemaName+" TO "+SCHEMA_AUTHORIZATION_ROLE+ ";";     
-            CachedRowSet prepRdQuery = Rdbms.prepRdQuery(configSchemaScript, new Object[]{});
+            Rdbms.prepRdQuery(configSchemaScript, new Object[]{});
             
             // La idea es no permitir ejecutar prepUpQuery directamente, por eso es privada y no publica.            
                 //Integer prepUpQuery = Rdbms.prepUpQuery(configSchemaScript, new Object[0]);

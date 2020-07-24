@@ -28,15 +28,16 @@ import javax.servlet.http.HttpServletResponse;
  * @author Administrator
  */
 public class BatchAPI extends HttpServlet {
+    static final String COMMON_PARAMS="incidentId|note";
     public enum BatchAPIEndpoints{
         /**
          *
          */
         CREATE_BATCH_ARRAY("CREATEBATCHARRAY", "incidentTitle|incidentDetail", "", "incidentNewIncident_success"),
-        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "incidentId|note", "", "incidentConfirmIncident_success"),
-        CLOSE_INCIDENT("CLOSE_INCIDENT", "incidentId|note", "", "incidentClosedIncident_success"),
-        REOPEN_INCIDENT("REOPEN_INCIDENT", "incidentId|note", "", "incidentReopenIncident_success"),
-        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", "incidentId|note", "", "incidentAddNoteToIncident_success"),
+        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", COMMON_PARAMS, "", "incidentConfirmIncident_success"),
+        CLOSE_INCIDENT("CLOSE_INCIDENT", COMMON_PARAMS, "", "incidentClosedIncident_success"),
+        REOPEN_INCIDENT("REOPEN_INCIDENT", COMMON_PARAMS, "", "incidentReopenIncident_success"),
+        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", COMMON_PARAMS, "", "incidentAddNoteToIncident_success"),
         ;
         private BatchAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
             this.name=name;
@@ -151,12 +152,6 @@ public class BatchAPI extends HttpServlet {
             Token token = new Token(finalToken);
 
            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
-           
-/*            con = Rdbms.createTransactionWithSavePoint();
-            if (con==null){
-                 response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
-                 return;
-            }*/
             Rdbms.setTransactionId(schemaPrefix);
             try (PrintWriter out = response.getWriter()) {
                 Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
@@ -199,30 +194,12 @@ public class BatchAPI extends HttpServlet {
                     default:
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 }    
-/*                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-                    Rdbms.rollbackWithSavePoint();
-                    if (!con.getAutoCommit()){
-                        con.rollback();
-                        con.setAutoCommit(true);}                
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, dataSample);   
-                }else{
-                    LPFrontEnd.servletReturnResponseErrorLPTrueDiagnostic(request, response, dataSample);
-                }       
-*/                
             }finally{try {
                 con.close();
             } catch (SQLException ex) {
                 Logger.getLogger(BatchAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 }
-/*                try {
-        con.rollback();
-        con.setAutoCommit(true);
-        }
-        catch (SQLException ex) {
-        Logger.getLogger(BatchAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }
-         */
             }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

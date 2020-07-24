@@ -134,14 +134,6 @@ public class SopUserAPI extends HttpServlet {
             }
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
             Object[] messageDynamicData=new Object[]{};
-/*       Connection con = Rdbms.createTransactionWithSavePoint();    
-        try {
-            con.rollback();
-            con.setAutoCommit(true);    
-        } catch (SQLException ex) {
-            Logger.getLogger(SopUserAPI.class.getName()).log(Level.SEVERE, null, ex);
-        }        
-*/
         RelatedObjects rObj=RelatedObjects.getInstance();
         Object[] userSopDiagnostic=new Object[0];
         try (PrintWriter out = response.getWriter()) {        
@@ -162,12 +154,7 @@ public class SopUserAPI extends HttpServlet {
                 return;                                          
             }
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userSopDiagnostic[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-                if (!con.getAutoCommit()){
-                    con.rollback();
-                    con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, userSopDiagnostic[4].toString(), messageDynamicData);                
-                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, userSopDiagnositc);   
             }else{                
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
@@ -179,7 +166,6 @@ public class SopUserAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-                //con.close();
                 Rdbms.closeRdbms();   
             } catch (Exception ignore) {
             }

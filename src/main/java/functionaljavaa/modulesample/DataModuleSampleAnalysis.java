@@ -67,8 +67,8 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
 if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         
-        Integer specialFieldIndex = Arrays.asList(DataSample.mandatoryFields).indexOf(TblsData.SampleAnalysis.FLD_STATUS.getName());
-        String status = DataSample.mandatoryFieldsValue[specialFieldIndex].toString();
+        Integer specialFieldIndex = Arrays.asList(dataSample.mandatoryFields).indexOf(TblsData.SampleAnalysis.FLD_STATUS.getName());
+        String status = dataSample.mandatoryFieldsValue[specialFieldIndex].toString();
         if (status.length() == 0) return "ERROR: The parameter status cannot be null";
         
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SampleRules.TBL.getName(), 

@@ -5,8 +5,6 @@
  */
 package functionaljavaa.samplestructure;
 
-import org.json.simple.JSONArray;
-
 /**
  *
  * @author User

@@ -66,7 +66,6 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         }             
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
 
 //        Token token = new Token(finalToken);
 

@@ -67,7 +67,6 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         }             
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
 
         GenomaVariableAPIFrontEndEndPoints endPoint = null;
 //        Object[] actionDiagnoses = null;
@@ -84,7 +83,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         switch (endPoint){
         case GET_ACTIVE_CONFIG_VARIABLE_SET:
             Rdbms.stablishDBConection();
-            
+            break;
         case GET_VARIABLE_SET_VARIABLES_ID: 
             areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaConfigVariableAPIFrontend.GenomaVariableAPIFrontEndEndPoints.GET_VARIABLE_SET_VARIABLES_ID.getMandatoryFields().split("\\|"));
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){

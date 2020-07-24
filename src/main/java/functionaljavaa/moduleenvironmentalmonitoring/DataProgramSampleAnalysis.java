@@ -57,9 +57,9 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                     Object[][] sampleSpecInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
                             new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, specMissingFields);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleSpecInfo[0][0].toString())){return LPArray.array2dTo1d(sampleSpecInfo);}
-                      for (String specMissingField : specMissingFields) {
+//                      for (String specMissingField : specMissingFields) {
                         // Pasar de sampleSpecInfo a specFields estando los datos en  specMissingFields
-                      }
+//                      }
                 }
                 String[] specWhereFieldName=LPArray.convertObjectArrayToStringArray(LPArray.getColumnFromArray2D(specFields, 2));
                 Object[] specWhereFieldValue=LPArray.getColumnFromArray2D(specFields, 1);
@@ -113,8 +113,8 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
 if (1 == 1) 
             return"ERROR: specialFieldCheckSampleAnalysisAnalyst not implemented yet.";
         
-        Integer specialFieldIndex = Arrays.asList(DataSample.mandatoryFields).indexOf(TblsData.SampleAnalysis.FLD_STATUS.getName());
-        String status = DataSample.mandatoryFieldsValue[specialFieldIndex].toString();
+        Integer specialFieldIndex = Arrays.asList(dataSample.mandatoryFields).indexOf(TblsData.SampleAnalysis.FLD_STATUS.getName());
+        String status = dataSample.mandatoryFieldsValue[specialFieldIndex].toString();
         if (status.length() == 0) return "ERROR: The parameter status cannot be null";
         
         Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SampleRules.TBL.getName(), 

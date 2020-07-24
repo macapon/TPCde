@@ -295,8 +295,6 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                 DataSampleAnalysis.sampleAnalysisEvaluateStatus(schemaPrefix, token, sampleId, testId, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_ENTERED.toString(), Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString()));
             }
-//            diagnoses=UserMethod.newUserMethodEntry(schemaPrefix, userName, userRole, analysis, methodName, methodVersion, sampleId, testId, appSessionId);
-//            return diagnoses;
         }
         Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(schemaPrefix, sampleSpecCode, sampleSpecCodeVersion, sampleSpecVariationName, analysis, methodName, methodVersion, paramName, 
                 new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(), TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName(), 
@@ -420,9 +418,7 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
 //                UserMethod.newUserMethodEntry(schemaPrefix, userName, userRole, analysis, methodName, methodVersion, sampleId, testId, appSessionId);
                 return diagnoses;
         }
-//            default:
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_SpecRuleNotImplemented", new Object[]{resultId.toString(), schemaDataName, ruleType});
-//        }
     }
     
     /**

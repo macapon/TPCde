@@ -12,7 +12,6 @@ import databases.Token;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 
 /**

@@ -14,7 +14,6 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 
 /**

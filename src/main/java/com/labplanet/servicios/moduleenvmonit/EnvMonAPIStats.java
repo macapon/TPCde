@@ -87,7 +87,7 @@ public class EnvMonAPIStats extends HttpServlet {
             return arguments;
         }     
         private final String name;
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }
 
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -103,11 +103,9 @@ public class EnvMonAPIStats extends HttpServlet {
         }             
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
             
         //Token token = new Token(finalToken);
         EnvMonAPIstatsEndpoints endPoint = null;
-        Object[] actionDiagnoses = null;
         try{
             endPoint = EnvMonAPIstatsEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
@@ -210,7 +208,6 @@ public class EnvMonAPIStats extends HttpServlet {
                     jObjMainObject=getKPIs(schemaPrefix, objGroupName, tblCategory, tblName, whereFieldsNameArr, whereFieldsValueArr, 
                         fldToRetrieve, dataGrouped);
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
-                    return;
             }
         }catch(Exception e){   
  /*           try {

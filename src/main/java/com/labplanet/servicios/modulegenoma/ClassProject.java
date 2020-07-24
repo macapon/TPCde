@@ -27,14 +27,12 @@ public class ClassProject {
     private Boolean functionFound=false;
 
     public ClassProject(HttpServletRequest request, Token token, String schemaPrefix, GenomaProjectAPIEndPoints endPoint){
-        Object[] dynamicDataObjects=new Object[]{};
         RelatedObjects rObj=RelatedObjects.getInstance();
 
         GenomaDataProject prj = new GenomaDataProject();
         GenomaDataStudy prjStudy = new GenomaDataStudy();
         String projectName = "";
         
-        String language="";
         Object[] actionDiagnoses = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;

@@ -128,10 +128,7 @@ public class Parameter {
         File[] transFiles = propertiesFiles(fileName);
         for (File f: transFiles)
         {
-            String translationPath = "view.text.translation." + f.getName().replace(".properties", "");
             String fileidt = translationsDir + "\\" + f.getName();
-
-            ResourceBundle prop = ResourceBundle.getBundle(translationPath);        
             try{    
                 return " Exists the tag in " + f.getName() + " for the entry " + entryName + " and value " + entryValue;
             }catch(MissingResourceException ex)

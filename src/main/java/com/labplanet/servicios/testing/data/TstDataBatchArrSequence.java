@@ -12,7 +12,6 @@ import databases.Rdbms;
 import functionaljavaa.batch.BatchArray;
 import java.io.IOException;
 import java.io.PrintWriter;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -22,17 +21,18 @@ import javax.servlet.http.HttpServletResponse;
  * @author Administrator
  */
 public class TstDataBatchArrSequence extends HttpServlet {
-
+        String literalObjectsInArray=". Objects in the array: ";
+    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
+
     @SuppressWarnings("empty-statement")
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws IOException {
         response = LPTestingOutFormat.responsePreparation(response);        
         String csvFileName = "tstDataBatchArray.txt"; 
         String fileContent = "";                          
@@ -123,21 +123,21 @@ public class TstDataBatchArrSequence extends HttpServlet {
                 
                 //System.out.println(mb.name + " " + mb.getBatchOperator() + " " + comment);
                 
-                out.println("Adding Sample 1 in position 11x1: " + mb.batchArrayAddObjectInPosic(1, 1, "Sample 1") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
-                out.println("Adding Sample 2 in position 9x1: " + mb.batchArrayAddObjectInPosic(2, 1, "Sample 2") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
-                out.println("Adding Sample 3 in position 9x1: " + mb.batchArrayAddObjectInPosic(1, 2, "Sample 3") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 1 in position 11x1: " + mb.batchArrayAddObjectInPosic(1, 1, "Sample 1") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 2 in position 9x1: " + mb.batchArrayAddObjectInPosic(2, 1, "Sample 2") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 3 in position 9x1: " + mb.batchArrayAddObjectInPosic(1, 2, "Sample 3") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 4 in position 9x1 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 2, "Sample 4") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 4 in position 9x1 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 2, "Sample 4") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 5 in position 10x10 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 10, "Sample 5") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 5 in position 10x10 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 10, "Sample 5") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 5 in position 10x2 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 2, "Sample 5") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 5 in position 10x2 by override: " + mb.batchArrayAddObjectInPosicOverride(10, 2, "Sample 5") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
 
-                out.println("Adding Sample 6 in position 10x2 without override: " + mb.batchArrayAddObjectInPosic(10, 2, "Sample 6") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 6 in position 10x2 without override: " + mb.batchArrayAddObjectInPosic(10, 2, "Sample 6") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                                 
-                out.println("Adding Sample 6 in position 1x1 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 1, "Sample 6") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 6 in position 1x1 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 1, "Sample 6") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
-                out.println("Adding Sample 7 in position 2x5 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 5, "Sample 7") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 7 in position 2x5 by override: " + mb.batchArrayAddObjectInPosicOverride(2, 5, "Sample 7") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
 
                 out.println("The object in position 9x1 is: " + mb.getBatchPositionContent(1, 1) + "<br>");
                 
@@ -145,19 +145,15 @@ public class TstDataBatchArrSequence extends HttpServlet {
                 
                 out.println("The Sample 4 was found in " + mb.searchStringContent("Sample 4").size() + " positions." + "<br>");
                 
-                mb.searchStringContent("Sample 4").forEach((Object al) -> {
-                    out.println("    " + al + "<br>");
-                });
+                mb.searchStringContent("Sample 4").forEach((Object al) -> out.println("    " + al + "<br>"));
                 
                 out.println("The Sample 1 was found in " + mb.searchStringContent("Sample 1").size() + " positions." + "<br>");
                 
-                out.println("Adding Sample 4 again in position 1x2 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 2, "Sample 4") + ". Objects in the array: " + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
+                out.println("Adding Sample 4 again in position 1x2 by override: " + mb.batchArrayAddObjectInPosicOverride(1, 2, "Sample 4") + literalObjectsInArray + mb.getBatchTotalObjets() + " / " + mb.getNumTotalObjects() + "<br>");
                 
                 out.println("The Sample 4 was found in " + mb.searchStringContent("Sample 4").size() + " positions." + "<br>");
                 
-                mb.searchStringContent("Sample 4").forEach(al -> {
-                    out.println("    " + al + "<br>");
-                });
+                mb.searchStringContent("Sample 4").forEach(al -> out.println("    " + al + "<br>"));
                 batchContent = myBatchArray[0][0].getBatchContent();
                 
                 batchContent1d = LPArray.array2dTo1d(batchContent);
@@ -202,7 +198,7 @@ public class TstDataBatchArrSequence extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
         try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
+        }catch(IOException e){
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
         }
     }
@@ -217,7 +213,7 @@ public class TstDataBatchArrSequence extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
         try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
+        }catch(IOException e){
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
         }
     }

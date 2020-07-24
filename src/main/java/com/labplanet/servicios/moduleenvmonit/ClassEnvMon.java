@@ -11,8 +11,6 @@ import databases.Token;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
-import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysisResult;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import java.time.LocalDateTime;
 import java.util.Arrays;
@@ -33,20 +31,13 @@ public class ClassEnvMon {
     private Boolean functionFound=false;
 
     public ClassEnvMon(HttpServletRequest request, Token token, String schemaPrefix, EnvMonAPIEndpoints endPoint){
-        String apiName="EnvMonAPI";
-        Object[] dynamicDataObjects=new Object[]{};
         RelatedObjects rObj=RelatedObjects.getInstance();
 
-        DataProgramSampleAnalysis prgSmpAna = new DataProgramSampleAnalysis();           
-        DataProgramSampleAnalysisResult prgSmpAnaRes = new DataProgramSampleAnalysisResult();           
         DataProgramSample prgSmp = new DataProgramSample();     
         String batchName = "";
         String incubationName = "";
         
-        String language="";
         Object[] actionDiagnoses = null;
-        Integer incubationStage=null;
-        Integer sampleId = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         this.functionFound=true;
             switch (endPoint){
@@ -140,12 +131,8 @@ public class ClassEnvMon {
                     break;
                 case EM_LOGSAMPLE_SCHEDULER:
                     LocalDateTime dateStart=(LocalDateTime) argValues[0];
-//                    if (dateStartStr!=null) dateStart=LPDate.dateStringFormatToLocalDateTime(dateStartStr);
                     LocalDateTime dateEnd=(LocalDateTime) argValues[1];
-//                    if (dateEndStr!=null) dateEnd=LPDate.dateStringFormatToLocalDateTime(dateEndStr);
                     programName = argValues[2].toString();
-  //                  programName=null;
-  //                  if (programNameStr!=null) programName=programNameStr;
                     actionDiagnoses=prgSmp.logProgramSampleScheduled(schemaPrefix, token, programName, dateStart, dateEnd);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{dateStart, dateEnd, programName, schemaPrefix});                                        
@@ -154,7 +141,6 @@ public class ClassEnvMon {
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
-        //this.messageDynamicData=dynamicDataObjects;
         rObj.killInstance();
     }
     

@@ -9,7 +9,6 @@ import lbplanet.utilities.LPFrontEnd;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -84,7 +83,7 @@ public class AuthenticationAPIParams extends HttpServlet {
      
         private final String name;
         private final String successMessageCode;  
-        private  LPAPIArguments[] arguments;
+        private final  LPAPIArguments[] arguments;
 
     }
     
@@ -178,11 +177,10 @@ public class AuthenticationAPIParams extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+            throws  IOException {
         response.setContentType("text/html;charset=UTF-8");
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");
@@ -208,7 +206,7 @@ public class AuthenticationAPIParams extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)  {
         try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
+        }catch(IOException e){
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
         }
     }
@@ -223,7 +221,7 @@ public class AuthenticationAPIParams extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)  {
         try{
         processRequest(request, response);
-        }catch(ServletException|IOException e){
+        }catch(IOException e){
             LPFrontEnd.servletReturnResponseError(request, response, e.getMessage(), new Object[]{}, null);
         }
     }

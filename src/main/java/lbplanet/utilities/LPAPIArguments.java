@@ -97,7 +97,6 @@ public class LPAPIArguments {
                     returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                     break;                                
             }
-            //returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
         }
         return returnArgsDef;
     }

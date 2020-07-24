@@ -5,21 +5,14 @@
  */
 package com.labplanet.servicios.app;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitConfig;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPMath;
 import databases.Rdbms;
 import databases.TblsApp;
-import databases.TblsAppAudit;
-import databases.TblsCnfg;
 import databases.Token;
 import databases.TblsData;
-import databases.TblsTesting;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.ConfigProgramCalendar;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
@@ -43,7 +36,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.labelling.ZPL;
 import lbplanet.utilities.LPDate;
-import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 
@@ -65,8 +57,6 @@ public class TestingServer extends HttpServlet {
             throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-
-        String language = LPFrontEnd.setLanguage(request);         
         
         try (PrintWriter out = response.getWriter()) {
             out.println("<!DOCTYPE html>");

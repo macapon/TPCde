@@ -8,7 +8,6 @@ package lbplanet.utilities;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import functionaljavaa.parameter.Parameter;
-import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -206,11 +205,7 @@ public class LPFrontEnd {
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_FALSE); 
-        
-//        errJsObj.put("category", apiName.toUpperCase().replace("API", ""));
-//        errJsObj.put("", relatedObjects);        
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
-        
         return errJsObj;
     }
     /**

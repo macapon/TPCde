@@ -26,12 +26,8 @@ public class ClassEnvMonIncubator {
     private Boolean functionFound=false;
 
     public ClassEnvMonIncubator(HttpServletRequest request, Token token, String schemaPrefix, EnvMonIncubationAPI.EnvMonIncubationAPIEndpoints endPoint){
-        Object[] dynamicDataObjects=new Object[]{};
         RelatedObjects rObj=RelatedObjects.getInstance();
-        String language="";
         Object[] actionDiagnoses = null;
-        Integer incubationStage=null;
-        Integer sampleId = null;
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());    
         String instrName="";
         BigDecimal temperature=null;
@@ -40,20 +36,20 @@ public class ClassEnvMonIncubator {
                 case EM_INCUBATION_ACTIVATE:
                     instrName=argValues[0].toString();               
                     actionDiagnoses=ConfigIncubator.activateIncubator(schemaPrefix, instrName, token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
                     this.messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_DEACTIVATE:
                     instrName=argValues[0].toString();
                     actionDiagnoses=ConfigIncubator.deactivateIncubator(schemaPrefix, instrName, token.getPersonName());
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
                     this.messageDynamicData=new Object[]{instrName};
                     break;
                 case EM_INCUBATION_ADD_TEMP_READING:
                     instrName=argValues[0].toString();
                     temperature=(BigDecimal) argValues[1];
                     actionDiagnoses=DataIncubatorNoteBook.newTemperatureReading(schemaPrefix, instrName, token.getPersonName(),temperature);                    
-                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), "instrument_incubator", instrName);                
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitConfig.InstrIncubator.TBL.getName(), TblsEnvMonitConfig.InstrIncubator.TBL.getName(), instrName);                
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), "instrument_incubator_notebook", actionDiagnoses[actionDiagnoses.length-1]);                
                     this.messageDynamicData=new Object[]{temperature, instrName};
                     break;      

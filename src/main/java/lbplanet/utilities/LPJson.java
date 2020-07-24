@@ -34,7 +34,6 @@ public class LPJson {
         if (!value.toUpperCase().contains("AS")) return value;
         return 
             value.substring(value.toUpperCase().indexOf("AS")+3);
-                //"hola";
     }
     public static JSONObject convertArrayRowToJSONObject(String[] header, Object[] row){
         JSONObject jObj = new JSONObject();    

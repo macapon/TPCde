@@ -39,7 +39,7 @@ public class PoolC3P0 {
          // Configuramos la conexion a base de datos
          // Creamos la fuente de datos
          
-         ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
+        BUNDLE_PARAMETER_DBDRIVER ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
          
          // Que driver de base de datos usaremos
          cpds.setDriverClass("java.sql.Driver"); // prop.getString(BUNDLE_PARAMETER_DBDRIVER);

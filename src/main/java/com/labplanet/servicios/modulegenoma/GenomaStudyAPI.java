@@ -9,7 +9,6 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulegenoma.GenomaProjectAPI.GenomaProjectAPIParamsList;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.modulegenoma.GenomaDataStudy;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -181,7 +180,6 @@ public class GenomaStudyAPI extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        GenomaDataStudy prjStudy = new GenomaDataStudy();
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 

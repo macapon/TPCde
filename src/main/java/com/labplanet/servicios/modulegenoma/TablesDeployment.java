@@ -47,7 +47,7 @@ public class TablesDeployment extends HttpServlet {
             out.println("<h1>Servlet TablesDeployment at " + request.getContextPath() + "</h1>");
             
             String tblCreateScript2=TblsCnfg.SopMetaData.createTableScript(schemaNamePrefix, new String[]{""});
-            //Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+            //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
             out.println("<p>Table "+TblsCnfg.SopMetaData.TBL.getName()+" created.</p>");
             
             String tblCreateScript=TblsData.UserSop.createTableScript(schemaNamePrefix, new String[]{""});

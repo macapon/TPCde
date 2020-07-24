@@ -105,8 +105,6 @@ public class TstDataSample extends HttpServlet {
         DataSample smp = new DataSample(smpAna);   
         DataSampleAnalysisResult smpAnaRes = new functionaljavaa.samplestructure.DataSampleAnalysisResult(moduleSmpAnaRes);   
         
-        String language = LPFrontEnd.setLanguage(request);
-        
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
 
         String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 

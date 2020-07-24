@@ -44,7 +44,7 @@ public final class Token {
     private String userRole="";
     private String eSign="";
     private String appSessionId="";
-    private Date appSessionStartedDate= null;
+    private final Date appSessionStartedDate= null;
     private String userProcedures="";    
     /**
      *
@@ -98,7 +98,7 @@ public final class Token {
             diagnoses = LPArray.addValueToArray1D(diagnoses, jwt);
             return diagnoses;
             
-        } catch (JWTVerificationException | IllegalArgumentException exception){
+        } catch (JWTVerificationException exception){
             diagnoses = LPArray.addValueToArray1D(diagnoses, false);
             return diagnoses;
         }       

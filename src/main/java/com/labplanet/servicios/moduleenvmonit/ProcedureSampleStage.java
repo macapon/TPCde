@@ -28,9 +28,9 @@ public class ProcedureSampleStage {
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
         Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
         Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
-        if (incubationPassed!=true){
+        if (!incubationPassed){
             return " Pendiente 1a Incubacion para la muestra "+sampleId;}
-        if (incubation2Passed!=true){
+        if (!incubation2Passed){
             return " Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
@@ -39,9 +39,9 @@ public class ProcedureSampleStage {
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
         Boolean incubationPassed=sampleStructure.get("incubation_passed").getAsBoolean();
         Boolean incubation2Passed=sampleStructure.get("incubation2_passed").getAsBoolean();
-        if (incubationPassed!=true){
+        if (!incubationPassed){
             return " Pendiente 1a Incubacion para la muestra "+sampleId;}
-        if (incubation2Passed!=true){
+        if (!incubation2Passed){
             return " Pendiente 2a Incubacion para la muestra "+sampleId;}
         return LPPlatform.LAB_TRUE;
     }  
@@ -50,7 +50,6 @@ public class ProcedureSampleStage {
     }
     public String sampleStagePlateReadingNextChecker(Integer sampleId, String sampleData) {   
         JsonObject sampleStructure = LPJson.convertToJsonObjectStringedObject(sampleData);
-        String samplingDate=sampleStructure.get("sampling_date").getAsString();
         JsonArray smpAna=sampleStructure.getAsJsonArray("sample_analysis");
         JsonElement jGet = smpAna.get(0);        
         JsonObject asJsonObject = jGet.getAsJsonObject();

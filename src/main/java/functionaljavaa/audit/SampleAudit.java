@@ -6,6 +6,7 @@
 package functionaljavaa.audit;
 
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
 import databases.TblsData;
 import databases.TblsDataAudit;
@@ -415,7 +416,6 @@ public class SampleAudit {
      * @param testId
      * @param resultId
      * @param auditlog
-     * @param parentAuditId
      */
     public void sampleAliquotingAuditAdd( String schemaPrefix, Token token, String action, String tableName, Integer tableId, Integer subaliquotId, Integer aliquotId, Integer sampleId, Integer testId, Integer resultId, Object[] auditlog) {
         
@@ -613,11 +613,10 @@ public class SampleAudit {
       Object[] whereFieldValue=new Object[]{sampleId, false};
     
       if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
-          whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+" is null");
+          whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
       Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
               whereFieldName, whereFieldValue, 
               new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
-      Boolean pendingRecords=true;
       for (Object[] curSampleInfo: sampleInfo){
         if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
           return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 

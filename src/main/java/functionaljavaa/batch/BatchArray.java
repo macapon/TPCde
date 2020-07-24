@@ -30,7 +30,7 @@ public final class BatchArray extends Batch{
     /**
      *
      */
-    public String[][] batchPosic;    
+    final String[][] batchPosic;    
     private Object[] linesName;
     private Object[] columnsName;
 

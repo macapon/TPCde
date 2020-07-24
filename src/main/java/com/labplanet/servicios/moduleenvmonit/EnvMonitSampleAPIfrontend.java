@@ -14,6 +14,7 @@ import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.*;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitData.ViewSampleMicroorganismList;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
@@ -148,7 +149,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                 case API_ENDPOINT_GET_MICROORGANISM_LIST:
                   String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()};
                   Object[][] list = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.MicroOrganism.TBL.getName(), 
-                          new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+" is not null"}, new Object[]{}
+                          new String[]{TblsEnvMonitConfig.MicroOrganism.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}
                           , fieldsToRetrieve, fieldsToRetrieve);
                   JSONArray jArr=new JSONArray();
                   for (Object[] curRec: list){
@@ -180,7 +181,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                                 whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                         }                                    
                     }            
-                    whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_CURRENT_STAGE.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RAW_VALUE.getName()+" is not null"});
+                    whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_CURRENT_STAGE.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RAW_VALUE.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()});
                     whereFieldsValueArr=LPArray.addValueToArray1D(whereFieldsValueArr, new Object[]{"MicroorganismIdentification"});
                     ViewSampleMicroorganismList[] fieldsList = TblsEnvMonitData.ViewSampleMicroorganismList.values();
                     fieldsToRetrieve = new String[0];
@@ -679,7 +680,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             //whereLimitsFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PROGRAM_NAME.getName());
                             //whereLimitsFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);                        
                         }
-                        whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+ " is not null");
+                        whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+ WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
 
                         Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                                 whereFieldNames, whereFieldValues, 
@@ -695,7 +696,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         Object[] whereLimitsFieldValues = new Object[0];                    
 
                         if (whereLimitsFieldNames==null || whereLimitsFieldNames.length==0)
-                            whereLimitsFieldNames=new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()+" is not null"};
+                            whereLimitsFieldNames=new String[]{TblsCnfg.SpecLimits.FLD_LIMIT_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
 //                        
                         String[] fieldToRetrieveLimitsArr=new String[]{TblsCnfg.SpecLimits.FLD_CODE.getName(), TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName(), TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_PARAMETER.getName(), TblsCnfg.SpecLimits.FLD_RULE_TYPE.getName(),
                             TblsCnfg.SpecLimits.FLD_RULE_VARIABLES.getName(), TblsCnfg.SpecLimits.FLD_UOM.getName()};
@@ -722,7 +723,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                                 whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, limitsFieldNamesToFilter[i]);                                
                                 whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, currLimit[i]);
                             }
-                            whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+ " is not null");                            
+                            whereFieldNames = LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+ WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());                            
                             whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, "");                            
                             Object[][] programLastResults=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
                                     whereFieldNames, whereFieldValues, 
@@ -816,36 +817,20 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
                     new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                     tblAllFlds, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RESULT_ID.getName()});                    
             jObj= new JSONObject();
-            for (Object[] curRow: sampleStageInfo){
-                jObj2= new JSONObject();
-                for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ //Object[] curRec: sampleInfo){   
-                    jObj2.put(tblAllFlds[iFlds], sampleStageInfo[0][iFlds].toString());
-                    //jArrMainObj.add(jObj);
-                    JSONObject jObjSampleStageInfo=new JSONObject();
-                    jObjSampleStageInfo.put("field_name", tblAllFlds[iFlds]);
-                    jObjSampleStageInfo.put("field_value", sampleStageInfo[0][iFlds].toString());
-                    //jArrSampleStageInfo.add(jObjSampleStageInfo);
-                    //jArrMainObj.add(jObj2);
-                    jArrMainObj.add(jObjSampleStageInfo);
-                }
-                jObj.put("counting", jObj2);
-                //jObj.put("fields", jArrSampleStageInfo);
+            jObj2= new JSONObject();
+            for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ //Object[] curRec: sampleInfo){   
+                jObj2.put(tblAllFlds[iFlds], sampleStageInfo[0][iFlds].toString());
+                JSONObject jObjSampleStageInfo=new JSONObject();
+                jObjSampleStageInfo.put("field_name", tblAllFlds[iFlds]);
+                jObjSampleStageInfo.put("field_value", sampleStageInfo[0][iFlds].toString());
+                jArrMainObj.add(jObjSampleStageInfo);
             }
-            //jArrMainObj=new JSONArray();
+            jObj.put("counting", jObj2);
             jArrMainObj.add(jObj);
-           // jArrMainObj.add(jArrSampleStageInfo);
             return jArrMainObj;
-            
-            
-            
-/*            jObj.put(TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName())].toString());
-            jArrMainObj.add(jObj);
-            return jArrMainObj; */
         default: 
-            return jArrMainObj; //new Object[][]{{}};
+            return jArrMainObj; 
     }
-    
-    //return new Object[][]{{"hola", "adios"}};
 }
     
     Object[] sampleAnalysisResultLockData(String schemaPrefix, String[] resultFieldToRetrieveArr, Object[] curRow){

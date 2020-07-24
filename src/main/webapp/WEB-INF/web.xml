@@ -252,10 +252,6 @@
         <url-pattern>/testing/platform/ProcedureDeployment</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>UserProfileAPI</servlet-name>
-        <url-pattern>/app/UserProfileAPI</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>AuthenticationAPIParams</servlet-name>
         <url-pattern>/AuthenticationAPIParams</url-pattern>
     </servlet-mapping>

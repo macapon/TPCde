@@ -11,7 +11,6 @@ import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
-import functionaljavaa.samplestructure.DataSampleStages;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
@@ -37,15 +36,7 @@ public class SampleAPIlogic {
         JSONObject dataSampleJSONMsg=new JSONObject();
 
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
-/*                Rdbms.rollbackWithSavePoint();
-            if (!con.getAutoCommit()){
-                con.rollback();
-                con.setAutoCommit(true);}                */
         }else{
-            DataSampleStages smpStage=new DataSampleStages(schemaPrefix);
-            /*if (smpStage.isSampleStagesEnable() && (sampleId!=null))
-                smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, actionName, sampleId);*/
-            
             dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue("this.getClass().getSimpleName()", 
                     endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
         }

@@ -16,7 +16,6 @@ import functionaljavaa.modulegenoma.GenomaDataAudit.ProjectAuditEvents;
 import functionaljavaa.modulegenoma.GenomaDataAudit.StudyAuditEvents;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPParadigm;
 
 /**
  *
@@ -191,11 +190,12 @@ public Object[] createStudy( String schemaPrefix, Token token, String studyName,
 */
         
         diagnosesProj = Rdbms.insertRecordInTable(schemaDataName, TblsGenomaData.Study.TBL.getName(), fieldsName, fieldsValue);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString()))
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnosesProj[0].toString())){
             GenomaDataAudit.studyAuditAdd(schemaPrefix, token, StudyAuditEvents.NEW_STUDY.toString(), TblsGenomaData.Study.TBL.getName(), studyName, 
                 studyName, projectName, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
             GenomaDataAudit.projectAuditAdd(schemaPrefix, token, ProjectAuditEvents.STUDY_ADDED.toString(), TblsGenomaData.Project.TBL.getName(), projectName, 
                 projectName, studyName, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
+        }
         return diagnosesProj;  
     }    
     if (devMode){

@@ -72,7 +72,6 @@ public class ClassSample {
     private Boolean functionFound=false;
     
     public ClassSample(HttpServletRequest request, Token token, String schemaPrefix, SampleAPIEndpoints endPoint){
-        Object[] dynamicDataObjects=new Object[]{};
         RelatedObjects rObj=RelatedObjects.getInstance();
         String schemaDataName="";
         String language="";
@@ -143,8 +142,6 @@ public class ClassSample {
                 break;
             case INCUBATIONSTART:
                 incubationStage=1;
-            case INCUBATION2START:
-                if (incubationStage==null) incubationStage=2;
                 sampleId = (Integer) argValues[0];
                 String incubName=argValues[1].toString();
                 BigDecimal tempReading=null;
@@ -152,10 +149,26 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
+            case INCUBATION2START:
+                incubationStage=2;
+                sampleId = (Integer) argValues[0];
+                incubName=argValues[1].toString();
+                tempReading=null;
+                diagn = DataSampleIncubation.setSampleStartIncubationDateTime(schemaPrefix, token, sampleId, incubationStage, incubName, tempReading);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
             case INCUBATIONEND:
                 incubationStage=1;
+                sampleId = (Integer) argValues[0];
+                incubName= argValues[1].toString();
+                tempReading=null;
+                diagn = DataSampleIncubation.setSampleEndIncubationDateTime(schemaPrefix, token, sampleId, incubationStage, incubName, tempReading);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
             case INCUBATION2END:
-                if (incubationStage==null) incubationStage=2;
+                incubationStage=2;
                 sampleId = (Integer) argValues[0];
                 incubName= argValues[1].toString();
                 tempReading=null;

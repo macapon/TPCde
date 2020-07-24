@@ -8,7 +8,6 @@ package com.labplanet.servicios.modulegenoma;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
-import functionaljavaa.modulegenoma.GenomaDataProject;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -118,7 +117,7 @@ public class GenomaProjectAPI extends HttpServlet {
         
         private final String name;
         private final String successMessageCode;  
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }
     
     /**
@@ -131,7 +130,6 @@ public class GenomaProjectAPI extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        GenomaDataProject prj = new GenomaDataProject();
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
 

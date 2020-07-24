@@ -159,7 +159,6 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_ID, sessionIdStr);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_DATE, nowLocalDate.toString());
-                    //String tabsStr="lp_frontend_page_name:sample-incub-batch*tabName:em-demo-a-sample-incub-batch*tabLabel_en:em-demo-a-sample-incub-batch*tabLabel_es:em-demo-a-sample-incub-batch*procedure:em-demo-a*tabType:tab*tabEsignRequired:undefined*tabConfirmUserRequired:false|lp_frontend_page_name:browser*tabName:em-demo-a-browser*tabLabel_en:em-demo-a-browser*tabLabel_es:em-demo-a-browser*procedure:em-demo-a*tabType:tab*tabEsignRequired:false*tabConfirmUserRequired:false|lp_frontend_page_name:user-profile/user-profile.js*tabName:user-profile*tabLabel_en:User Profile*tabLabel_es:Perfil de Usuario*procedure:user*tabType:systab*tabEsignRequired:false*tabConfirmUserRequired:true|lp_frontend_page_name:sop/my-sops.js*tabName:sop-allMySops*tabLabel_en:All My SOPs*tabLabel_es:Mis PNTs*procedure:sop*tabType:systab*tabEsignRequired:false*tabConfirmUserRequired:false";            
                     String tabsStr=userInfo[0][1].toString();
                     String[] tabs=tabsStr.split("\\|");
                     JSONArray jArr=new JSONArray();
@@ -226,7 +225,6 @@ public class AuthenticationAPI extends HttpServlet {
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
                     jsonObj = new JSONObject();
                     jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
-                    //LPPlatform.trapMessageJSON(LPPlatform.trapMessage(finalToken, userRole, argValues));                    
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
@@ -278,9 +276,6 @@ public class AuthenticationAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     break;
             }
-        }catch(IOException e){            
-            String exceptionMessage = e.getMessage();            
-            LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);  
         }catch(@SuppressWarnings("FieldNameHidesFieldInSuperclass") Exception e){            
             String exceptionMessage = e.getMessage();     
             LPFrontEnd.servletReturnResponseError(request, response, exceptionMessage, null, null);                    

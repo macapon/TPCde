@@ -40,10 +40,8 @@ public class TesterFromUploadFile extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)           throws ServletException, IOException {
         response = LPTestingOutFormat.responsePreparation(response);        
-        //try (PrintWriter out = response.getWriter()) {
         try{
             String saveDirectory="D:\\LP\\"; //TESTING_FILES_PATH;
-            //String saveDirectory="http://51.75.202.142/testingRepository/"; //TESTING_FILES_PATH;
             MultipartRequest mReq = new MultipartRequest(request, saveDirectory);
             Enumeration files = mReq.getFileNames();
             while (files.hasMoreElements()) {

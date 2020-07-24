@@ -63,7 +63,6 @@ public class DataIncubatorNoteBook {
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()}, 
                 new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature});
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT_IMPLEMENTED", new Object[0]);
     }
     
     /**
@@ -83,7 +82,6 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
                 new Object[]{instName, EventType.ACTIVATE.toString(), personName, LPDate.getCurrentTimeStamp()});
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT_IMPLEMENTED", new Object[0]);
     }
     
     /**
@@ -103,7 +101,6 @@ public class DataIncubatorNoteBook {
                 new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                     TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()}, 
                 new Object[]{instName, EventType.DEACTIVATE.toString(), personName, LPDate.getCurrentTimeStamp()});
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT_IMPLEMENTED", new Object[0]);
     }
 
     /**
@@ -129,8 +126,6 @@ public class DataIncubatorNoteBook {
                 new Object[]{instName, EventType.TEMPERATURE_READING.toString(), personName, LPDate.getCurrentTimeStamp(), temperature});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagn[0].toString())) return diagn;
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, EnvMonIncubationAPIEndpoints.EM_INCUBATION_ADD_TEMP_READING.getSuccessMessageCode(), new Object[]{instName, schemaPrefix});
-        
-        //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT_IMPLEMENTED", new Object[0]);
     }
     
     /**

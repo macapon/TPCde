@@ -27,6 +27,7 @@ import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure.ProgramCorrectiveAction;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
@@ -93,12 +94,12 @@ public class EnvMonAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public String[] PROGRAM_LOCATION_CARD_FIELDS_INTEGER=new String[]{"spec_code_version"};
+    public String[] programLocationCardFieldsInteger=new String[]{"spec_code_version"};
 
     /**
      *
      */
-    public String[] PROGRAM_LOCATION_CARD_FIELDS_NO_DBTYPE=new String[]{"description_en"};
+    public String[] programLocationCardFieldsNoDbType=new String[]{"description_en"};
     
     /**
      *
@@ -231,7 +232,6 @@ public class EnvMonAPIfrontend extends HttpServlet {
         }             
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-        String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
             
         //Token token = new Token(finalToken);
 
@@ -380,7 +380,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
                         TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_VARIATION_NAME.getName(), TblsEnvMonitData.ViewProgramScheduledLocations.FLD_SPEC_ANALYSIS_VARIATION.getName() 
                     };                            
                     Object[][] programCalendarDatePending=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ViewProgramScheduledLocations.TBL.getName(), 
-                            new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName()+" IS NOT NULL"}, new Object[]{}, 
+                            new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, new Object[]{}, 
                             fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName()});
                     JSONArray programConfigScheduledPointsJsonArray=new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())){
@@ -423,11 +423,11 @@ public class EnvMonAPIfrontend extends HttpServlet {
                                     programLocationCardInfoJsonObj.put(JSON_TAG_NAME_VALUE, programLocationCardInfo[xProc][yProc]);
                                     programLocationCardInfoJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TEXT);
                                     String fieldName=programLocationCardInfoFldNameArray[yProc];
-                                    Integer posicInArray=LPArray.valuePosicInArray(PROGRAM_LOCATION_CARD_FIELDS_INTEGER, fieldName);
+                                    Integer posicInArray=LPArray.valuePosicInArray(programLocationCardFieldsInteger, fieldName);
                                     if (posicInArray>-1){
                                         programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_INTEGER);
                                     }else{ 
-                                        posicInArray=LPArray.valuePosicInArray(PROGRAM_LOCATION_CARD_FIELDS_NO_DBTYPE, fieldName);
+                                        posicInArray=LPArray.valuePosicInArray(programLocationCardFieldsNoDbType, fieldName);
                                         if (posicInArray==-1){
                                             programLocationCardInfoJsonObj.put(JSON_TAG_NAME_DB_TYPE, JSON_TAG_NAME_DB_TYPE_VALUE_STRING);
                                         }else{

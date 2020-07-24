@@ -876,13 +876,9 @@ public class LPPlatform {
         className = className.replace(".java", "");
         Boolean errorCodeFromBundle = true;
         String errorCodeText="";
-/*        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(evaluation)){
-            errorCodeText = Parameter.getParameterBundle(LPPlatform.CONFIG_FILES_FOLDER, LPPlatform.CONFIG_FILES_API_SUCCESSMESSAGE+apiName, null, msgCode, "en");
-        }else{*/
-            errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, null);
-            if (errorCodeText.length()==0){errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, null);}
-            if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
-//        }
+        errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, className+"_"+msgCode, null);
+        if (errorCodeText.length()==0){errorCodeText = Parameter.getParameterBundle(CONFIG_FILES_FOLDER, CONFIG_FILES_ERRORTRAPING, null, msgCode, null);}
+        if (errorCodeText.length()==0){errorCodeText = msgCode; errorCodeFromBundle=false;}
         if (!errorCodeFromBundle){
             errorDetail = errorCodeText + " (*** This errorCode has no entry defined in messages property file)";
             if ( (msgVariables!=null) &&  msgVariables.length>0){

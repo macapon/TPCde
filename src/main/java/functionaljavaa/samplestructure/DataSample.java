@@ -320,7 +320,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                                         sampleId, null, null, fieldsOnLogSample, token, null);
             Integer transactionId = null;
             Integer preAuditId=Integer.valueOf(sampleAuditAdd[sampleAuditAdd.length-1].toString());
-            //DataSampleAnalysis dataSmpAna = new DataSampleAnalysis();
             this.smpAna.autoSampleAnalysisAdd(schemaPrefix, token, sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), preAuditId);
             
             autoSampleAliquoting(schemaPrefix, token, sampleId, sampleFieldName, sampleFieldValue, SampleStatuses.LOGGED.toString(), transactionId, preAuditId);            
@@ -677,8 +676,6 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @return
      */
     public Object[] logSampleAliquot( String schemaPrefix, Token token, Integer sampleId, String[] smpAliqFieldName, Object[] smpAliqFieldValue) {    
-        //String parentTableName = TblsData.Sample.TBL.getName();        
-
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(smpAliqFieldName, smpAliqFieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())){return fieldNameValueArrayChecker;}        
 
@@ -906,8 +903,8 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
                 }                
             }*/
             else{
-                if (sampleAuditFieldToRetrieve!=null){sampleAuditFieldToRetrieveArr=sampleAuditFieldToRetrieve.split("\\|");                   
-                }else {sampleAuditFieldToRetrieveArr=new String[0];}
+                if (sampleAuditFieldToRetrieve!=null) sampleAuditFieldToRetrieveArr=sampleAuditFieldToRetrieve.split("\\|");                   
+
                 sampleAuditFieldToRetrieveArr = LPArray.addValueToArray1D(sampleAuditFieldToRetrieveArr, 
                         new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_TRANSACTION_ID.getName(), 
                              TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_PERSON.getName(), TblsDataAudit.Sample.FLD_USER_ROLE.getName()});

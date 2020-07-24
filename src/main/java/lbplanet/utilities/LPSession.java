@@ -22,13 +22,11 @@ public class LPSession {
      *
      * @param fieldsName
      * @param fieldsValue
+     * @param remoteAddr
      * @return
      */
     public static Object[] newAppSession( String[] fieldsName, Object[] fieldsValue, String remoteAddr){        
-//        Date nowLocalDate = LPDate.getTimeStampLocalDate();
         LocalDateTime localDateTime=LPDate.getCurrentTimeStamp();
-        //localDateTime = null;
-        //localDateTime=LocalDateTime.now();
         
         String tableName = TblsApp.AppSession.TBL.getName();
         

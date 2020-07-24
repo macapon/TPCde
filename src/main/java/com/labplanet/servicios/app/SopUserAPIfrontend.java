@@ -10,6 +10,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
 import databases.Token;
@@ -301,7 +302,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 userSop = new UserSop();      
                 for (String currProc: allUserProcedurePrefix) {                   
                     Object[][] procSops = Rdbms.getRecordFieldsByFilter(currProc+"-config", TblsCnfg.SopMetaData.TBL.getName(), 
-                            new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+" is not null"}, null, fieldsToRetrieve);
+                            new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, fieldsToRetrieve);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(Arrays.toString(procSops[0]))){
                         Object[] errMsg = LPFrontEnd.responseError(procSops, language, null);
                         response.sendError((int) errMsg[0], (String) errMsg[1]);    

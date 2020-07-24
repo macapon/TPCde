@@ -31,7 +31,6 @@ import javax.print.DocPrintJob;
 import javax.print.PrintService;
 import javax.print.PrintServiceLookup;
 import javax.print.SimpleDoc;
-import javax.servlet.RequestDispatcher;
 
 /**
  *
@@ -42,13 +41,10 @@ public class ZPL {
     enum ContentType{TEXT, BARCODE39};
     public static void zplLabel(String ip, int port, Object[][] lblContent){
         try {
-            
             ResourceBundle propValue = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-            //final String username = propValue.getString("zpl.labelling.withDots");
             
             ZebraLabel zebraLabel = new ZebraLabel(Integer.valueOf(propValue.getString("zpl.labelling.widthDots")), Integer.valueOf(propValue.getString("zpl.labelling.heightDots")));
             zebraLabel.setDefaultZebraFont(ZebraFont.valueOf(propValue.getString("zpl.labelling.ZebraFont")));
-            
             for (Object[] curCont:lblContent){            
                 ContentType cType = null;
                 try{
@@ -67,13 +63,11 @@ public class ZPL {
                             break;
                         default:
                             break;
-                    }                        
-                        
+                    }                                                
                 }catch(NumberFormatException e){
 //                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
 //                    return;                   
                 }
-                
             }
             String command = "curl -X POST https://postman-echo.com/post --data foo1=bar1&foo2=bar2";
             command="curl --get http://api.labelary.com/v1/printers/8dpmm/labels/4x6/0/ --data-urlencode \""
@@ -96,38 +90,21 @@ if (response.statusCode() == 200) {
     System.out.println(errorMessage);
 }            
 */
-            try {
-                Process process = Runtime.getRuntime().exec(command);
-            } catch (IOException ex) {
-                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            URI ur=null;
-            try {
-                ur = new URI(command);
-            } catch (URISyntaxException ex) {
-                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            HttpRequest request = HttpRequest.newBuilder(ur)
-    .header("Accept", "application/pdf") // omit this line to get PNG images back
-    .POST(BodyPublishers.ofString(command))
-    .build();
-HttpClient client = HttpClient.newHttpClient();
-HttpResponse response = null;
-            try {
-                response = client.send(request, BodyHandlers.ofByteArray());
-            } catch (IOException ex) {
-                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (InterruptedException ex) {
-                Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
-            }
-            
- //           RequestDispatcher rd = request.getRequestDispatcher(command);
- //           rd.forward(request,response);   
-                         
-                    
-            zebraLabel.getZplCode();
-            ZebraUtils.printZpl(zebraLabel, ip, port);
-        } catch (ZebraPrintException ex) {
+        Process process = Runtime.getRuntime().exec(command);
+        URI ur=null;
+        ur = new URI(command);
+        HttpRequest request = HttpRequest.newBuilder(ur)
+            .header("Accept", "application/pdf") // omit this line to get PNG images back
+            .POST(BodyPublishers.ofString(command))
+            .build();
+        HttpClient client = HttpClient.newHttpClient();
+        HttpResponse response = null;
+        response = client.send(request, BodyHandlers.ofByteArray());
+//           RequestDispatcher rd = request.getRequestDispatcher(command);
+            //           rd.forward(request,response);               
+        zebraLabel.getZplCode();
+        ZebraUtils.printZpl(zebraLabel, ip, port);
+        } catch (ZebraPrintException|URISyntaxException|IOException ex) {
             Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }

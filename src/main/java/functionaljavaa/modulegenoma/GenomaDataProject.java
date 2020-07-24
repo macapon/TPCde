@@ -15,7 +15,6 @@ import databases.Token;
 import functionaljavaa.modulegenoma.GenomaDataAudit.ProjectAuditEvents;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPParadigm.ParadigmErrorTrapping;
 
 /**
  *
@@ -271,7 +270,7 @@ public Object[] projectUserManagement( String schemaPrefix, Token token, String 
     
     Object[] projOpenToChanges=isProjectOpenToChanges(schemaPrefix, token, projectName);    
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(projOpenToChanges[0].toString())) return projOpenToChanges;
-    Object[] diagnosesProj = new Object[0];
+    Object[] diagnosesProj = null;
     switch (actionName){
         //PROJECT_REMOVE_USER, PROJECT_CHANGE_USER_ROLE, 
         case "PROJECT_ADD_USER":

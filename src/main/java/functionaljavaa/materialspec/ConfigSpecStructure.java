@@ -147,7 +147,6 @@ if (1==1){myDiagnoses="SUCCESS, but not implemeneted yet"; return myDiagnoses;}
         String[] mandatoryFields = new String[1];
         Object[] mandatoryFieldValue = new String[0];
                 
-        String myDiagnoses = "";
         String schemaPrefix = parameters[0];
         String variationNames = parameters[1];
         

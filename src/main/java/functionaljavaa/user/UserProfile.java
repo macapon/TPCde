@@ -8,6 +8,7 @@ package functionaljavaa.user;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
 
 /**
@@ -68,7 +69,7 @@ public class UserProfile {
      * @return
      */
     public Object[] getProcedureUserProfileFieldValues ( String schemaPrefix, String personName) {
-            String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()+" is not null"};
+            String[] filterFieldName = new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName(), FIELDVALUE_ACTIVE, TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
             Object[] filterFieldValue = new Object[]{personName, true};            
             
             Object[][] userProc =  Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.PersonProfile.TBL.getName(), 

@@ -148,9 +148,7 @@ public class DataSampleIncubation {
         Object[] requiredFieldsValue=new Object[0];
         
         if (sampleIncubationMode.contains(SampleIncubationObjects.SAMPLE.toString())){}
-            //requiredFields=LPArray.addValueToArray1D(requiredFields, SampleIncubationObjects.SAMPLE.toString());
         else if (sampleIncubationMode.contains(SampleIncubationObjects.BATCH.toString()))
-            //requiredFields=LPArray.addValueToArray1D(requiredFields, TblsData.Sample.FLD_SAMPLE_ID.getName());
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker NOT IMPLEMENTED YET", null);
         else
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleIncubatorModeChecker Object <*1*> NOT RECOGNIZED", new Object[]{sampleIncubationMode});
@@ -238,11 +236,7 @@ public class DataSampleIncubation {
             Object[] currDiagnoses = new Object[0];
             String[] currSampleIncubationTempReadingBusinessRulevalueArr=currSampleIncubationTempReadingBusinessRulevalue.split("\\*");
             if (TempReadingBusinessRules.SAME_DAY.toString().equalsIgnoreCase(currSampleIncubationTempReadingBusinessRulevalueArr[0])){                
-                if (tempReadingDateDateTime.getDayOfYear()==LPDate.getCurrentTimeStamp().getDayOfYear())
-                    currDiagn=true;
-                    //return new Object[]{LPPlatform.LAB_TRUE};
-                else                    
-                    currDiagn=false;
+                currDiagn = tempReadingDateDateTime.getDayOfYear()==LPDate.getCurrentTimeStamp().getDayOfYear();
                     currDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The temperature reading day is <*1*> and is not from today as set for procedure <*2*>", new Object[]{tempReadingDate.toString(), schemaPrefix} );                
             }else if (TempReadingBusinessRules.HOURS.toString().equalsIgnoreCase(currSampleIncubationTempReadingBusinessRulevalueArr[0])){
                 long hours = ChronoUnit.HOURS.between(tempReadingDateDateTime, LPDate.getCurrentTimeStamp());

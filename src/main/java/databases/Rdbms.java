@@ -841,7 +841,6 @@ if (1==1)return;
                 whereFieldNames, whereFieldValues,fieldsToGroup, orderBy);            
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);
-        String fieldsToGroupConcat=Arrays.toString(fieldsToGroup);
         Integer fieldsToGroupContItem=fieldsToGroup.length;
         String[] fieldsToGroupAltered=new String[0];
         fieldsToGroupAltered=LPArray.addValueToArray1D(fieldsToGroupAltered, fieldsToGroup);
@@ -1041,6 +1040,7 @@ if (1==1)return;
     }
     
     private static String[] prepUpQueryK(String consultaconinterrogaciones, Object [] valoresinterrogaciones, Integer indexposition) {
+        String newId="";
         try (PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS)){
             String pkValue = "";
             //PreparedStatement prep=getConnection().prepareStatement(consultaconinterrogaciones, Statement.RETURN_GENERATED_KEYS);            
@@ -1049,20 +1049,17 @@ if (1==1)return;
             prep.executeUpdate();    
             ResultSet rs = prep.getGeneratedKeys();
             if (rs.next()) {
-                String newId = rs.getString(indexposition);
-                try {
-                    Integer newIdInt = Integer.parseInt(newId);
-                    if (newIdInt==0)
-                        return new String[]{LPPlatform.LAB_TRUE, TBL_KEY_NOT_FIRST_TABLEFLD}; 
-                    else
-                        return new String[]{LPPlatform.LAB_TRUE, String.valueOf(newIdInt)};              
-                } catch (NumberFormatException nfe) {
-                    return new String[]{LPPlatform.LAB_TRUE, newId};              
-                }              
+                newId = rs.getString(indexposition);
+                Integer newIdInt = Integer.parseInt(newId);
+                if (newIdInt==0)
+                    return new String[]{LPPlatform.LAB_TRUE, TBL_KEY_NOT_FIRST_TABLEFLD}; 
+                else
+                    return new String[]{LPPlatform.LAB_TRUE, String.valueOf(newIdInt)};              
             }
             return new String[]{LPPlatform.LAB_TRUE, pkValue};
-        }catch (SQLException er){
-            
+        } catch (NumberFormatException nfe) {
+            return new String[]{LPPlatform.LAB_TRUE, newId};                           
+        }catch (SQLException er){            
             String className = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getFileName(); 
             String classFullName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getClassName(); 
             String methodName = "";//Thread.currentThread().getStackTrace()[CLIENT_CODE_STACK_INDEX].getMethodName(); 

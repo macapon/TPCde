@@ -12,6 +12,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
 import databases.TblsCnfg;
 import databases.TblsData;
@@ -152,7 +153,7 @@ public class SampleAPIfrontend extends HttpServlet {
             
             switch (actionName.toUpperCase()){
             case API_ENDPOINT_GET_SAMPLETEMPLATES:       
-                String[] filterFieldName = new String[]{TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()+" is not null"};
+                String[] filterFieldName = new String[]{TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
                 Object[] filterFieldValue = new Object[]{""};
 /*                filterFieldName = LPArray.addValueToArray1D(filterFieldName, "code");
                 if ("process-us".equalsIgnoreCase(schemaPrefix)){
@@ -201,7 +202,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 if (whereFieldsValue==null){whereFieldsValue="";}
                 
                 if ( ("".equals(whereFieldsName)) && ("".equals(whereFieldsValue)) ){
-                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+" is null");
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
                 }else{
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, whereFieldsName.split("\\|"));
@@ -219,7 +220,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(tokenFieldValue[0])) 
                             whereFieldsValueArr[iFields]=tokenFieldValue[1];                                                    
                     } 
-                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+" is null");
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
                 }  
                 
@@ -273,7 +274,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 whereFieldsNameArr = null;
                 whereFieldsValueArr = null; 
                 if (actionName.toUpperCase().equalsIgnoreCase(API_ENDPOINT_SAMPLES_INPROGRESS_LIST) && (!whereFieldsName.contains(TblsData.Sample.FLD_STATUS.getName())) ){
-                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+" is not null");
+                    whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
                     Object[] recEncrypted = LPPlatform.encryptString("RECEIVED");
                     whereFieldsNameArr=LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_STATUS.getName()+" in|");                
@@ -619,7 +620,7 @@ public class SampleAPIfrontend extends HttpServlet {
                    sampleFieldToRetrieveArr=new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_ACTION_NAME.getName(), TblsDataAudit.Sample.FLD_FIELDS_UPDATED.getName()
                     , TblsDataAudit.Sample.FLD_REVIEWED.getName(), TblsDataAudit.Sample.FLD_REVIEWED_ON.getName()};
                    Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
-                           new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+" is null"}, new Object[]{sampleId}, 
+                           new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName(), TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{sampleId}, 
                            sampleFieldToRetrieveArr, new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName()});
                    JSONArray jArr = new JSONArray();
                    for (Object[] curRow: sampleAuditInfo){

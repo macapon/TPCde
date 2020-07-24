@@ -9,7 +9,6 @@ import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
-import java.math.BigDecimal;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
@@ -30,13 +29,10 @@ public class ClassEnvMonQueries {
     public ClassEnvMonQueries(HttpServletRequest request, Token token, String schemaPrefix, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
         try{
             Rdbms.stablishDBConection();
-            Object[] dynamicDataObjects=new Object[]{};
             RelatedObjects rObj=RelatedObjects.getInstance();
             Object[] actionDiagnoses = null;
             Integer sampleId = null;
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());    
-            String instrName="";
-            BigDecimal temperature=null;
             this.functionFound=true;
             switch (endPoint){
                     case GET_SAMPLE_INFO:

@@ -77,8 +77,6 @@ public class LPTestingOutFormat {
                         TblsTesting.ScriptSteps.FLD_ARGUMENT_07.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_08.getName(),
                         TblsTesting.ScriptSteps.FLD_ARGUMENT_09.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_10.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()},
                     new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
-                    
-            //if (LPPlatform.LAB_FALSE.equalsIgnoreCase(csvFileContent[0][0].toString())) csvFileContent = new Object[0][0];
             headerTags.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, 0);   
             headerTags.put(FILEHEADER_NUM_TABLES_TAG_NAME, "-");  
             headerTags.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, numEvalArgs);   
@@ -126,7 +124,7 @@ public class LPTestingOutFormat {
                 updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
                     functionRelatedObjects.toJSONString()});                    
             }
-            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
+            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
                     updFldNames, updFldValues,
                     new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});            
         }
@@ -485,8 +483,6 @@ public class LPTestingOutFormat {
                 fileWriter.write(fileContent);
                 fileWriter.flush();
             }catch(IOException er){
-              String errorMessage=er.getMessage();
-              //Logger.log(LogTag.JFR, LogLevel.TRACE, errorMessage);
             } 
     }
     
@@ -738,18 +734,22 @@ public class LPTestingOutFormat {
         return LPArray.convertCSVinArray(csvPathName, csvFileSeparator);         
     } 
     
+    private static int getStepObjectPosic(JsonObject jsonObject){
+            int stepObjectPosic = 1;
+            try{
+                stepObjectPosic = jsonObject.get("object_posic").getAsInt();  
+            }catch(Exception ex){stepObjectPosic = 1;}
+            return stepObjectPosic;
+    }
+    
     public static String getAttributeValue(Object value, Object[][] scriptSteps){            
         try{
             if (!value.toString().contains("step")) return LPNulls.replaceNull(value.toString());
 
-            JsonObject JsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
-            int stepNumber = JsonObject.get("step").getAsInt();        
-            String stepObjectType = JsonObject.get("object_type").getAsString(); 
-            int stepObjectPosic = 1;
-            try{
-                stepObjectPosic = JsonObject.get("object_posic").getAsInt();  
-            }catch(Exception ex){stepObjectPosic = 1;}
-
+            JsonObject jsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
+            int stepNumber = jsonObject.get("step").getAsInt();        
+            String stepObjectType = jsonObject.get("object_type").getAsString(); 
+            int stepObjectPosic=getStepObjectPosic(jsonObject);
             Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-2), stepNumber);
             if (stepPosic==-1) return "";
 

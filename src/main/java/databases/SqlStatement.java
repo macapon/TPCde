@@ -15,7 +15,7 @@ import java.util.HashMap;
 public class SqlStatement {
     enum WHERE_FLDVALUES_ARRAY_TYPES{NUMBER, INTEGER, BOOLEAN}
     
-    enum WHERECLAUSE_TYPES{NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), LIKE("LIKE"), BETWEEN("BETWEEN"),
+    public enum WHERECLAUSE_TYPES{IS_NULL("is null"), IS_NOT_NULL("is not null"), NULL("NULL"), IN("IN"), NOT_IN("NOT IN"), EQUAL("="), LIKE("LIKE"), BETWEEN("BETWEEN"),
         LESS_THAN_STRICT("<"), LESS_THAN("<="), GREATER_THAN_STRICT(">"), GREATER_THAN(">=");
         private final String clause;
         WHERECLAUSE_TYPES(String cl){this.clause=cl;}

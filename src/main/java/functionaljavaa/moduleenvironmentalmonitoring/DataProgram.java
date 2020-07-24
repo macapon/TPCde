@@ -233,7 +233,6 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
         String[] specialFields = labIntChecker.getStructureSpecialFields(schemaDataName, "projectStructure");
         String[] specialFieldsFunction = labIntChecker.getStructureSpecialFieldsFunction(schemaDataName, "projectStructure");
         
-        String specialFieldsCheck = "";
         Integer specialFieldIndex = -1;
         for (Integer inumLines=0;inumLines<sampleFieldName.length;inumLines++){
             String currField = tableName+"." + sampleFieldName[inumLines];
@@ -294,9 +293,7 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
      *
      */
     public void createProgramName(){
-    //DataSample prjSmp = new DataSample();
-    
-}
+    }
 
 }
 

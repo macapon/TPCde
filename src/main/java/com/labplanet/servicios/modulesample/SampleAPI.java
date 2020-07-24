@@ -117,7 +117,6 @@ public class SampleAPI extends HttpServlet {
             Logger.getLogger(SampleAPI.class.getName()).log(Level.SEVERE, null, ex);
         }*/
 
-        String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);    
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
         try (PrintWriter out = response.getWriter()) {

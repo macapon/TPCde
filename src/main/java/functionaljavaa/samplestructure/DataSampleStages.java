@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.moduleenvmonit.ProcedureSampleStage;
 import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
 import databases.Rdbms;
+import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsData;
 import databases.Token;
 import functionaljavaa.audit.SampleAudit;
@@ -193,7 +194,7 @@ Object[][] firstStageData=new Object[0][0];
         String jsonarrayf=DataSample.sampleEntireStructureData(schemaPrefix, sampleId, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null, 
                                 DataSample.SAMPLE_ENTIRE_STRUCTURE_ALL_FIELDS, null);
-        String sampleStageClassName=schemaPrefix+"SampleStage"; 
+//        String sampleStageClassName=schemaPrefix+"SampleStage"; 
         String functionName="sampleStage"+currStage+moveDirection+"Checker";        
         ProcedureSampleStage procSampleStage=new ProcedureSampleStage();        
         Method method = null;
@@ -248,17 +249,12 @@ Object[][] firstStageData=new Object[0][0];
         }
         Invocable invocable = (Invocable) engine;
         Object result;
-        try {
           result = invocable.invokeFunction(functionName, sampleId, jsonarrayf);
-        } catch (NoSuchMethodException ex) {
-          Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);      
-          return new Object[]{LPPlatform.LAB_FALSE, "NoSuchMethodException", labelMsgError+ex.getMessage()};
-        }
         if (result.toString().equalsIgnoreCase(LPPlatform.LAB_TRUE)) return new Object[]{LPPlatform.LAB_TRUE};
         return new Object[]{LPPlatform.LAB_FALSE, result};
-      } catch (ScriptException ex) {
+      } catch (ScriptException|NoSuchMethodException ex) {
         Logger.getLogger(DataSampleStages.class.getName()).log(Level.SEVERE, null, ex);
-        return new Object[]{LPPlatform.LAB_FALSE, "ScriptException", labelMsgError+ex.getMessage()};
+        return new Object[]{LPPlatform.LAB_FALSE, ex.getCause().toString(), labelMsgError+ex.getMessage()};
       }
     }
 
@@ -274,7 +270,7 @@ Object[][] firstStageData=new Object[0][0];
         }else if (SampleStageTimingCapturePhases.END.toString().equalsIgnoreCase(phase)){
            return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.SampleStageTimingCapture.TBL.getName(), 
                 new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()}, new Object[]{LPDate.getCurrentTimeStamp()}, 
-                new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+" is null", TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+" is not null"},
+                new String[]{TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_SAMPLE_ID.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_ENDED_ON.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause(), TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STARTED_ON.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()},
                 new Object[]{sampleId, currStage });            
         }else{
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The phase <*1*> is not one of the recognized by the system, <*2*>", 

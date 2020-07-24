@@ -35,7 +35,7 @@ public static JSONObject getKPIs(String schemaPrefix, String[] objGroupName, Str
         String[] curFldsToRetrieveArr=giveMeStringArr(fldToRetrieve[i]);
         String curdataGrouped=giveMeString(dataGrouped[i]);
 
-        if (curgrouperName.length()==0)curgrouperName="grouper_"+String.valueOf(i);
+        if (curgrouperName.length()==0)curgrouperName="grouper_"+i;
         Object[][] dataInfo = new Object[][]{{}};
         if (Boolean.valueOf(curdataGrouped)){
             dataInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, curtblCategory), curtblName, 

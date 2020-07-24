@@ -13,7 +13,6 @@ import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
-import lbplanet.utilities.LPParadigm;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -252,9 +251,9 @@ public class GenomaDataStudyIndividuals {
                 studyName, null, LPArray.joinTwo1DArraysInOneOf1DString(fieldsName, fieldsValue, ":"), null);
         return diagnosesProj;      
     } 
-public static Object[] isStudyIndividualOpenToChanges(String schemaPrefix, Token token, String studyName, Integer IndividualId){
+public static Object[] isStudyIndividualOpenToChanges(String schemaPrefix, Token token, String studyName, Integer individualId){
         Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsGenomaData.StudyIndividual.TBL.getName(),
-            new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{studyName, IndividualId}, new String[]{TblsGenomaData.StudyIndividual.FLD_ACTIVE.getName()});
+            new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{studyName, individualId}, new String[]{TblsGenomaData.StudyIndividual.FLD_ACTIVE.getName()});
     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString()))
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The study individual <*1*> does not exist in procedure <*2*>", new Object[]{studyName, schemaPrefix});
     if (!Boolean.valueOf(LPNulls.replaceNull(sampleInfo[0][0]).toString()))

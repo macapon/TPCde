@@ -101,32 +101,28 @@ public class AppHeaderAPI extends HttpServlet {
                 return;
             }    
             if (actionName.toUpperCase().equalsIgnoreCase(AppHeaderAPIEndpoints.GETAPPHEADER.getName())){
-//            switch (endPoint){
-//                case GETAPPHEADER:          
-                    String personFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME);
-                    String[] personFieldsNameArr = new String[0];
-                    if ( personFieldsName==null || personFieldsName.length()==0){
-                        personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE.split("\\|");                            
-                    }else{
-                        personFieldsNameArr = personFieldsName.split("\\|");
-                    }    
-                    if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-                    Token token = new Token(finalToken);
-                    Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_CONFIG, TblsAppConfig.Person.TBL.getName(), 
-                         new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, new String[]{token.getPersonName()}, personFieldsNameArr);             
-                    if (LPPlatform.LAB_FALSE.equals(personInfoArr[0][0].toString())){                                                                                                                                                   
-                        Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);
-                        response.sendError((int) errMsg[0], (String) errMsg[1]);   
-                        Rdbms.closeRdbms();    
-                        return;
-                    }
-                    for (int iFields=0; iFields<personFieldsNameArr.length; iFields++ ){
-                        personInfoJsonObj.put(personFieldsNameArr[iFields], personInfoArr[0][iFields]);
-                    }                                 
-                    token=null;
-                    LPFrontEnd.servletReturnSuccess(request, response, personInfoJsonObj);
-//                default:
-//                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);                                                      
+                String personFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME);
+                String[] personFieldsNameArr = new String[0];
+                if ( personFieldsName==null || personFieldsName.length()==0){
+                    personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE.split("\\|");                            
+                }else{
+                    personFieldsNameArr = personFieldsName.split("\\|");
+                }    
+                if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+                Token token = new Token(finalToken);
+                Object[][] personInfoArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_CONFIG, TblsAppConfig.Person.TBL.getName(), 
+                     new String[]{TblsAppConfig.Person.FLD_PERSON_ID.getName()}, new String[]{token.getPersonName()}, personFieldsNameArr);             
+                if (LPPlatform.LAB_FALSE.equals(personInfoArr[0][0].toString())){                                                                                                                                                   
+                    Object[] errMsg = LPFrontEnd.responseError(LPArray.array2dTo1d(personInfoArr), language, null);
+                    response.sendError((int) errMsg[0], (String) errMsg[1]);   
+                    Rdbms.closeRdbms();    
+                    return;
+                }
+                for (int iFields=0; iFields<personFieldsNameArr.length; iFields++ ){
+                    personInfoJsonObj.put(personFieldsNameArr[iFields], personInfoArr[0][iFields]);
+                }                                 
+                token=null;
+                LPFrontEnd.servletReturnSuccess(request, response, personInfoJsonObj);
             }            
         }catch(Exception e){            
             String exceptionMessage = e.getMessage();           

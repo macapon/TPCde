@@ -93,7 +93,7 @@ public class EnvMonAPI extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode;  
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }
     
     public enum EnvMonQueriesAPIEndpoints{
@@ -138,7 +138,7 @@ public class EnvMonAPI extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode; 
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }    
     
     /**
@@ -246,7 +246,6 @@ public class EnvMonAPI extends HttpServlet {
 
         //Rdbms.setTransactionId(schemaConfigName);
         EnvMonAPIEndpoints endPoint = null;
-        Object[] actionDiagnoses = null;
         try{
             endPoint = EnvMonAPIEndpoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
@@ -259,7 +258,6 @@ public class EnvMonAPI extends HttpServlet {
                     LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
             return;
         }                
-        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         try (PrintWriter out = response.getWriter()) {
 
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);

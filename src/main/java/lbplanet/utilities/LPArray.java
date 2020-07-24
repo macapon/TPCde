@@ -143,10 +143,6 @@ public class  LPArray {
                             }
                             catch(InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e){
                                 fieldValue1[iFields] = fieldValue1[iFields].toString();
-/*                                String errorCode = ERRORTRAPPING_EXCEPTION;
-                                Object[] errorDetailVariables = new Object[0];
-                                errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, e.getMessage());
-                                return LPArray.array1dTo2d(trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables), errorDetailVariables.length);*/
                             }    
                     }        
                 }
@@ -185,10 +181,6 @@ public class  LPArray {
                 }
                 catch(InvalidKeyException | NoSuchAlgorithmException | BadPaddingException | IllegalBlockSizeException | NoSuchPaddingException e){
                     fieldValue[iFields] = fieldValue[iFields].toString();
-/*                    String errorCode = ERRORTRAPPING_EXCEPTION;
-                    Object[] errorDetailVariables = new Object[0];
-                    errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, e.getMessage());
-                    return trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);*/
                 }
             }
         }
@@ -828,9 +820,6 @@ public class  LPArray {
             for (Object n : matrix) {
                 nameBuilder.append(fieldAdorn).append(LPNulls.replaceNull(n).toString().replace("'", "\\'")).append(fieldAdorn).append(fieldsSeparator);
             }
-
-//            nameBuilder.deleteCharAt(nameBuilder.length() - fieldsSeparator.length());
-
             return nameBuilder.toString();
         } else {
             return "";

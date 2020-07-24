@@ -72,7 +72,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
         }     
         private final String name;
         private final String successMessageCode; 
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }    
 
     
@@ -162,7 +162,6 @@ public class EnvMonIncubationAPI extends HttpServlet {
                 return ;                           
             }     
             EnvMonIncubationAPIEndpoints endPoint = null;
-            Object[] actionDiagnoses = null;
             try{
                 endPoint = EnvMonIncubationAPIEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){

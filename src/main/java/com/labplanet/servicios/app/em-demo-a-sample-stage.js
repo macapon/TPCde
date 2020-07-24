@@ -22,9 +22,9 @@ var sampleStageIncubationNextChecker = function(sampleId, sampleData) {
     var sampleStructure=JSON.parse(sampleData);
     var incubationPassed = sampleStructure.incubation_passed;
     var incubation2Passed = sampleStructure.incubation2_passed;
-    if (incubationPassed!=true){
+    if (!incubationPassed){
         return " Pendiente 1a Incubacion para la muestra "+sampleId;}
-    if (incubation2Passed!=true){
+    if (!incubation2Passed){
         return " Pendiente 2a Incubacion para la muestra "+sampleId;}
     return "LABPLANET_TRUE";
 };
