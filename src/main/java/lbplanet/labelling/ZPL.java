@@ -104,7 +104,7 @@ if (response.statusCode() == 200) {
             //           rd.forward(request,response);               
         zebraLabel.getZplCode();
         ZebraUtils.printZpl(zebraLabel, ip, port);
-        } catch (ZebraPrintException|URISyntaxException|IOException ex) {
+        } catch (InterruptedException|ZebraPrintException|URISyntaxException|IOException ex) {
             Logger.getLogger(ZPL.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
