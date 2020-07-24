@@ -321,10 +321,10 @@ public class DataBatchIncubatorStructured {
         if (pendingIncubationStage==null)return sampleId.toString()+POSITIONVALUESEPARATORSTRUCTUREDBATCH;
         return sampleId.toString()+POSITIONVALUESEPARATORSTRUCTUREDBATCH+pendingIncubationStage.toString();
     }
-    public static String setLinesName_NOUSADO(String[] names, Integer numRows){
+    public static String setLinesNameNOUSADO(String[] names, Integer numRows){
         //String[] linesName = new String[numRows];
         String valuesSeparator=BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
-        String linesName="";
+        StringBuilder linesName=new StringBuilder();
         if (names==null){
             char[] alphabet = "abcdefghijklmnopqrstuvwxyz".toCharArray();            
             //Integer numLet=alphabet.length;
@@ -338,42 +338,42 @@ public class DataBatchIncubatorStructured {
                     inumLetAlphabet=0;
                 }
                 //linesName[inumLet]=currPrefixBuilder.toString()+alphabet[inumLetAlphabet];
-                if (linesName.length()>0)linesName=linesName+valuesSeparator;
-                linesName=linesName+currPrefixBuilder.toString()+alphabet[inumLetAlphabet];
+                if (linesName.length()>0)linesName.append(valuesSeparator);
+                linesName.append(currPrefixBuilder.toString()+alphabet[inumLetAlphabet]);
                 inumLet++;
                 inumLetAlphabet++;
             }            
         }else{
             for (String name : names) {
-                if (linesName.length()>0)linesName=linesName+valuesSeparator;
-                linesName = linesName + name;
+                if (linesName.length()>0)linesName.append(valuesSeparator);
+                linesName.append(name);
             }            
 //            if (linesName.length==names.length) linesName=names;
         }
-        return linesName; //names;        
+        return linesName.toString(); //names;        
     }
-    public static String setColumnsName_NOUSADO(String[] names, Integer numCols){
+    public static String setColumnsNameNOUSADO(String[] names, Integer numCols){
         //String[] columnsName=new String[numCols];
         String valuesSeparator=BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
-        String columnsName="";
+        StringBuilder columnsName=new StringBuilder();
         
         if (names==null){                                    
             Integer inumLet=1;
             //while (inumLet<=columnsName.length){                
             while (inumLet<=numCols){                
-                if (columnsName.length()>0)columnsName=columnsName+valuesSeparator;
-                columnsName=columnsName+inumLet;                
+                if (columnsName.length()>0)columnsName.append(valuesSeparator);
+                columnsName.append(inumLet);                
                 //columnsName[inumLet-1]=inumLet.toString();
                 inumLet++;
             }
         } else{
             for (String name : names) {
-                if (columnsName.length()>0)columnsName=columnsName+valuesSeparator;
-                columnsName = columnsName + name;                                
+                if (columnsName.length()>0)columnsName.append(valuesSeparator);
+                columnsName.append(name);                                
             }
 //            if (columnsName.length==names.length) columnsName=names;            
         }
-        return columnsName; //names;
+        return columnsName.toString(); //names;
     }    
 
 }

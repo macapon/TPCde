@@ -62,7 +62,6 @@ public class ProcedureSampleStage {
             if ("0".equals(rawValue)) return LPPlatform.LAB_TRUE+"|END";
             else return LPPlatform.LAB_TRUE;
         }
-        //out.println(paramName + rawValue);        
         return LPPlatform.LAB_FALSE;
     }
     public String sampleStageMicroorganismIdentificationPreviousChecker(Integer sampleId, String sampleData) {   

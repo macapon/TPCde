@@ -6,12 +6,15 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.app.TestingRegressionUAT;
 import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.MANDATORY_PARAMS_MAIN_SERVLET;
 import databases.Rdbms;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -104,7 +107,6 @@ public class EnvMonAPIStats extends HttpServlet {
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             
-        //Token token = new Token(finalToken);
         EnvMonAPIstatsEndpoints endPoint = null;
         try{
             endPoint = EnvMonAPIstatsEndpoints.valueOf(actionName.toUpperCase());
@@ -224,7 +226,6 @@ public class EnvMonAPIStats extends HttpServlet {
         } finally {
             // release database resources
             try {
-                //con.close();
                 Rdbms.closeRdbms();   
             } catch (Exception ignore) {
             }
@@ -238,27 +239,30 @@ public class EnvMonAPIStats extends HttpServlet {
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doGet(HttpServletRequest request, HttpServletResponse response){
+        try {
+            processRequest(request, response);
+        } catch (ServletException | IOException ex) {
+            Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
+
 
     /**
      * Handles the HTTP <code>POST</code> method.
      *
      * @param request servlet request
      * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
+    protected void doPost(HttpServletRequest request, HttpServletResponse response){
+        try {
+            processRequest(request, response);
+        } catch (ServletException | IOException ex) {
+            Logger.getLogger(TestingRegressionUAT.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
 
     /**

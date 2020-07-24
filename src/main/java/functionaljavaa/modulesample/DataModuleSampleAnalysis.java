@@ -41,14 +41,14 @@ public class DataModuleSampleAnalysis implements DataSampleAnalysisStrategy{
                 anaName[1][0] = "LOD";
                 anaName[1][1] = "LOD Method";
                 anaName[1][2] = 1;                    
-        String analysisAdded = "";
+        StringBuilder analysisAdded = new StringBuilder();
         for (Object[] anaName1 : anaName) {
             String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
             functionaljavaa.samplestructure.DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldsName, fieldsValue, preAuditId);
-            analysisAdded=analysisAdded+LPArray.convertArrayToString(anaName1, ",", "");
+            analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded+" to the sample "+sampleId.toString()+" for schema "+schemaPrefix});        
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+schemaPrefix});        
   }
 
     /**

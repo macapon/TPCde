@@ -87,7 +87,6 @@ public class ClassProject {
                     
                     if (fieldValue!=null && fieldValue.length()>0) 
                         fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
-//                        fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     actionDiagnoses= prjStudy.createStudy(schemaPrefix, token, studyName, projectName, fieldNames, fieldValues,  false);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
@@ -99,7 +98,6 @@ public class ClassProject {
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
-        //this.messageDynamicData=dynamicDataObjects;
         rObj.killInstance();
     }
     

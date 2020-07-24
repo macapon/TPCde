@@ -233,15 +233,14 @@ public class EnvMonAPIfrontend extends HttpServlet {
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             
-        //Token token = new Token(finalToken);
-
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
         
         switch (actionName.toUpperCase()){
             case API_ENDPOINT_PROGRAMS_LIST:
                 String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
-                String programFldNameList = request.getParameter("programFldNameList");   
-                  if (programFldNameList==null) programFldNameList = DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_TO_GET;
+                StringBuilder programFldNameList = new StringBuilder();
+                programFldNameList.append(request.getParameter("programFldNameList"));   
+                  if (programFldNameList==null) programFldNameList.append(DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_TO_GET);
                 String[] programFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldNameList);
 
                 String programFldSortList = request.getParameter("programFldSortList");   
@@ -349,7 +348,6 @@ public class EnvMonAPIfrontend extends HttpServlet {
                             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
                             programLocationFldNameArray, programLocationFldSortArray);
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){
-//                            programJsonObj.put("program_location_error", programLocations[0][programLocations[0].length-1]);        
                         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}                           
                         programLocations = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                                                        new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 
@@ -435,7 +433,6 @@ public class EnvMonAPIfrontend extends HttpServlet {
                                         }
                                     }
                                     programLocationCardInfoJsonObj.put(JSON_TAG_NAME_PSWD, JSON_TAG_NAME_PSWD_VALUE_FALSE);
-                                    // programLocationCardInfoJsonObj.put(programLocationCardInfoFldNameArray[yProcEv], "test"); //programLocations1[yProcEv]);
                                     programLocationCardInfoJsonArr.add(programLocationCardInfoJsonObj);                                    
                                 }    
                             }
@@ -542,16 +539,17 @@ public class EnvMonAPIfrontend extends HttpServlet {
               }         
               
               String programName = request.getParameter("programName");   
-              
-              programFldNameList = request.getParameter("programCorrectiveActionFldNameList");   
-              if (programFldNameList==null) programFldNameList = DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_GET;                     
-//              programFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldNameList);             
+              programFldNameList = new StringBuilder();
+              programFldNameList.append(request.getParameter("programCorrectiveActionFldNameList"));   
+              if (programFldNameList==null) programFldNameList.append(DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_GET);
               if (programFldNameList==null || programFldNameList.length()==0){
-                programFldNameList="";
+                programFldNameList = new StringBuilder();
+                programFldNameList.append("");
+                
                 for (TblsEnvMonitProcedure.ProgramCorrectiveAction obj: TblsEnvMonitProcedure.ProgramCorrectiveAction.values()){
                     String objName = obj.name();
-                    if ( (!"TBL".equalsIgnoreCase(objName)) && (programFldNameList.length()>0) ) programFldNameList=programFldNameList+"|";
-                      programFldNameList=programFldNameList+obj.getName();
+                    if ( (!"TBL".equalsIgnoreCase(objName)) && (programFldNameList.length()>0) ) programFldNameList.append("|");
+                      programFldNameList.append(obj.getName());
                 }      
               }                  
               programFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldNameList);

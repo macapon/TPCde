@@ -5,7 +5,6 @@
  */
 package functionaljavaa.modulesample;
 
-//import functionaljavaa.moduleenvironmentalmonitoring.DataProgram;
 import databases.Token;
 import java.util.logging.Level;
 import java.util.logging.Logger;

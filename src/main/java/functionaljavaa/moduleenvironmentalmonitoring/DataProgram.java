@@ -288,12 +288,5 @@ Object[] createProgram( String schemaPrefix, Token token, String projectTemplate
     return diagnosesProj; 
 }    
 
-
-    /**
-     *
-     */
-    public void createProgramName(){
-    }
-
 }
 

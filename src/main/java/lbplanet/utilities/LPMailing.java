@@ -107,14 +107,12 @@ public static void main(String[] args) {
             prop.put("mail.smtp.ssl.trust", propValue.getString("tls.mail.smtp.ssl.trust"));
             prop.put("mail.user", username);
             prop.put("mail.password", password); //TLS
-//        Session session = Session.getInstance(prop, null);
             Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
                             @Override
                             protected PasswordAuthentication getPasswordAuthentication() {
                             return new PasswordAuthentication(username, password);
                             }
             });    
-            //return session;    
             buildMailInternal(session, subject, body, toList, ccList, bccList, attachmentUrl);
     }
 

@@ -582,7 +582,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @return
      */
     
-    public String specialFieldCheckSampleStatus_NOUSADO( String schemaPrefix, String template, Integer templateVersion){                      
+    public String specialFieldCheckSampleStatusNOUSADO( String schemaPrefix, String template, Integer templateVersion){                      
         String myDiagnoses = "";        
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
@@ -623,7 +623,7 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
      * @param templateVersion
      * @return
      */
-    public String specialFieldCheckSampleSpecCode_NOUSADO( String schemaPrefix, String template, Integer templateVersion){ 
+    public String specialFieldCheckSampleSpecCodeNOUSADO( String schemaPrefix, String template, Integer templateVersion){ 
         String schemaConfigName = LPPlatform.SCHEMA_CONFIG;
         
         schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, schemaConfigName); 

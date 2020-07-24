@@ -79,8 +79,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
            
-           // Token token = new Token(finalToken);
-
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}              
             
             switch (actionName.toUpperCase()){
@@ -461,9 +459,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                         jObjPieceOfInfo.put("field_name", fieldToDisplayArr1);
                         sampleJsonArr.add(jObjPieceOfInfo);
                     }                    
-                    //sampleJsonArr.add(jArrPieceOfInfo);
                     jObjMainObject.put(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY, sampleJsonArr);
-                    
                     
                     String sampleGroups=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS);
                     if (sampleGroups!=null){
@@ -489,40 +485,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
                         }
                     }                    
-                    
-                    //Object[] prodLotSamplingSamplesInfo=EnvMonIncubBatchAPIfrontend.incubBatchContentJson(prodLotTblAllFields, prodLotInfo[0]);
-                    //jObjMainObject.put("SAMPLES_ARRAY", prodLotSamplingSamplesInfo[0]);
-                    //jObjMainObject.put("NUM_SAMPLES", prodLotSamplingSamplesInfo[1]);     
-                    
-/*                    String lotName= prodLotInfo[0][LPArray.valuePosicInArray(TblsEnvMonitData.IncubBatch.getAllFieldNames(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName())].toString();
-                    Object incubStart= prodLotInfo[0][LPArray.valuePosicInArray(TblsEnvMonitData.IncubBatch.getAllFieldNames(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName())]; 
-                    Object incubEnd= prodLotInfo[0][LPArray.valuePosicInArray(TblsEnvMonitData.IncubBatch.getAllFieldNames(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName())];                     
-                    JSONArray jArrLastTempReadings = new JSONArray();
-                    if (lotName==null || incubStart==null || incubEnd==null){
-                        JSONObject jObj= new JSONObject();
-                        jObj.put("error", "This is not a completed batch so temperature readings cannot be");
-                        jArrLastTempReadings.add(jObj);
-                    }else{
-                        fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
-                                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
-                                    TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};   
-                        Object[][] instrReadings=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.InstrIncubatorNoteBook.TBL.getName(), 
-                                new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_NAME.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()+" BETWEEN "}, 
-                                new Object[]{lotName, incubStart, incubEnd}, 
-                                fieldsToRetrieve, new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName()});
-                        if ("LABPLANET_FALSE".equalsIgnoreCase(instrReadings[0][0].toString())){
-                            JSONObject jObj= new JSONObject();
-                            jObj.put("error", "No temperature readings found");
-                            jArrLastTempReadings.add(jObj);                            
-                        }else{
-                            for (Object[] currReading: instrReadings){
-                                JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsToRetrieve, currReading);
-                                jArrLastTempReadings.add(jObj);
-                            }
-                        }
-                    }
-                    jObjMainObject.put(GlobalAPIsParams.BATCH_REPORT_JSON_TAG_NAME_TEMP_READINGS, jArrLastTempReadings);    
-*/                    
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
                     break;                                        
                 case API_ENDPOINT_GET_INCUBATOR_REPORT:
@@ -715,8 +677,6 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
                             if (programName!=null){
                                 whereFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PROGRAM_NAME.getName());
                                 whereFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);
-                                //whereLimitsFieldNames=LPArray.addValueToArray1D(whereFieldNames, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PROGRAM_NAME.getName());
-                                //whereLimitsFieldValues=LPArray.addValueToArray1D(whereFieldValues, programName);                        
                             }                            
                             jObj= LPJson.convertArrayRowToJSONObject(fieldToRetrieveLimitsArr, currLimit);
                             for (int i=0;i<limitsFieldNamesToFilter.length;i++){
@@ -763,7 +723,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
 
 
 private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, String[] sampleFldName, Object[] sampleFldValue, String[] sampleStageFldName, Object[] sampleStageFldValue){
-    if (sampleStageFldValue==null) return null; //new Object[][]{{}};
+    if (sampleStageFldValue==null) return null;
     if (!LPArray.valueInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())) return null; //new Object[][]{{}};
     String currentStage=sampleStageFldValue[LPArray.valuePosicInArray(sampleStageFldName, TblsEnvMonitProcedure.SampleStageTimingCapture.FLD_STAGE_CURRENT.getName())].toString();
     JSONObject jObj= new JSONObject();
@@ -776,7 +736,6 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
             jObj.put("field_value", sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName())].toString());
             jArrMainObj.add(jObj);
             return jArrMainObj; 
-            //return new Object[][]{{TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName(), sampleFldValue[LPArray.valuePosicInArray(sampleFldName, TblsEnvMonitData.Sample.FLD_SAMPLING_DATE.getName())].toString()}};
         case "INCUBATION":
             String[] incub1Flds=new String[]{TblsEnvMonitData.Sample.FLD_INCUBATION_PASSED.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_BATCH.getName(), 
                 TblsEnvMonitData.Sample.FLD_INCUBATION_START.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMP_EVENT_ID.getName(), TblsEnvMonitData.Sample.FLD_INCUBATION_START_TEMPERATURE.getName(),
@@ -818,7 +777,7 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
                     tblAllFlds, new String[]{TblsEnvMonitData.ViewSampleMicroorganismList.FLD_TEST_ID.getName(), TblsEnvMonitData.ViewSampleMicroorganismList.FLD_RESULT_ID.getName()});                    
             jObj= new JSONObject();
             jObj2= new JSONObject();
-            for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ //Object[] curRec: sampleInfo){   
+            for (int iFlds=0;iFlds<sampleStageInfo[0].length;iFlds++){ 
                 jObj2.put(tblAllFlds[iFlds], sampleStageInfo[0][iFlds].toString());
                 JSONObject jObjSampleStageInfo=new JSONObject();
                 jObjSampleStageInfo.put("field_name", tblAllFlds[iFlds]);
@@ -855,7 +814,6 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
             fldValueArr=LPArray.addValueToArray1D(fldValueArr, lockReasonJSONObj);
         }
         return new Object[]{fldNameArr, fldValueArr};
-        //return null;
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">

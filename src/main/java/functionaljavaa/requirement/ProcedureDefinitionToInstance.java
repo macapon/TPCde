@@ -306,7 +306,6 @@ public class ProcedureDefinitionToInstance {
          Object[][] procSopMetaDataRecordsSource = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TABLE_NAME_PROCEDURE_SOP_META_DATA, 
                 new String[]{FLD_NAME_PROCEDURE_USER_ROLE_NAME, FLD_NAME_PROCEDURE_USER_ROLE_VERSION,FLD_NAME_PROCEDURE_USER_ROLE_SCHEMA_PREFIX}, new Object[]{procedure, procVersion, schemaPrefix}, 
                 FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SOURCE.split("\\|"), FIELDS_TO_RETRIEVE_PROCEDURE_SOP_META_DATA_SORT.split("\\|"));
-                //new String[]{"*"}, new String[]{"sop_id"});
         
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(procSopMetaDataRecordsSource[0][0].toString())){
           jsonObj.put(JSON_LABEL_FOR_ERROR, LPJson.convertToJSON(procSopMetaDataRecordsSource));

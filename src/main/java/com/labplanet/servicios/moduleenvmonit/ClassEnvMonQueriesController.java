@@ -41,10 +41,6 @@ public class ClassEnvMonQueriesController {
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
             
         }catch(Exception e){
-            //endPoint = SampleAPIParams.SampleAPIEndpoints.valueOf(actionName.toString().toUpperCase());
-            //ClassEnvMonSample clss=new ClassSample(request, token, schemaPrefix.toString(), endPoint);
-            //functionEvaluation=clss.getDiagnostic();
-            //functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         }
     }
 

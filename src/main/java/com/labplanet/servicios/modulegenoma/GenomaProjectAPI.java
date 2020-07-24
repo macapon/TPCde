@@ -200,7 +200,6 @@ public class GenomaProjectAPI extends HttpServlet {
         }*/
 
         GenomaProjectAPIEndPoints endPoint = null;
-//        Object[] actionDiagnoses = null;
         try{
             endPoint = GenomaProjectAPIEndPoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
@@ -217,7 +216,6 @@ public class GenomaProjectAPI extends HttpServlet {
         
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
 
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);

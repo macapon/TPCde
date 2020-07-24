@@ -250,7 +250,6 @@ public class GenomaStudyAPI extends HttpServlet {
         }*/
 
         GenomaStudyAPIEndPoints endPoint = null;
-//        Object[] actionDiagnoses = null;
         try{
             endPoint = GenomaStudyAPIEndPoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
@@ -263,13 +262,10 @@ public class GenomaStudyAPI extends HttpServlet {
                     LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
             return;
         }                
-        //Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
-        
+        //Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());        
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
-
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionEnabled[0].toString())){
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);

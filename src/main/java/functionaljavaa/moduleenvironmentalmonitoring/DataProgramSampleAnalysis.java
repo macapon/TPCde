@@ -22,7 +22,12 @@ import lbplanet.utilities.LPPlatform;
  * @author Administrator
  */
 public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
+     String[] mandatoryFields = null;
 
+    /**
+     *
+     */
+    Object[] mandatoryFieldsValue = null;
     /**
      *
      * @param schemaPrefix
@@ -87,14 +92,14 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                 return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "autoSampleAnalysisAdd_caseNotDetected", new String[]{autoAddAnalysisLevel+" not implemented yet."});
         }
 
-        String analysisAdded = "";
+        StringBuilder analysisAdded = new StringBuilder();
         for (Object[] anaName1 : anaName) {
             String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
             Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
             DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldsName, fieldsValue, preAuditId);
-            analysisAdded=analysisAdded+LPArray.convertArrayToString(anaName1, ",", "");
+            analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        
-        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded+" to the sample "+sampleId.toString()+" for schema "+schemaPrefix});        
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "autoSampleAnalysisAdded_success", new String[]{"Added analysis "+analysisAdded.toString()+" to the sample "+sampleId.toString()+" for schema "+schemaPrefix});        
     }
     /**
      *

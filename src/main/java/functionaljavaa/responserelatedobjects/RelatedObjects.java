@@ -43,7 +43,7 @@ public class RelatedObjects {
         }                 
     }
     public void killInstance(){   
-        mainStructureObject=null;        
+        RelatedObjects.mainStructureObject=null;        
     }
     public JSONArray getRelatedObject(){
         return jArrMainObject;

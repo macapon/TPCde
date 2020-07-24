@@ -473,10 +473,11 @@ public class LPTestingOutFormat {
         File file = new File(csvPathName);
             try (FileWriter fileWriter = new FileWriter(file)) {
                 if (file.exists()) {
-                  file.delete();
-                  //if ((!file.delete()){return;}
+                  if (!file.delete()){return;}
+//                  file.delete();
                 }
-                file.createNewFile();
+                if (!file.createNewFile()){return;}
+//                file.createNewFile();
                 if (!file.exists()){
                     return;
                 }

@@ -103,7 +103,7 @@ public class ClassSample {
                 }else{
                     diagn = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                 }
-                dynamicDataObjects=new Object[]{diagn[diagn.length-1]};
+                Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), diagn[diagn.length-1]);
                 this.messageDynamicData=new Object[]{diagn[diagn.length-1]};
                 break;

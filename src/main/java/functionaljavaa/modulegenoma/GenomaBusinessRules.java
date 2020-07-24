@@ -31,11 +31,11 @@ public class GenomaBusinessRules {
         String propertyEntryValue = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), propertyEntryName);        
         if (propertyEntryValue.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "", null);
         String[] propertyEntryValueArr=propertyEntryValue.split("\\|");
-        String specialFieldsPresent="";
+        StringBuilder specialFieldsPresent=new StringBuilder();
         for (String curFldToCheck: fieldsToCheck){
             if ( LPArray.valueInArray(propertyEntryValueArr, curFldToCheck) ) {
-                if (specialFieldsPresent.length()>0) specialFieldsPresent=specialFieldsPresent+", ";
-                specialFieldsPresent=specialFieldsPresent+curFldToCheck;
+                if (specialFieldsPresent.length()>0) specialFieldsPresent.append(", ");
+                specialFieldsPresent.append(curFldToCheck);
             }                  
         }
         if (specialFieldsPresent.length()>0) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Special fields (<*1*>) are present and they are not allowed by the generic update action.", new Object[]{specialFieldsPresent});

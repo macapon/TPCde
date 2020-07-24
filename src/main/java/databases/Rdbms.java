@@ -1295,7 +1295,7 @@ if (1==1)return;
      *
      * @return
      */
-    public static Connection createTransactionWithSavePoint_NOUSADO(){        
+    public static Connection createTransactionWithSavePointNOUSADO(){        
         try {
             conn.setAutoCommit(false);
             rdbms.savepoint = conn.setSavepoint();
@@ -1317,7 +1317,7 @@ if (1==1)return;
     /**
      *
      */
-    public static void rollbackWithSavePoint_NOUSADO(){
+    public static void rollbackWithSavePointNOUSADO(){
         try {
             conn.rollback(rdbms.savepoint);
         } catch (SQLException ex) {

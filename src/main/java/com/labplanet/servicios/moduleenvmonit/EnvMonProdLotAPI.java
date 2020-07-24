@@ -221,7 +221,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
                     con.rollback();
                     con.setAutoCommit(true);}                */
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), messageDynamicData);   
-                //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
             }else{
                 JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), messageDynamicData, rObj.getRelatedObject());
                 rObj.killInstance();
@@ -235,7 +234,6 @@ public class EnvMonProdLotAPI extends HttpServlet {
         } finally {
             // release database resources
             try {
-//                con.close();
                 Rdbms.closeRdbms();   
             } catch (Exception ignore) {
             }

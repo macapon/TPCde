@@ -55,7 +55,6 @@ public class ClassStudy {
                     
                     if (fieldValue!=null && fieldValue.length()>0) 
                         fieldValues=TblsGenomaData.Study.convertStringWithDataTypeToObjectArray(fieldNames, fieldValue.split("\\|"));
-//                        fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                                                
                     if ("STUDY_NEW".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prjStudy.createStudy(schemaPrefix, token, studyName, projectName, fieldNames, fieldValues,  false);
                     if ("STUDY_UPDATE".equalsIgnoreCase(endPoint.getName()))
@@ -251,7 +250,6 @@ public class ClassStudy {
             }    
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;
-        //this.messageDynamicData=dynamicDataObjects;
         rObj.killInstance();
     }
     

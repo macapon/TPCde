@@ -11,8 +11,7 @@ package lbplanet.utilities;
  */
 public class LPDatabase {
     private LPDatabase() {    throw new IllegalStateException("Utility class");  }
-        
-    
+                    
     public static final String booleanFld(){ return "boolean";}    
     public static final String booleanFld(Boolean def){ return LPDatabase.booleanFld() + " default " + def.toString();}
     public static final String booleanNotNull(Boolean def){ return LPDatabase.booleanFld() + " " + notNulllClause();}

@@ -87,13 +87,13 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
                             JSONObject curProjStudyJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.Study.getAllFieldNames(), curProjStudy);
 
                             String curStudyName=curProjStudy[LPArray.valuePosicInArray(TblsGenomaData.Study.getAllFieldNames(), TblsGenomaData.Study.FLD_NAME.getName())].toString();
-                            curProjStudyJson=StudyIndividualSamplesJson(schemaPrefix, curProjStudyJson, curStudyName, null);
-                            curProjStudyJson=StudyIndividualJson(schemaPrefix, curProjStudyJson, curStudyName, null);
-                            curProjStudyJson=StudySamplesSetJson(schemaPrefix, curProjStudyJson, curStudyName);
-                            curProjStudyJson=StudyFamilyJson(schemaPrefix, curProjStudyJson, curStudyName);
-                            curProjStudyJson=StudyVariableValuesJson(schemaPrefix, curProjStudyJson, 
+                            curProjStudyJson=studyIndividualSamplesJson(schemaPrefix, curProjStudyJson, curStudyName, null);
+                            curProjStudyJson=studyIndividualJson(schemaPrefix, curProjStudyJson, curStudyName, null);
+                            curProjStudyJson=studySamplesSetJson(schemaPrefix, curProjStudyJson, curStudyName);
+                            curProjStudyJson=studyFamilyJson(schemaPrefix, curProjStudyJson, curStudyName);
+                            curProjStudyJson=studyVariableValuesJson(schemaPrefix, curProjStudyJson, 
                                 curStudyName, null, null, null);
-                            curProjStudyJson=StudyObjectsFileJson(schemaPrefix, curProjStudyJson, curStudyName);
+                            curProjStudyJson=studyObjectsFileJson(schemaPrefix, curProjStudyJson, curStudyName);
                             projStudiesJsonArr.add(curProjStudyJson);
                         }
                     }
@@ -180,7 +180,7 @@ public class GenomaStudyAPIFrontend extends HttpServlet {
         } 
     }
     
-JSONObject StudyObjectsFileJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
+JSONObject studyObjectsFileJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.studyObjectsFiles.TBL.getName(), 
         new String[]{TblsGenomaData.studyObjectsFiles.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
@@ -196,7 +196,7 @@ JSONObject StudyObjectsFileJson(String schemaPrefix, JSONObject curProjStudyJson
     return curProjStudyJson;
 }    
 
-JSONObject StudyFamilyJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
+JSONObject studyFamilyJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyFamily.TBL.getName(), 
         new String[]{TblsGenomaData.StudyFamily.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
@@ -206,9 +206,9 @@ JSONObject StudyFamilyJson(String schemaPrefix, JSONObject curProjStudyJson, Str
         for (Object[] curStudyFamily: studyFamilyInfo){
             JSONObject curStudyFamilyJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyFamily.getAllFieldNames(), curStudyFamily);
             String curFamilyName=curStudyFamily[LPArray.valuePosicInArray(TblsGenomaData.StudyFamily.getAllFieldNames(), TblsGenomaData.StudyFamily.FLD_NAME.getName())].toString();
-            curStudyFamilyJson=StudyVariableValuesJson(schemaPrefix, curStudyFamilyJson, 
+            curStudyFamilyJson=studyVariableValuesJson(schemaPrefix, curStudyFamilyJson, 
                 curStudyName, null, null, curFamilyName);
-            curStudyFamilyJson=StudyIndividualJson(schemaPrefix, curStudyFamilyJson, curStudyName, curFamilyName);
+            curStudyFamilyJson=studyIndividualJson(schemaPrefix, curStudyFamilyJson, curStudyName, curFamilyName);
             studyFamiliesJsonArr.add(curStudyFamilyJson);
         }
         curProjStudyJson.put(TblsGenomaData.StudyFamily.TBL.getName(), studyFamiliesJsonArr);
@@ -216,7 +216,7 @@ JSONObject StudyFamilyJson(String schemaPrefix, JSONObject curProjStudyJson, Str
     return curProjStudyJson;
 }    
 
-JSONObject StudyIndividualJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, String familyName){
+JSONObject studyIndividualJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, String familyName){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()};
     String[] whereFldValues=new String[]{curStudyName};
@@ -227,11 +227,11 @@ JSONObject StudyIndividualJson(String schemaPrefix, JSONObject curProjStudyJson,
             new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()}, new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(studyFamilyIndividualInfo[0][0].toString()))
             return curProjStudyJson;    
-        String familyIndivsStr="";
+        StringBuilder familyIndivsStr=new StringBuilder();
         for (Object[] curVal: studyFamilyIndividualInfo){
-            familyIndivsStr=familyIndivsStr+curVal[0].toString()+"|";
+            familyIndivsStr.append(curVal[0].toString()).append("|");
         }        
-        if (familyIndivsStr.endsWith("|")) familyIndivsStr=familyIndivsStr.substring(0, familyIndivsStr.length()-1);
+        if (familyIndivsStr.toString().endsWith("|")) familyIndivsStr.append(familyIndivsStr.toString().substring(0, familyIndivsStr.length()-1));
         whereFldNames=LPArray.addValueToArray1D(whereFldNames, TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName()+" IN|");
         whereFldValues=LPArray.addValueToArray1D(whereFldValues, "INTEGER*"+familyIndivsStr);
     }
@@ -244,17 +244,17 @@ JSONObject StudyIndividualJson(String schemaPrefix, JSONObject curProjStudyJson,
             JSONObject curStudyIndividualJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividual.getAllFieldNames(), curStudyIndividual);
 
             Integer curStudyIndividualId=Integer.valueOf(curStudyIndividual[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividual.getAllFieldNames(), TblsGenomaData.StudyIndividual.FLD_INDIVIDUAL_ID.getName())].toString());
-            curStudyIndividualJson=StudyVariableValuesJson(schemaPrefix, curStudyIndividualJson, 
+            curStudyIndividualJson=studyVariableValuesJson(schemaPrefix, curStudyIndividualJson, 
                     curStudyName, curStudyIndividualId, null, null);
-            curStudyIndividualJson= StudyIndividualFamiliesJson(schemaPrefix, curStudyIndividualJson, curStudyName, curStudyIndividualId);
-            curStudyIndividualJson=StudyIndividualSamplesJson(schemaPrefix, curStudyIndividualJson, curStudyName, curStudyIndividualId);
+            curStudyIndividualJson= studyIndividualFamiliesJson(schemaPrefix, curStudyIndividualJson, curStudyName, curStudyIndividualId);
+            curStudyIndividualJson=studyIndividualSamplesJson(schemaPrefix, curStudyIndividualJson, curStudyName, curStudyIndividualId);
             studyIndividualJsonArr.add(curStudyIndividualJson);
         }
         curProjStudyJson.put(TblsGenomaData.StudyIndividual.TBL.getName(), studyIndividualJsonArr);
     }    
     return curProjStudyJson;
 }
-JSONObject StudyIndividualFamiliesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId){
+JSONObject studyIndividualFamiliesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     Object[][] studyFamilyInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudyFamilyIndividual.TBL.getName(), 
         new String[]{TblsGenomaData.StudyFamilyIndividual.FLD_STUDY.getName(), TblsGenomaData.StudyFamilyIndividual.FLD_INDIVIDUAL_ID.getName()}, new Object[]{curStudyName, individualId}, 
@@ -269,7 +269,7 @@ JSONObject StudyIndividualFamiliesJson(String schemaPrefix, JSONObject curProjSt
     }    
     return curProjStudyJson;
 }   
-JSONObject StudyIndividualSamplesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId){
+JSONObject studyIndividualSamplesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()};
     Object[] whereFldValues=new Object[]{curStudyName};
@@ -293,18 +293,18 @@ JSONObject StudyIndividualSamplesJson(String schemaPrefix, JSONObject curProjStu
             JSONObject curStudyIndividualSampleJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), curStudyIndividualSample);
             Integer curSampleId=Integer.valueOf(curStudyIndividualSample[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName())].toString());
             Integer curIndividualId=Integer.valueOf(curStudyIndividualSample[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), TblsGenomaData.StudyIndividualSample.FLD_INDIVIDUAL_ID.getName())].toString());
-            curStudyIndividualSampleJson=StudyVariableValuesJson(schemaPrefix, curStudyIndividualSampleJson, 
+            curStudyIndividualSampleJson=studyVariableValuesJson(schemaPrefix, curStudyIndividualSampleJson, 
                     curStudyName, null, curSampleId, null);
 
-            curStudyIndividualSampleJson= StudyIndividualFamiliesJson(schemaPrefix, curStudyIndividualSampleJson, curStudyName, curIndividualId);
-            curStudyIndividualSampleJson=StudyIndividualSampleSamplesSetJson(schemaPrefix, curStudyIndividualSampleJson, curStudyName, curSampleId);
+            curStudyIndividualSampleJson= studyIndividualFamiliesJson(schemaPrefix, curStudyIndividualSampleJson, curStudyName, curIndividualId);
+            curStudyIndividualSampleJson=studyIndividualSampleSamplesSetJson(schemaPrefix, curStudyIndividualSampleJson, curStudyName, curSampleId);
             studyIndividualSampleJsonArr.add(curStudyIndividualSampleJson);
         }
         curProjStudyJson.put(TblsGenomaData.StudyIndividualSample.TBL.getName(), studyIndividualSampleJsonArr);
     }
     return curProjStudyJson;
 }
-JSONObject StudyIndividualSampleSamplesSetJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer sampleId){
+JSONObject studyIndividualSampleSamplesSetJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer sampleId){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     String[] samplePossiblePosics=new String[]{
         sampleId.toString(), sampleId.toString()+"|%","%|"+sampleId.toString(), "%|"+sampleId.toString()+"|%"};
@@ -325,7 +325,7 @@ JSONObject StudyIndividualSampleSamplesSetJson(String schemaPrefix, JSONObject c
 }   
  
 
-JSONObject StudyVariableValuesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId, Integer sampleId, String familyName){
+JSONObject studyVariableValuesJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName, Integer individualId, Integer sampleId, String familyName){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     String[] whereFldNames=new String[]{TblsGenomaData.StudyIndividual.FLD_STUDY.getName()};
     Object[] whereFldValues=new Object[]{curStudyName};
@@ -357,7 +357,7 @@ JSONObject StudyVariableValuesJson(String schemaPrefix, JSONObject curProjStudyJ
 }
 
 
-JSONObject StudySamplesSetJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
+JSONObject studySamplesSetJson(String schemaPrefix, JSONObject curProjStudyJson, String curStudyName){
     String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
     Object[][] studySamplesSetInfo = Rdbms.getRecordFieldsByFilter(schemaName, TblsGenomaData.StudySamplesSet.TBL.getName(), 
         new String[]{TblsGenomaData.StudySamplesSet.FLD_STUDY.getName()}, new Object[]{curStudyName}, 
@@ -377,7 +377,7 @@ JSONObject StudySamplesSetJson(String schemaPrefix, JSONObject curProjStudyJson,
                     JSONObject curSamplesSetContentJson = LPJson.convertArrayRowToJSONObject(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), 
                             curStudySamplesSetContent);
                     Integer curSampleId=Integer.valueOf(curStudySamplesSetContent[LPArray.valuePosicInArray(TblsGenomaData.StudyIndividualSample.getAllFieldNames(), TblsGenomaData.StudyIndividualSample.FLD_SAMPLE_ID.getName())].toString());
-                    curSamplesSetContentJson=StudyVariableValuesJson(schemaPrefix, curSamplesSetContentJson, 
+                    curSamplesSetContentJson=studyVariableValuesJson(schemaPrefix, curSamplesSetContentJson, 
                             curStudyName, null, curSampleId, null);
                     studySamplesSetContentJsonArr.add(curSamplesSetContentJson);                
                 }

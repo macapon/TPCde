@@ -150,7 +150,7 @@ public class DataProgramSample{
                 fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName()});
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString()))
             return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Nothing pending in procedure "+schemaPrefix+" for the filter "+programCalendarDatePending[0][6].toString(), new Object[]{});
-        String newSamplesLogged="";
+        StringBuilder newSamplesLogged=new StringBuilder();
         Integer newSamplesCounter=0;
         for (Object[] curRecord: programCalendarDatePending){
             Object[] fieldValue = new Object[0];
@@ -165,7 +165,7 @@ public class DataProgramSample{
                     curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
             if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                 newSamplesCounter++;
-                newSamplesLogged=newSamplesLogged+" "+diagn[diagn.length-1].toString();
+                newSamplesLogged.append(" ").append(diagn[diagn.length-1].toString());
             }            
         }
         if (newSamplesCounter>0) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Logged "+newSamplesCounter.toString()+" new samples. Ids: "+newSamplesLogged, new Object[]{});

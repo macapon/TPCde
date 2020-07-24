@@ -230,7 +230,6 @@ public class EnvMonSampleAPI extends HttpServlet {
 
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
 
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
@@ -263,14 +262,11 @@ public class EnvMonSampleAPI extends HttpServlet {
                             con.rollback();
                             con.setAutoCommit(true);}                */
                         LPFrontEnd.servletReturnResponseErrorLPFalseDiagnosticBilingue(request, response, diagnostic[4].toString(), clssSmp.getMessageDynamicData());           
-                        //LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                     }else{
                         JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(SampleAPI.class.getSimpleName(), endPointSmp.getSuccessMessageCode(), clssSmp.getMessageDynamicData(), clssSmp.getRelatedObj().getRelatedObject());                
                         LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                     } 
                 }                
-//                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-//                return;                   
             }
             areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){

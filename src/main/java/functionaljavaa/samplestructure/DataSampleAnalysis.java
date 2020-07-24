@@ -62,7 +62,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
     /**
      *
      */
-//    public DataSampleAnalysis(){}    
     /**
      *  Automate the sample analysis assignment as to be triggered by any sample action.<br>
      *      Assigned to the actions: LOGSAMPLE.
@@ -296,7 +295,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);
         String sampleLevel = TblsData.Sample.TBL.getName();
-        //String sampleTableName = TblsData.Sample.TBL.getName();
         mandatoryFields = labIntChecker.getTableMandatoryFields(schemaDataName, sampleLevel + tableName, actionName);
         Object[] fieldNameValueArrayChecker = LPParadigm.fieldNameValueArrayChecker(fieldName, fieldValue);
         if (!LPPlatform.LAB_TRUE.equalsIgnoreCase(fieldNameValueArrayChecker[0].toString())) {
@@ -549,9 +547,6 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                 }
             }
             if (sampleSpecCode.length()>0){
-            //String sampleSpecCode=sampleSpecInfo[0][0].toString();
-            //Integer sampleSpecCodeVersion=Integer.valueOf(sampleSpecInfo[0][1].toString());
-            //String sampleSpecVariationName=sampleSpecInfo[0][2].toString();
             Object[][] specLimits = ConfigSpecRule.getSpecLimitLimitIdFromSpecVariables(schemaPrefix, sampleSpecCode, sampleSpecCodeVersion, 
                     sampleSpecVariationName, 
                     fieldValue[Arrays.asList(fieldName).indexOf(TblsData.SampleAnalysisResult.FLD_ANALYSIS.getName())].toString(), 

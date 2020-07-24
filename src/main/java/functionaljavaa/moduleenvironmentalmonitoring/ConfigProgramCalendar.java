@@ -225,13 +225,13 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
           new String[]{TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendar.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_RULE.getName(), TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.FLD_IS_HOLIDAYS.getName()},
           new Object[]{pName, programCalendarId, holidaysCalendarCode, true});
       int projRecursiveId = Integer.parseInt(newProjSchedRecursive[newProjSchedRecursive.length-1].toString());
-      String datesStr ="";
+      StringBuilder datesStr =new StringBuilder();
       for (Object[] holidaysCalendarDate : holidaysCalendarDates) {
           SimpleDateFormat format1 = new SimpleDateFormat("yyyy MMM dd HH:mm:ss"); //yyyy-MM-dd
           String s;
           Date calDate = (Date) holidaysCalendarDate[1]; //String s = cal.getTime().toString();
           s = format1.format(calDate.getTime());            
-          datesStr=datesStr+s+"|";
+          datesStr.append(s).append("|");
           Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), 
                     TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName()
@@ -308,7 +308,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
           daysOfWeek = (String) fieldValue[LPArray.valuePosicInArray(fieldName, TblsEnvMonitConfig.ProgramCalendar.FLD_DAY_OF_WEEK.getName())];
           //if ( daysOfWeek!=null){daysOfWeekArr = (String[]) daysOfWeek.split("\\*");}
       }
-      String datesStr = "";
+      StringBuilder datesStr = new StringBuilder();
       Object[] daysInRange = LPDate.getDaysInRange(startDate, endDate, daysOfWeek);  
       if (daysInRange.length==0){
         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_NO_DAYS_IN_RANGE, new Object[]{daysOfWeek, startDate, endDate});
@@ -323,8 +323,7 @@ public static Object[][] getConfigProgramCalendar( String schemaName, String pNa
           String s;
           Date cale = (Date) daysInRange1; //String s = cal.getTime().toString();
           s = format1.format(cale.getTime());            
-          datesStr=datesStr+s+"|";
-
+          datesStr.append(s).append("|");
           Object[] isHolidays = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG), TblsEnvMonitConfig.ProgramCalendarDate.TBL.getName(), 
                   new String[]{TblsEnvMonitConfig.ProgramCalendarDate.FLD_PROGRAM_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_CALENDAR_ID.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_DATE.getName(), TblsEnvMonitConfig.ProgramCalendarDate.FLD_IS_HOLIDAYS.getName()}, 
                   new Object[]{pName, programCalendarId, daysInRange1, true});             

@@ -133,7 +133,6 @@ public class GenomaConfigVariableAPI extends HttpServlet {
 
         String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);    
         Rdbms.setTransactionId(schemaConfigName);
-        //ResponseEntity<String121> responsew;        
         try (PrintWriter out = response.getWriter()) {
 
             Object[] actionEnabled = LPPlatform.procActionEnabled(schemaPrefix, token, actionName);
@@ -150,63 +149,6 @@ public class GenomaConfigVariableAPI extends HttpServlet {
             Object[] dataSample = null;
             
             switch (actionName.toUpperCase()){
-/*                case "PROJECT_NEW":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaProjectAPIEndPoints.PROJECT_NEW.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
-                    String fieldName=request.getParameter(GenomaProjectAPIParamsList.fieldsNames.toString());                                        
-                    String fieldValue=request.getParameter(GenomaProjectAPIParamsList.fieldsValues.toString());                    
-                    String[] fieldNames=null;
-                    Object[] fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                            
-                    String projectName=request.getParameter(GenomaProjectAPIParamsList.projectName.toString());
-                    if (projectName.length()==0)
-                        projectName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsGenomaData.Project.FLD_NAME.getName())].toString();
-
-                    dataSample =cnfVar.createProject(schemaPrefix, token, projectName, fieldNames, fieldValues,  false);
-                    //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
-                    break;
-                case "PROJECT_UPDATE":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaProjectAPIEndPoints.PROJECT_UPDATE.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
-                    fieldName=request.getParameter(GenomaProjectAPIParamsList.fieldsNames.toString());                                        
-                    fieldValue=request.getParameter(GenomaProjectAPIParamsList.fieldsValues.toString());                    
-                    fieldNames=null;
-                    fieldValues=null;
-                    if (fieldName!=null) fieldNames = fieldName.split("\\|");                                            
-                    if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));                                                            
-                    projectName=request.getParameter(GenomaProjectAPIParamsList.projectName.toString());
-                    if (projectName.length()==0)
-                        projectName = fieldValues[LPArray.valuePosicInArray(fieldNames, TblsGenomaData.Project.FLD_NAME.getName())].toString();
-
-                    dataSample =cnfVar.projectUpdate(schemaPrefix, token, projectName, fieldNames, fieldValues);
-                    //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
-                    break;
-                case "PROJECT_ACTIVATE":
-                case "PROJECT_DEACTIVATE":
-                    areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaProjectAPIEndPoints.PROJECT_ACTIVATE.getMandatoryFields().split("\\|"));
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                        LPFrontEnd.servletReturnResponseError(request, response, 
-                                LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                        return;                  
-                    }                     
-                    projectName=request.getParameter(GenomaProjectAPIParamsList.projectName.toString());
-                    if ("PROJECT_ACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =cnfVar.projectActivate(schemaPrefix, token, projectName);
-                    else if ("PROJECT_DEACTIVATE".equalsIgnoreCase(actionName))
-                        dataSample =cnfVar.projectDeActivate(schemaPrefix, token, projectName);
-                    else
-                        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
-                    break;
-*/                
                 case "VARIABLE_SET_ADD_VARIABLE":
                 case "VARIABLE_SET_REMOVE_VARIABLE":     
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, GenomaVariableAPIEndPoints.VARIABLE_SET_ADD_VARIABLE.getMandatoryFields().split("\\|"));

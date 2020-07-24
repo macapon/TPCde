@@ -81,8 +81,6 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
     String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             
-   // Token token = new Token(finalToken);
-
     if (!LPFrontEnd.servletStablishDBConection(request, response))return;
         
     switch (actionName.toUpperCase()){

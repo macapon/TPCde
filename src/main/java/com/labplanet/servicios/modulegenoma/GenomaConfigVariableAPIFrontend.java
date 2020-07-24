@@ -69,14 +69,12 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
 
         GenomaVariableAPIFrontEndEndPoints endPoint = null;
-//        Object[] actionDiagnoses = null;
         try{
             endPoint = GenomaVariableAPIFrontEndEndPoints.valueOf(actionName.toUpperCase());
         }catch(Exception e){
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }        
-        //Token token = new Token(finalToken);
 
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
