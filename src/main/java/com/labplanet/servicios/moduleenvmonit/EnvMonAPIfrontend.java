@@ -334,17 +334,18 @@ public class EnvMonAPIfrontend extends HttpServlet {
                     }
                     programJsonObj.put(JSON_TAG_NAME_TYPE, JSON_TAG_NAME_TYPE_VALUE_TREE_LIST); 
                     programJsonObj.put(JSON_TAG_NAME_TOTAL, programSampleSummary.length); 
-                    
-                    String[] curProgramKPIWhereFieldsNameArr = programKPIWhereFieldsName.split("\\/");
-                    String[] curProgramKPIWhereFieldsValueArr = programKPIWhereFieldsValue.split("\\/");
-                    for (int i=0;i<curProgramKPIWhereFieldsNameArr.length;i++){
-                        curProgramKPIWhereFieldsNameArr[i]=curProgramKPIWhereFieldsNameArr[i]+"|"+TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName();
-                        curProgramKPIWhereFieldsValueArr[i]=curProgramKPIWhereFieldsValueArr[i]+"|"+currProgram;
+                    JSONObject programkpIsObj = new JSONObject();
+                    if (programKPIWhereFieldsName!=null && programKPIWhereFieldsValue!=null){
+                        String[] curProgramKPIWhereFieldsNameArr = programKPIWhereFieldsName.split("\\/");
+                        String[] curProgramKPIWhereFieldsValueArr = programKPIWhereFieldsValue.split("\\/");
+                        for (int i=0;i<curProgramKPIWhereFieldsNameArr.length;i++){
+                            curProgramKPIWhereFieldsNameArr[i]=curProgramKPIWhereFieldsNameArr[i]+"|"+TblsEnvMonitData.Sample.FLD_PROGRAM_NAME.getName();
+                            curProgramKPIWhereFieldsValueArr[i]=curProgramKPIWhereFieldsValueArr[i]+"|"+currProgram;
+                        }
+                        programkpIsObj = LPKPIs.getKPIs(schemaPrefix, programKPIGroupNameArr, programKPITableCategoryArr, programKPITableNameArr, 
+                                curProgramKPIWhereFieldsNameArr, curProgramKPIWhereFieldsValueArr, programKPIRetrieveOrGroupingArr, programKPIGroupedArr);
                     }
-                    JSONObject programkpIsObj = LPKPIs.getKPIs(schemaPrefix, programKPIGroupNameArr, programKPITableCategoryArr, programKPITableNameArr, 
-                            curProgramKPIWhereFieldsNameArr, curProgramKPIWhereFieldsValueArr, programKPIRetrieveOrGroupingArr, programKPIGroupedArr);
                     programJsonObj.put("KPI", programkpIsObj);   
-                    
                     // Program Location subStructure. Begin
                     Object[][] programLocations = Rdbms.getRecordFieldsByFilter(schemaName, TblsEnvMonitData.ProgramLocation.TBL.getName(), 
                             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, new String[]{currProgram}, 

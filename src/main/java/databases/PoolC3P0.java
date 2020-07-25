@@ -37,10 +37,8 @@ public class PoolC3P0 {
      cpds = new ComboPooledDataSource();
      try {
          // Configuramos la conexion a base de datos
-         // Creamos la fuente de datos
-         
-        BUNDLE_PARAMETER_DBDRIVER ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
-         
+         // Creamos la fuente de datos         
+        ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);         
          // Que driver de base de datos usaremos
          cpds.setDriverClass("java.sql.Driver"); // prop.getString(BUNDLE_PARAMETER_DBDRIVER);
          // La url de la base de datos a la que nos conectaremos
