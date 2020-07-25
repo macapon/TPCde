@@ -8,6 +8,8 @@ package com.labplanet.servicios.moduleenvmonit;
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
@@ -40,8 +42,7 @@ public class ClassEnvMonSampleController {
             ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
-            
-        }catch(Exception e){
+        } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -18,6 +18,8 @@ import lbplanet.utilities.LPFrontEnd;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 /**
  *
  * @author Administrator
@@ -144,7 +146,7 @@ public class TestingResultCheckSpecQuantitative extends HttpServlet {
             // release database resources
             try {
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }       }
 

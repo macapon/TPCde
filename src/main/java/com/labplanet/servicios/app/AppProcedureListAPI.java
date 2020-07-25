@@ -24,6 +24,8 @@ import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *
@@ -251,7 +253,7 @@ public class AppProcedureListAPI extends HttpServlet {
             // release database resources
             try {
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       
     }

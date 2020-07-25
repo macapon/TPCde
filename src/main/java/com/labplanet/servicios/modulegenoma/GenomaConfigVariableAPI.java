@@ -170,7 +170,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                     return;                    
             }    
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
+            if (dataSample!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(dataSample[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
                 if (!con.getAutoCommit()){
                     con.rollback();
@@ -197,7 +197,7 @@ public class GenomaConfigVariableAPI extends HttpServlet {
             // release database resources
             try {
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                
   

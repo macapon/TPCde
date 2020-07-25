@@ -110,7 +110,7 @@ public class GenomaConfigVariableAPIFrontend extends HttpServlet {
        // release database resources
        try {
            Rdbms.closeRdbms();   
-       } catch (Exception ignore) {
+        } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
        }
     }              
     }

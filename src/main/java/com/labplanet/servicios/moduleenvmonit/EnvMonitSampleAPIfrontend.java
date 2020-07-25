@@ -35,6 +35,8 @@ import lbplanet.utilities.LPJson;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import functionaljavaa.samplestructure.DataSampleStages;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static lbplanet.utilities.LPDate.dateStringFormatToLocalDateTime;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPNulls;
@@ -716,7 +718,7 @@ public class EnvMonitSampleAPIfrontend extends HttpServlet {
             // release database resources
             try {
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                
 }

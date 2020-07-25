@@ -959,8 +959,6 @@ public class LPPlatform {
           TblsCnfg.zzzDbErrorLog.FLD_ERROR_MESSAGE.getName(), TblsCnfg.zzzDbErrorLog.FLD_CLASS_CALLER.getName(), TblsCnfg.zzzDbErrorLog.FLD_RESOLVED.getName()}, 
         new Object[]{LPDate.getCurrentTimeStamp(), query, Arrays.toString(queryParams), msgCode, Arrays.toString(callerInfo), false}                
         );
-    }else{
-
     }
   }    
   
@@ -979,8 +977,6 @@ public class LPPlatform {
           TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName()}, 
         new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName}                
         );
-    }else{
-
     }
   }      
 }

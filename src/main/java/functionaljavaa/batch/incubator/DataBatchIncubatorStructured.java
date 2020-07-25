@@ -155,9 +155,6 @@ public class DataBatchIncubatorStructured {
         if ((LPNulls.replaceNull(posicContent).length()>0) && (!BATCHCONTENTEMPTYPOSITIONVALUE.equalsIgnoreCase(LPNulls.replaceNull(posicContent))) ){
             if (!override) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The position <*1*>.<*2*> is occupied for batch <*3*> in procedure <*4*>"
                 , new Object[]{row, col, batchName, schemaPrefix});
-            else{
-                
-            }
         }
         batchContent2D[row-1][col-1]=buildBatchPositionValue(sampleId, pendingIncubationStage);
         batchContentStr=LPArray.convertArrayToString(LPArray.array2dTo1d(batchContent2D), BATCHCONTENTSEPARATORSTRUCTUREDBATCH, "");        

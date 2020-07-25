@@ -31,6 +31,8 @@ import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import functionaljavaa.parameter.Parameter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPKPIs;
@@ -615,7 +617,7 @@ public class EnvMonAPIfrontend extends HttpServlet {
             // release database resources
             try {
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }      }
 

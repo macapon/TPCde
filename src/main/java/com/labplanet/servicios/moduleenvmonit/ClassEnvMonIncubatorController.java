@@ -9,6 +9,8 @@ import com.labplanet.servicios.moduleenvmonit.EnvMonIncubationAPI.EnvMonIncubati
 import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPArray;
 import org.json.simple.JSONArray;
@@ -39,9 +41,8 @@ public class ClassEnvMonIncubatorController {
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
             ClassEnvMonIncubator clss=new ClassEnvMonIncubator(request, token, schemaPrefix, endPoint);
             this.functionDiagn=clss.getDiagnostic();
-            this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
-            
-        }catch(Exception e){
+            this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
+        } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
         }
     }
 

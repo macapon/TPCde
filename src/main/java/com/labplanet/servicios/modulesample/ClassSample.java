@@ -343,8 +343,12 @@ public class ClassSample {
                 if (SampleAPIEndpoints.SAMPLESTAGE_MOVETOPREVIOUS.getName().equalsIgnoreCase(endPoint.getName()))
                     diagn=smpStage.moveToPreviousStage(schemaPrefix, sampleId, sampleStage, sampleStageNext);
                 String[] sampleFieldName=new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName(), TblsData.Sample.FLD_PREVIOUS_STAGE.getName()};
-                Object[] sampleFieldValue=new Object[]{diagn[diagn.length-1], sampleStage};
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
+                Object[] sampleFieldValue=new Object[0];
+                if (diagn==null)
+                    sampleFieldValue=new Object[]{"", sampleStage};                    
+                else                    
+                    sampleFieldValue=new Object[]{diagn[diagn.length-1], sampleStage};
+                if (diagn!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
                     smpStage.dataSampleStagesTimingCapture(schemaPrefix, sampleId, sampleStage, DataSampleStages.SampleStageTimingCapturePhases.END.name());                                                         
                     smpStage.dataSampleStagesTimingCapture(schemaPrefix, sampleId, diagn[diagn.length-1].toString(), DataSampleStages.SampleStageTimingCapturePhases.START.toString());
                     diagn=Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(),
@@ -376,7 +380,7 @@ public class ClassSample {
             default:
                 break;                
         }
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
+        if (diagn!=null &&  LPPlatform.LAB_TRUE.equalsIgnoreCase(diagn[0].toString())){
             DataSampleStages smpStage = new DataSampleStages(schemaPrefix);
             if (sampleId!=null)
                 smpStage.dataSampleActionAutoMoveToNext(schemaPrefix, token, endPoint.getName().toUpperCase(), sampleId);

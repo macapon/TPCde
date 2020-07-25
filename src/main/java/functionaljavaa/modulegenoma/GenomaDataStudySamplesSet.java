@@ -102,7 +102,7 @@ public Object[] createStudySamplesSet( String schemaPrefix, Token token, String 
                 
             }else{
                 Integer valuePosic = Arrays.asList(fieldsName).indexOf(currField);
-                mandatoryFieldsValue[inumLines] = fieldsValue[valuePosic]; 
+                if (fieldsValue!=null && fieldsValue.length>=valuePosic && mandatoryFieldsValue!=null && mandatoryFieldsValue.length>=inumLines) mandatoryFieldsValue[inumLines] = fieldsValue[valuePosic]; 
             }        
         }            
         if (mandatoryFieldsMissingBuilder.length()>0){

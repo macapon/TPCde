@@ -54,7 +54,7 @@ public class ClassEnvMonIncubator {
                     this.messageDynamicData=new Object[]{temperature, instrName};
                     break;      
         }
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+        if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
             actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{instrName, temperature});
         this.diagnostic=actionDiagnoses;
         this.relatedObj=rObj;        

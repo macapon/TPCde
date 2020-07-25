@@ -210,7 +210,7 @@ public class IncidentAPI extends HttpServlet {
                     actionDiagnoses = inc.reopenIncident(token, incId, argValues[1].toString());
                     break;                    
             }    
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
+            if (actionDiagnoses!=null && LPPlatform.LAB_FALSE.equalsIgnoreCase(actionDiagnoses[0].toString())){  
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstance();
@@ -228,7 +228,7 @@ public class IncidentAPI extends HttpServlet {
             // release database resources
             try {                
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }          
 

@@ -21,6 +21,8 @@ import java.math.BigDecimal;
 import java.sql.Date;
 import java.util.HashMap;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPDate;
@@ -483,7 +485,7 @@ public class LPTestingOutFormat {
                 }
                 fileWriter.write(fileContent);
                 fileWriter.flush();
-            }catch(IOException er){
+            } catch (IOException ex) {Logger.getLogger(LPTestingOutFormat.class.getName()).log(Level.SEVERE, null, ex);
             } 
     }
     

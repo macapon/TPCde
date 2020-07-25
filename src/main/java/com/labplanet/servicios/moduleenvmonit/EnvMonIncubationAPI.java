@@ -13,6 +13,8 @@ import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValu
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.HashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
@@ -242,7 +244,7 @@ public class EnvMonIncubationAPI extends HttpServlet {
             try {                
                 //con.close();
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                
     }

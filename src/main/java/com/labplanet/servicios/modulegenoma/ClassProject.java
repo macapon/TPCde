@@ -51,7 +51,7 @@ public class ClassProject {
                     if ("PROJECT_UPDATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prj.projectUpdate(schemaPrefix, token, projectName, fieldNames, fieldValues);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Project.TBL.getName(), TblsGenomaData.Project.TBL.getName(), projectName);                
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                    if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{projectName, schemaPrefix});                    
                     this.messageDynamicData=new Object[]{projectName, schemaPrefix};
                     break;

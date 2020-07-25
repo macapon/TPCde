@@ -111,7 +111,7 @@ public class EnvMonSampleAPI extends HttpServlet {
      
         private final String name;
         private final String successMessageCode;  
-        private  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
 
     }
 
@@ -268,7 +268,8 @@ public class EnvMonSampleAPI extends HttpServlet {
                     } 
                 }                
             }
-            areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
+            if (endPoint!=null && endPoint.getArguments()!=null)
+                areMandatoryParamsInResponse = LPHttp.areEndPointMandatoryParamsInApiRequest(request, endPoint.getArguments());
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                 LPFrontEnd.servletReturnResponseError(request, response,
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
@@ -284,7 +285,10 @@ public class EnvMonSampleAPI extends HttpServlet {
                         con.setAutoCommit(true);}                */
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, diagnostic);   
                 }else{
-                    JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                    JSONObject dataSampleJSONMsg =new JSONObject();
+                    if (endPoint!=null)
+                        dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), clss.getMessageDynamicData(), clss.getRelatedObj().getRelatedObject());                
+                    
                     LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);                 
                 }            
 /*            }else{
@@ -327,7 +331,7 @@ public class EnvMonSampleAPI extends HttpServlet {
             try {
 //                con.close();
                 Rdbms.closeRdbms();   
-            } catch (Exception ignore) {
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                
   

@@ -195,7 +195,7 @@ public class BatchAPI extends HttpServlet {
                         LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 }    
             }finally{try {
-                con.close();
+                if (con!=null) con.close();
             } catch (SQLException ex) {
                 Logger.getLogger(BatchAPI.class.getName()).log(Level.SEVERE, null, ex);
             }

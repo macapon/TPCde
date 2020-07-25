@@ -60,7 +60,7 @@ public class ClassStudy {
                     if ("STUDY_UPDATE".equalsIgnoreCase(endPoint.getName()))
                         actionDiagnoses= prjStudy.studyUpdate(schemaPrefix, token, studyName, fieldNames, fieldValues);
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsGenomaData.Study.TBL.getName(), TblsGenomaData.Study.TBL.getName(), studyName);                
-                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
+                    if (actionDiagnoses!=null && LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{studyName, schemaPrefix});                    
                     this.messageDynamicData=new Object[]{projectName, studyName, schemaPrefix};
                     break;
