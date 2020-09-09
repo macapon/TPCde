@@ -12,16 +12,20 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.batch.BatchArray;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 
 /**
  *
@@ -29,48 +33,46 @@ import javax.servlet.http.HttpServletResponse;
  */
 public class BatchAPI extends HttpServlet {
     static final String COMMON_PARAMS="incidentId|note";
+
     public enum BatchAPIEndpoints{
-        /**
-         *
-         */
-        CREATE_BATCH_ARRAY("CREATEBATCHARRAY", "incidentTitle|incidentDetail", "", "incidentNewIncident_success"),
-        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", COMMON_PARAMS, "", "incidentConfirmIncident_success"),
-        CLOSE_INCIDENT("CLOSE_INCIDENT", COMMON_PARAMS, "", "incidentClosedIncident_success"),
-        REOPEN_INCIDENT("REOPEN_INCIDENT", COMMON_PARAMS, "", "incidentReopenIncident_success"),
-        ADD_NOTE_INCIDENT("ADD_NOTE_INCIDENT", COMMON_PARAMS, "", "incidentAddNoteToIncident_success"),
+        CREATE_BATCH_ARRAY("CREATE_BATCH_ARRAY", "incidentNewIncident_success",
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
+        LOAD_BATCH_ARRAY("LOAD_BATCH_ARRAY", "incidentConfirmIncident_success",
+            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
         ;
-        private BatchAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private BatchAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
-            
+            this.arguments=argums;  
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
             return this.name;
-        }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
         }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
 
-     
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
-        private final String successMessageCode;       
-    }    
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_CREATEBATCHARRAY= "CREATEBATCHARRAY";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_LOADBATCHARRAY = "LOADBATCHARRAY";
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }
+    
     
     /**
      *
@@ -150,6 +152,15 @@ public class BatchAPI extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);                   
                 
             Token token = new Token(finalToken);
+            BatchAPIEndpoints endPoint = null;
+            try{
+                endPoint = BatchAPIEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
+            
 
            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
             Rdbms.setTransactionId(schemaPrefix);
@@ -164,8 +175,8 @@ public class BatchAPI extends HttpServlet {
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionEnabled);
                     return ;                                
                 }
-                switch (actionName.toUpperCase()){
-                    case API_ENDPOINT_CREATEBATCHARRAY:   
+                switch (endPoint){
+                    case CREATE_BATCH_ARRAY:   
                         areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_CREATEBATCHARRAY.split("\\|"));                       
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                              LPFrontEnd.servletReturnResponseError(request, response, 
@@ -181,7 +192,7 @@ public class BatchAPI extends HttpServlet {
                         BatchArray bArray = new BatchArray(schemaPrefix,  batchTemplate,  Integer.valueOf(batchTemplateVersionStr),  batchName,  
                                 token.getPersonName(),  Integer.valueOf(numRowsStr),  Integer.valueOf(numColsStr));
                         break;
-                    case API_ENDPOINT_LOADBATCHARRAY:                        
+                    case LOAD_BATCH_ARRAY:                        
                         areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_LOADBATCHARRAY.split("\\|"));                       
                         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                              LPFrontEnd.servletReturnResponseError(request, response, 

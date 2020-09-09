@@ -10,7 +10,8 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.API_ENDPOINT_GET_ACTIVE_PRODUCTION_LOTS;
+import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID;
+import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import functionaljavaa.samplestructure.DataSampleUtilities;
@@ -30,9 +31,13 @@ import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure.ProgramCorre
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
+import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPAPIArguments;
 import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
 import lbplanet.utilities.LPJson;
 import lbplanet.utilities.LPKPIs;
@@ -45,13 +50,6 @@ public class EnvMonAPIfrontend extends HttpServlet {
     /**
      *
      */
-    public static final String API_ENDPOINT_PROGRAMS_LIST="PROGRAMS_LIST";
-
-    /***
-     *
-     */
-    public static final String API_ENDPOINT_PROGRAMS_CORRECTIVE_ACTION_LIST="PROGRAM_CORRECTIVE_ACTION_LIST";
-    
     /**
      *
      */
@@ -210,7 +208,68 @@ public class EnvMonAPIfrontend extends HttpServlet {
      *
      */
     public static final String JSON_TAG_SPEC_DEFINITION="spec_definition";
-    
+/*
+        
+   
+ GlobalAPIsParams. GlobalAPIsParams.
+GlobalAPIsParams. GlobalAPIsParams. GlobalAPIsParams.  
+GlobalAPIsParams.
+*/    
+    public enum EnvMonAPIfrontendEndpoints{
+        PROGRAMS_LIST("PROGRAMS_LIST", "", 
+                new LPAPIArguments[]{new LPAPIArguments("programFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 6),
+                new LPAPIArguments("programFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 7),                    
+                new LPAPIArguments("programLocationFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 8),
+                new LPAPIArguments("programLocationFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 9),                    
+                new LPAPIArguments("programLocationCardInfoFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 10),
+                new LPAPIArguments("programLocationCardInfoFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 11),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 12),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_CATEGORY, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 13),                    
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_TABLE_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 14),                    
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 15),                    
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 16),                    
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_FIELDS_TO_RETRIEVE_OR_GROUPING, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 17),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_GROUPED, LPAPIArguments.ArgumentType.STRINGARR.toString(), false, 18),
+                }),
+        PROGRAMS_CORRECTIVE_ACTION_LIST("PROGRAMS_CORRECTIVE_ACTION_LIST", "", 
+                new LPAPIArguments[]{new LPAPIArguments("programName", LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments("programCorrectiveActionFldNameList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 7),
+                    new LPAPIArguments("programCorrectiveActionFldSortList", LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 8),}),
+        GET_ACTIVE_PRODUCTION_LOTS("GET_ACTIVE_PRODUCTION_LOTS", "", 
+                new LPAPIArguments[]{}),
+        ;
+        private EnvMonAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }
     
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -234,15 +293,26 @@ public class EnvMonAPIfrontend extends HttpServlet {
         }             
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        EnvMonAPIfrontendEndpoints endPoint = null;
+        try{
+            endPoint = EnvMonAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            return;                   
+        }
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
             
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
         
-        switch (actionName.toUpperCase()){
-            case API_ENDPOINT_PROGRAMS_LIST:
+        switch (endPoint){
+            case PROGRAMS_LIST: 
+        
                 String schemaName=LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
                 StringBuilder programFldNameList = new StringBuilder();
                 programFldNameList.append(request.getParameter("programFldNameList"));   
-                  if (programFldNameList==null) programFldNameList.append(DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_TO_GET);
+                  if (programFldNameList==null || "null".equalsIgnoreCase(programFldNameList.toString())) {
+                      programFldNameList = new StringBuilder();
+                      programFldNameList.append(DEFAULT_PARAMS_PROGRAMS_LIST_PROGRAM_TO_GET);}
                 String[] programFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldNameList);
 
                 String programFldSortList = request.getParameter("programFldSortList");   
@@ -385,20 +455,22 @@ public class EnvMonAPIfrontend extends HttpServlet {
                             fieldsToRetrieve, new String[]{TblsEnvMonitData.ViewProgramScheduledLocations.FLD_PROGRAM_DAY_DATE.getName()});
                     JSONArray programConfigScheduledPointsJsonArray=new JSONArray();
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCalendarDatePending[0][0].toString())){
-                        jObj.put("message", "Nothing pending in procedure "+schemaPrefix+" for the filter "+programCalendarDatePending[0][6].toString());
+                        jObj.put("message", "Nothing pending in procedure "+schemaPrefix+" for the filter "+LPNulls.replaceNull(programCalendarDatePending[6][0]).toString());
                         programConfigScheduledPointsJsonArray.add(jObj);
+                    }else{
+                        for (Object[] curRecord: programCalendarDatePending){
+                            jObj= new JSONObject();
+                            for (int i=0;i<curRecord.length;i++){ jObj.put(fieldsToRetrieve[i], curRecord[i].toString());}
+                            jObj.put("title", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
+                            jObj.put("content", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
+                            jObj.put("date",curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName())].toString());
+                            jObj.put("category","orange");
+                            jObj.put("color","#000");
+                            programConfigScheduledPointsJsonArray.add(jObj);
+                        }
                     }
-                    for (Object[] curRecord: programCalendarDatePending){
-                        jObj= new JSONObject();
-                        for (int i=0;i<curRecord.length;i++){ jObj.put(fieldsToRetrieve[i], curRecord[i].toString());}
-                        jObj.put("title", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
-                        jObj.put("content", curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_LOCATION_NAME.getName())].toString());
-                        jObj.put("date",curRecord[LPArray.valuePosicInArray(fieldsToRetrieve, TblsEnvMonitData.ViewProgramScheduledLocations.FLD_DATE.getName())].toString());
-                        jObj.put("category","orange");
-                        jObj.put("color","#000");
-                        programConfigScheduledPointsJsonArray.add(jObj);
-                    }    
                     programJsonObj.put(JSON_TAG_GROUP_NAME_CONFIG_CALENDAR, programConfigScheduledPointsJsonArray); 
+                    
                     
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(programLocations[0][0].toString())){     
                         JSONArray programLocationsJsonArray = new JSONArray();                              
@@ -533,19 +605,21 @@ public class EnvMonAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();                    
                 Response.ok().build();
                 return;  
-            case API_ENDPOINT_PROGRAMS_CORRECTIVE_ACTION_LIST:    
+            case PROGRAMS_CORRECTIVE_ACTION_LIST:    
               areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST.split("\\|"));                       
               if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                   LPFrontEnd.servletReturnResponseError(request, response, 
                       LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
                   return;          
-              }         
-              
+              }                       
               String programName = request.getParameter("programName");   
               programFldNameList = new StringBuilder();
               programFldNameList.append(request.getParameter("programCorrectiveActionFldNameList"));   
-              if (programFldNameList==null) programFldNameList.append(DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_GET);
-              if (programFldNameList==null || programFldNameList.length()==0){
+              if ("null".equalsIgnoreCase(programFldNameList.toString())){
+                  programFldNameList = new StringBuilder();
+                  programFldNameList.append(DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_GET);
+              }
+              if ("null".equalsIgnoreCase(programFldNameList.toString()) || programFldNameList.length()==0) {
                 programFldNameList = new StringBuilder();
                 programFldNameList.append("");
                 
@@ -564,22 +638,28 @@ public class EnvMonAPIfrontend extends HttpServlet {
               programFldSortArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldSortList);
                             
               String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
-              
-              Object[][] programCorrectiveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), ProgramCorrectiveAction.TBL.getName(), 
-                      new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
-                      new String[]{programName, statusClosed}, 
-                      programFldNameArray, programFldSortArray);
-              if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCorrectiveAction[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
-                              
-              JSONArray jArray = new JSONArray();                              
-              for (Object[] curRow: programCorrectiveAction){
-                JSONObject jObj=LPJson.convertArrayRowToJSONObject(programFldNameArray, curRow);
-                jArray.add(jObj);
+              JSONArray jArray = new JSONArray(); 
+              if (!isProgramCorrectiveActionEnable(schemaPrefix)){
+                JSONObject jObj=new JSONObject();
+                jArray.add(jObj.put(programFldNameArray, "program corrective action not active!"));
+              }
+              else{
+                Object[][] programCorrectiveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), ProgramCorrectiveAction.TBL.getName(), 
+                        new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+                        new String[]{programName, statusClosed}, 
+                        programFldNameArray, programFldSortArray);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCorrectiveAction[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
+
+                                             
+                for (Object[] curRow: programCorrectiveAction){
+                  JSONObject jObj=LPJson.convertArrayRowToJSONObject(programFldNameArray, curRow);
+                  jArray.add(jObj);
+                }
               }
               Rdbms.closeRdbms();                    
               LPFrontEnd.servletReturnSuccess(request, response, jArray);
               break;
-            case API_ENDPOINT_GET_ACTIVE_PRODUCTION_LOTS:
+            case GET_ACTIVE_PRODUCTION_LOTS:
                 String[] fieldsToRetrieve = new String[0];
                  TblsEnvMonitData.ProductionLot[] fieldsListPrLot = TblsEnvMonitData.ProductionLot.values();                 
                  for (TblsEnvMonitData.ProductionLot fieldsList1 : fieldsListPrLot) {

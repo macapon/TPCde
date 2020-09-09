@@ -18,8 +18,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import databases.Token;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONObject;
 
 /**
@@ -32,36 +36,44 @@ public class AppHeaderAPI extends HttpServlet {
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
     public static final String MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE="first_name|last_name|photo";
-    public enum AppHeaderAPIEndpoints{
+    public enum AppHeaderAPIfrontendEndpoints{
         /**
          *
          */
-        GETAPPHEADER("GETAPPHEADER", "", "", ""),
+        GETAPPHEADER("GETAPPHEADER", "",new LPAPIArguments[]{new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),}),
         ;
-        private AppHeaderAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private AppHeaderAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
-            
+            this.arguments=argums;  
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
             return this.name;
-        }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
         }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
 
-     
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
-        private final String successMessageCode;       
-    }    
-    
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -89,21 +101,16 @@ public class AppHeaderAPI extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
 
             JSONObject personInfoJsonObj = new JSONObject();
-            AppHeaderAPIEndpoints endPoint = null;
+            AppHeaderAPIfrontendEndpoints endPoint = null;
             try{
-                endPoint = AppHeaderAPIEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = AppHeaderAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
             }
-            areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response,
-                        LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
-                return;
-            }    
-            if (actionName.toUpperCase().equalsIgnoreCase(AppHeaderAPIEndpoints.GETAPPHEADER.getName())){
-                String personFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_PERSON_FIELDS_NAME);
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());     
+            if (actionName.toUpperCase().equalsIgnoreCase(AppHeaderAPIfrontendEndpoints.GETAPPHEADER.getName())){
+                String personFieldsName = LPNulls.replaceNull(argValues[0]).toString();
                 String[] personFieldsNameArr = new String[0];
                 if ( personFieldsName==null || personFieldsName.length()==0){
                     personFieldsNameArr = MANDATORY_PARAMS_FRONTEND_GETAPPHEADER_PERSONFIELDSNAME_DEFAULT_VALUE.split("\\|");                            

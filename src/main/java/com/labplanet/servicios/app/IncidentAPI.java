@@ -10,8 +10,10 @@ import databases.TblsApp;
 import databases.Token;
 import functionaljavaa.incident.AppIncident;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -19,6 +21,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
@@ -91,36 +94,50 @@ public class IncidentAPI extends HttpServlet {
         private final String successMessageCode;       
         private final LPAPIArguments[] arguments;
     }
+
     
     public enum IncidentAPIfrontendEndpoints{
-        USER_OPEN_INCIDENTS("USER_OPEN_INCIDENTS", "", "", ""),
-        INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "incidentId", "", ""),
+        /**
+         *
+         */
+        USER_OPEN_INCIDENTS("USER_OPEN_INCIDENTS", "",new LPAPIArguments[]{}),
+        INCIDENT_DETAIL_FOR_GIVEN_INCIDENT("INCIDENT_DETAIL_FOR_GIVEN_INCIDENT", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INCIDENT_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}),
         ;
-        private IncidentAPIfrontendEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode){
+        private IncidentAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
             return this.name;
         }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
-        }
-   
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
-        private final String successMessageCode;
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
     }
 
-    public enum ParamsList{
-        INCIDENT_ID("incidentId"),
-        INCIDENT_TITLE("incidentTitle"),
-        INCIDENT_DETAIL("incidentDetail"),
-        NOTE("note"),
-        NEW_STATUS("newStatus"),
+    public enum ParamsList{INCIDENT_ID("incidentId"),INCIDENT_TITLE("incidentTitle"),INCIDENT_DETAIL("incidentDetail"),
+        NOTE("note"),NEW_STATUS("newStatus"),
         ;
         private ParamsList(String requestName){
             this.requestName=requestName;

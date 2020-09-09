@@ -114,10 +114,6 @@
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPI</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>EnvMonAPIfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIFrontend</servlet-class>
-    </servlet>
-    <servlet>
         <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonitSampleAPIfrontend</servlet-class>
     </servlet>
@@ -240,6 +236,14 @@
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.ModulesConfigMasterDataAPI</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ModuleDefinitionAPI</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EnvMonAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIfrontend</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
         <url-pattern>/testing/platform/DBActions</url-pattern>
@@ -352,10 +356,6 @@
         <url-pattern>/moduleenvmon/EnvMonAPI</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>EnvMonAPIfrontend</servlet-name>
-        <url-pattern>/moduleenvmon/frontend/EnvMonAPIfrontend</url-pattern>
-    </servlet-mapping>
-    <servlet-mapping>
         <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
         <url-pattern>/moduleenvmon/frontend/EnvMonSampleAPIfrontend</url-pattern>
     </servlet-mapping>
@@ -466,6 +466,14 @@
     <servlet-mapping>
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
         <url-pattern>/modules/ConfigMasterDataAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ModuleDefinitionAPI</servlet-name>
+        <url-pattern>/app/ModuleDefinitionAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EnvMonAPIfrontend</servlet-name>
+        <url-pattern>/moduleenvmon/frontend/EnvMonAPIfrontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

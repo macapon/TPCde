@@ -24,8 +24,11 @@ import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import static functionaljavaa.batch.incubator.DataBatchIncubatorStructured.BATCHCONTENTSEPARATORSTRUCTUREDBATCH;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPAPIArguments;
 
 /**
  *
@@ -33,11 +36,42 @@ import java.util.logging.Logger;
  */
 public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
     
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_ACTIVE_BATCH_LIST="ACTIVE_BATCH_LIST";  
+    public enum EnvMonIncubBatchAPIfrontendEndpoints{
+        ACTIVE_BATCH_LIST("ACTIVE_BATCH_LIST", "", new LPAPIArguments[]{}),
+        ;
+        private EnvMonIncubBatchAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
 
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }
+    
     /**
      *
      */
@@ -66,12 +100,20 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
         }             
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+        EnvMonIncubBatchAPIfrontendEndpoints endPoint = null;
+        try{
+            endPoint = EnvMonIncubBatchAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+        }catch(Exception e){
+            LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            return;                   
+        }
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
 
         if (!LPFrontEnd.servletStablishDBConection(request, response))return;
 
-        switch (actionName.toUpperCase()){
+        switch (endPoint){
             
-        case API_ENDPOINT_ACTIVE_BATCH_LIST: 
+        case ACTIVE_BATCH_LIST: 
             Rdbms.stablishDBConection();
             String[] fieldsToRetrieve=new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName(), TblsEnvMonitData.IncubBatch.FLD_TYPE.getName()
                 , TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_ID.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUB_BATCH_CONFIG_VERSION.getName()

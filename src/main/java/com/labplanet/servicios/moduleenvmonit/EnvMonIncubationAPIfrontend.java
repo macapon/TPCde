@@ -8,14 +8,18 @@ package com.labplanet.servicios.moduleenvmonit;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
+import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
@@ -29,32 +33,49 @@ import org.json.simple.JSONObject;
  */
 public class EnvMonIncubationAPIfrontend extends HttpServlet {
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_INCUBATOR_TEMP_READINGS="INCUBATOR_TEMP_READINGS";  
+    public enum EnvMonIncubationAPIfrontendEndpoints{
+        INCUBATOR_TEMP_READINGS("INCUBATOR_TEMP_READINGS", "", 
+                new LPAPIArguments[]{new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                    new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS, LPAPIArguments.ArgumentType.INTEGER.toString(), true, 7),}),
+        INCUBATORS_LIST("INCUBATORS_LIST", "", 
+                new LPAPIArguments[]{}),
+        ;
+        private EnvMonIncubationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_INCUBATORS_LIST="INCUBATORS_LIST";  
-
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }    
     /**
      *
      */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATOR_TEMP_READINGS="incubatorName";
-
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_INCUBATION_LAST_TEMP_READINGS="incubatorName";
-    
-    
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
@@ -80,11 +101,18 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
     }             
     String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
     String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
-            
+    EnvMonIncubationAPIfrontendEndpoints endPoint = null;
+    try{
+        endPoint = EnvMonIncubationAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+    }catch(Exception e){
+        LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+        return;                   
+    }
+    Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                   
     if (!LPFrontEnd.servletStablishDBConection(request, response))return;
         
-    switch (actionName.toUpperCase()){
-        case API_ENDPOINT_INCUBATORS_LIST: 
+    switch (endPoint){
+        case INCUBATORS_LIST: 
             String[] fieldsToRetrieve=new String[]{TblsEnvMonitConfig.InstrIncubator.FLD_NAME.getName()};
             String[] fieldsToRetrieveReadings=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                         TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
@@ -108,20 +136,14 @@ protected void processRequest(HttpServletRequest request, HttpServletResponse re
             Rdbms.closeRdbms();  
             LPFrontEnd.servletReturnSuccess(request, response, jArr);
             break;
-        case API_ENDPOINT_INCUBATOR_TEMP_READINGS:
-            areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_INCUBATOR_TEMP_READINGS.split("\\|"));                       
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-                LPFrontEnd.servletReturnResponseError(request, response, 
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
-                return;          
-            }  
-            String instrName=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NAME);                  
-            String numPoints=request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_INCUBATOR_NUM_POINTS);                     
+        case INCUBATOR_TEMP_READINGS:
+            String instrName=argValues[0].toString();
+            String numPoints=argValues[1].toString();
             Integer numPointsInt=null;
             fieldsToRetrieve=new String[]{TblsEnvMonitData.InstrIncubatorNoteBook.FLD_ID.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_EVENT_TYPE.getName(),
                         TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_ON.getName(), TblsEnvMonitData.InstrIncubatorNoteBook.FLD_CREATED_BY.getName(),
                         TblsEnvMonitData.InstrIncubatorNoteBook.FLD_TEMPERATURE.getName()};            
-            if (numPoints!=null) numPointsInt=Integer.valueOf(numPoints);                    
+            if (numPoints!=null && numPoints.length()>0) numPointsInt=Integer.valueOf(numPoints);                    
             Object[][] instrReadings=DataIncubatorNoteBook.getLastTemperatureReading(schemaPrefix, instrName, numPointsInt);                    
             Rdbms.closeRdbms();  
             jArr = new JSONArray();

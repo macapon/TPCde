@@ -9,14 +9,17 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
 import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
@@ -29,6 +32,45 @@ import org.json.simple.JSONObject;
  * @author User
  */
 public class ProcedureDefinitionfrontend extends HttpServlet {
+    public enum ProcedureDefinitionAPIfrontendEndpoints{
+        /**
+         *
+         */
+        ALL_PROCEDURE_DEFINITION("ALL_PROCEDURE_DEFINITION", "",new LPAPIArguments[]{}),
+        ENABLE_ACTIONS_AND_ROLES("ENABLE_ACTIONS_AND_ROLES", "",new LPAPIArguments[]{}),
+        ;
+        private ProcedureDefinitionAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }
     
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
     public static final String ERRORMSG_ERROR_STATUS_CODE="Error Status Code";
@@ -44,9 +86,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
         request=LPHttp.requestPreparation(request);
         response=LPHttp.responsePreparation(response);
-
         String language = LPFrontEnd.setLanguage(request); 
-        
         try (PrintWriter out = response.getWriter()) {
             Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -57,13 +97,20 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
             String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
+            ProcedureDefinitionAPIfrontendEndpoints endPoint = null;
+            try{
+                endPoint = ProcedureDefinitionAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
             Token token = new Token(finalToken);
             String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);                        
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
             JSONArray mainArr = new JSONArray(); 
             JSONArray mainContentArr = new JSONArray(); 
-            switch (actionName.toUpperCase()){
-            case "ALL_PROCEDURE_DEFINITION":
+            switch (endPoint){
+            case ALL_PROCEDURE_DEFINITION:
                 JSONObject schemaContentObj = new JSONObject(); 
                 String[] sectionsArr=new String[]{ProcBusinessRulesQueries.PROCEDURE_MAIN_INFO.toString(), ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString(),
                     ProcBusinessRulesQueries.PROCEDURE_SAMPLE_AUDIT_LEVEL.toString(),
@@ -78,7 +125,7 @@ public class ProcedureDefinitionfrontend extends HttpServlet {
                 mainContentArr.add(schemaContentObj);
                 LPFrontEnd.servletReturnSuccess(request, response, schemaContentObj);
                 return;                                
-            case "ENABLE_ACTIONS_AND_ROLES":  
+            case ENABLE_ACTIONS_AND_ROLES:  
                 LPFrontEnd.servletReturnSuccess(request, response, 
                         getProcBusinessRulesQueriesInfo(schemaPrefix, ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString()));
                 return;
