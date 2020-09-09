@@ -14,8 +14,10 @@ import databases.TblsData;
 import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.sop.UserSop;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.ServletException;
@@ -31,41 +33,41 @@ import org.json.simple.JSONObject;
 public class SopUserAPI extends HttpServlet {
 
     public enum SopUserAPIEndpoints{
-        /**
-         *
-         */
-        SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "sopName", "", "appSop_markAsCompleted_success",  
-            new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
+        SOP_MARK_AS_COMPLETED("SOP_MARK_AS_COMPLETED", "appSop_markAsCompleted_success",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6 )}),
         ;
-        private SopUserAPIEndpoints(String name, String mandatoryParams, String optionalParams, String successMessageCode, LPAPIArguments[] argums){
+        private SopUserAPIEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
-            this.mandatoryParams=mandatoryParams;
-            this.optionalParams=optionalParams;
             this.successMessageCode=successMessageCode;
-            this.arguments=argums;
+            this.arguments=argums;  
         } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
         public String getName(){
             return this.name;
-        }
-        public String getMandatoryParams(){
-            return this.mandatoryParams;
         }
         public String getSuccessMessageCode(){
             return this.successMessageCode;
         }           
 
-       /**
+        /**
          * @return the arguments
          */
         public LPAPIArguments[] getArguments() {
             return arguments;
         }     
         private final String name;
-        private final String mandatoryParams; 
-        private final String optionalParams; 
         private final String successMessageCode;  
-        private final  LPAPIArguments[] arguments;
+        private final LPAPIArguments[] arguments;
     }
+    
     /**
      *
      */

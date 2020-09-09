@@ -25,8 +25,11 @@ import functionaljavaa.user.UserProfile;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import functionaljavaa.sop.UserSop;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
+import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import lbplanet.utilities.LPAPIArguments;
 /**
  *
  * @author Administrator
@@ -128,6 +131,44 @@ public class SopUserAPIfrontend extends HttpServlet {
      */
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
+    public enum SopUserAPIfrontendEndpoints{
+        ALL_MY_SOPS("ALL_MY_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
+        MY_PENDING_SOPS("MY_PENDING_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
+        PROCEDURE_SOPS("PROCEDURE_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
+        SOP_TREE_LIST_ELEMENT("SOP_TREE_LIST_ELEMENT", "",new LPAPIArguments[]{ }),
+        ; 
+        private SopUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+            this.name=name;
+            this.successMessageCode=successMessageCode;
+            this.arguments=argums;  
+        } 
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+            HashMap<HttpServletRequest, Object[]> hm = new HashMap();
+            Object[] argValues=new Object[0];
+            for (LPAPIArguments curArg: this.arguments){                
+                argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+                request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
+            }  
+            hm.put(request, argValues);            
+            return hm;
+        }        
+        public String getName(){
+            return this.name;
+        }
+        public String getSuccessMessageCode(){
+            return this.successMessageCode;
+        }           
+
+        /**
+         * @return the arguments
+         */
+        public LPAPIArguments[] getArguments() {
+            return arguments;
+        }     
+        private final String name;
+        private final String successMessageCode;  
+        private final LPAPIArguments[] arguments;
+    }
                            
 
     /**
@@ -156,11 +197,18 @@ public class SopUserAPIfrontend extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
             Token token = new Token(finalToken);
-                        
+            SopUserAPIfrontendEndpoints endPoint = null;
+            try{
+                endPoint = SopUserAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
              
-            switch (actionName.toUpperCase()){
-            case "ALL_MY_SOPS":    
+            switch (endPoint){
+            case ALL_MY_SOPS:    
                 UserProfile usProf = new UserProfile();
                 String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
@@ -170,16 +218,14 @@ public class SopUserAPIfrontend extends HttpServlet {
                     return;
                 }
                 String[] fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-                String sopFieldsToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE);
+                String sopFieldsToRetrieve = argValues[0].toString();
                 if (sopFieldsToRetrieve!=null) {                
                     String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
                     for (String fv: sopFieldsToRetrieveArr){
                         fieldsToRetrieve = LPArray.addValueToArray1D(fieldsToRetrieve, fv);
                     }
                 }
-                
                 UserSop userSop = new UserSop();                               
-                
                 Object[][] userSops = UserSop.getUserProfileFieldValues( 
                         new String[]{"user_id"}, new Object[]{token.getPersonName()}, fieldsToRetrieve, allUserProcedurePrefix);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
@@ -223,7 +269,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 mySopsListArr.add(mySopsList);
                 LPFrontEnd.servletReturnSuccess(request, response, mySopsListArr);
                 return;
-            case "MY_PENDING_SOPS":    
+            case MY_PENDING_SOPS:    
                 if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                 usProf = new UserProfile();
                 allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
@@ -234,7 +280,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                     return;
                 }
                 fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-                sopFieldsToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE);
+                sopFieldsToRetrieve = argValues[0].toString(); 
                 if (sopFieldsToRetrieve!=null) {                
                     String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
                     for (String fv: sopFieldsToRetrieveArr){
@@ -281,7 +327,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 }                
                 LPFrontEnd.servletReturnSuccess(request, response, myPendingSopsByProc);
                 return;
-            case "PROCEDURE_SOPS":    
+            case PROCEDURE_SOPS:    
               if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                 usProf = new UserProfile();
                 allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
@@ -292,7 +338,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                     return;
                 }
                 fieldsToRetrieve = new String[]{FIELDNAME_SOP_ID, FIELDNAME_SOP_NAME};
-                sopFieldsToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE);
+                sopFieldsToRetrieve = argValues[0].toString(); 
                 if (sopFieldsToRetrieve!=null) {                
                     String[] sopFieldsToRetrieveArr = sopFieldsToRetrieve.split("\\|");
                     for (String fv: sopFieldsToRetrieveArr){
@@ -329,7 +375,7 @@ public class SopUserAPIfrontend extends HttpServlet {
                 response.getWriter().write(myPendingSopsByProc.toString());                    
                 LPFrontEnd.servletReturnSuccess(request, response, myPendingSopsByProc);
                 return;
-            case "SOP_TREE_LIST_ELEMENT":
+            case SOP_TREE_LIST_ELEMENT:
                 if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
                 usProf = new UserProfile();
                 allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));

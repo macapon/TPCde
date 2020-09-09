@@ -11,6 +11,7 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPJson;
 import com.labplanet.servicios.app.GlobalAPIsParams;
+import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIfrontendEndpoints;
 import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsApp;
@@ -31,6 +32,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -41,69 +43,6 @@ import org.json.simple.JSONObject;
  */
 public class SampleAPIfrontend extends HttpServlet {
 
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GET_SAMPLETEMPLATES="GET_SAMPLETEMPLATES";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_UNRECEIVESAMPLES_LIST="UNRECEIVESAMPLES_LIST";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLES_INPROGRESS_LIST="SAMPLES_INPROGRESS_LIST";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLES_BY_STAGE="SAMPLES_BY_STAGE";    
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_ANALYSIS_ALL_LIST="ANALYSIS_ALL_LIST";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GET_SAMPLE_ANALYSIS_LIST="GET_SAMPLE_ANALYSIS_LIST";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_LIST="GET_SAMPLE_ANALYSIS_RESULT_LIST";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_CHANGEOFCUSTODY_SAMPLE_HISTORY="CHANGEOFCUSTODY_SAMPLE_HISTORY";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_CHANGEOFCUSTODY_USERS_LIST="CHANGEOFCUSTODY_USERS_LIST";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_SPEC="GET_SAMPLE_ANALYSIS_RESULT_SPEC";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_SAMPLE_ENTIRE_STRUCTURE="SAMPLE_ENTIRE_STRUCTURE";
-
-    /**
-     *
-     */
-    public static final String API_ENDPOINT_GET_SAMPLEAUDIT="GET_SAMPLE_AUDIT";
-    
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
     
     /**
@@ -149,13 +88,19 @@ public class SampleAPIfrontend extends HttpServlet {
             String schemaConfigName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG);  
         
             //Token token = new Token(finalToken);
+            SampleAPIfrontendEndpoints endPoint = null;
+            try{
+                endPoint = SampleAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+            }catch(Exception e){
+                LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+                return;                   
+            }
+            Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                             
 
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        
-      
             
-            switch (actionName.toUpperCase()){
-            case API_ENDPOINT_GET_SAMPLETEMPLATES:       
+            switch (endPoint){
+            case GET_SAMPLETEMPLATES:       
                 String[] filterFieldName = new String[]{TblsCnfg.Sample.FLD_JSON_DEFINITION.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()};
                 Object[] filterFieldValue = new Object[]{""};
 /*                filterFieldName = LPArray.addValueToArray1D(filterFieldName, "code");
@@ -176,7 +121,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 }           
                 LPFrontEnd.servletReturnSuccess(request, response, jArray);
                 return;
-            case API_ENDPOINT_UNRECEIVESAMPLES_LIST:   
+            case UNRECEIVESAMPLES_LIST:   
                 areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_UNRECEIVESAMPLES_LIST.split("\\|"));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                     LPFrontEnd.servletReturnResponseError(request, response, 
@@ -235,8 +180,8 @@ public class SampleAPIfrontend extends HttpServlet {
                 Rdbms.closeRdbms();
                 LPFrontEnd.servletReturnSuccess(request, response, smplsJsArr);       
                 return;
-            case API_ENDPOINT_SAMPLES_BY_STAGE:   
-            case API_ENDPOINT_SAMPLES_INPROGRESS_LIST:   
+            case SAMPLES_BY_STAGE:   
+            case SAMPLES_INPROGRESS_LIST:   
                 whereFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_NAME); 
                 if (whereFieldsName==null){whereFieldsName="";}
                 whereFieldsValue = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_WHERE_FIELDS_VALUE); 
@@ -286,7 +231,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 }                
                 whereFieldsNameArr = null;
                 whereFieldsValueArr = null; 
-                if (actionName.toUpperCase().equalsIgnoreCase(API_ENDPOINT_SAMPLES_INPROGRESS_LIST) && (!whereFieldsName.contains(TblsData.Sample.FLD_STATUS.getName())) ){
+                if (actionName.toUpperCase().equalsIgnoreCase(SampleAPIfrontendEndpoints.SAMPLES_INPROGRESS_LIST.getName()) && (!whereFieldsName.contains(TblsData.Sample.FLD_STATUS.getName())) ){
                     whereFieldsNameArr = LPArray.addValueToArray1D(whereFieldsNameArr, TblsData.Sample.FLD_RECEIVED_BY.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
                     whereFieldsValueArr = LPArray.addValueToArray1D(whereFieldsValueArr, "");
                     Object[] recEncrypted = LPPlatform.encryptString("RECEIVED");
@@ -430,7 +375,7 @@ public class SampleAPIfrontend extends HttpServlet {
                 }
                     Rdbms.closeRdbms(); 
                     return;                                        
-                case API_ENDPOINT_ANALYSIS_ALL_LIST:          
+                case ANALYSIS_ALL_LIST:          
                     String fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE); 
 
                     String[] fieldToRetrieveArr = new String[0];
@@ -456,7 +401,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }
                     return;         
-                case API_ENDPOINT_GET_SAMPLE_ANALYSIS_LIST:    
+                case GET_SAMPLE_ANALYSIS_LIST:    
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_LIST.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -491,7 +436,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }
                     return;                                            
-                case API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_LIST:
+                case GET_SAMPLE_ANALYSIS_RESULT_LIST:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_LIST.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -545,7 +490,7 @@ public class SampleAPIfrontend extends HttpServlet {
                       LPFrontEnd.servletReturnSuccess(request, response, jArr);
                     }                    
                     return;  
-                case API_ENDPOINT_CHANGEOFCUSTODY_SAMPLE_HISTORY:     
+                case CHANGEOFCUSTODY_SAMPLE_HISTORY:     
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_CHANGEOFCUSTODY_SAMPLE_HISTORY.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -581,7 +526,7 @@ public class SampleAPIfrontend extends HttpServlet {
                         LPFrontEnd.servletReturnSuccess(request, response, myData);
                     }                             
                     return;                      
-                case API_ENDPOINT_CHANGEOFCUSTODY_USERS_LIST:
+                case CHANGEOFCUSTODY_USERS_LIST:
 
                     fieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FIELD_TO_RETRIEVE);                    
                     sortFieldsName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SORT_FIELDS_NAME);
@@ -610,7 +555,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     }                             
 
                     return;                      
-                case API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_SPEC:
+                case GET_SAMPLE_ANALYSIS_RESULT_SPEC:
                     areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, SampleAPIParams.MANDATORY_PARAMS_FRONTEND_GET_SAMPLE_ANALYSIS_RESULT_SPEC.split("\\|"));
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
                         LPFrontEnd.servletReturnResponseError(request, response, 
@@ -620,7 +565,7 @@ public class SampleAPIfrontend extends HttpServlet {
                     // No implementado aun, seguramente no tiene sentido porque al final la spec está evaluada y guardada en la tabla sample_analysis_result
                     Rdbms.closeRdbms();
                     return;  
-                case API_ENDPOINT_SAMPLE_ENTIRE_STRUCTURE:
+                case SAMPLE_ENTIRE_STRUCTURE:
                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                     
                    String[] sampleIdStrArr=sampleIdStr.split("\\|");  
                    Object[] sampleIdArr=new Object[0];
@@ -642,7 +587,7 @@ public class SampleAPIfrontend extends HttpServlet {
                             sampleAuditFieldToRetrieve, sampleAuditResultFieldToSort);
                     LPFrontEnd.servletReturnSuccess(request, response, jsonarrayf);
                     return;
-                case API_ENDPOINT_GET_SAMPLEAUDIT:
+                case GET_SAMPLEAUDIT:
                    sampleIdStr = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);                     
                    sampleId=Integer.valueOf(sampleIdStr);
                    sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_AUDIT_FIELD_TO_RETRIEVE);

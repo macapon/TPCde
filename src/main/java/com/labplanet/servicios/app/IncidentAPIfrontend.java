@@ -19,9 +19,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPJson;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -69,12 +71,7 @@ public class IncidentAPIfrontend extends HttpServlet {
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
             return;                   
         }
-        areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, endPoint.getMandatoryParams().split("\\|"));
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
-            LPFrontEnd.servletReturnResponseError(request, response,
-                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
-            return;
-        }
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());   
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}          
 
         switch (endPoint){
@@ -96,7 +93,7 @@ public class IncidentAPIfrontend extends HttpServlet {
                 return;  
             case INCIDENT_DETAIL_FOR_GIVEN_INCIDENT:
                 Integer incId=null;
-                String incIdStr=request.getParameter(IncidentAPI.ParamsList.INCIDENT_ID.getParamName());
+                String incIdStr=LPNulls.replaceNull(argValues[0]).toString();
                 if (incIdStr!=null && incIdStr.length()>0) incId=Integer.valueOf(incIdStr);
 
                 fieldsToRetrieve=TblsAppAudit.Incident.getAllFieldNames();

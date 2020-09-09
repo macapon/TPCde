@@ -240,6 +240,14 @@
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
         <servlet-class>com.labplanet.servicios.app.ModulesConfigMasterDataAPI</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ModuleDefinitionAPI</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduledefinition.ModuleDefinitionAPI</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>EnvMonAPIFrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIFrontend</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
         <url-pattern>/testing/platform/DBActions</url-pattern>
@@ -466,6 +474,14 @@
     <servlet-mapping>
         <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
         <url-pattern>/modules/ConfigMasterDataAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ModuleDefinitionAPI</servlet-name>
+        <url-pattern>/app/ModuleDefinitionAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>EnvMonAPIFrontend</servlet-name>
+        <url-pattern>/moduleenvmon/frontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
