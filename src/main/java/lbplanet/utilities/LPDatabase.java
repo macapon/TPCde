@@ -41,14 +41,15 @@ public class LPDatabase {
     public static final String FIELDS_NAMES_ACTIVE="active";
     public static final String FIELDS_NAMES_CREATED_BY="created_by";
     public static final String FIELDS_NAMES_CREATED_ON="created_on";
-    public static final String FIELDS_NAMES_VOLUME="volume";
-    public static final String FIELDS_NAMES_VOLUME_UOM="volume_uom";
+    public static final String FIELDS_NAMES_DESCRIPTION="description";
     public static final String FIELDS_NAMES_METHOD_NAME="method_name";
     public static final String FIELDS_NAMES_METHOD_VERSION="method_version";
     public static final String FIELDS_NAMES_PROCEDURE_NAME="procedure_name";
     public static final String FIELDS_NAMES_PROCEDURE_VERSION="procedure_version";
     public static final String FIELDS_NAMES_SAMPLE_ID="sample_id";
-    public static final String FIELDS_NAMES_DESCRIPTION="description";
+    public static final String FIELDS_NAMES_TESTING_GROUP="testing_group";
+    public static final String FIELDS_NAMES_VOLUME="volume";
+    public static final String FIELDS_NAMES_VOLUME_UOM="volume_uom";
     
     
 }

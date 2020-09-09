@@ -80,15 +80,14 @@ public class LPAPIArguments {
                         if (requestArgValue.length()>0) valueConvertedBoolean=Boolean.valueOf(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
                         break;
-/*                    case STRINGARR:
-                        String[] valueConvertedStrArr = requestArgValue.split("\\|");
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedStrArr);
+                    case STRINGARR:
+                        //String[] valueConvertedStrArr = requestArgValue.split("\\|");
+                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                         break;                        
                     case STRINGOFOBJECTS:
-                        Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
-                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedTopObjectArr);
-                        break;                        
-*/                        
+                        //Object[] valueConvertedTopObjectArr = LPArray.convertStringWithDataTypeToObjectArray(requestArgValue.split("\\|"));   
+                        returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
+                        break;                                                
                     default:
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, requestArgValue);
                         break;                

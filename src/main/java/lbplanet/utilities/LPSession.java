@@ -70,6 +70,7 @@ public class LPSession {
      * @return
      */
     public static Object[] addProcessSession( String processName, Integer appSessionId, String[] fieldsNamesToInsert){
+        addProcessToAppSession(processName, appSessionId);
         String tableName = TblsDataAudit.Session.TBL.getName();
         String schemaAuditName = LPPlatform.buildSchemaName(processName, LPPlatform.SCHEMA_DATA_AUDIT);       
         
@@ -83,7 +84,32 @@ public class LPSession {
             }
             return Rdbms.insertRecordInTable(schemaAuditName, tableName, fieldsNamesToInsert, appSession);
         }
+        
         return LPArray.array2dTo1d(recordFieldsBySessionId);
+    }
+    
+    /**
+     * One user can be assigned to multiple processes, keep the track about which are the processes for which the user
+     *  performed any action at the app_session level is useful to simplify the way to get data across the procedures and audits.
+     * @param processName
+     * @param appSessionId
+     * @return
+     */    
+    public static Object[] addProcessToAppSession(String processName, Integer appSessionId){
+        Object[][] recordFieldsBySessionId = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.AppSession.TBL.getName(), 
+                new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId}, 
+                new String[]{TblsApp.AppSession.FLD_PROCEDURES.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(recordFieldsBySessionId[0][0].toString()))        
+            return LPArray.array2dTo1d(recordFieldsBySessionId);
+        String[] sessionProcsArr=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString().split("\\|");
+        String procListValue=LPNulls.replaceNull(recordFieldsBySessionId[0][0]).toString();
+        if (procListValue.length()>0) procListValue=procListValue+"|";
+        procListValue=procListValue+processName.replace("-"+LPPlatform.SCHEMA_DATA_AUDIT, "");
+        if (!LPArray.valueInArray(sessionProcsArr, processName))
+            return Rdbms.updateRecordFieldsByFilter(LPPlatform.SCHEMA_APP, TblsApp.AppSession.TBL.getName(), 
+                    new String[]{TblsApp.AppSession.FLD_PROCEDURES.getName()}, new Object[]{procListValue}, 
+                    new String[]{TblsApp.AppSession.FLD_SESSION_ID.getName()}, new Object[]{appSessionId});
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The procedure<*1*>already exists for the session<*2*>",new Object[]{processName, appSessionId} );
     }
 
     public static Object[] addAppSession(Integer appSessionId, String[] fieldsNamesToInsert){

@@ -23,6 +23,19 @@ import static databases.TblsCnfg.FIELDSTAG;
  */
 public class TblsDataAudit {
 
+    public static final String getTableCreationScriptFromDataAuditTable(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
+            case "SESSION": return Session.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN TBLSDATAAUDIT "+LPPlatform.LAB_FALSE;
+        }        
+    }
+
+    private static final java.lang.String FIELDS_NAMES_LIGHT = "light";
+    public static final String FIELDS_NAMES_USER_ID="user_id";
+    public static final String FIELDS_NAMES_USER_NAME="user_name";
+
+    
 public enum MyEnum implements Indexed<MyEnum> {
     ONE,
     TWO,

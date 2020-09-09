@@ -10,14 +10,21 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPMath;
 import databases.Rdbms;
+import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.TblsApp;
+import databases.TblsCnfg;
+import databases.TblsCnfgAudit;
 import databases.Token;
 import databases.TblsData;
+import databases.TblsProcedure;
+import databases.TblsReqs;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.ConfigProgramCalendar;
 import functionaljavaa.modulesample.DataModuleSampleAnalysis;
 import functionaljavaa.parameter.Parameter;
+import functionaljavaa.platform.doc.EndPointsToRequirements;
 import functionaljavaa.samplestructure.DataSample;
+import functionaljavaa.samplestructure.DataSampleRevisionTestingGroup;
 import functionaljavaa.samplestructure.DataSampleUtilities;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.io.IOException;
@@ -30,12 +37,14 @@ import java.nio.charset.CharsetDecoder;
 import java.nio.charset.CodingErrorAction;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.labelling.ZPL;
 import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPFilesTools;
 import lbplanet.utilities.LPPlatform;
 import org.json.simple.JSONObject;
 
@@ -70,15 +79,34 @@ public class TestingServer extends HttpServlet {
             out.println("</html>");
 
             Object[][] lblContent = new Object[][]{{"TEXT", "Ejemplo", 1, 1, 14}, {"BARCODE39", "123", 1, 1, 14, 1, 1}};
-            ZPL.zplLabel("", 5, lblContent);
+            ZPL.zplLabel("", 5, lblContent);            
+Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable("proc-deploy", "procedure", DataSampleRevisionTestingGroup.TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());            
+        //String tblCreateScript2=TblsData.SampleRevisionTestingGroup.createTableScript("proc-deploy", new String[]{""});
+        //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+EndPointsToRequirements.EndpointDefinition();
+//        String tblCreateScript2=TblsCnfgAudit.Spec.createTableScript("proc-deploy", new String[]{""});
+//        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+
+//        String tblCreateScript2=TblsCnfg.zzzDbErrorLog.createTableScript("config", new String[]{""});
+//        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+if  (1==1)      return;
+
+        
 //lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
-
 //lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
 //        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
-
 //lbplanet.utilities.LPMailing.otroMailViaSSL();
-
+//LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
+//LPFilesTools.toCsvFromArray("D:\\LP\\Postgresql Backups\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});
+//TblsReqs.ProcedureUserRequirements.
+            List<String[]> fromCsvToArray = LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
+Rdbms.stablishDBConectionTester();
+insertRecordInTableFromTable(true, TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
+        LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
+        new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
+        new Object[]{"proc-deploy", 1, "proc-deploy"},
+        LPPlatform.buildSchemaName("proc-deploy", LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
             if (1==1) return;            
 //            out.println(SomeEnumClass.getCell(1));
 //            out.println(OtherEnumClass.getCell(1));

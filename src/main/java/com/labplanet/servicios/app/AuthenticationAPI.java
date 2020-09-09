@@ -150,6 +150,7 @@ public class AuthenticationAPI extends HttpServlet {
                    Object[][] userInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_APP, Users.TBL.getName(), 
                             new String[]{Users.FLD_USER_NAME.getName()}, new Object[]{token.getUserName()}, 
                             new String[]{Users.FLD_ESIGN.getName(), TblsApp.Users.FLD_TABS_ON_LOGIN.getName()});
+                   
                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(userInfo[0][0].toString())){  
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_PROPERTY_ESIGN_INFO_NOT_AVAILABLE, null, language);       
                         return;                                                                                
@@ -161,6 +162,8 @@ public class AuthenticationAPI extends HttpServlet {
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myFinalToken);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_ID, sessionIdStr);
                     jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_APP_SESSION_DATE, nowLocalDate.toString());
+                    if (userInfo[0][0].toString().length()==0)
+                        jsonObj.put("warning", "no esign phrase");
                     String tabsStr=userInfo[0][1].toString();
                     String[] tabs=tabsStr.split("\\|");
                     JSONArray jArr=new JSONArray();
@@ -182,15 +185,17 @@ public class AuthenticationAPI extends HttpServlet {
                     String esignPhraseToCheck = argValues[1].toString();
 
                     token = new Token(myToken);
-                    
+                    if (token.geteSign().length()==0){               
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_TOKEN_ESIGN_VALUE_NULL, new Object[]{esignPhraseToCheck}, language);
+                        return;                             
+                    }
                     if(esignPhraseToCheck.equals(token.geteSign())){   
                         LPFrontEnd.servletReturnSuccess(request, response);
                         return;                                             
                     }else{               
                         LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_ESIGN_TO_CHECK_INVALID, new Object[]{esignPhraseToCheck}, language);
                         return;                             
-                    }
-                    
+                    }                    
                 case TOKEN_VALIDATE_USER_CREDENTIALS:     
                     myToken = argValues[0].toString();
                     String userToCheck = argValues[1].toString();                      

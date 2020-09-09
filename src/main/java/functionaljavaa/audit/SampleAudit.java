@@ -32,7 +32,6 @@ public class SampleAudit {
      */
  
     public enum SampleAuditErrorTrapping{ 
-        
         AUDIT_RECORDS_PENDING_REVISION("auditRecordsPendingRevision", "The sample <*1*> has pending sign audit records.", "La muestra <*1*> tiene registros de auditoría sin firmar"),
         AUDIT_RECORD_NOT_FOUND("AuditRecordNotFound", "The audit record <*1*> for sample does not exist", "No encontrado un registro de audit para muestra con id <*1*>"),
         AUDIT_RECORD_ALREADY_REVIEWED("AuditRecordAlreadyReviewed", "The audit record <*1*> was reviewed therefore cannot be reviewed twice.", "El registro de audit para muestra con id <*1*> ya fue revisado, no se puede volver a revisar."),
@@ -319,9 +318,10 @@ public class SampleAudit {
 */        
 //        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
 //        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-
+        
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
                 fieldNames, fieldValues);
+        
     }
 
     /**

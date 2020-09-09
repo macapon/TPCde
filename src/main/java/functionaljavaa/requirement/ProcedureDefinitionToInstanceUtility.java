@@ -9,8 +9,10 @@ import lbplanet.utilities.LPPlatform;
 import databases.Rdbms;
 import databases.TblsCnfg;
 import databases.TblsProcedure;
+import databases.TblsReqs;
 import static functionaljavaa.requirement.RequirementLogFile.requirementsLogEntry;
 import functionaljavaa.sop.UserSop;
+import lbplanet.utilities.LPArray;
 
 
 /**
@@ -20,6 +22,16 @@ import functionaljavaa.sop.UserSop;
 public class ProcedureDefinitionToInstanceUtility {
     private ProcedureDefinitionToInstanceUtility(){    throw new IllegalStateException("Utility class");}
 
+
+    
+    public static final Object[] ProcedureRolesList(String procName, Integer procVersion){
+        Object[][] ProcedureRolesListArr = Rdbms.getRecordFieldsByFilter(LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureRoles.TBL.getName(), 
+                new String[]{TblsReqs.ProcedureRoles.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureRoles.FLD_PROCEDURE_VERSION.getName()}, new Object[]{procName, procVersion}, 
+                new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()}, new String[]{TblsReqs.ProcedureRoles.FLD_ROLE_NAME.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(ProcedureRolesListArr[0].toString()))
+            return new Object[]{};
+        return LPArray.getColumnFromArray2D(ProcedureRolesListArr, 0);
+    }
     /**
      *
      * @param procName
@@ -30,18 +42,19 @@ public class ProcedureDefinitionToInstanceUtility {
      * @param sopVersion
      * @param sopRevision
      * @return
-     */
+     */    
     public static final Object[][] procedureAddSopToUsersByRole( String procName, Integer procVersion, String schemaName, String roleName, String sopName, Integer sopVersion, Integer sopRevision){
         String schemaNameDestinationProcedure=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_PROCEDURE);
         UserSop usSop = new UserSop();
         Object[][] diagnoses = new Object[0][0];
         Object[][] personPerRole = Rdbms.getRecordFieldsByFilter(schemaNameDestinationProcedure, TblsProcedure.PersonProfile.TBL.getName(),
         new String[]{TblsProcedure.PersonProfile.FLD_ROLE_NAME.getName()}, new Object[]{roleName}, new String[]{TblsProcedure.PersonProfile.FLD_PERSON_NAME.getName()}, null);
-        
-        for (Object[] curPersRole: personPerRole){
-            String curPersonName=curPersRole[0].toString();
-            usSop.addSopToUserByName(schemaName, curPersonName, sopName);            
-            //diagnoses = LPArray.joinTwo2DArrays(diagnoses, new Object[][]{{curPersonName, addSopToUserByName}});
+        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(personPerRole[0][0].toString())){
+            for (Object[] curPersRole: personPerRole){
+                String curPersonName=curPersRole[0].toString();
+                usSop.addSopToUserByName(schemaName, curPersonName, sopName);            
+                //diagnoses = LPArray.joinTwo2DArrays(diagnoses, new Object[][]{{curPersonName, addSopToUserByName}});
+            }
         }
         return diagnoses;
         /*usSop.addSopToUserInternalLogic();

@@ -15,6 +15,7 @@ import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
 import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
+import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 
 /**
  *
@@ -153,19 +154,22 @@ public class DataProgramCorrectiveAction {
      * @return
      */
     public static Object[] markAsCompleted(String schemaPrefix, Token token, Integer correctiveActionId){    
-    String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
-    Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
-    new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
-    new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()});
-    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
-        return correctiveActionInfo[0];
+        String statusClosed=Parameter.getParameterBundle(schemaPrefix+"-"+LPPlatform.SCHEMA_DATA, "programCorrectiveAction_statusClosed");
+        Object[][] correctiveActionInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+        new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId},
+        new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
+            return correctiveActionInfo[0];
+        }
+        if (statusClosed.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED.getErrorCode(), new Object[]{correctiveActionId});
+        }
+        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()}, 
+                new Object[]{statusClosed}, 
+                new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId});
+    }  
+    public static Boolean isProgramCorrectiveActionEnable(String schemaPrefix){
+        return "ENABLE".equalsIgnoreCase(Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, "programCorrectiveActionMode"));
     }
-    if (statusClosed.equalsIgnoreCase(correctiveActionInfo[0][0].toString())){
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ProgramCorrectiveActionErrorTrapping.ACTION_CLOSED.getErrorCode(), new Object[]{correctiveActionId});
-    }
-    return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
-            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()}, 
-            new Object[]{statusClosed}, 
-            new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()}, new Object[]{correctiveActionId});
-  }  
 }

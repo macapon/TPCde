@@ -362,7 +362,6 @@ public class UserSop {
      * @return
      */
     private Object[] addSopToUserInternalLogic( String schemaPrefix, String personName, String sopIdFieldName, Object sopIdFieldValue){
-                
         String schemaName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
         Object[] exists = Rdbms.existsRecord(schemaName, TblsData.UserSop.TBL.getName(), new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName}, new Object[]{personName, sopIdFieldValue});
                 

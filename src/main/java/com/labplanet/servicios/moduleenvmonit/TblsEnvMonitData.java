@@ -22,7 +22,22 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author Administrator
  */
 public class TblsEnvMonitData {
-
+    public static final String getTableCreationScriptFromDataTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
+            case "INSTRUMENT_INCUBATOR_NOTEBOOK": return InstrIncubatorNoteBook.createTableScript(schemaNamePrefix, fields);
+            case "PRODUCTION_LOT": return ProductionLot.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_DAY": return ProgramDay.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_MICROORGANISM": return SampleMicroorganism.createTableScript(schemaNamePrefix, fields);
+            case "PR_SCHEDULED_LOCATIONS_VIEW": return ViewProgramScheduledLocations.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_MICROORGANISM_LIST_VIEW": return ViewSampleMicroorganismList.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAENVMONIT"+LPPlatform.LAB_FALSE;
+        }        
+    }    
     /**
      *
      */
@@ -56,18 +71,27 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_SPEC_CODE("spec_code", LPDatabase.string())
-        ,        
+        FLD_SPEC_CODE("spec_code", LPDatabase.string()),        
 
         /**
          *
          */
-        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer())        
-        ,
+        FLD_SPEC_CONFIG_VERSION("spec_config_version", LPDatabase.integer()),
 
         /**
          *
          */
+        FLD_SAMPLE_CONFIG_CODE("sample_config_code", LPDatabase.string()),        
+        FLD_MAP_IMAGE("map_image", LPDatabase.string()),        
+        
+        /**
+         *
+         */
+        FLD_SAMPLE_CONFIG_CODE_VERSION("sample_config_code_version", LPDatabase.integer()),        
+        FLD_DESCRIPTION_EN("description_en", LPDatabase.string()),        
+        FLD_DESCRIPTION_ES("description_es", LPDatabase.string()),        
+
+                
         FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())
         // ...
         ;
@@ -90,17 +114,18 @@ public class TblsEnvMonitData {
 
         /**
          *
+         * @param schemaNamePrefix
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */
-        public static String createTableScript(String[] fields){
-            return createTableScriptPostgres(fields);
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
         }
-        private static String createTableScriptPostgres(String[] fields){
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = Program.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_DATA);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -111,7 +136,7 @@ public class TblsEnvMonitData {
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.SCHEMA_DATA);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
                         currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
                         fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
                         tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
@@ -132,21 +157,24 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        TBL("program_location",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_NAME) )" +
+        TBL("program_location",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_PROGRAM_NAME, #FLD_LOCATION_NAME, #FLD_AREA) )" +
                 LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
         ,
 
         /**
          *
          */
-        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, "character varying2100) COLLATE pg_catalog.\"default\" NOT NULL")
+        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME, LPDatabase.stringNotNull(100))
         ,
 
         /**
          *
          */
-        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.string(200))
-        ,
+        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.string(200)),
+        FLD_AREA("area",  LPDatabase.string()),
+        FLD_ORDER_NUMBER("order_number",  LPDatabase.integer()),
+        FLD_DESCRIPTION_EN("description_en",  LPDatabase.string()),
+        FLD_DESCRIPTION_ES("description_es",  LPDatabase.string()),
         /**
          *
          */
@@ -154,7 +182,18 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_PERSON_ANA_DEFINITION("person_ana_definition",LPDatabase.stringNotNull()),
+        FLD_PERSON_ANA_DEFINITION("person_ana_definition",LPDatabase.string()),
+        FLD_SPEC_CODE("spec_code",  LPDatabase.string()),
+        FLD_SPEC_CODE_VERSION("spec_code_version",  LPDatabase.integer()),
+        FLD_SPEC_VARIATION_NAME("spec_variation_name",  LPDatabase.string()),
+        FLD_SPEC_ANALYSIS_VARIATION("spec_analysis_variation",  LPDatabase.string()),
+        FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),
+
+        FLD_MAP_ICON("map_icon",  LPDatabase.string()),
+        FLD_MAP_ICON_H("map_icon_h",  LPDatabase.string()),
+        FLD_MAP_ICON_W("map_icon_w",  LPDatabase.string()),
+        FLD_MAP_ICON_TOP("map_icon_top",  LPDatabase.string()),
+        FLD_MAP_ICON_LEFT("map_icon_left",  LPDatabase.string()),
         
 //        , FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.String())
         // ...
@@ -177,17 +216,18 @@ public class TblsEnvMonitData {
 
         /**
          *
+         * @param schemaNamePrefix
          * @param fields fields , ALL when this is null
          * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
          */
-        public static String createTableScript(String[] fields){
-            return createTableScriptPostgres(fields);
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
         }
-        private static String createTableScriptPostgres(String[] fields){
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
             StringBuilder tblCreateScript=new StringBuilder(0);
             String[] tblObj = ProgramLocation.TBL.getDbFieldDefinitionPostgres();
             tblCreateScript.append(tblObj[1]);
-            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_DATA);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
@@ -198,7 +238,7 @@ public class TblsEnvMonitData {
                 if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
                         if (fieldsScript.length()>0)fieldsScript.append(", ");
                         StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
-                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.SCHEMA_DATA);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
                         currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
                         fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
                         tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
@@ -210,6 +250,229 @@ public class TblsEnvMonitData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
+
+    public enum ProgramCalendarDate{
+
+        /**
+         *
+         */
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_id_seq'::regclass)")
+        ,        
+        TBL("program_calendar_date", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_PROGRAM_ID, #FLD_CALENDAR_ID, #FLD_ID) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+
+        /**
+         *
+         */
+
+
+        /**
+         *
+         */
+        FLD_CALENDAR_ID("calendar_id", LPDatabase.integerNotNull())
+        ,
+
+        /**
+         *
+         */
+        FLD_PROGRAM_ID(TblsEnvMonitConfig.FIELDS_NAMES_PROGRAM_ID,LPDatabase.stringNotNull())
+        ,
+
+        /**
+         *
+         */
+        FLD_RECURSIVE_ID("recursive_id", LPDatabase.integerNotNull())
+        ,
+
+        /**
+         *
+         */
+        FLD_IS_HOLIDAYS("is_holidays", LPDatabase.booleanFld(false))
+        ,
+
+        /**
+         *
+         */
+        FLD_DATE("date", LPDatabase.date())
+        ,
+
+        /**
+         *
+         */
+        FLD_CONFLICT("conflict", LPDatabase.string())
+        ,
+
+        /**
+         *
+         */
+        FLD_CONFLICT_DETAIL("conflict_detail", LPDatabase.string())
+        ,
+
+        /**
+         *
+         */
+        FLD_LOCATION_NAME("location_name", LPDatabase.string())
+        ,
+
+        /**
+         *
+         */
+        FLD_SPEC("spec", LPDatabase.string())
+        ,
+
+        /**
+         *
+         */
+        FLD_VARIATION_NAME("variation_name", LPDatabase.string())
+        ,
+
+        /**
+         *
+         */
+        FLD_ANALYSIS_VARIATION("analysis_variation", LPDatabase.string())
+        ;        
+        private ProgramCalendarDate(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return entry name
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix procedure prefix
+         * @param fields fields , ALL when this is null
+         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ProgramCalendarDate.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ProgramCalendarDate obj: ProgramCalendarDate.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_CONFIG));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }                
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }
+    
+    public enum ProgramDay{
+
+        /**
+         *
+         */
+        TBL("program_day",  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_PROGRAM_CONFIG_ID, #FLD_PROGRAM_CONFIG_VERSION) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,
+
+        /**
+         *
+         */
+        FLD_PROGRAM_CONFIG_ID("program_config_id", LPDatabase.integerNotNull())
+        ,
+
+        /**
+         *
+         */
+        FLD_PROGRAM_CONFIG_VERSION("program_config_version", LPDatabase.integerNotNull())
+        ,
+        /**
+         *
+         */
+        FLD_DAY_ID("day_id", LPDatabase.integer())        
+        ,
+
+        /**
+         *
+         */
+        FLD_DATE("date", LPDatabase.date())        
+        // ...
+        ;
+        
+        private ProgramDay(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return entry name
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields fields , ALL when this is null
+         * @return One Create-Table script for this given table, for this given procedure and for ALL or the given fields.
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ProgramDay.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ProgramDay obj: ProgramDay.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }                
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }
+    
     private static final String FIELDS_NAMES_LOCATION_NAME = "location_name";
     private static final String FIELDS_NAMES_PROGRAM_NAME = "program_name";
 
@@ -254,7 +517,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.stringNotNull())
+        FLD_STATUS_PREVIOUS("status_previous",LPDatabase.string())
         ,
 
         /**
@@ -290,7 +553,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.stringNotNull())
+        FLD_VOLUME_UOM(LPDatabase.FIELDS_NAMES_VOLUME_UOM,LPDatabase.string())
         ,
 
         /**
@@ -302,7 +565,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_ALIQUOT_STATUS("aliq_status",LPDatabase.stringNotNull())
+        FLD_ALIQUOT_STATUS("aliq_status",LPDatabase.string())
         ,
 
         /**
@@ -314,7 +577,7 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.stringNotNull())
+        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom",LPDatabase.string())
         ,
 
         /**
@@ -344,13 +607,13 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_CUSTODIAN("custodian",  LPDatabase.stringNotNull(2))
+        FLD_CUSTODIAN("custodian",  LPDatabase.string(2))
         ,
 
         /**
          *
          */
-        FLD_CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.stringNotNull(2))
+        FLD_CUSTODIAN_CANDIDATE("custodian_candidate",  LPDatabase.string(2))
         ,
 
         /**
@@ -368,19 +631,19 @@ public class TblsEnvMonitData {
         /**
          *
          */
-        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.stringNotNull(2))
+        FLD_PROGRAM_NAME(FIELDS_NAMES_PROGRAM_NAME,  LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.stringNotNull(2))
+        FLD_LOCATION_NAME(FIELDS_NAMES_LOCATION_NAME,  LPDatabase.stringNotNull())
         ,
 
         /**
          *
          */
-        FLD_PRODUCTION_LOT("production_lot",  LPDatabase.stringNotNull(2)),
+        FLD_PRODUCTION_LOT("production_lot",  LPDatabase.string()),
         /**
          *
          */
@@ -495,13 +758,13 @@ public class TblsEnvMonitData {
          */
         FLD_INCUBATION2_PASSED("incubation2_passed", LPDatabase.booleanFld())        
         ,
-        FLD_CURRENT_STAGE("current_stage",LPDatabase.stringNotNull())
+        FLD_CURRENT_STAGE("current_stage",LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.stringNotNull())
+        FLD_PREVIOUS_STAGE("previous_stage",LPDatabase.string())
         
         ;
         private Sample(String dbObjName, String dbObjType){
@@ -1186,7 +1449,7 @@ group by s.sample_id, s.current_stage, s.program_name, s.location_name, s.incuba
         TBL("pr_scheduled_locations",  LPDatabase.createView() +
                 " select  dpr.sample_config_code, dpr.sample_config_code_version, "+
                 "         cnfpcd.*, dpl.area, dpl.spec_code, dpl.spec_variation_name, dpl.spec_analysis_variation, dpl.spec_code_version, dpl.requires_person_ana, dpl.person_ana_definition "+
-                "   from #SCHEMA_CONFIG.program_calendar_date  cnfpcd"+
+                "   from #SCHEMA_DATA.program_calendar_date  cnfpcd"+
                 "  inner join #SCHEMA_DATA.program  dpr on dpr.name=cnfpcd.program_id "+
                 "  inner join #SCHEMA_DATA.program_location dpl on dpl.program_name=cnfpcd.program_id and dpl.location_name=cnfpcd.location_name;"+
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")

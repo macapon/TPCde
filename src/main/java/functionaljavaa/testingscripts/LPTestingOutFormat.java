@@ -53,6 +53,8 @@ public class LPTestingOutFormat {
     private HashMap<String, Object> csvHeaderTags=null;
     private StringBuilder htmlStyleHeader = new StringBuilder(0);
     private Integer numEvaluationArguments = 0;
+    private Integer actionNamePosic = 0;
+    
     
     public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
         String csvPathName ="";
@@ -60,13 +62,14 @@ public class LPTestingOutFormat {
         Object[][] csvFileContent = new Object[0][0];
         Object testingSource=request.getAttribute(LPTestingParams.TESTING_SOURCE);
         Integer numEvalArgs=0;
+        numEvalArgs = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.NUM_EVAL_ARGS).toString()));
         StringBuilder htmlStyleHdr = new StringBuilder(0);
         HashMap<String, Object> headerTags = new HashMap();   
+        Integer actionNamePosic=numEvalArgs+1;
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
             if (!LPFrontEnd.servletStablishDBConection(request, null)){return;}     
-            numEvalArgs = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.NUM_EVAL_ARGS).toString()));
             Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
             String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
@@ -82,6 +85,7 @@ public class LPTestingOutFormat {
             headerTags.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, 0);   
             headerTags.put(FILEHEADER_NUM_TABLES_TAG_NAME, "-");  
             headerTags.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, numEvalArgs);   
+            actionNamePosic=5;
         }else{
             csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
             csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
@@ -95,8 +99,7 @@ public class LPTestingOutFormat {
 
             String[][] headerInfo = LPArray.convertCSVinArray(csvPathName, "=");
             headerTags = LPTestingOutFormat.getCSVHeader(headerInfo);          
-            numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());   
-            
+            numEvalArgs = Integer.valueOf(headerTags.get(LPTestingOutFormat.FILEHEADER_NUM_EVALUATION_ARGUMENTS).toString());               
         }        
         htmlStyleHdr = new StringBuilder(0);
         htmlStyleHdr.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
@@ -108,6 +111,7 @@ public class LPTestingOutFormat {
         this.csvHeaderTags=headerTags;
         this.htmlStyleHeader=htmlStyleHdr;
         this.numEvaluationArguments=numEvalArgs;
+        this.actionNamePosic=actionNamePosic;
     }
     
     public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
@@ -126,7 +130,7 @@ public class LPTestingOutFormat {
                 updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{evaluate[TRAP_MESSAGE_CODE_POSIC], tstAssert.getEvalCodeDiagnostic(),
                     functionRelatedObjects.toJSONString()});                    
             }
-            Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
+            Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(),                         
                     updFldNames, updFldValues,
                     new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()}, new Object[]{scriptId, stepId});            
         }
@@ -153,7 +157,7 @@ public class LPTestingOutFormat {
                                 TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName()});
                     updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalCodeMatch(), tstAssertSummary.getTotalCodeUndefined(), tstAssertSummary.getTotalCodeUnMatch()});                    
                 }
-                Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),                         
+                Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),                         
                         updFldNames, updFldValues,
                         new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});            
             }
@@ -797,6 +801,9 @@ public class LPTestingOutFormat {
      */
     public String getFileName() {
         return fileName;
+    }
+    public Integer getActionNamePosic() {
+        return actionNamePosic;
     }
 
     /**

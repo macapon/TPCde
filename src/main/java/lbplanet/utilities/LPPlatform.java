@@ -174,7 +174,9 @@ public class LPPlatform {
     
     /**
      *
-     */
+     */    
+    public static final String CONFIG_PROC_CONFIG_FILE_NAME = "-config";
+    public static final String CONFIG_PROC_DATA_FILE_NAME = "-data";
     public static final String CONFIG_PROC_FILE_NAME = "-procedure";
     private static final String ENCRYPTION_KEY = "Bar12345Bar12345";
 
@@ -197,7 +199,7 @@ public class LPPlatform {
     private static final String JSON_TAG_ERROR_MSG_CLASS_ERROR_CODE = "errorCode";
     private static final String JSON_TAG_ERROR_MSG_CLASS_ERROR_CODE_TEXT = "errorCodeText";
     private static final String JSON_TAG_ERROR_MSG_CLASS_ERROR_DETAIL = "errorDetail";
-    
+    public static final String CONFIG_OTRONOMBRE_FILE_NAME = "-otronombre";
     /**
      *
      */
@@ -969,14 +971,26 @@ public class LPPlatform {
      * @param paramName
      */
     public static void saveParameterPropertyInDbErrorLog(String schemaName, String fileName, String paramName) {          
-  if (1==1) return;
-    String schemaPrefix = LPNulls.replaceNull(schemaName);
-    if (Rdbms.stablishDBConection()){
-      Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, SCHEMA_CONFIG) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
-        new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(), 
-          TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName()}, 
-        new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName}                
-        );
+        if (1==1) return;
+        String schemaPrefix = LPNulls.replaceNull(schemaName);
+        if (Rdbms.stablishDBConection()){
+            Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, SCHEMA_CONFIG) , TblsCnfg.zzzPropertiesMissing.TBL.getName(), 
+              new String[]{TblsCnfg.zzzPropertiesMissing.FLD_CREATION_DATE.getName(), TblsCnfg.zzzPropertiesMissing.FLD_FILE.getName(), 
+                TblsCnfg.zzzPropertiesMissing.FLD_PARAMETER_NAME.getName()}, 
+              new Object[]{LPDate.getCurrentTimeStamp(), fileName, paramName}                
+              );
+        }
+    }      
+    public static Object[] isProcedureBusinessRuleEnable(String procName, String fileSchemaRepository, String ruleName){
+        String[] enableRuleValues=new String[]{"ENABLE", "YES", "ACTIVE", "ACTIVADO", "SI", "ACTIVO"};
+        String ruleValue=Parameter.getParameterBundle("config", procName, fileSchemaRepository, ruleName, null);
+        if (ruleValue.length()==0) 
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleTestingByGroup_ReviewByTestingGroup not found or not define", null);
+        for (String curVal: enableRuleValues){
+            if (curVal.equalsIgnoreCase(ruleValue))
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "ruleName = "+ruleValue, null);        
+        }
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "ruleName = "+ruleValue, null);
     }
-  }      
+    
 }

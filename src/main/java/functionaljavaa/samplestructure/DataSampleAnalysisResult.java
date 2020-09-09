@@ -479,10 +479,9 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
      * @param sampleId
      * @param testId
      * @param resultId
-     * @param dataSample
      * @return
      */
-    public Object[] sampleAnalysisResultUnCancel(String schemaPrefix, Token token, Integer sampleId, Integer testId, Integer resultId, DataSample dataSample) {
+    public Object[] sampleAnalysisResultUnCancel(String schemaPrefix, Token token, Integer sampleId, Integer testId, Integer resultId) {
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
         String sampleAnalysisResultStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLEANALYSISRESULT_STATUSCANCELED);
@@ -502,51 +501,55 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             cancelScope = TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName();
             cancelScopeId = resultId;
         }
+        Object[] samplesToUnCancel = new Object[0];
+        Object[] testsToUnCancel = new Object[0];
+        String[] diagPerResult = new String[0];
+
         Object[][] resultInfo = null;
         resultInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
                 new String[]{cancelScope}, new Object[]{cancelScopeId}, 
                 new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), 
                     TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()});
-        if (resultInfo.length == 0) {
-            String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + sampleId.toString() + " " + TblsData.SampleAnalysisResult.FLD_TEST_ID.getName() + ":" + testId.toString() +
-                    " " + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName() + ":" + resultId.toString()};
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(resultInfo[0][0].toString())) {
+            String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + LPNulls.replaceNull(sampleId).toString() + " " + TblsData.SampleAnalysisResult.FLD_TEST_ID.getName() + ":" + LPNulls.replaceNull(testId).toString() +
+                    " " + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName() + ":" + LPNulls.replaceNull(resultId).toString()};
             errorCode = DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode();
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, new Object[]{Arrays.toString(filter), schemaDataName});
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
-        }
-        Object[] samplesToUnCancel = new Object[0];
-        Object[] testsToUnCancel = new Object[0];
-        String[] diagPerResult = new String[0];
-        for (Integer iResToCancel = 0; iResToCancel < resultInfo.length; iResToCancel++) {
-            String currResultStatus = (String) resultInfo[iResToCancel][0];
-            String statusPrevious = (String) resultInfo[iResToCancel][1];
-            resultId = (Integer) resultInfo[iResToCancel][2];
-            testId = (Integer) resultInfo[iResToCancel][3];
-            sampleId = (Integer) resultInfo[iResToCancel][4];
-            if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currResultStatus))) {
-                diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleUnCancel_StatusNotExpected", new Object[]{resultInfo[0][0].toString(), sampleAnalysisResultStatusCanceled, schemaDataName});
-                diagPerResult = LPArray.addValueToArray1D(diagPerResult, TblsData.SampleAnalysisResult.TBL.getName()+" " + resultId.toString() + " not uncanceled because current status is " + currResultStatus);
-            } else {
+            //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, errorDetailVariables);
+        }else{
+            for (Integer iResToCancel = 0; iResToCancel < resultInfo.length; iResToCancel++) {
+                String currResultStatus = (String) resultInfo[iResToCancel][0];
+                String statusPrevious = (String) resultInfo[iResToCancel][1];
                 resultId = (Integer) resultInfo[iResToCancel][2];
-                diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
-                        new String[]{TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()}, new Object[]{sampleAnalysisResultStatusCanceled, statusPrevious}, 
-                        new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId});
-                if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                    String[] fieldsForAudit = new String[0];
-                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + sampleAnalysisResultStatusCanceled);
-                    fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + statusPrevious);
-                    SampleAudit smpAudit = new SampleAudit();
-                    smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
+                testId = (Integer) resultInfo[iResToCancel][3];
+                sampleId = (Integer) resultInfo[iResToCancel][4];
+                if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currResultStatus))) {
+                    diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleUnCancel_StatusNotExpected", new Object[]{resultInfo[0][0].toString(), sampleAnalysisResultStatusCanceled, schemaDataName});
+                    diagPerResult = LPArray.addValueToArray1D(diagPerResult, TblsData.SampleAnalysisResult.TBL.getName()+" " + resultId.toString() + " not uncanceled because current status is " + currResultStatus);
+                } else {
+                    resultId = (Integer) resultInfo[iResToCancel][2];
+                    diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
+                            new String[]{TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()}, new Object[]{sampleAnalysisResultStatusCanceled, statusPrevious}, 
+                            new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId});
+                    if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                        String[] fieldsForAudit = new String[0];
+                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + sampleAnalysisResultStatusCanceled);
+                        fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + statusPrevious);
+                        SampleAudit smpAudit = new SampleAudit();
+                        smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_UNCANCELED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
+                    }
+                    diagPerResult = LPArray.addValueToArray1D(diagPerResult, "Result " + resultId.toString() + " UNCANCELED ");
                 }
-                diagPerResult = LPArray.addValueToArray1D(diagPerResult, "Result " + resultId.toString() + " UNCANCELED ");
-            }
-            if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToUnCancel, sampleId))) {
-                samplesToUnCancel = LPArray.addValueToArray1D(samplesToUnCancel, sampleId);
-            }
-            if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()) || cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_TEST_ID.getName())) && (!LPArray.valueInArray(testsToUnCancel, testId))) {
-                testsToUnCancel = LPArray.addValueToArray1D(testsToUnCancel, testId);
+                if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToUnCancel, sampleId))) {
+                    samplesToUnCancel = LPArray.addValueToArray1D(samplesToUnCancel, sampleId);
+                }
+                if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()) || cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_TEST_ID.getName())) && (!LPArray.valueInArray(testsToUnCancel, testId))) {
+                    testsToUnCancel = LPArray.addValueToArray1D(testsToUnCancel, testId);
+                }
             }
         }
+        if (testsToUnCancel.length==0 && cancelScope.equalsIgnoreCase(TblsData.SampleAnalysis.FLD_TEST_ID.getName()))
+            testsToUnCancel = LPArray.addValueToArray1D(testsToUnCancel, cancelScopeId);                
         for (Integer iTstToUnCancel = 0; iTstToUnCancel < testsToUnCancel.length; iTstToUnCancel++) {
             Integer currTest = (Integer) testsToUnCancel[iTstToUnCancel];
             Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
@@ -570,6 +573,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
                 diagnoses[5] = "The "+TblsData.SampleAnalysis.TBL.getName()+" "+currTest+" has status "+currStatus+" then cannot be canceled in schema "+schemaDataName;                 
             }
         }
+        if (samplesToUnCancel.length==0 && cancelScope.equalsIgnoreCase(TblsData.Sample.FLD_SAMPLE_ID.getName()))
+            samplesToUnCancel = LPArray.addValueToArray1D(samplesToUnCancel, cancelScopeId);        
         for (Integer iSmpToUnCancel = 0; iSmpToUnCancel < samplesToUnCancel.length; iSmpToUnCancel++) {
             Integer currSample = (Integer) samplesToUnCancel[iSmpToUnCancel];
             Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{currSample}, 
@@ -617,56 +622,67 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         Object[] testsToCancel = new Object[0];
         Object[] testsSampleToCancel = new Object[0];
         String cancelScope = "";
+        String cancelScopeTable = "";
         Integer cancelScopeId = 0;
         if (sampleId != null) {
-            cancelScope = TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName();
+            cancelScope = TblsData.Sample.FLD_SAMPLE_ID.getName();
+            cancelScopeTable = TblsData.Sample.TBL.getName();
             cancelScopeId = sampleId;
         }
         if (testId != null) {
-            cancelScope = TblsData.SampleAnalysisResult.FLD_TEST_ID.getName();
+            cancelScope = TblsData.SampleAnalysis.FLD_TEST_ID.getName();
+            cancelScopeTable = TblsData.SampleAnalysis.TBL.getName();
             cancelScopeId = testId;
         }
         if (resultId != null) {
             cancelScope = TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName();
+            cancelScopeTable = TblsData.SampleAnalysisResult.TBL.getName();
             cancelScopeId = resultId;
         }
         Object[][] objectInfo = null;
-        objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
+        objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, cancelScopeTable, 
                 new String[]{cancelScope}, new Object[]{cancelScopeId}, 
                 new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()});
-        if (objectInfo.length == 0) {
-            String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + sampleId.toString() + TblsData.SampleAnalysisResult.FLD_TEST_ID.getName() + ":" + testId.toString() 
-                    + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName() + ":" + resultId.toString()};
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filter), schemaDataName});
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString())) {
+            String[] filter = new String[]{TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName() + ":" + LPNulls.replaceNull(sampleId).toString() + TblsData.SampleAnalysisResult.FLD_TEST_ID.getName() + ":" + LPNulls.replaceNull(testId).toString() 
+                    + TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName() + ":" + LPNulls.replaceNull(resultId).toString()};
+            //return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.SAMPLE_NOT_FOUND.getErrorCode(), new Object[]{Arrays.toString(filter), schemaDataName});
         } else {
-            for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
-                String currStatus = (String) objectInfo[iResToCancel][0];
-                if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currStatus))) {
-                    resultId = (Integer) objectInfo[iResToCancel][1];
-                    testId = (Integer) objectInfo[iResToCancel][2];
-                    sampleId = (Integer) objectInfo[iResToCancel][3];
-                    if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
-                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
-                                new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName()}, new Object[]{sampleAnalysisResultStatusCanceled, currStatus}, 
-                                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId});
-                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
-                            String[] fieldsForAudit = new String[0];
-                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusCanceled);
-                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
-                            SampleAudit smpAudit = new SampleAudit();
-                            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_CANCELED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
-                        }
-                    } else 
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultCancelation_StatusNotExpected", new Object[]{resultId.toString(), currStatus, schemaDataName});
-                }
-                if ((cancelScope.equalsIgnoreCase(TblsData.Sample.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToCancel, sampleId)))
-                    samplesToCancel = LPArray.addValueToArray1D(samplesToCancel, sampleId);
-                if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()) || cancelScope.equalsIgnoreCase(TblsData.SampleAnalysis.FLD_TEST_ID.getName())) && (!LPArray.valueInArray(testsToCancel, testId))) {
-                    testsToCancel = LPArray.addValueToArray1D(testsToCancel, testId);
-                    testsSampleToCancel = LPArray.addValueToArray1D(testsSampleToCancel, sampleId);
+            objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, cancelScopeTable, 
+                    new String[]{cancelScope}, new Object[]{cancelScopeId}, 
+                    new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()});
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(objectInfo[0][0].toString())) {
+                for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
+                    String currStatus = (String) objectInfo[iResToCancel][0];
+                    if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currStatus))) {
+                        resultId = (Integer) objectInfo[iResToCancel][1];
+                        testId = (Integer) objectInfo[iResToCancel][2];
+                        sampleId = (Integer) objectInfo[iResToCancel][3];
+                        if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
+                            diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
+                                    new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName()}, new Object[]{sampleAnalysisResultStatusCanceled, currStatus}, 
+                                    new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName()}, new Object[]{resultId});
+                            if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                                String[] fieldsForAudit = new String[0];
+                                fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusCanceled);
+                                fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
+                                SampleAudit smpAudit = new SampleAudit();
+                                smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_CANCELED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
+                            }
+                        } else 
+                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultCancelation_StatusNotExpected", new Object[]{resultId.toString(), currStatus, schemaDataName});
+                    }
+                    if ((cancelScope.equalsIgnoreCase(TblsData.Sample.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToCancel, sampleId)))
+                        samplesToCancel = LPArray.addValueToArray1D(samplesToCancel, sampleId);
+                    if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName()) || cancelScope.equalsIgnoreCase(TblsData.SampleAnalysis.FLD_TEST_ID.getName())) && (!LPArray.valueInArray(testsToCancel, testId))) {
+                        testsToCancel = LPArray.addValueToArray1D(testsToCancel, testId);
+                        testsSampleToCancel = LPArray.addValueToArray1D(testsSampleToCancel, sampleId);
+                    }
                 }
             }
         }
+        if (testsToCancel.length==0 && cancelScope.equalsIgnoreCase(TblsData.SampleAnalysis.FLD_TEST_ID.getName()))
+            testsToCancel = LPArray.addValueToArray1D(testsToCancel, cancelScopeId);        
         for (Integer iTstToCancel = 0; iTstToCancel < testsToCancel.length; iTstToCancel++) {
             Integer currTest = (Integer) testsToCancel[iTstToCancel];
             objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
@@ -686,6 +702,8 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
             } else 
                 diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisCancelation_StatusNotExpected", new Object[]{LPNulls.replaceNull(currTest), currStatus, schemaDataName});            
         }
+        if (samplesToCancel.length==0 && cancelScope.equalsIgnoreCase(TblsData.Sample.FLD_SAMPLE_ID.getName()))
+            samplesToCancel = LPArray.addValueToArray1D(samplesToCancel, cancelScopeId);
         for (Integer iSmpToCancel = 0; iSmpToCancel < samplesToCancel.length; iSmpToCancel++) {
             Integer currSample = (Integer) samplesToCancel[iSmpToCancel];
             objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
@@ -726,52 +744,110 @@ sampleFieldValue=LPArray.addValueToArray1D(sampleFieldValue, sampleSpecVariation
         Object[] testsToReview = new Object[0];
         Object[] testsSampleToReview = new Object[0];
         String[] fieldsToRetrieve = new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_TEST_ID.getName(), TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()};
-        String cancelScope = "";
-        Integer cancelScopeId = 0;
+        String reviewScope = "";
+        Integer reviewScopeId = 0;
         if (sampleId != null) {
-            cancelScope = TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName();
-            cancelScopeId = sampleId;
+            reviewScope = TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName();
+            reviewScopeId = sampleId;
+            Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(schemaPrefix, token, sampleId);
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;            
         }
         if (testId != null) {
-            cancelScope = TblsData.SampleAnalysisResult.FLD_TEST_ID.getName();
-            cancelScopeId = testId;
+            reviewScope = TblsData.SampleAnalysisResult.FLD_TEST_ID.getName();
+            reviewScopeId = testId;
         }
         if (resultId != null) {
-            cancelScope = TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName();
-            cancelScopeId = resultId;
+            reviewScope = TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName();
+            reviewScopeId = resultId;
         }
-        Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), new String[]{cancelScope}, new Object[]{cancelScopeId}, fieldsToRetrieve);
+        Object[][] objectInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
+                new String[]{reviewScope}, new Object[]{reviewScopeId}, fieldsToRetrieve);
         if (objectInfo.length == 0) {            
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotFound", new Object[]{resultId.toString(), schemaDataName});
         } else {
             for (Integer iResToCancel = 0; iResToCancel < objectInfo.length; iResToCancel++) {
                 String currStatus = (String) objectInfo[iResToCancel][0];
                 if (!(sampleAnalysisResultStatusCanceled.equalsIgnoreCase(currStatus))) {
-                    resultId = (Integer) objectInfo[iResToCancel][1];
-                    testId = (Integer) objectInfo[iResToCancel][2];
-                    sampleId = (Integer) objectInfo[iResToCancel][3];
+                    resultId = Integer.valueOf(objectInfo[iResToCancel][1].toString());
+                    testId = Integer.valueOf(objectInfo[iResToCancel][2].toString());
+                    sampleId = Integer.valueOf(objectInfo[iResToCancel][3].toString());
                     if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
-                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName()}, new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()}, new Object[]{resultId, "<>" + sampleAnalysisResultStatusCanceled});
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysisResult.TBL.getName(), 
+                                new String[]{TblsData.SampleAnalysisResult.FLD_STATUS.getName(), TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName()}, 
+                                new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, 
+                                new String[]{TblsData.SampleAnalysisResult.FLD_RESULT_ID.getName(), TblsData.SampleAnalysisResult.FLD_STATUS.getName()+" not in-"}, new Object[]{resultId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
                         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
                             String[] fieldsForAudit = new String[0];
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
                             fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysisResult.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
                             SampleAudit smpAudit = new SampleAudit();
                             smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysisResult.TBL.getName(), resultId, sampleId, testId, resultId, fieldsForAudit, token, null);
-                        } else 
-                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNothingPending", 
-                                    new Object[]{resultId.toString(), schemaDataName});
-                    } else 
-                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotReviable", new Object[]{resultId.toString(), schemaDataName, sampleAnalysisResultStatusReviewed});
+                        }
+// Parece que no tiene sentido ¿Si no hay nada pendiente entonces no sigue?
+//                         else 
+//                            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNothingPending", 
+//                                    new Object[]{resultId.toString(), schemaDataName});
+                    } 
+// Si ya está revisado entonces no volver a revisarlo ... pero ... ¿debe hacer return o continuar?
+//                        else 
+//                        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResultNotReviable", new Object[]{resultId.toString(), schemaDataName, sampleAnalysisResultStatusReviewed});
                 }
-                if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToReview, sampleId))) {
+                if ((reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName())) && (!LPArray.valueInArray(samplesToReview, sampleId))) {
                     samplesToReview = LPArray.addValueToArray1D(samplesToReview, sampleId);
                 }
-                if ((cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()) || cancelScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_TEST_ID.getName())) && (!LPArray.valueInArray(testsToReview, testId))) {
+                if ((reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_SAMPLE_ID.getName()) || reviewScope.equalsIgnoreCase(TblsData.SampleAnalysisResult.FLD_TEST_ID.getName())) && (!LPArray.valueInArray(testsToReview, testId))) {
                     testsToReview = LPArray.addValueToArray1D(testsToReview, testId);
                     testsSampleToReview = LPArray.addValueToArray1D(testsSampleToReview, sampleId);
                 }
             }
+            for (Integer itestsToReview = 0; itestsToReview < testsToReview.length; itestsToReview++) {
+                testId = Integer.valueOf(testsToReview[itestsToReview].toString());
+                Object[][] testInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
+                        new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName()}, new Object[]{testId}, 
+                        new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName()});
+                if (testInfo.length == 0) {            
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisNotFound", new Object[]{testId.toString(), schemaDataName});
+                } else {
+                    String currStatus=testInfo[0][0].toString();                
+                    if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), 
+                                new String[]{TblsData.SampleAnalysis.FLD_STATUS.getName(), TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName()}, 
+                                new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, 
+                                new String[]{TblsData.SampleAnalysis.FLD_TEST_ID.getName(), TblsData.SampleAnalysis.FLD_STATUS.getName()+" not in-"}, new Object[]{testId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                            String[] fieldsForAudit = new String[0];
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.SampleAnalysis.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
+                            SampleAudit smpAudit = new SampleAudit();
+                            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.SampleAnalysis.TBL.getName(), testId, sampleId, testId, null, fieldsForAudit, token, null);
+                        }
+                    }
+                }
+            }            
+            for (Integer isamplesToReview = 0; isamplesToReview < samplesToReview.length; isamplesToReview++) {
+                sampleId = Integer.valueOf(samplesToReview[isamplesToReview].toString());
+                Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                        new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                        new String[]{TblsData.Sample.FLD_STATUS.getName()});
+                if (sampleInfo.length == 0) {            
+                    return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleNotFound", new Object[]{sampleId.toString(), schemaDataName});
+                } else {
+                    String currStatus=sampleInfo[0][0].toString();                
+                    if (!(sampleAnalysisResultStatusReviewed.equalsIgnoreCase(currStatus))) {
+                        diagnoses = Rdbms.updateRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), 
+                                new String[]{TblsData.Sample.FLD_STATUS.getName(), TblsData.Sample.FLD_STATUS_PREVIOUS.getName()}, 
+                                new Object[]{sampleAnalysisResultStatusReviewed, currStatus}, 
+                                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_STATUS.getName()+" not in-"}, new Object[]{sampleId, sampleAnalysisResultStatusCanceled+"-"+sampleAnalysisResultStatusReviewed});
+                        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())) {
+                            String[] fieldsForAudit = new String[0];
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS.getName() + ":" + sampleAnalysisResultStatusReviewed);
+                            fieldsForAudit = LPArray.addValueToArray1D(fieldsForAudit, TblsData.Sample.FLD_STATUS_PREVIOUS.getName() + ":" + currStatus);
+                            SampleAudit smpAudit = new SampleAudit();
+                            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAnalysisResultAuditEvents.SAMPLE_ANALYSIS_RESULT_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+                        }
+                    }
+                }
+            }                        
         }
         return diagnoses;
     }    

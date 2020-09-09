@@ -61,8 +61,10 @@ public class TblsProcedure {
         /**
          *
          */
-        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull()),
-        FLD_ACTIVE("active", LPDatabase.booleanFld())
+        FLD_ROLE_NAME("role_name", LPDatabase.stringNotNull()),        
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_USER_TITLE("user_title", LPDatabase.string()),
+        
 /*        , FLD_ANALYSIS("analysis", LPDatabase.StringNotNull())
          , FLD_METHOD_VERSION("method_version", LPDatabase.IntegerNotNull())
         , FLD_MANDATORY("mandatory", LPDatabase.Boolean())
@@ -192,6 +194,8 @@ public class TblsProcedure {
          */
         FLD_ESIGN_REQUIRED("esign_required", LPDatabase.booleanFld())
         ,
+        FLD_USERCONFIRM_REQUIRED("userconfirm_required", LPDatabase.booleanFld())
+        ,
 
         /**
          *
@@ -245,7 +249,18 @@ public class TblsProcedure {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }                                        
+        }  
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ProcedureEvents obj: ProcedureEvents.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                     
+        
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        
@@ -344,6 +359,106 @@ public class TblsProcedure {
         }
         private final String dbObjName;             
         private final String dbObjTypePostgres;           
+    } 
+    public enum ViewProcUserAndRoles{
+
+        /**
+         *
+         */
+        TBL("proc_user_and_roles",  LPDatabase.createView() +
+                " SELECT #FLDS from #SCHEMA.person_profile persprof " +
+                "   INNER JOIN \"app\".users usr on usr.person_name=persprof.person_name; "+
+                "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
+        ,
+
+        /**
+         *
+         */
+        FLD_USER_NAME("user_name", "usr.user_name")
+        ,
+
+        /**
+         *
+         */
+        FLD_EMAIL("email", "usr.email")
+        ,
+
+        /**
+         *
+         */
+        FLD_ROLE_NAME("role_name", "persprof.role_name")
+        ,
+        /**
+         *
+         */
+        FLD_USER_TITLE("user_title", "persprof.user_title")
+        ,
+
+        /**
+         *
+         */
+        FLD_ACTIVE("active", "persprof.active")
+        ;
+        private ViewProcUserAndRoles(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = ViewProcUserAndRoles.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#SCHEMA_CONFIG", LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_PROCEDURE));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_PROCEDURE));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (ViewProcUserAndRoles obj: ViewProcUserAndRoles.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        fieldsScript.append(currField[1]).append(" AS ").append(currField[0]);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }      
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (ViewProcUserAndRoles obj: ViewProcUserAndRoles.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }             
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
     }        
+    
     
 }

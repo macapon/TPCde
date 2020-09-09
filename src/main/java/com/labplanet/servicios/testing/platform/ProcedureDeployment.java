@@ -5,6 +5,8 @@
  */
 package com.labplanet.servicios.testing.platform;
 
+import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
+import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPPlatform;
@@ -14,6 +16,7 @@ import databases.TblsCnfg;
 import databases.TblsProcedure;
 import functionaljavaa.requirement.Requirement;
 import functionaljavaa.requirement.ProcedureDefinitionToInstance;
+import static functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcessTables;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.user.UserAndRolesViews;
 import java.io.IOException;
@@ -24,6 +27,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 
 /**
  *
@@ -32,7 +36,7 @@ import javax.servlet.http.HttpServletResponse;
 public class ProcedureDeployment extends HttpServlet {
         private static final Boolean PROC_DISPLAY_PROC_DEF_REQUIREMENTS=false;
 
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS=true;
+        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS=false;
 
     /**
      *
@@ -42,23 +46,23 @@ public class ProcedureDeployment extends HttpServlet {
     /**
      *
      */
-    public static final String      PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_SORT="branch_level|order_number";
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_ROLES=true;
+        public static final String      PROC_DISPLAY_PROC_INSTANCE_REQUIREMENTS_SORT="branch_level|order_number";
+        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_ROLES=false;
         private static final String     PROC_DISPLAY_PROC_INSTANCE_ROLES_FLD_NAME="role_name";
         private static final String     PROC_DISPLAY_PROC_INSTANCE_ROLES_SORT="role_name";
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_USERS=true;
+        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_USERS=false;
         private static final String     PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_FLD_NAME="person_name";
         private static final String     PROC_DISPLAY_PROC_INSTANCE_USERS_PERSON_SORT="person_name";
-        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_SOPS=true;
+        private static final Boolean PROC_DISPLAY_PROC_INSTANCE_SOPS=false;
         private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME="sop_id|sop_name";
         private static final String     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT="sop_id";
         
-        private static final Boolean PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE=true;
+        private static final Boolean PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE=false;
         
         private static final Boolean PROC_DEPLOYMENT_DB_CREATE_SCHEMAS=false;
-        
+        private static final Boolean PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES=true;
         private static final Boolean PROC_DEPLOYMENT_ENTIRE_PROCEDURE=false;
-        private static final Boolean PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS=true;
+        private static final Boolean PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS=false;
         private static final Boolean PROC_DEPLOYMENT_ASSIGN_USER_SOPS=false;
         
         
@@ -71,9 +75,10 @@ public class ProcedureDeployment extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)  throws ServletException, IOException {
-                
-        String procName = "process-us"; 
-        String schemaPrefix="process-us";
+        ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                
+        String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
+        String schemaPrefix=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
         
         String procInstanceSchemaConfigName=LPPlatform.buildSchemaName(procName, LPPlatform.SCHEMA_CONFIG);
         String procInstanceSchemaProcName=LPPlatform.buildSchemaName(procName, LPPlatform.SCHEMA_PROCEDURE);
@@ -87,7 +92,7 @@ public class ProcedureDeployment extends HttpServlet {
                             , {"PROC_DISPLAY_PROC_INSTANCE_USERS", PROC_DISPLAY_PROC_INSTANCE_USERS.toString()}                
                             , {"PROC_DISPLAY_PROC_INSTANCE_SOPS", PROC_DISPLAY_PROC_INSTANCE_SOPS.toString()}      
                             , {"PROC_DEPLOYMENT_DB_CREATE_SCHEMAS", PROC_DEPLOYMENT_DB_CREATE_SCHEMAS.toString()}
-                
+                            , {"PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES", PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES.toString()}
                 
                             , {"PROC_DEPLOYMENT_ENTIRE_PROCEDURE", PROC_DEPLOYMENT_ENTIRE_PROCEDURE.toString()}
                             , {"PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS", PROC_DEPLOYMENT_CREATE_MISSING_PROC_EVENT_SOPS.toString()}
@@ -99,7 +104,6 @@ public class ProcedureDeployment extends HttpServlet {
         try (PrintWriter out = response.getWriter()) {
              if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}           
             
-        
             if (PROC_DISPLAY_PROC_DEF_REQUIREMENTS){
                 Requirement.getProcedureBySchemaPrefix(procName);
             }
@@ -150,13 +154,13 @@ public class ProcedureDeployment extends HttpServlet {
             Object[][] procSopInMetaData = Rdbms.getRecordFieldsByFilter(procInstanceSchemaConfigName, TblsCnfg.SopMetaData.TBL.getName(),
                     new String[]{TblsCnfg.SopMetaData.FLD_SOP_ID.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
                     PROC_DISPLAY_PROC_INSTANCE_SOPS_SORT.split("\\|"), true );
-            Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()));
             if (PROC_DISPLAY_PROC_INSTANCE_SOPS){
                 procSopInMetaData = LPArray.joinTwo2DArrays(LPArray.array1dTo2d(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"),
                         PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|").length), procSopInMetaData);            
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(procSopInMetaData);
             }
             if (PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE){
+                Object[] procSopMetaDataSopName = LPArray.getColumnFromArray2D(procSopInMetaData, LPArray.valuePosicInArray(PROC_DISPLAY_PROC_INSTANCE_SOPS_FLD_NAME.split("\\|"), TblsCnfg.SopMetaData.FLD_SOP_NAME.getName()));
                 String matching=LPTestingOutFormat.TST_ICON_UNDEFINED + " Not Implemented Yet";
                 HashMap<String, Object[]> procSopsInMetaData = LPArray.evaluateValuesAreInArray(
                         procSopMetaDataSopName, procEventSOPS);
@@ -172,7 +176,8 @@ public class ProcedureDeployment extends HttpServlet {
                         new String[][]{{"PROC_CHECKER_INSTANCE_REQ_SOPS_IN_SOP_TABLE", matching}});
             }
             fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(dataIntegrityInstanceTable);
-            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMAS){ProcedureDefinitionToInstance.createDBProcessSchemas(schemaPrefix);}
+            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMAS) ProcedureDefinitionToInstance.createDBProcessSchemas(schemaPrefix);            
+            if (PROC_DEPLOYMENT_DB_CREATE_SCHEMA_TABLES) createDBProcessTables(schemaPrefix, "", new String[]{});
             //if (PROC_DEPLOYMENT_ENTIRE_PROCEDURE){reqDep.procedureDeployment(procName, procVersion);}
             //if (PROC_DEPLOYMENT_ASSIGN_USER_SOPS){reqDep.procedureDeployment(procName, procVersion);}
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();

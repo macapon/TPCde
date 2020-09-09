@@ -87,8 +87,7 @@ public class UserProfile {
             Object[] totalProcUserProfiles  = new Object[0];          
         if ( (personName == null) || (personName.length()==0) ){
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "personNameIsEmpty", new Object[]{});
-        }
-               
+        }               
         for (Object schemaPrefix1 : schemaPrefix) {
             String currProcPrefix = schemaPrefix1.toString();
             Object[] currProcUserProfiles =  getProcedureUserProfileFieldValues(currProcPrefix, personName);

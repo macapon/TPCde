@@ -162,6 +162,7 @@ public class AuthenticationAPIParams extends HttpServlet {
      *
      */
     public static final String ERROR_API_ERRORTRAPING_PROPERTY_ESIGN_TO_CHECK_INVALID = "authenticationAPI_esignToCheckInvalid";
+    public static final String ERROR_API_ERRORTRAPING_PROPERTY_TOKEN_ESIGN_VALUE_NULL = "authenticationAPI_tokenEsignValueNull";
     
     /**
      *

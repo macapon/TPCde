@@ -947,6 +947,50 @@ if (1==1)return;
     }
     
     /**
+     * insert into tbl2 (fld1ooo,fld2,fld3,fld4) select (fld1,fld2,fld3,fld4) from tbl1
+     * @param includeFldsSameName
+     * @param fieldNamesFrom
+     * @param schemaNameFrom
+     * @param tableNameFrom
+     * @param whereFieldNamesFrom
+     * @param whereFieldValuesFrom
+     * @param schemaNameTo
+     * @param tableNameTo
+     * @return
+     */
+    public static Object[] insertRecordInTableFromTable(Boolean includeFldsSameName, String[] fieldNamesFrom, String schemaNameFrom, String tableNameFrom, String[] whereFieldNamesFrom, Object[] whereFieldValuesFrom
+        , String schemaNameTo, String tableNameTo, String[] fieldNamesTo){
+        Object[] diagnosis = new Object[0];
+        SqlStatement sql = new SqlStatement(); 
+        String[] fldsInBoth=new String[]{};
+        if (includeFldsSameName){
+            for (String currField: fieldNamesTo){
+                if (LPArray.valueInArray(fieldNamesFrom, currField)) fldsInBoth=LPArray.addValueToArray1D(fldsInBoth, currField);
+            }
+//            String[] fromAllFlds=
+        }
+        
+        
+        HashMap<String, Object[]> hmQuery = sql.buildSqlStatement("SELECT", schemaNameFrom, tableNameFrom,
+                whereFieldNamesFrom, whereFieldValuesFrom, fldsInBoth, null, null,
+                null, null);              
+        String query= hmQuery.keySet().iterator().next();  
+        query="insert into "+schemaNameTo+"."+tableNameTo+"("+Arrays.toString(fldsInBoth).replace("[", "").replace("]", "")+")"+"( "+query+" ) ";
+        //fieldValues = LPArray.encryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNamesFrom, fieldValues);
+        String[] insertRecordDiagnosis = Rdbms.prepUpQueryK(query, whereFieldValuesFrom, 1);
+//        fieldValues = LPArray.decryptTableFieldArray(schemaNameFrom, tableNameFrom, fieldNames, (Object[]) whereFieldValuesFrom);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(insertRecordDiagnosis[0])){
+            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "Rdbms_RecordCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
+            diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
+            return diagnosis;
+        }else{
+            diagnosis =  LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Rdbms_RecordNotCreated", new String[]{String.valueOf(insertRecordDiagnosis[1]), query, Arrays.toString(whereFieldValuesFrom), schemaNameFrom});
+            diagnosis = LPArray.addValueToArray1D(diagnosis, insertRecordDiagnosis[1]);
+            return diagnosis;                         
+        }        
+    }
+    
+    /**
      *
      * @param schemaName
      * @param tableName
@@ -1226,6 +1270,10 @@ if (1==1)return;
                         Array array = conn.createArrayOf("VARCHAR", (Object []) obj);
                         prepsta.setArray(indexval, array);
                         break;
+                    case "class org.json.simple.JSONArray":
+                    case "class org.json.simple.JSONObject":
+                        prepsta.setString(indexval, (String) obj.toString()); 
+                        break;
                     default:
                         prepsta.setString(indexval, (String) obj);
                         break; 
@@ -1346,8 +1394,8 @@ if (1==1)return;
         }catch (SQLException er) {
             Logger.getLogger(query).log(Level.SEVERE, null, er);     
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{er.getLocalizedMessage()+er.getCause(), query});                         
-        }                    
-        
+        }  
+    
     }
 /*
 private static final int CLIENT_CODE_STACK_INDEX;

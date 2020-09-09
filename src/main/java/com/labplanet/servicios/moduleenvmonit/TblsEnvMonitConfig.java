@@ -20,7 +20,19 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author Administrator
  */
 public class TblsEnvMonitConfig {
-
+    public static final String getTableCreationScriptFromConfigTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
+            case "INSTRUMENT_INCUBATOR": return InstrIncubator.createTableScript(schemaNamePrefix, fields);
+            case "MICROORGANISM": return MicroOrganism.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM": return Program.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CALENDAR": return ProgramCalendar.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CALENDAR_DATE": return ProgramCalendarDate.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CALENDAR_RECURSIVE_ENTRY": return ProgramCalendarRecursiveEntries.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_LOCATION": return ProgramLocation.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGENVMONIT"+LPPlatform.LAB_FALSE;
+        }        
+    }
     /**
      *
      */
@@ -238,7 +250,7 @@ public class TblsEnvMonitConfig {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
-    private static final String FIELDS_NAMES_PROGRAM_ID = "program_id";
+    static final String FIELDS_NAMES_PROGRAM_ID = "program_id";
 
     /**
      *

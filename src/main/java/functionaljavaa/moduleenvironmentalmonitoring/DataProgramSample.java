@@ -53,12 +53,19 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, programLocation);
             }else
                 fieldValue[programLocationPosic] = programLocation;
+
+            Object[] diagnosis = Rdbms.existsRecord(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
+                    new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName(), TblsEnvMonitData.ProgramLocation.FLD_LOCATION_NAME.getName()}, 
+                    new Object[]{programName, programLocation});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
+               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Program <*1*> or location <*2*> not found for procedure <*3*>", new Object[]{programName, programLocation, schemaPrefix});    
+            
             newProjSample = ds.logSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue);
         } catch (IllegalArgumentException ex) {
             Logger.getLogger(DataProgram.class.getName()).log(Level.SEVERE, null, ex);
         }
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(newProjSample[0].toString()))
-            logProgramSamplerSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[0].toString()));
+            logProgramSamplerSample(schemaPrefix, token, programTemplate, programTemplateVersion, fieldName, fieldValue, programName, programLocation, Integer.valueOf(newProjSample[newProjSample.length-1].toString()));
         return newProjSample;
     }
 

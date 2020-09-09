@@ -115,7 +115,7 @@
     </servlet>
     <servlet>
         <servlet-name>EnvMonAPIfrontend</servlet-name>
-        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIfrontend</servlet-class>
+        <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIFrontend</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EnvMonitSampleAPIfrontend</servlet-name>
@@ -145,8 +145,8 @@
         <servlet-class>com.labplanet.servicios.requirements.ProcedureDefinitionToInstance</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DbTestingQuantitativeLimitAndResult</servlet-name>
-        <servlet-class>com.labplanet.servicios.testing.config.db.TestingQuantitativeLimitAndResult</servlet-class>
+        <servlet-name>DbTestingimitAndResult</servlet-name>
+        <servlet-class>com.labplanet.servicios.testing.config.db.DbTestingimitAndResult</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EnvMonSampleAPI</servlet-name>
@@ -228,6 +228,18 @@
         <servlet-name>EnvMonAPIStats</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIStats</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>ProcedureDefinitionfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.proceduredefinition.ProcedureDefinitionfrontend</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ProcedureDefinitionAPI</servlet-name>
+        <servlet-class>com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.ModulesConfigMasterDataAPI</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
         <url-pattern>/testing/platform/DBActions</url-pattern>
@@ -272,8 +284,8 @@
         <url-pattern>/ProcedureDefinitionToInstance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>DbTestingQuantitativeLimitAndResult</servlet-name>
-        <url-pattern>/testing/config/db/QuantitativeLimitAndResult</url-pattern>
+        <servlet-name>DbTestingimitAndResult</servlet-name>
+        <url-pattern>/testing/config/db/DbTestingimitAndResult</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingConfigSamplingPlanStructure</servlet-name>
@@ -442,6 +454,18 @@
     <servlet-mapping>
         <servlet-name>EnvMonAPIStats</servlet-name>
         <url-pattern>/moduleenvmon/EnvMonAPIstats</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProcedureDefinitionfrontend</servlet-name>
+        <url-pattern>/frontend/ProcedureDefinitionfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ProcedureDefinitionAPI</servlet-name>
+        <url-pattern>/app/ProcedureDefinitionAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>ModulesConfigMasterDataAPI</servlet-name>
+        <url-pattern>/modules/ConfigMasterDataAPI</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

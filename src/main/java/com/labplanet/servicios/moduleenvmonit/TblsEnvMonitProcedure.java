@@ -22,7 +22,14 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author User
  */
 public class TblsEnvMonitProcedure {
-
+    public static final String getTableCreationScriptFromDataProcedureTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "INCUBATOR_TEMP_READING_VIOLATIONS": return IncubatorTempReadingViolations.createTableScript(schemaNamePrefix, fields);
+            case "PROGRAM_CORRECTIVE_ACTIONS": return ProgramCorrectiveAction.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_STAGE_TIMING_CAPTURE": return SampleStageTimingCapture.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
+        }        
+    }    
     /**
      *
      */ 

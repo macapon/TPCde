@@ -319,7 +319,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     new String[]{mandatoryFieldsMissingBuilder.toString(), Arrays.toString(fieldName), schemaConfigName});
         }
         // set first status. Begin
-        String firstStatus = Parameter.getParameterBundle(schemaDataName, "sampleAnalysis_statusFirst");
+        String firstStatus = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysis_statusFirst");
         Integer specialFieldIndex = Arrays.asList(fieldName).indexOf(TblsData.Sample.FLD_STATUS.getName());
         if (specialFieldIndex == -1) {
             fieldName = LPArray.addValueToArray1D(fieldName, TblsData.Sample.FLD_STATUS.getName());
@@ -337,6 +337,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         String sampleSpecCode = "";
         Integer sampleSpecCodeVersion = null;
         String sampleSpecVariationName = "";
+        String specAnalysisTestingGroup="";
         Object[][] sampleSpecData = Rdbms.getRecordFieldsByFilter(schemaDataName, TblsData.Sample.TBL.getName(), new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
                 new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName(), TblsData.Sample.FLD_SPEC_CODE.getName(), TblsData.Sample.FLD_SPEC_CODE_VERSION.getName(), 
                     TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName(), TblsData.Sample.FLD_STATUS.getName()});
@@ -358,7 +359,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     for (String iFieldN : specAnalysisFieldName) {
                         specialFieldIndex = Arrays.asList(fieldName).indexOf(iFieldN);
                         if (specialFieldIndex == -1) {
-                            specAnalysisFieldValue = LPArray.addValueToArray1D(fieldValue, null);
+                            specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, "is null");
                         } else {
                             specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, fieldValue[specialFieldIndex]);
                         }
@@ -369,10 +370,14 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
                     specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, sampleSpecCodeVersion);
                     specAnalysisFieldName = LPArray.addValueToArray1D(specAnalysisFieldName, TblsCnfg.SpecLimits.FLD_VARIATION_NAME.getName());
                     specAnalysisFieldValue = LPArray.addValueToArray1D(specAnalysisFieldValue, sampleSpecVariationName);
-                    Object[] analysisInSpec = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), specAnalysisFieldName, specAnalysisFieldValue);
-                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisInSpec[0].toString())) {
+                    //Object[] analysisInSpec = Rdbms.existsRecord(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), specAnalysisFieldName, specAnalysisFieldValue);
+                    Object[][] analysisInSpec = Rdbms.getRecordFieldsByFilter(schemaConfigName, TblsCnfg.SpecLimits.TBL.getName(), 
+                        specAnalysisFieldName, specAnalysisFieldValue, 
+                        new String[]{TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(analysisInSpec[0][0].toString())) {
                         return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecLimitNotFound", new Object[]{Arrays.toString(LPArray.joinTwo1DArraysInOneOf1DString(specAnalysisFieldName, specAnalysisFieldValue, ":")), schemaDataName});
                     }
+                    specAnalysisTestingGroup=analysisInSpec[0][0].toString();
                 }
             }
         }
@@ -471,7 +476,7 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         // This is temporary !!!! ***************************************************************
         specialFieldIndex = Arrays.asList(getResultFields).indexOf(TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         if (specialFieldIndex == -1) {
-            firstStatus = Parameter.getParameterBundle(schemaDataName, "sampleAnalysisResult_statusFirst");
+            firstStatus = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), "sampleAnalysisResult_statusFirst");
             resultFieldRecords = LPArray.addColumnToArray2D(resultFieldRecords, firstStatus);
             getResultFields = LPArray.addValueToArray1D(getResultFields, TblsData.SampleAnalysisResult.FLD_STATUS.getName());
         }
@@ -502,6 +507,10 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         }
         fieldName = LPArray.addValueToArray1D(fieldName, new String[]{TblsData.SampleAnalysis.FLD_SAMPLE_ID.getName(), TblsData.SampleAnalysis.FLD_ADDED_ON.getName(), TblsData.SampleAnalysis.FLD_ADDED_BY.getName()});
         fieldValue = LPArray.addValueToArray1D(fieldValue, new Object[]{sampleId, Rdbms.getCurrentDate(), token.getUserName()});
+        if (!LPArray.valueInArray(fieldName, TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName())){
+            fieldName = LPArray.addValueToArray1D(fieldName, TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName());
+            fieldValue = LPArray.addValueToArray1D(fieldValue, specAnalysisTestingGroup);
+        }
         String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(fieldName, fieldValue, ":");
         Object[] diagnoses = Rdbms.insertRecordInTable(schemaDataName, TblsData.SampleAnalysis.TBL.getName(), fieldName, fieldValue);
         Integer testId = Integer.parseInt(diagnoses[diagnoses.length - 1].toString());
@@ -571,6 +580,9 @@ public class DataSampleAnalysis{// implements DataSampleAnalysisStrategy{
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnoses3[0].toString())) {
             return diagnoses3;
         }
+        Object[] addSampleRevisionByTestingGroup = DataSampleRevisionTestingGroup.addSampleRevisionByTestingGroup(schemaPrefix, token, sampleId, testId, specAnalysisTestingGroup);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(addSampleRevisionByTestingGroup[0].toString())) return addSampleRevisionByTestingGroup;
+        
         return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "DataSample_SampleAnalysisAddedSuccessfully", new Object[]{"", testId, schemaDataName});
     }
     

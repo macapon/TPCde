@@ -20,6 +20,12 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author User
  */
 public class TblsEnvMonitDataAudit {
+    public static final String getTableCreationScriptFromDataAuditTableEnvMonit(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "INCUB_BATCH": return IncubBatch.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSDATAAUDITENVMONIT"+LPPlatform.LAB_FALSE;
+        }        
+    }    
 
     /**
      *

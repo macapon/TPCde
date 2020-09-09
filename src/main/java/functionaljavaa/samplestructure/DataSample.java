@@ -105,6 +105,7 @@ public class DataSample {
         ERROR_INSERTING_SAMPLE_RECORD("errorInsertingSampleRecord", "", ""),
         MISSING_MANDATORY_FIELDS("MissingMandatoryFields", "", ""),
         MISSING_CONFIG_CODE("MissingConfigCode", "", ""),        
+        MISSING_SPEC_CONFIG_CODE("MissingSpecConfigCode", "Spec Config code <*1*> version <*2*> Not found for the procedure <*3*>", ""),        
         SAMPLE_ALREADY_RECEIVED("SampleAlreadyReceived", "", ""),
         SAMPLE_NOT_REVIEWABLE("SampleNotReviewable", "", ""),
         VOLUME_SHOULD_BE_GREATER_THAN_ZERO("sampleAliquoting_volumeCannotBeNegativeorZero", "", ""),
@@ -223,6 +224,11 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_CODE.getName());
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_CODE_VERSION.getName());
             mandatoryFields = LPArray.addValueToArray1D(mandatoryFields, TblsData.Sample.FLD_SPEC_VARIATION_NAME.getName());
+            Object[] diagnosis = Rdbms.existsRecord(schemaConfigName, TblsCnfg.Spec.TBL.getName(), 
+                    new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
+                    new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion]});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnosis[0].toString()))
+               return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, DataSampleErrorTrapping.MISSING_SPEC_CONFIG_CODE.getErrorCode(), new Object[]{sampleFieldValue[fieldIndexSpecCode], sampleFieldValue[fieldIndexSpecCodeVersion], schemaPrefix});    
         }
 
         mandatoryFieldsValue = new Object[mandatoryFields.length];
@@ -281,6 +287,11 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
         sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_CONFIG_CODE_VERSION.getName());    
         sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, sampleTemplateVersion); 
         
+        sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_LOGGED_ON.getName());    
+        sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, LPDate.getCurrentTimeStamp());
+        sampleFieldName = LPArray.addValueToArray1D(sampleFieldName, TblsData.Sample.FLD_LOGGED_BY.getName());    
+        sampleFieldValue = LPArray.addValueToArray1D(sampleFieldValue, token.getPersonName()); 
+
         if (LPArray.valuePosicInArray(sampleFieldName, TblsData.Sample.FLD_CUSTODIAN.getName())==-1){
             ChangeOfCustody coc = new ChangeOfCustody();
             Object[] changeOfCustodyEnable = coc.isChangeOfCustodyEnable(schemaDataName, TblsData.Sample.TBL.getName());
@@ -548,7 +559,8 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
     public Object[] sampleReview( String schemaPrefix, Token token, Integer sampleId){
         Object[] diagnoses = new Object[7];
         String schemaDataName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA); 
-            
+        Object[] sampleRevisionByTestingGroupReviewed = DataSampleRevisionTestingGroup.isSampleRevisionByTestingGroupReviewed(schemaPrefix, token, sampleId);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleRevisionByTestingGroupReviewed[0].toString())) return sampleRevisionByTestingGroupReviewed;
         String sampleStatusCanceled = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSCANCELED);
         String sampleStatusReviewed = Parameter.getParameterBundle(schemaDataName.replace("\"", ""), CONFIG_SAMPLE_STATUSREVIEWED);
         Object[] sampleAuditRevision=SampleAudit.sampleAuditRevisionPass(schemaPrefix, sampleId);

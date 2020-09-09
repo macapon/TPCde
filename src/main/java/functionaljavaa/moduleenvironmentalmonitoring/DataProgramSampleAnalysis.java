@@ -80,10 +80,9 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
                         specWhereFieldValue=LPArray.addValueToArray1D(specWhereFieldValue, analysisVariationArr[1]);                    
                     }
                 }                 
-
                 anaName=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.SpecLimits.TBL.getName(), 
                         specWhereFieldName, specWhereFieldValue, 
-                        new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName()});                
+                        new String[]{TblsCnfg.SpecLimits.FLD_ANALYSIS.getName(), TblsCnfg.SpecLimits.FLD_METHOD_NAME.getName(), TblsCnfg.SpecLimits.FLD_METHOD_VERSION.getName(), TblsCnfg.SpecLimits.FLD_TESTING_GROUP.getName()});
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(anaName[0][0].toString())){return LPArray.array2dTo1d(anaName);}
                 
                 break;
@@ -94,8 +93,8 @@ public class DataProgramSampleAnalysis implements DataSampleAnalysisStrategy {
 
         StringBuilder analysisAdded = new StringBuilder();
         for (Object[] anaName1 : anaName) {
-            String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName()};
-            Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2]};
+            String[] fieldsName = new String[]{TblsData.SampleAnalysis.FLD_ANALYSIS.getName(), TblsData.SampleAnalysis.FLD_METHOD_NAME.getName(), TblsData.SampleAnalysis.FLD_METHOD_VERSION.getName(), TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()};
+            Object[] fieldsValue = new Object[]{(String) anaName1[0], (String) anaName1[1], (Integer) anaName1[2], (String) anaName1[3]};
             DataSampleAnalysis.sampleAnalysisAddtoSample(schemaPrefix, token, sampleId, fieldsName, fieldsValue, preAuditId);
             analysisAdded.append(LPArray.convertArrayToString(anaName1, ",", ""));
         }        

@@ -36,18 +36,10 @@ public class EnvMonitAPIParams extends HttpServlet {
     /**
      *
      */
-    
-    public static final String API_ENDPOINT_GET_SAMPLE_ANALYSIS_RESULT_LIST = "GET_SAMPLE_ANALYSIS_RESULT_LIST";
-    public static final String API_ENDPOINT_GET_MICROORGANISM_LIST = "GET_MICROORGANISM_LIST";
-    public static final String API_ENDPOINT_GET_SAMPLE_MICROORGANISM_VIEW = "GET_SAMPLE_MICROORGANISM_VIEW";
-    public static final String API_ENDPOINT_GET_SAMPLE_STAGES_SUMMARY_REPORT = "GET_SAMPLE_STAGES_SUMMARY_REPORT";
-    public static final String API_ENDPOINT_GET_BATCH_REPORT = "GET_BATCH_REPORT";
-    public static final String API_ENDPOINT_GET_PRODLOT_REPORT = "GET_PRODLOT_REPORT";
     public static final String MANDATORY_PARAMS_GET_SAMPLE_STAGES_SUMMARY_REPORT="sampleId"; 
     public static final String MANDATORY_PARAMS_GET_BATCH_REPORT=REQUEST_PARAM_BATCH_NAME;
     public static final String MANDATORY_PARAMS_GET_PRODLOT_REPORT=REQUEST_PARAM_LOT_NAME;
     
-    public static final String API_ENDPOINT_GET_INCUBATOR_REPORT = "GET_INCUBATOR_REPORT";
     public static final String MANDATORY_PARAMS_GET_INCUBATOR_REPORT=REQUEST_PARAM_INCUBATOR_NAME; 
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE = "batchFieldToRetrieve";
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
@@ -56,14 +48,12 @@ public class EnvMonitAPIParams extends HttpServlet {
     public static final String REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
     public static final String REQUEST_PARAM_PROD_LOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 
-    public static final String API_ENDPOINT_STATS_SAMPLES_PER_STAGE = "STATS_SAMPLES_PER_STAGE";
     public static final String MANDATORY_PARAMS_STATS_SAMPLES_PER_STAGE=""; 
-    public static final String API_ENDPOINT_STATS_PROGRAM_LAST_RESULTS = "STATS_PROGRAM_LAST_RESULTS";
     public static final String MANDATORY_PARAMS_STATS_PROGRAM_LAST_RESULTS =""; 
     /**
      *
      */
-    public static final String API_ENDPOINT_GET_ACTIVE_PRODUCTION_LOTS = "GET_ACTIVE_PRODUCTION_LOTS";
+/*    public static final String API_ENDPOINT_GET_ACTIVE_PRODUCTION_LOTS = "GET_ACTIVE_PRODUCTION_LOTS";
     public static final String API_ENDPOINT_INCUBATIONEND = "INCUBATIONEND";
     public static final String API_ENDPOINT_ENTERRESULT = "ENTERRESULT";
     public static final String API_ENDPOINT_UNREVIEWRESULT = "UNREVIEWRESULT";
@@ -92,7 +82,7 @@ public class EnvMonitAPIParams extends HttpServlet {
     public static final String API_ENDPOINT_EM_BATCH_INCUB_MOVE_SMP    = "EM_BATCH_INCUB_MOVE_SMP";
     public static final String API_ENDPOINT_EM_BATCH_INCUB_REMOVE_SMP = "EM_BATCH_INCUB_REMOVE_SMP";
     public static final String API_ENDPOINT_EM_LOGSAMPLE_SCHEDULER   = "EM_LOG_SAMPLE_SCHEDULER";
-    
+    */
     
     /**
      *

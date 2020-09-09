@@ -24,6 +24,8 @@ public class LPTestingParams {
         NODB_SCHEMACONFIG_SPECQUANTI_RULEFORMAT("/testing/config/testingConfigSpecQuantitativeRuleFormat", "noDBSchema_config_SpecQuantitativeRuleGeneratorChecker.txt", 2, "Min;Max Spec;|Min Spec;Min Control;Max Control;Max Spec"),
         NODB_SCHEMACONFIG_SPECQUANTI_RESULTCHECK("/testing/config/ResultCheckSpecQuantitative", "noDBSchema_config_specQuantitative_resultCheck.txt", 2, ""),
         
+        DB_SCHEMACONFIG_SPEC_RESULTCHECK("/testing/config/db/DbTestingimitAndResult", "dbSchema_config_spec_resultCheck.txt", 2, ""),
+        
         DB_SCHEMADATA_ENVMONIT_SAMPLES("/testing/moduleEnvMonit/TestingEnvMonitSamples", "DBSchema_data_envMonitSamples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),
         DB_SCHEMADATA_SAMPLES("/testing/moduleSamples/TestingSamples", "DBSchema_data_Samples.txt", 1, "Arg1; Arg2; Arg3; Arg4; Arg5; Arg6; Arg7; Arg8; Arg9; Arg10; esign Provided; confirmUser provided; confirmUser PWD provided"),
         ;
@@ -42,6 +44,9 @@ public class LPTestingParams {
         }
         public String getTablesHeaders(){
             return this.tablesHeaders;
+        }
+        public Integer getNumTables(){
+            return this.numTables;
         }
         
         private final String servletUrl;

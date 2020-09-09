@@ -12,6 +12,8 @@ import databases.TblsCnfg;
 import functionaljavaa.materialspec.ConfigSpecRule;
 import functionaljavaa.materialspec.DataSpec;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import functionaljavaa.testingscripts.LPTestingParams;
+import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import functionaljavaa.testingscripts.TestingAssert;
 import functionaljavaa.testingscripts.TestingAssertSummary;
 import functionaljavaa.unitsofmeasurement.UnitsOfMeasurement;
@@ -28,12 +30,13 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPNulls;
+import org.json.simple.JSONArray;
 
 /**
  *
  * @author Administrator
  */
-public class TestingQuantitativeLimitAndResult extends HttpServlet {
+public class DbTestingimitAndResult extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,20 +47,45 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        String table1Header = TestingServletsConfig.DB_SCHEMACONFIG_SPEC_RESULTCHECK.getTablesHeaders();
         response = LPTestingOutFormat.responsePreparation(response);        
         DataSpec resChkSpec = new DataSpec();   
 
         TestingAssertSummary tstAssertSummary = new TestingAssertSummary();
+        
+        String testerFileName=LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RULEFORMAT.getTesterFileName();                         
+        LPTestingOutFormat tstOut=new LPTestingOutFormat(request, testerFileName);
+        HashMap<String, Object> csvHeaderTags=tstOut.getCsvHeaderTags();
+        
+        StringBuilder fileContentBuilder = new StringBuilder(0);        
+        fileContentBuilder.append(tstOut.getHtmlStyleHeader());
+        Object[][]  testingContent =tstOut.getTestingContent();
 
-        String csvFileName = "dbSchema_config_specQuantitative_resultCheck.txt"; 
-                             
-        String csvPathName = LPTestingOutFormat.TESTING_FILES_PATH+csvFileName; 
+/*        
+        String csvPathName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH);
+        String csvFileName =(String) request.getAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME);
+        if ("".equals(csvPathName) || csvPathName==null){
+            csvFileName = LPTestingParams.TestingServletsConfig.NODB_SCHEMACONFIG_SPECQUAL_RESULTCHECK.getTesterFileName();                         
+            csvPathName = LPTestingOutFormat.TESTING_FILES_PATH; }
+        csvPathName = csvPathName+csvFileName; 
         String csvFileSeparator=LPTestingOutFormat.TESTING_FILES_FIELD_SEPARATOR;
         
-        Object[][] csvFileContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
-        StringBuilder fileContentBuilder = new StringBuilder(0);
+        Object[][] testingContent = LPArray.convertCSVinArray(csvPathName, csvFileSeparator); 
+        StringBuilder fileContentBuilder = new StringBuilder(0);*/
+
         try (PrintWriter out = response.getWriter()) {
-            fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
+            if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
+                fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
+                out.println(fileContentBuilder.toString()); 
+                return;
+            }            
+            Integer numEvaluationArguments = tstOut.getNumEvaluationArguments();
+            Integer numHeaderLines = Integer.valueOf(csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_NUM_HEADER_LINES_TAG_NAME).toString());   
+            
+            StringBuilder fileContentTable1Builder = new StringBuilder(0);
+            fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
+            
+/*            fileContentBuilder.append(LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), csvFileName));
             HashMap<String, Object> csvHeaderTags = LPTestingOutFormat.getCSVHeader(LPArray.convertCSVinArray(csvPathName, "="));
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                 fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
@@ -70,14 +98,14 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
             String table1Header = csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TABLE_NAME_TAG_NAME+"1").toString();               
             StringBuilder fileContentTable1Builder = new StringBuilder(0);
             fileContentTable1Builder.append(LPTestingOutFormat.createTableWithHeader(table1Header, numEvaluationArguments));
-            Integer totalLines =csvFileContent.length;
+            Integer totalLines =testingContent.length; */
 //            numHeaderLines=13;
 //            totalLines=14;
-            for (Integer iLines=numHeaderLines;iLines<totalLines;iLines++){
+            for (Integer iLines=numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();
-                TestingAssert tstAssert = new TestingAssert(csvFileContent[iLines], numEvaluationArguments);
+                TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);
                 
-                Integer lineNumCols = csvFileContent[0].length-1;
+                Integer lineNumCols = testingContent[0].length-1;
                 String resultValue = null;
                 
                 String schemaName="";
@@ -90,25 +118,25 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
                 String parameterName="";
                 String resultUomName=null; 
                 if (lineNumCols>=numEvaluationArguments)
-                    {schemaName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments]);}
+                    {schemaName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()]);}
                 if (lineNumCols>=numEvaluationArguments+1)
-                    {specCode = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+1]);}
+                    {specCode = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+1]);}
                 if (lineNumCols>=numEvaluationArguments+2)
-                    {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+2]);}
+                    {specCodeVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+2]);}
                 if (lineNumCols>=numEvaluationArguments+3)
-                    {variation = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+3]);}
+                    {variation = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+3]);}
                 if (lineNumCols>=numEvaluationArguments+4)
-                    { analysis = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+4]);}
+                    { analysis = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+4]);}
                 if (lineNumCols>=numEvaluationArguments+5)
-                    { methodName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+5]);}
+                    { methodName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+5]);}
                 if (lineNumCols>=numEvaluationArguments+6)
-                    { methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(csvFileContent[iLines][numEvaluationArguments+6]);}
+                    { methodVersion = LPTestingOutFormat.csvExtractFieldValueInteger(testingContent[iLines][tstOut.getActionNamePosic()+6]);}
                 if (lineNumCols>=numEvaluationArguments+7)
-                    {parameterName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+7]);}
+                    {parameterName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+7]);}
                 if (lineNumCols>=numEvaluationArguments+8)
-                    {resultValue = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+8]);}
+                    {resultValue = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+8]);}
                 if (lineNumCols>=numEvaluationArguments+9)
-                    {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(csvFileContent[iLines][numEvaluationArguments+9]);}
+                    {resultUomName = LPTestingOutFormat.csvExtractFieldValueString(testingContent[iLines][tstOut.getActionNamePosic()+9]);}
                 
                 String schemaConfigName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_CONFIG);
                 String schemaDataName=LPPlatform.buildSchemaName(schemaName, LPPlatform.SCHEMA_DATA);
@@ -131,21 +159,23 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
                     if (specRule.getRuleIsQualitative()){        
                       resSpecEvaluation = resChkSpec.resultCheck((String) resultValue, specRule.getQualitativeRule(), 
                               specRule.getQualitativeRuleValues(), specRule.getQualitativeRuleSeparator(), specRule.getQualitativeRuleListName());
-                    }                   
-                    Boolean requiresUnitsConversion=true;
-                    BigDecimal resultConverted =  null;
-                    UnitsOfMeasurement uom = new UnitsOfMeasurement();     
-                    resultUomName = LPNulls.replaceNull(resultUomName);
-                    specUomName = LPNulls.replaceNull(specUomName);
-                    if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
-                    if (requiresUnitsConversion){
-                        Object[] convDiagnoses = uom.convertValue(schemaName, new BigDecimal(resultValue), resultUomName, specUomName);
-                        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(convDiagnoses[0].toString())) {
-                            resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), convDiagnoses[3].toString(), schemaDataName});                  
-                        }
-                        resultConverted =  new BigDecimal((String) convDiagnoses[1]);        
-                    }
+                    } 
                     if (specRule.getRuleIsQuantitative()){
+                        Boolean requiresUnitsConversion=true;
+                        BigDecimal resultConverted =  null;
+                        UnitsOfMeasurement uom = new UnitsOfMeasurement();     
+                        resultUomName = LPNulls.replaceNull(resultUomName);
+                        specUomName = LPNulls.replaceNull(specUomName);
+                        if (resultUomName.equals(specUomName)){requiresUnitsConversion=false;}
+                        if (requiresUnitsConversion){
+                            Object[] convDiagnoses = uom.convertValue(schemaName, new BigDecimal(resultValue), resultUomName, specUomName);
+                            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(convDiagnoses[0].toString())) {
+                                resSpecEvaluation=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SampleAnalysisResult_ConverterFALSE", new Object[]{limitId.toString(), convDiagnoses[3].toString(), schemaDataName});                  
+                            }
+                            resultConverted =  new BigDecimal((String) convDiagnoses[1]);        
+                        }
+
+                        
                       BigDecimal resultValueBigDecimal= new BigDecimal(resultValue);
                       if (specRule.getQuantitativeHasControl()){
                           if (requiresUnitsConversion) {
@@ -167,18 +197,29 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
 //                    if (specRule.getMinControl()==null){
+                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][testingContent[0].length-1]).toString());
+                    fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
+
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
                     }
 //                }
             }
-        }       
-        tstAssertSummary.notifyResults();
+        } 
+        fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
+        //fileContentTable1Builder.append();
+        fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary));
+
+        fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
+        out.println(fileContentBuilder.toString());            
+        LPTestingOutFormat.createLogFile(tstOut.getFilePathName(), fileContentBuilder.toString());
+        tstAssertSummary=null; resChkSpec=null;            
+/*        tstAssertSummary.notifyResults();
         fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
         String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
         fileContentBuilder.append(fileContentSummary).append(fileContentTable1Builder.toString());
         out.println(fileContentBuilder.toString());            
         LPTestingOutFormat.createLogFile(csvPathName, fileContentBuilder.toString());
-        tstAssertSummary=null; resChkSpec=null;
+        tstAssertSummary=null; resChkSpec=null; */
         }
         catch(Exception error){
             PrintWriter out = response.getWriter();
@@ -207,7 +248,7 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(TestingQuantitativeLimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbTestingimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -222,7 +263,7 @@ public class TestingQuantitativeLimitAndResult extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(TestingQuantitativeLimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbTestingimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

@@ -56,7 +56,20 @@ public class DbObjects {
         tblCreateScript=TblsProcedure.ProcedureEvents.createTableScript(schemaPrefix, new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
         jsonObj.put("TblsProcedure.ProcedureEvents", tblCreateScript);
-                
+
+        tblCreateScript=TblsCnfg.SopMetaData.createTableScript(schemaPrefix, new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsCnfg.SopMetaData", tblCreateScript);
+        
+        tblCreateScript=TblsData.UserSop.createTableScript(schemaPrefix, new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsData.UserSop", tblCreateScript);
+
+        tblCreateScript=TblsData.ViewUserAndMetaDataSopView.createTableScript(schemaPrefix, new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
+        jsonObj.put("TblsData.ViewUserAndMetaDataSopView", tblCreateScript);
+        
+        
         return jsonObj;
      }    
 

@@ -19,6 +19,13 @@ import static databases.TblsCnfg.FIELDSTAG;
  * @author User
  */
 public class TblsTesting {
+    public static final String getTableCreationScriptFromTestingTable(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "SCRIPT": return Script.createTableScript(schemaNamePrefix, fields);
+            case "SCRIPT_STEPS": return ScriptSteps.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN ENVMONIT_TBLSCNFGENVMONIT"+LPPlatform.LAB_FALSE;
+        }        
+    }    
     public enum Script{
 
         /**

@@ -14,6 +14,7 @@ import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsProcedure;
 import databases.Token;
+import functionaljavaa.parameter.Parameter;
 import functionaljavaa.user.UserProfile;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -26,6 +27,7 @@ import org.json.simple.JSONArray;
 import functionaljavaa.sop.UserSop;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 
 /**
  *
@@ -180,6 +182,9 @@ public class AppProcedureListAPI extends HttpServlet {
                         new String[]{TblsProcedure.ProcedureInfo.FLD_NAME.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause()}, null, PROC_FLD_NAME.split("\\|"));
                 if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procInfo[0][0].toString())){
                     procedure = LPJson.convertArrayRowToJSONObject(procFldNameArray, procInfo[0]);
+                    String attributeName="windowOpenableWhenNotSopCertifiedUserSopCertification";
+                    String propValue = Parameter.getParameterBundle(curProc.toString().replace("\"", "")+CONFIG_PROC_FILE_NAME, attributeName);
+                    procedure.put(attributeName, propValue);
                     procedure.put(LABEL_PROC_SCHEMA, curProc);
 
                     if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}      
@@ -192,8 +197,7 @@ public class AppProcedureListAPI extends HttpServlet {
                         procEventJson.put("Error on get procedure_events records", procEvent[0][procEvent.length-1].toString());                        
                         procedure.put(LABEL_ARRAY_PROC_EVENTS_ERROR, procEventJson);
                         procedure.put(LABEL_ARRAY_PROC_EVENTS, new JSONObject());
-                    }
-                    
+                    }                    
                     if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(procEvent[0][0].toString())){                                                
                         JSONArray procEvents = new JSONArray(); 
                         for (Object[] procEvent1 : procEvent) {
@@ -257,7 +261,10 @@ public class AppProcedureListAPI extends HttpServlet {
             }
         }                                       
     }
-    
+    public static JSONObject allProcSops(String curProc){
+        JSONObject procSopDetail = new JSONObject();
+        return procSopDetail;
+    }
     /**
      *
      * @param internalUserID the personName

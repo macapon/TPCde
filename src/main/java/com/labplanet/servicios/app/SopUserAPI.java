@@ -64,7 +64,7 @@ public class SopUserAPI extends HttpServlet {
         private final String mandatoryParams; 
         private final String optionalParams; 
         private final String successMessageCode;  
-        private  LPAPIArguments[] arguments;
+        private final  LPAPIArguments[] arguments;
     }
     /**
      *

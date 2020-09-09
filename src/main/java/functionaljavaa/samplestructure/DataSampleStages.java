@@ -214,6 +214,8 @@ Object[][] firstStageData=new Object[0][0];
         }
         if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("ERROR")) )
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedERROR", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
+        if ( (specialFunctionReturn==null) || (specialFunctionReturn!=null && specialFunctionReturn.toString().contains("FALSE")) )
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DataSample_SpecialFunctionReturnedFALSE", new Object[]{functionName, LPNulls.replaceNull(specialFunctionReturn)});                                    
 
         return new Object[]{specialFunctionReturn};
         }

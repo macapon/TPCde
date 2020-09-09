@@ -1,0 +1,144 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package com.labplanet.servicios.proceduredefinition;
+
+import com.labplanet.servicios.app.GlobalAPIsParams;
+import databases.Rdbms;
+import databases.Token;
+import static functionaljavaa.requirement.ProcedureDefinitionQueries.*;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPFrontEnd;
+import lbplanet.utilities.LPHttp;
+import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+
+/**
+ *
+ * @author User
+ */
+public class ProcedureDefinitionfrontend extends HttpServlet {
+    
+    public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
+    public static final String ERRORMSG_ERROR_STATUS_CODE="Error Status Code";
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    protected void processRequest(HttpServletRequest request, HttpServletResponse response)            throws ServletException, IOException {
+        request=LPHttp.requestPreparation(request);
+        response=LPHttp.responsePreparation(response);
+
+        String language = LPFrontEnd.setLanguage(request); 
+        
+        try (PrintWriter out = response.getWriter()) {
+            Object[] areMandatoryParamsInResponse = LPHttp.areMandatoryParamsInApiRequest(request, MANDATORY_PARAMS_MAIN_SERVLET.split("\\|"));                       
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
+                LPFrontEnd.servletReturnResponseError(request, response, 
+                    LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);              
+                return;          
+            }                  
+            String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
+            String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
+            
+            Token token = new Token(finalToken);
+            String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);                        
+            if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
+            JSONArray mainArr = new JSONArray(); 
+            JSONArray mainContentArr = new JSONArray(); 
+            switch (actionName.toUpperCase()){
+            case "ALL_PROCEDURE_DEFINITION":
+                JSONObject schemaContentObj = new JSONObject(); 
+                String[] sectionsArr=new String[]{ProcBusinessRulesQueries.PROCEDURE_MAIN_INFO.toString(), ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString(),
+                    ProcBusinessRulesQueries.PROCEDURE_SAMPLE_AUDIT_LEVEL.toString(),
+                    ProcBusinessRulesQueries.PROCEDURE_USER_SOP_CERTIFICATION_LEVEL.toString(), ProcBusinessRulesQueries.PROGRAM_CORRECTIVE_ACTION.toString(),
+                    ProcBusinessRulesQueries.CHANGE_OF_CUSTODY.toString(), ProcBusinessRulesQueries.SAMPLE_STAGES_TIMING_CAPTURE.toString(),
+                    ProcBusinessRulesQueries.SAMPLE_INCUBATION.toString(),ProcBusinessRulesQueries.PROCEDURE_ALL_PROC_USERS_ROLES.toString(),
+                    ProcBusinessRulesQueries.PROCEDURE_SAMPLE_STAGES.toString(),ProcBusinessRulesQueries.PROCEDURE_ENCRYPTION_TABLES_AND_FIELDS.toString()};
+                for (String currSection: sectionsArr)
+                    mainArr.add(getProcBusinessRulesQueriesInfo(schemaPrefix, currSection));
+                
+                schemaContentObj.put("definition", mainArr);
+                mainContentArr.add(schemaContentObj);
+                LPFrontEnd.servletReturnSuccess(request, response, schemaContentObj);
+                return;                                
+            case "ENABLE_ACTIONS_AND_ROLES":  
+                LPFrontEnd.servletReturnSuccess(request, response, 
+                        getProcBusinessRulesQueriesInfo(schemaPrefix, ProcBusinessRulesQueries.PROCEDURE_ACTIONS_AND_ROLES.toString()));
+                return;
+            default:                
+                    LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
+            }
+        }catch(Exception e){
+            String errMessage = e.getMessage();
+            String[] errObject = new String[0];
+            errObject = LPArray.addValueToArray1D(errObject, ERRORMSG_ERROR_STATUS_CODE+": "+HttpServletResponse.SC_BAD_REQUEST);
+            errObject = LPArray.addValueToArray1D(errObject, "This call raised one unhandled exception. Error:"+errMessage);     
+            Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
+            response.sendError((int) errMsg[0], (String) errMsg[1]);    
+            Rdbms.closeRdbms();        
+        } finally {
+            // release database resources
+            try {
+                Rdbms.closeRdbms();   
+            } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
+            }
+        }                                       
+    }
+
+    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of the servlet.
+     *
+     * @return a String containing servlet description
+     */
+    @Override
+    public String getServletInfo() {
+        return "Short description";
+    }// </editor-fold>
+
+}

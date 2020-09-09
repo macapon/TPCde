@@ -24,6 +24,29 @@ public class TblsData {
     public static final String FIELDS_NAMES_USER_ID="user_id";
     public static final String FIELDS_NAMES_USER_NAME="user_name";
 
+    public static final String getTableCreationScriptFromDataTable(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ALIQ": return SampleAliq.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ALIQ_SUB": return SampleAliqSub.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ANALYSIS": return SampleAnalysis.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ANALYSIS_RESULT": return SampleAnalysisResult.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_COC": return SampleCoc.createTableScript(schemaNamePrefix, fields);
+            case "USER_ANALYSIS_METHOD": return UserAnalysisMethod.createTableScript(schemaNamePrefix, fields);
+            case "USER_SOP": return UserSop.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_ANALYSIS_RESULT_WITH_SPEC_LIMITS_VIEW": return ViewSampleAnalysisResultWithSpecLimits.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_COC_NAMES_VIEW": return ViewSampleCocNames.createTableScript(schemaNamePrefix, fields);
+            case "USER_AND_META_DATA_SOP_VIEW": return ViewUserAndMetaDataSopView.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN TBLDATA "+LPPlatform.LAB_FALSE;
+        }        
+    }
+    private static final java.lang.String FIELDS_NAMES_STATUS_PREVIOUS = "status_previous";
+    private static final java.lang.String FIELDS_NAMES_STATUS = "status";
+    private static final java.lang.String FIELDS_NAMES_SPEC_EVAL = "spec_eval";
+    private static final java.lang.String FIELDS_NAMES_CUSTODIAN_CANDIDATE = "custodian_candidate";
+    private static final java.lang.String FIELDS_NAMES_CUSTODIAN = "custodian";
+    private static final java.lang.String FIELDS_NAMES_COC_CONFIRMED_ON = "coc_confirmed_on";
+    
     /**
      *
      */
@@ -302,7 +325,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.stringNotNull())
+        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string())
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -352,12 +375,74 @@ public class TblsData {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }            
-    private static final java.lang.String FIELDS_NAMES_STATUS_PREVIOUS = "status_previous";
-    private static final java.lang.String FIELDS_NAMES_STATUS = "status";
-    private static final java.lang.String FIELDS_NAMES_SPEC_EVAL = "spec_eval";
-    private static final java.lang.String FIELDS_NAMES_CUSTODIAN_CANDIDATE = "custodian_candidate";
-    private static final java.lang.String FIELDS_NAMES_CUSTODIAN = "custodian";
-    private static final java.lang.String FIELDS_NAMES_COC_CONFIRMED_ON = "coc_confirmed_on";
+
+    public enum SampleRevisionTestingGroup{
+
+        /**
+         *
+         */
+        FLD_SAMPLE_ID(LPDatabase.FIELDS_NAMES_SAMPLE_ID, LPDatabase.integer()),
+        FLD_TESTING_GROUP("testing_group", LPDatabase.string()),                
+        TBL("sample_revision_testing_group",  LPDatabase.createTable() + " (#FLDS , CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_SAMPLE_ID, #FLD_TESTING_GROUP) )" +
+                LPDatabase.POSTGRESQL_OIDS+LPDatabase.createTableSpace()+"  ALTER TABLE  #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")
+        ,        
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld())
+        ,
+        FLD_REVIEWED("reviewed", LPDatabase.booleanFld())
+        ,
+        FLD_REVISION_ON("revision_on", LPDatabase.dateTime())
+        ,
+        FLD_REVISION_BY("revision_by", LPDatabase.string())
+        ;
+        private SampleRevisionTestingGroup(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){return this.dbObjName;}
+        private String[] getDbFieldDefinitionPostgres(){return new String[]{this.dbObjName, this.dbObjTypePostgres};}
+
+        /**
+         *
+         * @param schemaNamePrefix
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String schemaNamePrefix, String[] fields){
+            return createTableScriptPostgres(schemaNamePrefix, fields);
+        }
+        private static String createTableScriptPostgres(String schemaNamePrefix, String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = SampleRevisionTestingGroup.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (SampleRevisionTestingGroup obj: SampleRevisionTestingGroup.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.buildSchemaName(schemaNamePrefix, LPPlatform.SCHEMA_DATA));
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }        
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }            
+
 
     /**
      *
@@ -395,7 +480,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull())
+        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string())
         ,
 
         /**
@@ -437,7 +522,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.stringNotNull(2))
+        FLD_SPEC_EVAL(FIELDS_NAMES_SPEC_EVAL,  LPDatabase.string(2))
         ,
 
         /**
@@ -487,7 +572,7 @@ public class TblsData {
          */
         FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer())
         ,
-
+        FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),
         /**
          *
          */
@@ -604,7 +689,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.stringNotNull())
+        FLD_STATUS_PREVIOUS(FIELDS_NAMES_STATUS_PREVIOUS, LPDatabase.string())
         ,
 
         /**
@@ -634,13 +719,13 @@ public class TblsData {
         /**
          *
          */
-        FLD_PARAM_NAME("param_name", "")
+        FLD_PARAM_NAME("param_name", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PARAM_TYPE("param_type", "")
+        FLD_PARAM_TYPE("param_type", LPDatabase.string())
         ,
 
         /**
@@ -658,13 +743,13 @@ public class TblsData {
         /**
          *
          */
-        FLD_RAW_VALUE("raw_value", "")
+        FLD_RAW_VALUE("raw_value", LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_PRETTY_VALUE("pretty_value", "")
+        FLD_PRETTY_VALUE("pretty_value", LPDatabase.string())
         ,
 
         /**
@@ -700,13 +785,13 @@ public class TblsData {
         /**
          *
          */
-        FLD_UOM("uom", LPDatabase.stringNotNull())        
+        FLD_UOM("uom", LPDatabase.string())        
         ,        
 
         /**
          *
          */
-        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.stringNotNull())        
+        FLD_UOM_CONVERSION_MODE("uom_conversion_mode", LPDatabase.string())        
         ,
 
         /**
@@ -859,7 +944,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.stringNotNull())
+        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.string())
         ,
 
         /**
@@ -871,7 +956,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.stringNotNull())
+        FLD_VOLUME_FOR_ALIQ_UOM("volume_for_aliq_uom", LPDatabase.string())
         ;
         private SampleAliq(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -984,7 +1069,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.stringNotNull())
+        FLD_VOLUME_UOM( LPDatabase.FIELDS_NAMES_VOLUME_UOM, LPDatabase.string())
         ;
         private SampleAliqSub(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -1067,13 +1152,13 @@ public class TblsData {
         /**
          *
          */
-        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN, LPDatabase.stringNotNull())
+        FLD_CUSTODIAN(FIELDS_NAMES_CUSTODIAN, LPDatabase.string())
         ,
 
         /**
          *
          */
-        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, LPDatabase.stringNotNull())
+        FLD_CUSTODIAN_CANDIDATE(FIELDS_NAMES_CUSTODIAN_CANDIDATE, LPDatabase.string())
         ,
 
         /**
@@ -1097,7 +1182,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_NEW_CUSTODIAN_NOTES("coc_new_custodian_notes", LPDatabase.stringNotNull())
+        FLD_NEW_CUSTODIAN_NOTES("coc_new_custodian_notes", LPDatabase.string())
         ,
 
         /**
@@ -1216,7 +1301,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_ASSIGNED_BY("assigned_by", LPDatabase.stringNotNull())
+        FLD_ASSIGNED_BY("assigned_by", LPDatabase.string())
         ,
 
         /**
@@ -1794,6 +1879,7 @@ public class TblsData {
          */
         TBL("sample_analysis_result_with_spec_limits",  LPDatabase.createView() +
                 " SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
+                "   INNER JOIN \"em-demo-a-data\".sample_analysis sa on sa.test_id = sar.test_id "+
                 "   INNER JOIN \"em-demo-a-data\".sample s on s.sample_id = sar.sample_id "+
                 "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id; " +
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
@@ -1946,7 +2032,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_SAMPLE_STATUS("sample_status", "s.status as sample_status"),
+        FLD_SAMPLE_STATUS("sample_status", "s.status"),
         FLD_CURRENT_STAGE("current_stage", "s.current_stage"),
         FLD_PROGRAM_NAME("program_name", "s.program_name"),
         FLD_SAMPLING_DATE("sampling_date", "s.sampling_date"),
@@ -1956,6 +2042,7 @@ public class TblsData {
         FLD_PRODUCTION_LOT("production_lot", "s.production_lot"),
         FLD_PROGRAM_DAY_ID("program_day_id", "s.program_day_id"),
         FLD_PROGRAM_DAY_DATE("program_day_date", "s.program_day_date"),
+        FLD_TESTING_GROUP("testing_group", "sa.testing_group"),
         
         FLD_LIMIT_ID("limit_id", "spcLim.limit_id")        
         ,

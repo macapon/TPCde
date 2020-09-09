@@ -20,6 +20,7 @@ import functionaljavaa.samplestructure.DataSample;
 import functionaljavaa.samplestructure.DataSampleAnalysis;
 import functionaljavaa.samplestructure.DataSampleAnalysisResult;
 import functionaljavaa.samplestructure.DataSampleIncubation;
+import static functionaljavaa.samplestructure.DataSampleRevisionTestingGroup.reviewSampleTestingGroup;
 import functionaljavaa.samplestructure.DataSampleStages;
 import java.math.BigDecimal;
 import java.sql.Date;
@@ -196,6 +197,19 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
+            case REVIEWSAMPLE:
+                sampleId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleResultReview(schemaPrefix, token, sampleId, null, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
+            case REVIEWSAMPLE_TESTINGGROUP:
+                sampleId = (Integer) argValues[0];
+                String testingGroup = argValues[1].toString();
+                diagn = reviewSampleTestingGroup(schemaPrefix, token, sampleId, testingGroup);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
             case REVIEWRESULT:
                 Integer objectId = (Integer) argValues[0];
                 String objectLevel = argValues[1].toString();
@@ -208,26 +222,40 @@ public class ClassSample {
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
+            case CANCELSAMPLE:
+                sampleId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, sampleId, null, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
+            case CANCELTEST:
+                testId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, null, testId, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
             case CANCELRESULT:
-                objectId = (Integer) argValues[0];
-                objectLevel = argValues[1].toString();
-                testId = null; resultId = null;
-                if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
-                if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
-                if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
-                diagn = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, sampleId, testId, resultId);
+                resultId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultCancel(schemaPrefix, token, null, null, resultId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;
             case UNREVIEWRESULT:   // No break then will take the same logic than the next one
+            case UNCANCELSAMPLE:
+                sampleId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, sampleId, null, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
+            case UNCANCELTEST:
+                testId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, null, testId, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{sampleId};
+                break;
             case UNCANCELRESULT:
-                objectId = (Integer) argValues[0];
-                objectLevel = argValues[1].toString();
-                testId = null; resultId = null;
-                if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
-                if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
-                if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}
-                diagn = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, sampleId, testId, resultId, smp);
+                resultId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleAnalysisResultUnCancel(schemaPrefix, token, null, null, resultId);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
                 this.messageDynamicData=new Object[]{sampleId};
                 break;

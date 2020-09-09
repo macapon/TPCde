@@ -14,11 +14,9 @@ import java.util.Arrays;
 public class LPParadigm {
     private LPParadigm(){    throw new IllegalStateException("Utility class");}    
     
-    
-    
     public enum ParadigmErrorTrapping{ 
         SPECIAL_FUNCTION_RETURNED_EXCEPTION("SpecialFunctionReturnedException", "", ""),
-        SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedError", "", ""),
+        SPECIAL_FUNCTION_RETURNED_ERROR("SpecialFunctionReturnedERROR", "", ""),
         UNHANDLED_EXCEPTION_IN_CODE("UnhandledExceptionInCode", "", ""),
         ;
         private ParadigmErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){

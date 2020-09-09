@@ -5,6 +5,8 @@
  */
 package com.labplanet.servicios.requirements;
 
+import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI;
+import com.labplanet.servicios.proceduredefinition.ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints;
 import databases.DbObjects;
 import lbplanet.utilities.LPFrontEnd;
 import databases.Rdbms;
@@ -15,6 +17,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import lbplanet.utilities.LPAPIArguments;
 import org.json.simple.JSONObject;
 
 /**
@@ -27,8 +30,10 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
     private static final Boolean  PROC_DEPLOY_PROCEDURE_INFO=false;
     private static final Boolean  PROC_DEPLOY_PROCEDURE_USER_ROLES=false;
     private static final Boolean  PROC_DEPLOY_PROCEDURE_SOP_META_DATA=false;
-    private static final Boolean  PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS=true;
-    
+    private static final Boolean  PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS=false;
+    private static final Boolean  PROC_DEPLOY_PROCEDURE_EVENTS=false;
+    private static final Boolean  PROC_DEPLOY_BUSINESS_RULES_PROPERTIES_FILES=false;
+    private static final Boolean  PROC_DEPLOY_MODULE_TABLES_AND_FIELDS=true;
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
      *
@@ -41,10 +46,16 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
         response=LPTestingOutFormat.responsePreparation(response);
         String fileContent = LPTestingOutFormat.getHtmlStyleHeader(this.getClass().getSimpleName(), "No File");
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}   
-        String procName = "em-demo-a"; 
-        Integer procVersion = 1; 
-        String schemaPrefix = "em-demo-a";
-        
+        //String procName = "em-demo-a"; 
+        //Integer procVersion = 1; 
+        //String schemaPrefix = "em-demo-a";
+
+        ProcedureDefinitionAPI.ProcedureDefinitionAPIEndpoints endPoint = ProcedureDefinitionAPIEndpoints.DEPLOY_REQUIREMENTS;
+        Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());                
+        String procName = argValues[0].toString(); //request.getParameter("procedureName"); //"process-us";         
+        Integer procVersion= (Integer) argValues[1];
+        String schemaPrefix=argValues[2].toString(); //request.getParameter("schemaPrefix"); //"process-us";
+        String moduleName=argValues[3].toString();
         String[][] businessVariablesHeader = new String[][]{{"Business Rule", "Value"}                 
                             , {"Process Name", procName}, {"Process Version", procVersion.toString()}, {"Instance", schemaPrefix}
                             , {"CREATE_SCHEMAS_AND_PROC_TBLS", CREATE_SCHEMAS_AND_PROC_TBLS.toString()}
@@ -87,7 +98,20 @@ public class ProcedureDefinitionToInstance extends HttpServlet {
                 JSONObject createDBProcedureUserRoles = functionaljavaa.requirement.ProcedureDefinitionToInstance.addProcedureSOPtoUsers(procName, procVersion, schemaPrefix);
                 String[][] createDBProcedureUserRolesTbl = new String[][]{{"Log for PROC_DEPLOY_ASSIGN_PROCEDURE_SOPS_TO_USERS"},{createDBProcedureUserRoles.toJSONString()}};  
                 fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureUserRolesTbl);
-            }                 
+            }  
+            if (PROC_DEPLOY_PROCEDURE_EVENTS){
+                JSONObject createDBProcedureEvents = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBProcedureEvents(procName, procVersion, schemaPrefix);
+                String[][] createDBProcedureEventsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_PROCEDURE_EVENTS"},{createDBProcedureEvents.toJSONString()}};  
+                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBProcedureEventsDiagnostic);                
+            }
+            if (PROC_DEPLOY_BUSINESS_RULES_PROPERTIES_FILES){
+                
+            }
+            if (PROC_DEPLOY_MODULE_TABLES_AND_FIELDS){
+                JSONObject createDBModuleTablesAndFields = functionaljavaa.requirement.ProcedureDefinitionToInstance.createDBModuleTablesAndFields(procName, procVersion, schemaPrefix, moduleName);
+                String[][] createDBModuleTablesAndFieldsDiagnostic = new String[][]{{"Log for PROC_DEPLOY_MODULE_TABLES_AND_FIELDS"},{createDBModuleTablesAndFields.toJSONString()}};  
+                fileContent = fileContent + LPTestingOutFormat.convertArrayInHtmlTable(createDBModuleTablesAndFieldsDiagnostic);                
+            }
             
             fileContent=fileContent+LPTestingOutFormat.bodyEnd()+LPTestingOutFormat.htmlEnd();
             out.println(fileContent);            

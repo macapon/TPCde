@@ -14,6 +14,25 @@ import lbplanet.utilities.LPPlatform;
  * @author Administrator
  */
 public class TblsCnfg {    
+    
+    public static final String getTableCreationScriptFromCnfgTable(String tableName, String schemaNamePrefix, String[] fields){
+        switch (tableName.toUpperCase()){
+            case "ANALYSIS": return Analysis.createTableScript(schemaNamePrefix, fields);
+            case "ANALYSIS_METHOD": return AnalysisMethod.createTableScript(schemaNamePrefix, fields);
+            case "ANALYSIS_METHOD_PARAMS": return AnalysisMethodParams.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE": return Sample.createTableScript(schemaNamePrefix, fields);
+            case "SAMPLE_RULES": return SampleRules.createTableScript(schemaNamePrefix, fields);
+            case "SOP_META_DATA": return SopMetaData.createTableScript(schemaNamePrefix, fields);
+            case "SPEC": return Spec.createTableScript(schemaNamePrefix, fields);
+            case "SPEC_LIMITS": return SpecLimits.createTableScript(schemaNamePrefix, fields);
+            case "SPEC_RULES": return SpecRules.createTableScript(schemaNamePrefix, fields);
+            case "UNITS_OF_MEASUREMENT": return UnitsOfMeasurement.createTableScript(schemaNamePrefix, fields);
+            case "ANALYSIS_METHODS_VIEW": return ViewAnalysisMethodsView.createTableScript(schemaNamePrefix, fields);
+            case "ZZZ_DB_ERROR_LOG": return zzzDbErrorLog.createTableScript(schemaNamePrefix, fields);
+            case "ZZZ_PROPERTIES_ERROR": return zzzPropertiesMissing.createTableScript(schemaNamePrefix, fields);
+            default: return "TABLE "+tableName+" NOT IN TBLSCNFG"+LPPlatform.LAB_FALSE;
+        }        
+    }
 
     /**
      *
@@ -79,7 +98,8 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())        
+        FLD_ACTIVE( LPDatabase.FIELDS_NAMES_ACTIVE, LPDatabase.booleanFld())  ,
+        FLD_TESTING_GROUP( LPDatabase.FIELDS_NAMES_TESTING_GROUP, LPDatabase.booleanFld())  ,
         ;
         private Analysis(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -601,6 +621,8 @@ public class TblsCnfg {
          */
         FLD_BRIEF_SUMMARY("brief_summary", LPDatabase.string())
         ,
+        FLD_EXPIRES("expires", LPDatabase.booleanFld()),
+        FLD_HAS_CHILD("has_child", LPDatabase.booleanFld()),
 
         /**
          *
@@ -723,7 +745,9 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_VARIATION_NAMES("variation_names", LPDatabase.string())
+        FLD_VARIATION_NAMES("variation_names", LPDatabase.string()),
+        FLD_REPORTING_ACCEPTANCE_CRITERIA("reporting_acceptance_criteria", LPDatabase.string())
+        
         ;
         private Spec(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -829,7 +853,7 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.booleanFld())
+        FLD_METHOD_VERSION(LPDatabase.FIELDS_NAMES_METHOD_VERSION, LPDatabase.integer())
         ,
 
         /**
@@ -868,6 +892,7 @@ public class TblsCnfg {
         FLD_MAX_VAL_FOR_UNDETERMINED("max_undetermined", LPDatabase.real()),
         FLD_MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", LPDatabase.booleanFld(false)),
         FLD_MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", LPDatabase.booleanFld(false)),
+        FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),        
         ;
         private SpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -1045,7 +1070,7 @@ public class TblsCnfg {
         /**
          *
          */
-        FLD_MEASUREMENT_FAMILY("measurement_family", LPDatabase.stringNotNull())
+        FLD_MEASUREMENT_FAMILY("measurement_family", LPDatabase.string())
         ,
 
         /**
@@ -1119,7 +1144,17 @@ public class TblsCnfg {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }        
+        }   
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (UnitsOfMeasurement obj: UnitsOfMeasurement.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }                     
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }        

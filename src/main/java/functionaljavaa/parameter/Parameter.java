@@ -30,36 +30,47 @@ public class Parameter {
     
 
     /**
-     *
+     *  Get the parameter value or blank otherwise.
+     * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
+     * @param procName - procedureName
+     * @param schemaSuffix - The procedure schema: config/data/procedure. 
+     * @param parameterName - Tag name
+     * @param language - Language
+     * @return
+     **/
+    public static String getParameterBundle(String parameterFolder, String procName, String schemaSuffix, String parameterName, String language) {
+        ResourceBundle prop = null;
+        if (parameterFolder==null){parameterFolder="config";}
+        String filePath = "parameter."+parameterFolder+"."+procName;
+        if (schemaSuffix!=null){filePath=filePath+"-"+schemaSuffix;}
+        if (language != null) {filePath=filePath+"_" + language;}
+        
+        try {
+            prop = ResourceBundle.getBundle(filePath);
+            if (!prop.containsKey(parameterName)) {              
+                LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, parameterName);
+                return "";
+            } else {
+                return prop.getString(parameterName);
+            }
+        } catch (Exception e) {
+            LPPlatform.saveParameterPropertyInDbErrorLog(procName, parameterFolder, parameterName);
+            return "";
+        }
+    }
+
+    /**
+     *  Check if a parameter is part or not of a properties file
      * @param parameterFolder - The directoy name LabPLANET (api messages/error trapping)/config (procedure business rules) (if null then config)
      * @param schemaName - procedureName
      * @param areaName - The procedure schema: config/data/procedure. 
      * @param parameterName - Tag name
      * @param language - Language
      * @return
-     **/
-    public static String getParameterBundle(String parameterFolder, String schemaName, String areaName, String parameterName, String language) {
-        ResourceBundle prop = null;
-        if (parameterFolder==null){parameterFolder="config";}
-        String filePath = "parameter."+parameterFolder+"."+schemaName;
-        if (areaName!=null){filePath=filePath+"-"+areaName;}
-        if (language != null) {filePath=filePath+"_" + language;}
-        
-        try {
-            prop = ResourceBundle.getBundle(filePath);
-            if (!prop.containsKey(parameterName)) {              
-                LPPlatform.saveParameterPropertyInDbErrorLog(schemaName, parameterFolder, parameterName);
-                return "";
-            } else {
-                return prop.getString(parameterName);
-            }
-        } catch (Exception e) {
-            LPPlatform.saveParameterPropertyInDbErrorLog(schemaName, parameterFolder, parameterName);
-            return "";
-        }
+     */
+    public Boolean parameterInFile(String parameterFolder, String schemaName, String areaName, String parameterName, String language){
+        return !"".equals(getParameterBundle(parameterFolder, schemaName, areaName, parameterName, language));
     }
-
-
     /**
      *
      * @param parameterName
@@ -95,8 +106,8 @@ public class Parameter {
      * @return
      */
     public static String getParameterBundle(String configFile, String parameterName) {
-        try {
-            ResourceBundle prop = ResourceBundle.getBundle("parameter.config." + configFile);
+        try {            
+            ResourceBundle prop = ResourceBundle.getBundle("parameter.config." + configFile.replace("\"", ""));
             if (!prop.containsKey(parameterName)) {
                 LPPlatform.saveParameterPropertyInDbErrorLog("", configFile, parameterName);
                 return "";
@@ -110,14 +121,14 @@ public class Parameter {
     }
 
     /**
-     *
+     * Not in use
      * @param fileName
      * @param entryName
      * @param entryValue
      * @return
      * @throws java.io.IOException
      */
-    public String addTagInPropertiesFile(String fileName, String entryName, String entryValue) throws IOException{
+    public String _addTagInPropertiesFile(String fileName, String entryName, String entryValue) throws IOException{
 
         StringBuilder newEntryBuilder = new StringBuilder(0);
 

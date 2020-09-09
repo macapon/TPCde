@@ -296,7 +296,7 @@ public class DataBatchIncubator {
         String allowMultipleStartBatch=Parameter.getParameterBundle(null, schemaPrefix, BatchBusinessRules.START_MULTIPLE_BATCH_IN_PARALLEL.getAreaName(), BatchBusinessRules.START_MULTIPLE_BATCH_IN_PARALLEL.getTagName(), null);
         if (!"YES".equalsIgnoreCase(allowMultipleStartBatch)){
             Object[][] batchInProcess = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
-                    new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{incubName, "", ""},
+                    new String[]{TblsEnvMonitData.IncubBatch.FLD_INCUBATION_INCUBATOR.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()+WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_END.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause()}, new Object[]{batchIncubName, "", ""},
                     new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()});            
             if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(batchInProcess[0][0].toString())) {
                 Object[] diagn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, BatchErrorTrapping.INCUBATORBATCH_ALREADY_IN_PROCESS.getErrorCode(), new Object[]{batchInProcess[0][0], batchIncubName, schemaPrefix});
@@ -495,8 +495,8 @@ public class DataBatchIncubator {
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_ACTIVE.getName(), TblsEnvMonitData.IncubBatch.FLD_INCUBATION_START.getName()});
         if (batchInfo[0][0]==null || !Boolean.valueOf(batchInfo[0][0].toString())) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IncubatorBatchNotActiveToChangeItsContent", new Object[]{batchName}); 
-        if (batchInfo[0][1]!=null) 
+        if (batchInfo[0][1]!=null && batchInfo[0][1].toString().length()>0) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "IncubatorBatchStartedToChangeItsContent", new Object[]{batchName}); 
-        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "The Batch <*1*> is not available to alter its content", new Object[]{batchName}); 
+        return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The Batch <*1*> is available to alter its content", new Object[]{batchName}); 
     }
 }
