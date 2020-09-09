@@ -33,14 +33,7 @@ public class EnvMonitAPIParams extends HttpServlet {
     public static final String REQUEST_PARAM_PROGRAM_NAME = "programName";
     public static final String REQUEST_PARAM_LOCATION_NAME = "locationName";
     public static final String REQUEST_PARAM_TOTAL_OBJECTS = "totalObjects";        
-    /**
-     *
-     */
-    public static final String MANDATORY_PARAMS_GET_SAMPLE_STAGES_SUMMARY_REPORT="sampleId"; 
-    public static final String MANDATORY_PARAMS_GET_BATCH_REPORT=REQUEST_PARAM_BATCH_NAME;
-    public static final String MANDATORY_PARAMS_GET_PRODLOT_REPORT=REQUEST_PARAM_LOT_NAME;
     
-    public static final String MANDATORY_PARAMS_GET_INCUBATOR_REPORT=REQUEST_PARAM_INCUBATOR_NAME; 
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE = "batchFieldToRetrieve";
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
@@ -48,45 +41,6 @@ public class EnvMonitAPIParams extends HttpServlet {
     public static final String REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
     public static final String REQUEST_PARAM_PROD_LOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 
-    public static final String MANDATORY_PARAMS_STATS_SAMPLES_PER_STAGE=""; 
-    public static final String MANDATORY_PARAMS_STATS_PROGRAM_LAST_RESULTS =""; 
-    /**
-     *
-     */
-/*    public static final String API_ENDPOINT_GET_ACTIVE_PRODUCTION_LOTS = "GET_ACTIVE_PRODUCTION_LOTS";
-    public static final String API_ENDPOINT_INCUBATIONEND = "INCUBATIONEND";
-    public static final String API_ENDPOINT_ENTERRESULT = "ENTERRESULT";
-    public static final String API_ENDPOINT_UNREVIEWRESULT = "UNREVIEWRESULT";
-    public static final String API_ENDPOINT_INCUBATIONSTART = "INCUBATIONSTART";
-    public static final String API_ENDPOINT_SAMPLINGCOMMENTREMOVE = "SAMPLINGCOMMENTREMOVE";
-    public static final String API_ENDPOINT_LOGSAMPLE = "LOGSAMPLE";
-    public static final String API_ENDPOINT_UNCANCELRESULT = "UNCANCELRESULT";
-    public static final String API_ENDPOINT_TESTASSIGNMENT = "ESTASSIGNMENT";
-    public static final String API_ENDPOINT_COC_ABORTCHANGE = "COC_ABORTCHANGE";
-    public static final String API_ENDPOINT_SAMPLINGCOMMENTADD = "SAMPLINGCOMMENTADD";
-    public static final String API_ENDPOINT_SAMPLEANALYSISADD = "SAMPLEANALYSISADD";
-    public static final String API_ENDPOINT_COC_STARTCHANGE = "COC_STARTCHANGE";
-    public static final String API_ENDPOINT_CHANGESAMPLINGDATE = "CHANGESAMPLINGDATE";
-    public static final String API_ENDPOINT_RECEIVESAMPLE = "RECEIVESAMPLE";
-    public static final String API_ENDPOINT_LOGSUBALIQUOT = "LOGSUBALIQUOT";
-    public static final String API_ENDPOINT_LOGALIQUOT = "LOGALIQUOT";
-    public static final String API_ENDPOINT_CANCELRESULT = "CANCELRESULT";
-    public static final String API_ENDPOINT_COC_CONFIRMCHANGE = "COC_CONFIRMCHANGE";
-    public static final String API_ENDPOINT_REVIEWRESULT = "REVIEWRESULT";
-    public static final String API_ENDPOINT_GETSAMPLEINFO = "GETSAMPLEINFO";
-    public static final String API_ENDPOINT_ENTERRESULT_LOD = "ENTERRESULT_LOD";
-    public static final String API_ENDPOINT_RESULT_CHANGE_UOM = "RESULT_CHANGE_UOM";
-    public static final String API_ENDPOINT_ADD_SAMPLE_MICROORGANISM = "ADD_SAMPLE_MICROORGANISM";
-    public static final String API_ENDPOINT_EM_BATCH_INCUB_CREATE     = "EM_BATCH_INCUB_CREATE";
-    public static final String API_ENDPOINT_EM_BATCH_INCUB_ADD_SMP    = "EM_BATCH_INCUB_ADD_SMP";
-    public static final String API_ENDPOINT_EM_BATCH_INCUB_MOVE_SMP    = "EM_BATCH_INCUB_MOVE_SMP";
-    public static final String API_ENDPOINT_EM_BATCH_INCUB_REMOVE_SMP = "EM_BATCH_INCUB_REMOVE_SMP";
-    public static final String API_ENDPOINT_EM_LOGSAMPLE_SCHEDULER   = "EM_LOG_SAMPLE_SCHEDULER";
-    */
-    
-    /**
-     *
-     */
     public static final String MANDATORY_PARAMS_MAIN_SERVLET = GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN+"|"+GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX;
 
     /**
