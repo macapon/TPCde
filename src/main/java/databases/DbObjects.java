@@ -101,11 +101,9 @@ public class DbObjects {
     
     /**
      *
-     * @param tableName
-     * @param fieldsName
      * @return
      */
-    public static final  JSONObject createDBTables(String tableName, String[] fieldsName){
+    public static final  JSONObject createDBTables(){
         JSONObject jsonObj = new JSONObject();        
         
         String tblCreateScript=TblsApp.AppSession.createTableScript(new String[]{""});

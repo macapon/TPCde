@@ -23,7 +23,7 @@ import lbplanet.utilities.LPPlatform;
  */
 public class DataBatchIncubatorUnstructured {
 
-    static Boolean batchIsEmptyUnstructured(String schemaPrefix, Token token, String batchName){
+    static Boolean batchIsEmptyUnstructured(String schemaPrefix, String batchName){
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_UNSTRUCT_CONTENT.getName()});

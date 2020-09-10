@@ -7,7 +7,6 @@ package com.labplanet.servicios.moduleenvmonit;
 
 import databases.Rdbms;
 import databases.TblsData;
-import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
@@ -26,7 +25,7 @@ public class ClassEnvMonQueries {
     private Object[] diagnostic=new Object[0];
     private Boolean functionFound=false;
 
-    public ClassEnvMonQueries(HttpServletRequest request, Token token, String schemaPrefix, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
+    public ClassEnvMonQueries(HttpServletRequest request, String schemaPrefix, EnvMonAPI.EnvMonQueriesAPIEndpoints endPoint){
         try{
             Rdbms.stablishDBConection();
             RelatedObjects rObj=RelatedObjects.getInstance();

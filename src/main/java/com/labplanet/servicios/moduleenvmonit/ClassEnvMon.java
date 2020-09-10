@@ -106,8 +106,7 @@ public class ClassEnvMon {
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
-                    String incubName=null;
-                    actionDiagnoses=DataBatchIncubator.batchStarted(schemaPrefix, token, batchName, incubName, batchTemplateId, batchTemplateVersion);
+                    actionDiagnoses=DataBatchIncubator.batchStarted(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});
                         this.messageDynamicData=new Object[]{incubationName, batchName};                    
@@ -123,8 +122,7 @@ public class ClassEnvMon {
                     rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsEnvMonitData.IncubBatch.TBL.getName(), TblsEnvMonitData.IncubBatch.TBL.getName(), batchName);                
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
-                    incubName=null;
-                    actionDiagnoses=DataBatchIncubator.batchEnded(schemaPrefix, token, batchName, incubName, batchTemplateId, batchTemplateVersion);
+                    actionDiagnoses=DataBatchIncubator.batchEnded(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{batchName, schemaPrefix});
                     this.messageDynamicData=new Object[]{batchName, incubationName};

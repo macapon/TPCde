@@ -27,7 +27,7 @@ public class DataBatchIncubatorStructured {
     public static final String POSITIONVALUESEPARATORSTRUCTUREDBATCH="*";
     public static final String BATCHCONTENTEMPTYPOSITIONVALUE="-";
     
-    static Boolean batchIsEmptyStructured(String schemaPrefix, Token token, String batchName){
+    static Boolean batchIsEmptyStructured(String schemaPrefix, String batchName){
         Object[][] batchInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.IncubBatch.TBL.getName(), 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_NAME.getName()}, new Object[]{batchName}, 
                 new String[]{TblsEnvMonitData.IncubBatch.FLD_STRUCT_TOTAL_OBJECTS.getName()});

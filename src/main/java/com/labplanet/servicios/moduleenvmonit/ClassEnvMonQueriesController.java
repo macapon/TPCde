@@ -38,7 +38,7 @@ public class ClassEnvMonQueriesController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonQueries clss=new ClassEnvMonQueries(request, token, schemaPrefix, endPoint);
+            ClassEnvMonQueries clss=new ClassEnvMonQueries(request, schemaPrefix, endPoint);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();              
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
