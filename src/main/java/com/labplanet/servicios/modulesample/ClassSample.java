@@ -208,12 +208,19 @@ public class ClassSample {
                 String testingGroup = argValues[1].toString();
                 diagn = reviewSampleTestingGroup(schemaPrefix, token, sampleId, testingGroup);
                 rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
-                this.messageDynamicData=new Object[]{sampleId};
+                this.messageDynamicData=new Object[]{sampleId, testingGroup};
+                break;
+            case REVIEWTEST:
+                Integer testId = (Integer) argValues[0];
+                diagn = smpAnaRes.sampleResultReview(schemaPrefix, token, null, testId, null);
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), TblsData.Sample.TBL.getName(), sampleId);
+                this.messageDynamicData=new Object[]{testId};
                 break;
             case REVIEWRESULT:
                 Integer objectId = (Integer) argValues[0];
                 String objectLevel = argValues[1].toString();
-                Integer testId = null; resultId = null;
+                testId = null; 
+                resultId = null;
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_SAMPLE)){sampleId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_TEST)){testId = objectId;}
                 if (objectLevel.equalsIgnoreCase(GlobalAPIsParams.REQUEST_PARAM_OBJECT_LEVEL_RESULT)){resultId = objectId;}

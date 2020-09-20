@@ -8,6 +8,9 @@ package functionaljavaa.samplestructure;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
+import functionaljavaa.audit.SampleAudit;
+import functionaljavaa.modulesample.DataModuleSampleAnalysis;
+import static functionaljavaa.samplestructure.DataSample.PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -65,6 +68,15 @@ public class DataSampleRevisionTestingGroup {
                 new Object[]{pendingTestingGroupStr, sampleId, schemaPrefix});
         }
     }
+    public static Object[] isReadyForRevision( String schemaPrefix, Token token, Integer sampleId, String testingGroup){
+        String[] sampleAnalysisFieldName=new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName()};
+        Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),  
+                new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
+        if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "readyForRevision", new Object[]{sampleId, schemaPrefix});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "notReadyForRevision", new Object[]{sampleId, schemaPrefix});
+        //return diagnoses;
+    }  
     
     public static Object[] reviewSampleTestingGroup(String schemaPrefix, Token token, Integer sampleId, String testingGroup){
         Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable(schemaPrefix, "procedure", TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());
@@ -78,10 +90,65 @@ public class DataSampleRevisionTestingGroup {
                 new Object[]{sampleId, testingGroup, true});
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(existsPendingAnalysis[0].toString())) 
             return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending results for the testing group <*1*> for the sample <*2*> in procedure <*3*>", null);
-        return Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
-            new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_ON.getName()},
-            new Object[]{false, true, token.getPersonName(), LPDate.getCurrentTimeStamp()}, 
-            new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()},
-            new Object[]{sampleId, testingGroup});
+        Object[] isRevisionSampleAnalysisRequired=LPPlatform.isProcedureBusinessRuleEnable(schemaPrefix, "procedure", PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED);
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(isRevisionSampleAnalysisRequired[0].toString())){            
+            Object[] isallsampleAnalysisReviewed = DataSampleAnalysis.isAllsampleAnalysisReviewed(schemaPrefix, token, sampleId, new String[]{TblsData.SampleAnalysis.FLD_TESTING_GROUP.getName()}, new Object[]{testingGroup});
+            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(isallsampleAnalysisReviewed[0].toString())) return isallsampleAnalysisReviewed;
+        }
+        Object[] readyForRevision = isReadyForRevision(schemaPrefix, token, sampleId, testingGroup);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(readyForRevision[0].toString())) return readyForRevision;
+        
+        Object[] updateReviewSampleTestingGroup = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
+                new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_BY.getName(), TblsData.SampleRevisionTestingGroup.FLD_REVISION_ON.getName()},
+                new Object[]{false, true, token.getPersonName(), LPDate.getCurrentTimeStamp()},
+                new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(), TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()},
+                new Object[]{sampleId, testingGroup});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(updateReviewSampleTestingGroup[0].toString())){
+            markSampleAsReadyForRevision(schemaPrefix, token, sampleId);
+            Object[] fieldsForAudit= new Object[]{TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()+":"+testingGroup};
+            SampleAudit smpAudit = new SampleAudit();
+            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_REVIEWED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+        }
+        return updateReviewSampleTestingGroup;        
     }
+    
+    public static Object[] markSampleAsReadyForRevision(String schemaPrefix, Token token, Integer sampleId){
+        Object[][] PendingTestingGroupByRevisionValue= Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),
+                new String[]{TblsData.SampleRevisionTestingGroup.FLD_REVIEWED.getName()},
+                new String[]{TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName()}, 
+                new Object[]{sampleId}, null);
+        if (PendingTestingGroupByRevisionValue.length==1 && PendingTestingGroupByRevisionValue[0][0].toString().equalsIgnoreCase("TRUE")){
+            DataModuleSampleAnalysis smpAna = new DataModuleSampleAnalysis();
+            DataSample smp=new DataSample(smpAna);
+            smp.setReadyForRevision(schemaPrefix, token, sampleId);
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+        }
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "There are pending testing group reviews for the sample <*1*> in procedure <*2*>", new Object[]{sampleId, schemaPrefix});
+    }
+    /**
+     *
+     * @param schemaPrefix
+     * @param token
+     * @param sampleId
+     * @param testingGroup
+     * @return
+     */
+    public static Object[] setReadyForRevision( String schemaPrefix, Token token, Integer sampleId, String testingGroup){
+        String[] sampleFieldName=new String[]{TblsData.SampleRevisionTestingGroup.FLD_READY_FOR_REVISION.getName()};
+        Object[] sampleFieldValue=new Object[]{true};
+        Object[][] sampleRevisionTestingGroupInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(),  
+                new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup}, sampleFieldName);
+        if ("TRUE".equalsIgnoreCase(sampleRevisionTestingGroupInfo[0][0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "alreadyReadyForRevision", new Object[]{sampleId, schemaPrefix});
+        
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleRevisionTestingGroup.TBL.getName(), 
+                sampleFieldName, sampleFieldValue, 
+                new String[] {TblsData.SampleRevisionTestingGroup.FLD_SAMPLE_ID.getName(),TblsData.SampleRevisionTestingGroup.FLD_TESTING_GROUP.getName()}, new Object[]{sampleId, testingGroup});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+            SampleAudit smpAudit = new SampleAudit();       
+            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.SAMPLE_TESTINGGROUP_SET_READY_REVISION.toString(), TblsData.SampleRevisionTestingGroup.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+        }    
+        return diagnoses;
+    }    
 }

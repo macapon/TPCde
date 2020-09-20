@@ -15,6 +15,8 @@ import com.labplanet.servicios.modulesample.SampleAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.Token;
+import functionaljavaa.audit.SampleAudit;
+import static functionaljavaa.audit.SampleAudit.sampleAuditRevisionPassByAction;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -192,7 +194,25 @@ public class EnvMonSampleAPI extends HttpServlet {
         Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(schemaPrefix, actionName);
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
             mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
-        }        
+        }  
+        String sampleIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
+        Integer sampleId=0;
+        if (sampleIdStr!=null && sampleIdStr.length()>0) sampleId=Integer.valueOf(sampleIdStr);
+        String testIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_TEST_ID);
+        Integer testId=0;
+        if (testIdStr!=null && testIdStr.length()>0) testId=Integer.valueOf(testIdStr);
+        String resultIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_RESULT_ID);
+        Integer resultId=0;
+        if (resultIdStr!=null && resultIdStr.length()>0) sampleId=Integer.valueOf(resultIdStr);
+
+        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
+        
+        Object[] sampleAuditRevision=sampleAuditRevisionPassByAction(schemaPrefix, actionName, sampleId, testId, resultId);     
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleAuditRevision[0].toString())){   
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, sampleAuditRevision);
+            //LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
+            return;                             
+        }  
         if (mandatoryParams!=null){
             areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -207,7 +227,6 @@ public class EnvMonSampleAPI extends HttpServlet {
 
         if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
              (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}        
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
       
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
  /*       if (con==null){

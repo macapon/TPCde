@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.moduleenvmonit;
 
-import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;

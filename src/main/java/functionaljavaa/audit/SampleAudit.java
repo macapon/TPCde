@@ -52,144 +52,17 @@ public class SampleAudit {
         private final String defaultTextWhenNotInPropertiesFileEn;
         private final String defaultTextWhenNotInPropertiesFileEs;
     }    
-    public enum SampleAuditEvents{
-
-        /**
-         * 
-         */
-        SAMPLE_LOGGED,
-
-        /**
-         *
-         */
-        SAMPLE_RECEIVED,
-
-        /**
-         *
-         */
-        SET_SAMPLING_DATE,
-
-        /**
-         *
-         */
-        SAMPLE_CHANGE_SAMPLING_DATE,
-
-        /**
-         *
-         */
-        SAMPLE_RECEPTION_COMMENT_ADD,
-
-        /**
-         *
-         */
-        SAMPLE_RECEPTION_COMMENT_REMOVE,
-
-        /**
-         *
-         */
-        SAMPLE_EVALUATE_STATUS
-        ,
-
-        /**
-         *
-         */
-        SAMPLE_REVIEWED,
-
-        /**
-         *
-         */
-        LOG_SAMPLE_ALIQUOT,
-
-        /**
-         *
-         */
-        LOG_SAMPLE_SUBALIQUOT,
-
-        /**
-         *
-         */
-        SAMPLESTAGE_MOVETONEXT,
-
-        /**
-         *
-         */
-        SAMPLESTAGE_MOVETOPREVIOUS,
-
-        /**
-         *
-         */
-        UPDATE_LAST_ANALYSIS_USER_METHOD
-        , 
-
-        /**
-         *
-         */
-        CHAIN_OF_CUSTODY_STARTED, 
-
-        /**
-         *
-         */
-        CHAIN_OF_CUSTODY_COMPLETED, 
-
-        /**
-         *
-         */
-        MICROORGANISM_ADDED, 
-
-        /**
-         *
-         */
-        SAMPLE_SET_INCUBATION_STARTED, 
-
-        /**
-         *
-         */
-        SAMPLE_SET_INCUBATION_ENDED, 
-
-        /**
-         *
-         */
-        SAMPLE_CANCELED, 
-
-        /**
-         *
-         */
-        SAMPLE_UNCANCELED}  
+    public enum SampleAuditEvents{SAMPLE_LOGGED, SAMPLE_RECEIVED, SET_SAMPLING_DATE, SAMPLE_CHANGE_SAMPLING_DATE,
+        SAMPLE_RECEPTION_COMMENT_ADD, SAMPLE_RECEPTION_COMMENT_REMOVE, SAMPLE_EVALUATE_STATUS, SAMPLE_TESTINGGROUP_REVIEWED, SAMPLE_TESTINGGROUP_SET_READY_REVISION, SAMPLE_REVIEWED,
+        LOG_SAMPLE_ALIQUOT, LOG_SAMPLE_SUBALIQUOT, SAMPLESTAGE_MOVETONEXT, SAMPLESTAGE_MOVETOPREVIOUS,
+        UPDATE_LAST_ANALYSIS_USER_METHOD, CHAIN_OF_CUSTODY_STARTED, CHAIN_OF_CUSTODY_COMPLETED, MICROORGANISM_ADDED, 
+        SAMPLE_SET_INCUBATION_STARTED, SAMPLE_SET_INCUBATION_ENDED, SAMPLE_CANCELED, SAMPLE_UNCANCELED, SAMPLE_SET_READY_FOR_REVISION}  
 
     /**
      *
      */
-    public enum SampleAnalysisAuditEvents{ 
-
-        /**
-         *
-         */
-        SAMPLE_ANALYSIS_REVIEWED, 
-
-        /**
-         *
-         */
-        SAMPLE_ANALYSIS_EVALUATE_STATUS, 
-
-        /**
-         *
-         */
-        SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
-
-        /**
-         *
-         */
-        SAMPLE_ANALYSIS_ADDED, 
-
-        /**
-         *
-         */
-        SAMPLE_ANALYSIS_CANCELED, 
-
-        /**
-         *
-         */
-        SAMPLE_ANALYSIS_UNCANCELED}
+    public enum SampleAnalysisAuditEvents{ SAMPLE_ANALYSIS_REVIEWED, SAMPLE_ANALYSIS_EVALUATE_STATUS, SAMPLE_ANALYSIS_ANALYST_ASSIGNMENT, 
+        SAMPLE_ANALYSIS_ADDED, SAMPLE_ANALYSIS_CANCELED, SAMPLE_ANALYSIS_UNCANCELED, SAMPLE_ANALYSIS_SET_READY_fOR_REVISION}
     
     /**
      *
@@ -580,51 +453,120 @@ public class SampleAudit {
      *
      * @param schemaPrefix
      * @param sampleId
+     * @param actionName
      * @return
      */
     public static Object[] sampleAuditRevisionPass(String schemaPrefix, Integer sampleId){
-      String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
-      String auditRevisionMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
-      String auditRevisionChildRequired = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
-      if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
-                new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
-      String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
-      Boolean auditRevisionModeRecognized=false;
-      for (String curModeRequired: auditRevisionModesRequired){
-        if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
-      }
-      if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
-                new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
-      if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1)return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleAuditRevisionMode_Disable", 
-                new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
-      if (LPArray.valuePosicInArray(auditRevisionModeArr, "STAGES")>-1){
-        DataSampleStages smpStages = new DataSampleStages(schemaPrefix);
-        if (!smpStages.isSampleStagesEnable())return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_StagesDetectedButSampleStagesNotEnable", 
-                new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
-        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
-                new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
-                new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
-        String sampleCurrentStage=sampleInfo[0][0].toString();
-        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleCurrentStage)) return LPArray.array2dTo1d(sampleInfo);
-        if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "currentSampleStageNotRequiresSampleAuditRevision", 
-                new Object[]{sampleCurrentStage, sampleId, PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
-      }
-      String[] whereFieldName=new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName()};
-      Object[] whereFieldValue=new Object[]{sampleId, false};
-    
-      if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
-          whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
-      Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
-              whereFieldName, whereFieldValue, 
-              new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
-      for (Object[] curSampleInfo: sampleInfo){
-        if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
-          return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
-          new Object[]{sampleId, schemaPrefix});
+        String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
+        String auditRevisionMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
+        String auditRevisionChildRequired = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
+        if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+        String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
+        Boolean auditRevisionModeRecognized=false;
+        for (String curModeRequired: auditRevisionModesRequired){
+          if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
         }
-      }      
-//      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);
-//      if ( (sampleAuditReviewedValues.length!=1) || ( (sampleAuditReviewedValues.length==1) && !("true".equalsIgnoreCase(sampleAuditReviewedValues[0].toString())) ) )
-      return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};
+        if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+        if (LPArray.valuePosicInArray(auditRevisionModeArr, "DISABLE")>-1)return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "sampleAuditRevisionMode_Disable", 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+        if (LPArray.valuePosicInArray(auditRevisionModeArr, "STAGES")>-1){
+          DataSampleStages smpStages = new DataSampleStages(schemaPrefix);
+          if (!smpStages.isSampleStagesEnable())return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_StagesDetectedButSampleStagesNotEnable", 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+          Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), 
+                  new String[]{TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, 
+                  new String[]{TblsData.Sample.FLD_CURRENT_STAGE.getName()});
+          String sampleCurrentStage=sampleInfo[0][0].toString();
+          if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleCurrentStage)) return LPArray.array2dTo1d(sampleInfo);
+          if (LPArray.valuePosicInArray(auditRevisionModeArr, sampleInfo[0][0].toString())==-1) return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "currentSampleStageNotRequiresSampleAuditRevision", 
+                  new Object[]{sampleCurrentStage, sampleId, PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+        }
+        if (LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")>-1){
+
+        }
+        String[] whereFieldName=new String[]{TblsDataAudit.Sample.FLD_SAMPLE_ID.getName()};
+        Object[] whereFieldValue=new Object[]{sampleId, false};
+
+        if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
+            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+                whereFieldName, whereFieldValue, 
+                new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
+        for (Object[] curSampleInfo: sampleInfo){
+          if (!"true".equalsIgnoreCase(curSampleInfo[1].toString())) {
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
+            new Object[]{sampleId, schemaPrefix});
+          }
+        }      
+    //      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);
+    //      if ( (sampleAuditReviewedValues.length!=1) || ( (sampleAuditReviewedValues.length==1) && !("true".equalsIgnoreCase(sampleAuditReviewedValues[0].toString())) ) )
+        return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};
     }  
+    
+    /**
+     *
+     * @param schemaPrefix
+     * @param sampleId
+     * @param actionName
+     * @param testId
+     * @param resultId
+     * @return
+     */
+    public static Object[] sampleAuditRevisionPassByAction(String schemaPrefix, String actionName, Integer sampleId, Integer testId, Integer resultId){
+        
+        
+//if (1==1) return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};        
+        
+        if ( (sampleId==null || sampleId==0) && (testId==null || testId==0) && (resultId==null || resultId==0) )
+                return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "The action "+actionName+" has no sampleId, testId or resultId linked with so this method returns true doing nothing", null);
+        String[] auditRevisionModesRequired=new String[]{"ENABLE", "DISABLE"};
+        String auditRevisionMode = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, null);  
+        String auditRevisionChildRequired = Parameter.getParameterBundle("config", schemaPrefix, "procedure", PARAMETER_BUNDLE_SAMPLE_AUDIT_CHILD_REVISION_REQUIRED, null);   
+        if (auditRevisionMode==null || auditRevisionMode.length()==0) return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+        String[] auditRevisionModeArr= auditRevisionMode.split("\\|");
+        Boolean auditRevisionModeRecognized=false;
+        for (String curModeRequired: auditRevisionModesRequired){
+          if (LPArray.valuePosicInArray(auditRevisionModeArr, curModeRequired)>-1) auditRevisionModeRecognized= true; 
+        }
+        if (!auditRevisionModeRecognized)return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "sampleAuditRevisionMode_ParameterMissing", 
+                  new Object[]{PARAMETER_BUNDLE_SAMPLE_AUDIT_REVISION_MODE, schemaPrefix});
+        if (LPArray.valuePosicInArray(auditRevisionModeArr, "ACTIONS")==-1){
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), new Object[]{sampleId, schemaPrefix});
+
+        }
+        String[] whereFieldName=new String[]{TblsDataAudit.Sample.FLD_REVIEWED.getName()};
+        Object[] whereFieldValue=new Object[]{false};
+        if (sampleId!=null && sampleId!=0){
+            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_SAMPLE_ID.getName());
+            whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, sampleId);
+        }
+        if (testId!=null && testId!=0){
+            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_TEST_ID.getName());
+            whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, testId);
+        }
+        if (resultId!=null && resultId!=0){
+            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_RESULT_ID.getName());
+            whereFieldValue=LPArray.addValueToArray1D(whereFieldValue, resultId);
+        }
+//        if ("FALSE".equalsIgnoreCase(auditRevisionChildRequired))
+//            whereFieldName=LPArray.addValueToArray1D(whereFieldName, TblsDataAudit.Sample.FLD_PARENT_AUDIT_ID.getName()+WHERECLAUSE_TYPES.IS_NULL.getSqlClause());
+        Object[][] sampleAuditInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsDataAudit.Sample.TBL.getName(), 
+                whereFieldName, whereFieldValue, 
+                new String[]{TblsDataAudit.Sample.FLD_AUDIT_ID.getName(), TblsDataAudit.Sample.FLD_REVIEWED.getName()});
+        for (Object[] curSampleInfo: sampleAuditInfo){
+          if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(curSampleInfo[0].toString())) {
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, SampleAuditErrorTrapping.AUDIT_RECORDS_PENDING_REVISION.getErrorCode(), 
+            new Object[]{sampleId, schemaPrefix});
+          }
+        }      
+    //      Object[] sampleAuditReviewedValues=LPArray.getUniquesArray(sampleInfoReviewed1D);
+    //      if ( (sampleAuditReviewedValues.length!=1) || ( (sampleAuditReviewedValues.length==1) && !("true".equalsIgnoreCase(sampleAuditReviewedValues[0].toString())) ) )
+        return new Object[]{LPPlatform.LAB_TRUE, "All reviewed"};
+    }  
+    
+    
+    
 }

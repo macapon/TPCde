@@ -95,13 +95,8 @@ public class EnvMonFrontEndUtilities {
      * @return dataProgramLocation info for a given program
      */
     public static JSONArray dataProgramLocationInfo(String schemaPrefix, String programName, String[] fieldsName, String[] sortFields){
-    if (fieldsName==null || fieldsName.length==0){
-      for (TblsEnvMonitData.ProgramLocation obj: TblsEnvMonitData.ProgramLocation.values()){
-          String objName = obj.name();
-          if (!"TBL".equalsIgnoreCase(objName))
-            fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
-      }      
-    }
+    if (fieldsName==null || fieldsName.length==0)
+        fieldsName=TblsEnvMonitData.ProgramLocation.getAllFieldNames();
     Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.ProgramLocation.TBL.getName(), 
             new String[]{TblsEnvMonitData.ProgramLocation.FLD_PROGRAM_NAME.getName()}, 
             new Object[]{programName,}, 

@@ -44,6 +44,9 @@ public class DataSample {
     /**
      *
      */
+    public static final String PROCEDURE_REVISIONSAMPLEANALYSISREQUIRED="revisionSampleAnalysisRequired";
+    public static final String PROCEDURE_SAMPLEANALYSIS_AUTHORCANBEREVIEWERTOO="sampleAnalysisAuthorCanBeReviewerToo";
+
     public static final String CONFIG_SAMPLE_STATUSREVIEWED="sample_statusReviewed";
 
     /**
@@ -377,7 +380,49 @@ Object[] logSample( String schemaPrefix, Token token, String sampleTemplate, Int
             smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.SAMPLE_RECEIVED.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
         }    
         return diagnoses;
-}
+    }
+   /**
+     *
+     * @param schemaPrefix
+     * @param token
+     * @param sampleId
+     * @return
+     */
+    public static Object[] isReadyForRevision( String schemaPrefix, Token token, Integer sampleId){
+        String[] sampleAnalysisFieldName=new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()};
+        Object[][] sampleAnalysisInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SampleAnalysis.TBL.getName(),  
+                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleAnalysisFieldName);
+        if ("TRUE".equalsIgnoreCase(sampleAnalysisInfo[0][0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "readyForRevision", new Object[]{sampleId, schemaPrefix});
+        return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "NOT IMPLEMENTED YET WHEN SET READY FOR REVISION NOT TRUE YET", new Object[]{sampleId, schemaPrefix});
+        //return diagnoses;
+    }    
+    /**
+     *
+     * @param schemaPrefix
+     * @param token
+     * @param sampleId
+     * @return
+     */
+    public static Object[] setReadyForRevision( String schemaPrefix, Token token, Integer sampleId){
+        String[] sampleFieldName=new String[]{TblsData.Sample.FLD_READY_FOR_REVISION.getName()};
+        Object[] sampleFieldValue=new Object[]{true};
+        Object[][] sampleInfo=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(),  
+                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId}, sampleFieldName);
+        if ("TRUE".equalsIgnoreCase(sampleInfo[0][0].toString()))
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "alreadyReadyForRevision", new Object[]{sampleId, schemaPrefix});
+        
+        Object[] diagnoses = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.Sample.TBL.getName(), sampleFieldName, sampleFieldValue, 
+                                                new String[] {TblsData.Sample.FLD_SAMPLE_ID.getName()}, new Object[]{sampleId});
+        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(diagnoses[0].toString())){
+            String[] fieldsForAudit = LPArray.joinTwo1DArraysInOneOf1DString(sampleFieldName, sampleFieldValue, token.getPersonName());
+
+            SampleAudit smpAudit = new SampleAudit();       
+            smpAudit.sampleAuditAdd(schemaPrefix, SampleAudit.SampleAuditEvents.SAMPLE_SET_READY_FOR_REVISION.toString(), TblsData.Sample.TBL.getName(), sampleId, sampleId, null, null, fieldsForAudit, token, null);
+        }    
+        return diagnoses;
+    }
+
     /**
      *
      * @param schemaPrefix

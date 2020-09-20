@@ -325,7 +325,8 @@ public class TblsData {
         /**
          *
          */
-        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string())
+        FLD_PREVIOUS_STAGE("previous_stage", LPDatabase.string()),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),        
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -573,6 +574,7 @@ public class TblsData {
         FLD_ALIQUOT_ID(FIELDS_NAMES_ALIQUOT_ID, LPDatabase.integer())
         ,
         FLD_TESTING_GROUP("testing_group",  LPDatabase.string()),
+        FLD_READY_FOR_REVISION("ready_for_revision", LPDatabase.booleanFld()),                
         /**
          *
          */
@@ -637,7 +639,17 @@ public class TblsData {
             }
             tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
             return tblCreateScript.toString();
-        }        
+        }     
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (SampleAnalysis obj: SampleAnalysis.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }            
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }            

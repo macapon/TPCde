@@ -654,7 +654,7 @@ if (1==1)return;
         String query= hmQuery.keySet().iterator().next();   
         Object[] keyFieldValueNew = hmQuery.get(query);        
         try{
-            ResultSet res = null;
+            ResultSet res = null;            
             res = Rdbms.prepRdQuery(query, keyFieldValueNew);
             if (res==null){
                 Object[] errorLog = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPPING_RDBMS_DT_SQL_EXCEPTION, new Object[]{ERROR_TRAPPING_ARG_VALUE_RES_NULL, query + ERROR_TRAPPING_ARG_VALUE_LBL_VALUES+ Arrays.toString(keyFieldValueNew)});

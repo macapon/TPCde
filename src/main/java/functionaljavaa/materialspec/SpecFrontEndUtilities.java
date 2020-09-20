@@ -30,9 +30,8 @@ public class SpecFrontEndUtilities {
      */
     public static JSONObject configSpecInfo(String schemaPrefix, String code, Integer configVersion, String[] fieldsName, String[] sortFields){
     if (fieldsName==null || fieldsName.length==0){
-      for (TblsCnfg.Spec obj: TblsCnfg.Spec.values()){
-        String objName = obj.name();
-        if (!"TBL".equalsIgnoreCase(objName))          fieldsName=LPArray.addValueToArray1D(fieldsName, obj.getName());
+    for (TblsCnfg.Spec obj: TblsCnfg.Spec.values()){
+        fieldsName=TblsCnfg.Spec.getAllFieldNames();
       }      
     }
     Object[][] records=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_CONFIG), TblsCnfg.Spec.TBL.getName(), 
