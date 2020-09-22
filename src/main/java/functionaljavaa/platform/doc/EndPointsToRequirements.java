@@ -9,6 +9,8 @@ import com.labplanet.servicios.app.AppHeaderAPI.AppHeaderAPIfrontendEndpoints;
 import com.labplanet.servicios.app.AuthenticationAPIParams.AuthenticationAPIEndpoints;
 import com.labplanet.servicios.app.IncidentAPI.IncidentAPIEndpoints;
 import com.labplanet.servicios.app.IncidentAPI.IncidentAPIfrontendEndpoints;
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIEndpoints;
+import com.labplanet.servicios.app.InvestigationAPI.InvestigationAPIfrontendEndpoints;
 import com.labplanet.servicios.app.ModulesConfigMasterDataAPI.ConfigMasterDataAPIEndpoints;
 import com.labplanet.servicios.app.SopUserAPI.SopUserAPIEndpoints;
 import com.labplanet.servicios.app.SopUserAPIfrontend.SopUserAPIfrontendEndpoints;
@@ -97,6 +99,23 @@ public class EndPointsToRequirements {
             fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
             declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
         }
+        InvestigationAPIEndpoints[] valuesInvest = InvestigationAPIEndpoints.values();
+        for (InvestigationAPIEndpoints curApi: valuesInvest){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+        }
+        InvestigationAPIfrontendEndpoints[] valuesInvestFrontEnd = InvestigationAPIfrontendEndpoints.values();
+        for (InvestigationAPIfrontendEndpoints curApi: valuesInvestFrontEnd){
+            String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});
+            Object[] fieldValues=LPArray.addValueToArray1D(new Object[]{}, new Object[]{curApi.getClass().getSimpleName(), curApi.getName()});
+            fieldNames=LPArray.addValueToArray1D(fieldNames, new String[]{EndpointsDeclaration.FLD_ARGUMENTS_ARRAY.getName()});
+            fieldValues=LPArray.addValueToArray1D(fieldValues, new Object[]{getEndPointArguments(curApi.getArguments())});                
+            declareInDatabase(curApi.getClass().getSimpleName(), curApi.getName(), fieldNames, fieldValues);
+        }
+
         SopUserAPIEndpoints[] valuesSop = SopUserAPIEndpoints.values();
         for (SopUserAPIEndpoints curApi: valuesSop){
             String[] fieldNames=LPArray.addValueToArray1D(new String[]{}, new String[]{EndpointsDeclaration.FLD_API_NAME.getName(),  EndpointsDeclaration.FLD_ENDPOINT_NAME.getName()});

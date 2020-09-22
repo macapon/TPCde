@@ -78,6 +78,7 @@ public class LPPlatform {
      *
      */
     public static final String SCHEMA_PROCEDURE = "procedure";
+    public static final String SCHEMA_PROCEDURE_AUDIT = "procedure-audit";
 
     /**
      *

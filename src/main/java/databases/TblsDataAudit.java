@@ -366,5 +366,5 @@ public enum OtherEnumClass {
         private final String dbObjName;             
         private final String dbObjTypePostgres;                     
     }
-    
+
 }

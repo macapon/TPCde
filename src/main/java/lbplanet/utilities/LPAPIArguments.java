@@ -77,7 +77,7 @@ public class LPAPIArguments {
                         break;
                     case BOOLEAN:     
                         Boolean valueConvertedBoolean=null;
-                        if (requestArgValue.length()>0) valueConvertedBoolean=Boolean.valueOf(requestArgValue);
+                        if (requestArgValue.length()>0 && ("TRUE".equalsIgnoreCase(requestArgValue)||"FALSE".equalsIgnoreCase(requestArgValue) )) valueConvertedBoolean=Boolean.valueOf(requestArgValue);
                         returnArgsDef=LPArray.addValueToArray1D(returnArgsDef, valueConvertedBoolean);
                         break;
                     case STRINGARR:

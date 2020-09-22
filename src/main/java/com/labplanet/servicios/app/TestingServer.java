@@ -12,11 +12,13 @@ import lbplanet.utilities.LPMath;
 import databases.Rdbms;
 import static databases.Rdbms.insertRecordInTableFromTable;
 import databases.TblsApp;
+import databases.TblsAppAudit;
 import databases.TblsCnfg;
 import databases.TblsCnfgAudit;
 import databases.Token;
 import databases.TblsData;
 import databases.TblsProcedure;
+import databases.TblsProcedureAudit;
 import databases.TblsReqs;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.ConfigProgramCalendar;
@@ -77,6 +79,8 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
+        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
             Object[][] lblContent = new Object[][]{{"TEXT", "Ejemplo", 1, 1, 14}, {"BARCODE39", "123", 1, 1, 14, 1, 1}};
             ZPL.zplLabel("", 5, lblContent);            

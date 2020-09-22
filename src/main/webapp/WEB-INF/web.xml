@@ -244,6 +244,14 @@
         <servlet-name>EnvMonAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.moduleenvmonit.EnvMonAPIfrontend</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>InvestigationAPI</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.InvestigationAPI</servlet-class>
+    </servlet>
+    <servlet>
+        <servlet-name>InvestigationAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.InvestigationAPIfrontend</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
         <url-pattern>/testing/platform/DBActions</url-pattern>
@@ -474,6 +482,14 @@
     <servlet-mapping>
         <servlet-name>EnvMonAPIfrontend</servlet-name>
         <url-pattern>/moduleenvmon/frontend/EnvMonAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvestigationAPI</servlet-name>
+        <url-pattern>/app/InvestigationAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>InvestigationAPIfrontend</servlet-name>
+        <url-pattern>/frontend/InvestigationAPIfrontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
