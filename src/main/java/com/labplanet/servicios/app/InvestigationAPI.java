@@ -97,6 +97,7 @@ public class InvestigationAPI extends HttpServlet {
          *
          */
         OPEN_INVESTIGATIONS("OPEN_INVESTIGATIONS", "",new LPAPIArguments[]{}),
+        INVESTIGATION_RESULTS_PENDING_DECISION("INVESTIGATION_RESULTS_PENDING_DECISION", "",new LPAPIArguments[]{}),
         INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION("INVESTIGATION_DETAIL_FOR_GIVEN_INVESTIGATION", "",new LPAPIArguments[]{new LPAPIArguments(ParamsList.INVESTIGATION_ID.getParamName(), LPAPIArguments.ArgumentType.INTEGER.toString(), true, 6),}),
         ;
         private InvestigationAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){

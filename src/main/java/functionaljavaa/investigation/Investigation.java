@@ -10,6 +10,7 @@ import databases.Rdbms;
 import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.audit.ProcedureInvestigationAudit;
+import functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction;
 import java.util.Arrays;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPDate;
@@ -117,7 +118,10 @@ public class Investigation {
             diagnostic=Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.InvestObjects.TBL.getName(), 
                 updFieldName, updFieldValue);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
-            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){
+            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){                
+                diagnostic=DataProgramCorrectiveAction.markAsAddedToInvestigation(schemaPrefix, token, investId, curObjDetail[0], curObjDetail[1]);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())) return diagnostic;
+
                 String incIdStr=diagnostic[diagnostic.length-1].toString();
                 Object[] investigationAuditAdd = ProcedureInvestigationAudit.investigationAuditAdd(schemaPrefix, token, InvestigationAuditEvents.OBJECT_ADDED_TO_INVESTIGATION.toString(), TblsProcedure.InvestObjects.TBL.getName(), investId, incIdStr,  
                         LPArray.joinTwo1DArraysInOneOf1DString(updFieldName, updFieldValue, ":"), parentAuditId, null);

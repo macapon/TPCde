@@ -137,7 +137,7 @@ public class SqlStatement {
             } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.LIKE.getSqlClause())) {
                 queryWhere.append(fn).append(" ? ");
                 whereFieldValuesNew = LPArray.addValueToArray1D(whereFieldValuesNew, whereFieldValues[iwhereFieldNames]);
-            } else if (fn.toUpperCase().contains(WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
+            } else if (fn.toUpperCase().contains(" "+WHERECLAUSE_TYPES.NOT_IN.getSqlClause())) {
                 String separator = inNotInSeparator(fn);
                 String textSpecs = (String) whereFieldValues[iwhereFieldNames];
                 String[] textSpecArray = textSpecs.split("\\" + separator);
@@ -278,17 +278,18 @@ public class SqlStatement {
      * @return
      */
     public String inNotInSeparator(String fn){
-        Integer posicNOTINClause = fn.toUpperCase().indexOf(" NOT IN");
+        Integer posicNOTINClause = fn.toUpperCase().indexOf(" NOT IN");        
         Integer posicINClause = fn.toUpperCase().indexOf(" IN");
         String separator = fn;
+        Integer fldLen=fn.length();
         if (posicNOTINClause==-1){
-            if (fn.length()<posicINClause + 3) return "|";
+            if (fldLen<posicINClause + 3) return "|";
             separator = separator.substring(posicINClause + 3, posicINClause + 4);
             separator = separator.trim();
             separator = separator.replace(" IN", "");
         }else{
-            if (fn.length()<posicNOTINClause + 7) return "|";
-            separator = separator.substring(posicNOTINClause + 6, posicNOTINClause + 7);
+            if (fldLen<posicNOTINClause + 8) return "|";
+            separator = separator.substring(posicNOTINClause + 7, posicNOTINClause + 8);
             separator = separator.trim();
             separator = separator.replace(" NOT IN", "");
         }

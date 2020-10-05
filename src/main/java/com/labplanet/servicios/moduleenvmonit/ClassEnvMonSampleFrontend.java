@@ -13,6 +13,7 @@ import databases.Rdbms;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
 import databases.TblsData;
+import databases.TblsProcedure;
 import databases.Token;
 import functionaljavaa.instruments.incubator.DataIncubatorNoteBook;
 import functionaljavaa.materialspec.ConfigSpecRule;
@@ -50,7 +51,7 @@ public class ClassEnvMonSampleFrontend {
     private JSONArray responseSuccessJArr=null;
     private Object[] responseError=null;
 
-    private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()};
+    private static final String[] SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION=new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()};
     public static final String MANDATORY_PARAMS_MAIN_SERVLET=GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME+"|"+GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN;
 
     public enum EnvMonSampleAPIFrontendEndpoints{
@@ -873,15 +874,15 @@ private JSONArray sampleStageDataJsonArr(String schemaPrefix, Integer sampleId, 
         Integer resultId=Integer.valueOf(curRow[resultFldPosic].toString());
         
         if (!isProgramCorrectiveActionEnable(schemaPrefix)) return new Object[]{fldNameArr, fldValueArr};
-        Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName(), 
-                new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+        Object[][] notClosedProgramCorrreciveAction=Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProgramCorrectiveAction.TBL.getName(), 
+                new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_RESULT_ID.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                 new Object[]{resultId,DataProgramCorrectiveAction.ProgramCorrectiveStatus.CLOSED.toString()}, 
                 SAMPLEANALYSISRESULTLOCKDATA_RETRIEVEDATA_PROGRAMCORRECTIVEACTION);
         if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(notClosedProgramCorrreciveAction[0][0].toString())){
             fldNameArr=LPArray.addValueToArray1D(fldNameArr, "is_locked");
             fldValueArr=LPArray.addValueToArray1D(fldValueArr, true);
             fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_object");
-            fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsEnvMonitProcedure.ProgramCorrectiveAction.TBL.getName());
+            fldValueArr=LPArray.addValueToArray1D(fldValueArr, TblsProcedure.ProgramCorrectiveAction.TBL.getName());
             fldNameArr=LPArray.addValueToArray1D(fldNameArr, "locking_reason");
             
             JSONObject lockReasonJSONObj = LPFrontEnd.responseJSONDiagnosticLPTrue(

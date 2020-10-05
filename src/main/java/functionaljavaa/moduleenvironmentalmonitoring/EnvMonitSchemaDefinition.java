@@ -5,7 +5,7 @@
  */
 package functionaljavaa.moduleenvironmentalmonitoring;
 
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure;
+import databases.TblsProcedure;
 import databases.Rdbms;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.JSON_LABEL_FOR_NUM_RECORDS_IN_DEFINITION;
 import static functionaljavaa.requirement.ProcedureDefinitionToInstance.SCHEMA_AUTHORIZATION_ROLE;
@@ -60,9 +60,9 @@ public class EnvMonitSchemaDefinition {
         JSONObject jsonObj = new JSONObject();        
         String tblCreateScript="";
         
-        tblCreateScript=TblsEnvMonitProcedure.ProgramCorrectiveAction.createTableScript(schemaPrefix, new String[]{""});
+        tblCreateScript=TblsProcedure.ProgramCorrectiveAction.createTableScript(schemaPrefix, new String[]{""});
         Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-        jsonObj.put("TblsEnvMonitProcedure.ProgramCorrectiveAction", tblCreateScript);
+        jsonObj.put("TblsProcedure.ProgramCorrectiveAction", tblCreateScript);
         
         return jsonObj;    }
 }

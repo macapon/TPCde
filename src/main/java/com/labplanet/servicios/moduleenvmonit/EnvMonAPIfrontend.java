@@ -10,8 +10,6 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.PARAMETER_PROGRAM_SAMPLE_CORRECITVE_ACTION_ID;
-import static com.labplanet.servicios.moduleenvmonit.EnvMonAPI.PARAMETER_PROGRAM_SAMPLE_PROGRAM_NAME;
 import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import functionaljavaa.samplestructure.DataSampleUtilities;
@@ -27,9 +25,10 @@ import javax.ws.rs.core.Response;
 import lbplanet.utilities.LPNulls;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitProcedure.ProgramCorrectiveAction;
+import databases.TblsProcedure.ProgramCorrectiveAction;
 import databases.SqlStatement.WHERECLAUSE_TYPES;
 import databases.TblsCnfg;
+import databases.TblsProcedure;
 import functionaljavaa.materialspec.SpecFrontEndUtilities;
 import static functionaljavaa.moduleenvironmentalmonitoring.DataProgramCorrectiveAction.isProgramCorrectiveActionEnable;
 import functionaljavaa.parameter.Parameter;
@@ -623,15 +622,15 @@ GlobalAPIsParams.
                 programFldNameList = new StringBuilder();
                 programFldNameList.append("");
                 
-                for (TblsEnvMonitProcedure.ProgramCorrectiveAction obj: TblsEnvMonitProcedure.ProgramCorrectiveAction.values()){
+                for (TblsProcedure.ProgramCorrectiveAction obj: TblsProcedure.ProgramCorrectiveAction.values()){
                     String objName = obj.name();
                     if ( (!"TBL".equalsIgnoreCase(objName)) && (programFldNameList.length()>0) ) programFldNameList.append("|");
                       programFldNameList.append(obj.getName());
                 }      
               }                  
               programFldNameArray = LPTestingOutFormat.csvExtractFieldValueStringArr(programFldNameList);
-              if (!LPArray.valueInArray(programFldNameArray, TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName()))
-                programFldNameArray=LPArray.addValueToArray1D(programFldNameArray, TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_ID.getName());
+              if (!LPArray.valueInArray(programFldNameArray, TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName()))
+                programFldNameArray=LPArray.addValueToArray1D(programFldNameArray, TblsProcedure.ProgramCorrectiveAction.FLD_ID.getName());
               
               programFldSortList = request.getParameter("programCorrectiveActionFldSortList");   
               if (programFldSortList==null) programFldSortList = DEFAULT_PARAMS_PROGRAM_CORRECTIVE_ACTION_LIST_FLDS_TO_SORT;                     
@@ -645,7 +644,7 @@ GlobalAPIsParams.
               }
               else{
                 Object[][] programCorrectiveAction = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), ProgramCorrectiveAction.TBL.getName(), 
-                        new String[]{TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsEnvMonitProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
+                        new String[]{TblsProcedure.ProgramCorrectiveAction.FLD_PROGRAM_NAME.getName(), TblsProcedure.ProgramCorrectiveAction.FLD_STATUS.getName()+"<>"}, 
                         new String[]{programName, statusClosed}, 
                         programFldNameArray, programFldSortArray);
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(programCorrectiveAction[0][0].toString()))LPFrontEnd.servletReturnSuccess(request, response, new JSONArray());
