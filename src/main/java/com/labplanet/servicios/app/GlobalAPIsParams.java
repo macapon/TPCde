@@ -248,12 +248,30 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME = "sampleWhereFieldsName"; 
     public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";  
     public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";  
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLES = "includeSamples";  
+    public static final String REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES = "includeSamplerSamples";  
+    public static final String REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES = "excludeSamplerSamples";  
+    public static final String REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED = "excludeReadingNotEntered";  
+    public static final String REQUEST_PARAM_READING_EQUAL = "readingEqual";  
+    public static final String REQUEST_PARAM_READING_MIN = "readingMin";  
+    public static final String REQUEST_PARAM_READING_MAX = "readingMax";  
+    public static final String REQUEST_PARAM_INCLUDE_MICROORGANISMS = "includeMicroorganisms";      
+    public static final String REQUEST_PARAM_MICROORGANISMS_TO_FIND = "MicroorganismsToFind";      
+    public static final String REQUEST_PARAM_SAMPLING_DAY_START = "samplingDayStart";  
+    public static final String REQUEST_PARAM_SAMPLING_DAY_END = "samplingDayEnd";  
+    public static final String REQUEST_PARAM_SAMPLER = "samplerName";  
+    public static final String REQUEST_PARAM_SAMPLER_AREA = "samplerArea";  
     
+    public static final String REQUEST_PARAM_LOGIN_DAY_START = "loginDayStart";  
+    public static final String REQUEST_PARAM_LOGIN_DAY_END = "loginDayEnd";  
 
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_RETRIEVE = "batchFieldToRetrieve";
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
+
+    public static final String REQUEST_PARAM_OUTPUT_IS_FILE = "outputIsFile";
+    
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_DISPLAY = "prodLotFieldsToDisplay";
 

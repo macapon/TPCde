@@ -1893,7 +1893,10 @@ public class TblsData {
                 " SELECT #FLDS from #SCHEMA.sample_analysis_result sar " +
                 "   INNER JOIN \"em-demo-a-data\".sample_analysis sa on sa.test_id = sar.test_id "+
                 "   INNER JOIN \"em-demo-a-data\".sample s on s.sample_id = sar.sample_id "+
-                "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id; " +
+                "    left outer join #SCHEMA_CONFIG.spec_limits spcLim on sar.limit_id=spcLim.limit_id " +
+                "    left outer join #SCHEMA_PROCEDURE.program_corrective_action pca on pca.result_id=rsl.result_id " +
+                "    left outer join #SCHEMA_PROCEDURE.invest_objects io on io.object_id=rsl.result_id and io.object_type='sample_analysis_result' ;" +
+                        
                 "ALTER VIEW  #SCHEMA.#TBL  OWNER TO #OWNER;")
         ,
 
@@ -1978,8 +1981,8 @@ public class TblsData {
         /**
          *
          */
-        FLD_RAW_VALUE("raw_value", "sar.raw_value")
-        ,
+        FLD_RAW_VALUE("raw_value", "sar.raw_value"),
+        FLD_RAW_VALUE_NUM("raw_value_num", "TO_NUMBER(sar.raw_value, '9999')"),         
 
         /**
          *
@@ -2044,6 +2047,7 @@ public class TblsData {
         /**
          *
          */
+        FLD_SAMPLE_CONFIG_CODE("sample_config_code", "s.config_code"),
         FLD_SAMPLE_STATUS("sample_status", "s.status"),
         FLD_CURRENT_STAGE("current_stage", "s.current_stage"),
         FLD_PROGRAM_NAME("program_name", "s.program_name"),
@@ -2055,10 +2059,10 @@ public class TblsData {
         FLD_PROGRAM_DAY_ID("program_day_id", "s.program_day_id"),
         FLD_PROGRAM_DAY_DATE("program_day_date", "s.program_day_date"),
         FLD_TESTING_GROUP("testing_group", "sa.testing_group"),
-        
-        FLD_LIMIT_ID("limit_id", "spcLim.limit_id")        
-        ,
-
+        FLD_LOGGED_ON("logged_on", "s.logged_on"),
+        FLD_LIMIT_ID("limit_id", "spcLim.limit_id"),
+        FLD_SAMPLER("sampler", "s.sampler"),
+        FLD_SAMPLER_AREA("sampler_area", "s.sampler_area"),
         /**
          *
          */
@@ -2131,8 +2135,11 @@ public class TblsData {
         FLD_MAX_VAL_FOR_UNDETERMINED("max_undetermined", "spcLim.max_undetermined"),
         FLD_MIN_VAL_UNDETERMINED_IS_STRICT("min_undet_strict", "spcLim.min_undet_strict"),
         FLD_MAX_VAL_UNDETERMINED_IS_STRICT("max_undet_strict", "spcLim.max_undet_strict"),
-        
-        
+        FLD_HAS_PREINVEST("has_pre_invest", "CASE WHEN pca.id IS NULL THEN 'NO' ELSE 'YES' END"),
+        FLD_PREINVEST_ID("pre_invest_id", "pca.id"),
+        FLD_HAS_INVEST("has_invest", "CASE WHEN io.id IS NULL THEN 'NO' ELSE 'YES' END"),
+        FLD_INVEST_ID("invest_id", "io.invest_id"),
+        FLD_INVEST_OBJECT_ID("invest_object_id", "io.id"),
         ;
         private ViewSampleAnalysisResultWithSpecLimits(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

@@ -31,9 +31,9 @@ public class LPJson {
      * @return
      */
      static String setAlias(String value){
-        if (!value.toUpperCase().contains("AS")) return value;
+        if (!value.toUpperCase().contains(" AS")) return value;
         return 
-            value.substring(value.toUpperCase().indexOf("AS")+3);
+            value.substring(value.toUpperCase().indexOf(" AS")+4);
     }
     public static JSONObject convertArrayRowToJSONObject(String[] header, Object[] row){
         JSONObject jObj = new JSONObject();    

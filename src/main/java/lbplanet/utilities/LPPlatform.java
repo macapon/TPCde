@@ -153,9 +153,8 @@ public class LPPlatform {
      */
     public static final String SERVLETS_RESPONSE_ERROR_ATTRIBUTE_NAME="errorDetail";
     
-    /**
-     *
-     */
+    public static final String REQUEST_PARAM_FILE_PATH = "filePath";
+    public static final String REQUEST_PARAM_FILE_NAME = "fileName";
     public static final String REQUEST_PARAM_LANGUAGE = "language";
 
     /**

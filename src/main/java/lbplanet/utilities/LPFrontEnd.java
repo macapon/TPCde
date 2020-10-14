@@ -5,14 +5,22 @@
  */
 package lbplanet.utilities;
 
+import com.github.opendevl.JFlat;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import functionaljavaa.parameter.Parameter;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.servlet.RequestDispatcher;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.json.simple.JSONArray;
@@ -26,7 +34,7 @@ public class LPFrontEnd {
     public static final String ERROR_TRAPPING_TABLE_NO_RECORDS="tableWithNoRecords";
 
     public enum ResponseTags{
-        DIAGNOTIC("diagnostic"), CATEGORY("category"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
+        DIAGNOSTIC("diagnostic"), CATEGORY("category"), MESSAGE("message"), RELATED_OBJECTS("related_objects"), IS_ERROR("is_error");
         private ResponseTags(String labelName){
             this.labelName=labelName;            
         }    
@@ -121,7 +129,7 @@ public class LPFrontEnd {
      */
     public static JSONObject responseJSONDiagnosticLPFalse(Object[] lpFalseStructure){
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), lpFalseStructure[0]);
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpFalseStructure[0]);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpFalseStructure[lpFalseStructure.length-1]);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpFalseStructure[lpFalseStructure.length-1]);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
@@ -129,7 +137,7 @@ public class LPFrontEnd {
     }
     public static JSONObject responseJSONDiagnosticLPFalse(String errorCode, Object[] msgVariables){
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_FALSE);
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE);
         Object [] errorMsgEn=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "en");
         Object [] errorMsgEs=LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, msgVariables, "es");
         String errorTextEn = errorMsgEn[errorMsgEn.length-1].toString(); 
@@ -148,7 +156,7 @@ public class LPFrontEnd {
      */
     public static JSONObject responseJSONDiagnosticLPTrue(Object[] lpTrueStructure){
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), lpTrueStructure[0]);
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), lpTrueStructure[0]);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", lpTrueStructure[lpTrueStructure.length-1]);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", lpTrueStructure[lpTrueStructure.length-1]);
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), false);
@@ -172,7 +180,7 @@ public class LPFrontEnd {
             }        
         }        
         JSONObject errJsObj = new JSONObject();
-        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_TRUE);
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_TRUE);
         errJsObj.put(ResponseTags.CATEGORY.getLabelName(), apiName.toUpperCase().replace("API", ""));
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_en", errorTextEn);
@@ -204,7 +212,7 @@ public class LPFrontEnd {
             }         
         }
         errJsObj.put(ResponseTags.MESSAGE.getLabelName()+"_es", errorTextEs);
-        errJsObj.put(ResponseTags.DIAGNOTIC.getLabelName(), LPPlatform.LAB_FALSE); 
+        errJsObj.put(ResponseTags.DIAGNOSTIC.getLabelName(), LPPlatform.LAB_FALSE); 
         errJsObj.put(ResponseTags.IS_ERROR.getLabelName(), true);
         return errJsObj;
     }
@@ -306,6 +314,74 @@ public class LPFrontEnd {
         servetInvokeResponseSuccessServlet(request, response);
     }   
 
+    public static final void servletReturnSuccessFile(HttpServletRequest request, HttpServletResponse response, JSONObject jsonObj, HttpServlet srv, String filePath, String fileName){  
+        if (jsonObj==null){request.setAttribute(LPPlatform.SERVLETS_RESPONSE_SUCCESS_ATTRIBUTE_NAME,"");}
+        else{
+            try { 
+                if (filePath==null || filePath.length()==0) filePath="D:\\\\LP\\\\";
+                if (fileName==null || fileName.length()==0) fileName="mycsv.csv";
+                String fileWithPath=filePath+fileName; //"D:\\\\LP\\\\mycsv.csv";
+                String str = jsonObj.toJSONString(); //new String(Files.readAllBytes(Paths.get(fileWithPath)));
+
+                JFlat flatMe = new JFlat(str);
+
+                //directly write the JSON document to CSV
+                flatMe.json2Sheet().write2csv(fileWithPath);
+
+                //directly write the JSON document to CSV but with delimiter
+                flatMe.json2Sheet().write2csv(fileWithPath, '|');
+
+                //String fileWithPath = "E:/Test/Download/MYPIC.JPG";
+                File downloadFile = new File(fileWithPath);
+                FileInputStream inStream = new FileInputStream(downloadFile);
+
+                // if you want to use a relative path to context root:
+                String relativePath = srv.getServletContext().getRealPath("");
+                System.out.println("relativePath = " + relativePath);
+
+                // obtains ServletContext
+                ServletContext context = srv.getServletContext();
+
+                // gets MIME type of the file
+                String mimeType = context.getMimeType(fileWithPath);
+                if (mimeType == null) {        
+                    // set to binary type if MIME mapping not found
+                    mimeType = "application/octet-stream";
+                }
+                System.out.println("MIME type: " + mimeType);
+
+                // modifies response
+                response.setContentType(mimeType);
+                response.setContentLength((int) downloadFile.length());
+
+                // forces download
+                String headerKey = "Content-Disposition";
+                String headerValue = String.format("attachment; filename=\"%s\"", downloadFile.getName());
+                response.setHeader(headerKey, headerValue);
+                //response.getContext().responseComplete();
+                // obtains response's output stream
+                OutputStream outStream = response.getOutputStream();
+
+                byte[] buffer = new byte[4096];
+                int bytesRead = -1;
+
+                while ((bytesRead = inStream.read(buffer)) != -1) {
+                    outStream.write(buffer, 0, bytesRead);
+                }
+
+                inStream.close();
+                outStream.close();                  
+            } catch (FileNotFoundException ex) {
+                Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (UnsupportedEncodingException ex) {
+                Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                Logger.getLogger(LPFrontEnd.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        servetInvokeResponseSuccessServlet(request, response);
+    }   
+    
     /**
      *
      * @param request

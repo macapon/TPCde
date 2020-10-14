@@ -96,10 +96,13 @@ public class DataProgramSample{
                 fieldValue = LPArray.addValueToArray1D(fieldValue, curArea);
             }else
                 fieldValue[samplerAreaPosic] = curArea;
-
-            fieldName = LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.Sample.FLD_SAMPLE_ID_RELATED.getName());
-            fieldValue = LPArray.addValueToArray1D(fieldValue, programSampleId);           
             
+            Integer sampleIdRelatedPosic = (LPArray.valuePosicInArray(fieldName, TblsEnvMonitData.Sample.FLD_SAMPLE_ID_RELATED.getName()));
+            if (sampleIdRelatedPosic==-1){
+                fieldName = LPArray.addValueToArray1D(fieldName, TblsEnvMonitData.Sample.FLD_SAMPLE_ID_RELATED.getName());
+                fieldValue = LPArray.addValueToArray1D(fieldValue, programSampleId);           
+            }else
+                fieldValue[sampleIdRelatedPosic] = programSampleId;            
             newProjSample = ds.logSample(schemaPrefix, token, samplerSmpTemplate, programTemplateVersion, fieldName, fieldValue);
         }
         return newProjSample;        

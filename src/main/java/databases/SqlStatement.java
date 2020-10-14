@@ -5,8 +5,14 @@
  */
 package databases;
 
+import static com.sun.tools.doclint.Entity.prop;
+import functionaljavaa.parameter.Parameter;
 import lbplanet.utilities.LPArray;
 import java.util.HashMap;
+import java.util.ResourceBundle;
+import lbplanet.utilities.LPDate;
+import lbplanet.utilities.LPNulls;
+import lbplanet.utilities.LPPlatform;
 
 /**
  *
@@ -22,6 +28,36 @@ public class SqlStatement {
         public String getSqlClause(){
             return clause;
         }
+    }
+    
+    public static Object[] buildDateRangeFromStrings(String fieldName, String startStr, String endStr){
+        if ((startStr==null || startStr.length()==0) && (endStr==null || endStr.length()==0) )
+            return new Object[]{LPPlatform.LAB_TRUE};
+        startStr=LPNulls.replaceNull(startStr);
+        endStr=LPNulls.replaceNull(endStr);
+        Object[] diagn=new Object[]{LPPlatform.LAB_TRUE};
+        if (startStr.length()>0 && endStr.length()>0)
+            diagn=LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.BETWEEN.getSqlClause());
+        else if (startStr.length()>0)
+            diagn=LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
+        else if (endStr.length()>0)
+            diagn=LPArray.addValueToArray1D(diagn, fieldName+" "+WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
+        else
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotRecognized for start <*1*> and end <*2*>", new Object[]{startStr, endStr});
+        ResourceBundle prop = ResourceBundle.getBundle(Parameter.BUNDLE_TAG_PARAMETER_CONFIG_CONF);
+        String[] dateTodayTranslation = prop.getString("dateToday").split("\\|");
+        if (startStr.length()>0) 
+            if (LPArray.valueInArray(dateTodayTranslation, startStr))
+                diagn=LPArray.addValueToArray1D(diagn, LPDate.getTimeStampLocalDate());      
+            else
+                diagn=LPArray.addValueToArray1D(diagn, LPDate.StringFormatToDate(startStr));
+        if (endStr.length()>0) 
+            if (LPArray.valueInArray(dateTodayTranslation, endStr))
+                diagn=LPArray.addValueToArray1D(diagn, LPDate.getTimeStampLocalDate()); 
+            else
+                diagn=LPArray.addValueToArray1D(diagn, LPDate.StringFormatToDate(endStr));        
+            
+        return diagn;// LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "DateRange filter NotImplementedYet", null);
     }
     /**
      *
@@ -283,12 +319,12 @@ public class SqlStatement {
         String separator = fn;
         Integer fldLen=fn.length();
         if (posicNOTINClause==-1){
-            if (fldLen<posicINClause + 3) return "|";
+            if (fldLen<=posicINClause + 3) return "|";
             separator = separator.substring(posicINClause + 3, posicINClause + 4);
             separator = separator.trim();
             separator = separator.replace(" IN", "");
         }else{
-            if (fldLen<posicNOTINClause + 8) return "|";
+            if (fldLen<=posicNOTINClause + 8) return "|";
             separator = separator.substring(posicNOTINClause + 7, posicNOTINClause + 8);
             separator = separator.trim();
             separator = separator.replace(" NOT IN", "");

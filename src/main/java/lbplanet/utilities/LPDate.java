@@ -139,4 +139,17 @@ public class LPDate {
             }
         }
     }
+    
+    public static Date StringFormatToDate(String dateStr){ 
+        if (!dateStr.toUpperCase().contains("T")) dateStr=dateStr+"T00:00:00";
+        Calendar cal = Calendar.getInstance();    
+        int y=LocalDateTime.parse(dateStr).getYear();
+        int m=LocalDateTime.parse(dateStr).getMonthValue();
+        int d=LocalDateTime.parse(dateStr).getDayOfMonth();
+        cal.set(y, 
+                m-1,
+                d);
+        return cal.getTime();
+    }
+
 }

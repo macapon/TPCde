@@ -30,6 +30,7 @@ import javax.naming.InitialContext;
 import javax.naming.NamingException;
 import javax.sql.DataSource;
 import java.sql.Types;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Properties;
@@ -1200,7 +1201,7 @@ if (1==1)return;
                             clase = "class java.sql.Date";
                             prepsta.setNull(indexval, Types.DATE);
                             break;
-                        case "DATETIME":
+                        case "DATETIME": 
                             clase = "class java.time.LocalDateTime";
                             prepsta.setNull(indexval, Types.TIME_WITH_TIMEZONE);
                             break;
@@ -1239,6 +1240,10 @@ if (1==1)return;
                         break;
                     case "class java.lang.Boolean":
                         prepsta.setBoolean(indexval, (Boolean)obj);
+                        break;
+                    case "class java.time.LocalDate":
+                        prepsta.setDate(indexval, (java.sql.Date)obj);
+                         //prepsta.setTimestamp(indexval,Timestamp.valueOf((LocalDate)obj));
                         break;
                     case "class java.time.LocalDateTime":
                          prepsta.setTimestamp(indexval,Timestamp.valueOf((LocalDateTime)obj));
