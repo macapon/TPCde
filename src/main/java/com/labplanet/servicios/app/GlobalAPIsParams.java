@@ -247,6 +247,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_SAMPLE_FIELD_TO_DISPLAY = "sampleFieldsToDisplay";
     public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_NAME = "sampleWhereFieldsName"; 
     public static final String REQUEST_PARAM_SAMPLE_WHERE_FIELDS_VALUE = "sampleWhereFieldsValue";  
+    public static final String REQUEST_PARAM_INVESTIGATION_GROUPS = "investigationGroups";  
     public static final String REQUEST_PARAM_SAMPLE_GROUPS = "sampleGroups";  
     public static final String REQUEST_PARAM_INCLUDE_SAMPLES = "includeSamples";  
     public static final String REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES = "includeSamplerSamples";  
@@ -257,6 +258,12 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_READING_MAX = "readingMax";  
     public static final String REQUEST_PARAM_INCLUDE_MICROORGANISMS = "includeMicroorganisms";      
     public static final String REQUEST_PARAM_MICROORGANISMS_TO_FIND = "MicroorganismsToFind";      
+    public static final String REQUEST_PARAM_CREATION_DAY_START = "creationDayStart";  
+    public static final String REQUEST_PARAM_CREATION_DAY_END = "creationDayEnd";  
+    public static final String REQUEST_PARAM_CLOSURE_DAY_START = "closureDayStart";  
+    public static final String REQUEST_PARAM_CLOSURE_DAY_END = "closureDayEnd";  
+    public static final String REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET = "excludeNotClosedYet";  
+
     public static final String REQUEST_PARAM_SAMPLING_DAY_START = "samplingDayStart";  
     public static final String REQUEST_PARAM_SAMPLING_DAY_END = "samplingDayEnd";  
     public static final String REQUEST_PARAM_SAMPLER = "samplerName";  
@@ -269,7 +276,7 @@ public class GlobalAPIsParams extends HttpServlet {
     public static final String REQUEST_PARAM_BATCH_FIELD_TO_DISPLAY = "batchFieldsToDisplay";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_RETRIEVE = "incubatorFieldToRetrieve";
     public static final String REQUEST_PARAM_INCUBATOR_FIELD_TO_DISPLAY = "incubatorFieldsToDisplay";
-
+    public static final String REQUEST_PARAM_NAME = "name";
     public static final String REQUEST_PARAM_OUTPUT_IS_FILE = "outputIsFile";
     
     public static final String REQUEST_PARAM_PRODLOT_FIELD_TO_RETRIEVE = "prodLotFieldToRetrieve";

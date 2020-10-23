@@ -11,6 +11,7 @@ import static com.labplanet.servicios.moduleenvmonit.EnvMonitAPIParams.MANDATORY
 import databases.Rdbms;
 import databases.SqlStatement;
 import databases.TblsData;
+import databases.TblsProcedure;
 import functionaljavaa.parameter.Parameter;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -59,6 +60,8 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 12),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 14),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 15),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MIN, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 16),
@@ -66,8 +69,6 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
- 
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }),
         QUERY_SAMPLER_SAMPLING_HISTORY("QUERY_SAMPLER_SAMPLING_HISTORY", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
@@ -100,7 +101,6 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 17),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
                 }),
         KPI_PRODUCTION_LOT_SAMPLES("KPI_PRODUCTION_LOT_SAMPLES", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
@@ -118,7 +118,26 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
-                //new LPAPIArguments(EnvMonitAPIParams., LPAPIArguments.ArgumentType.STRING.toString(), false, 7)
+                }),        
+        QUERY_INVESTIGATION("QUERY_INVESTIGATION", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INVESTIGATION_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
+/*                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_SAMPLES, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_SAMPLER_SAMPLES, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 14),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 15),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MIN, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 16),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MAX, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 17),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
+*/ 
                 }),
         KPIS("KPIS", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OBJ_GROUP_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
@@ -193,15 +212,28 @@ public class EnvMonAPIStats extends HttpServlet {
             if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
             String smpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "SampleTemplate", null);  
             String samplerSmpTemplate=Parameter.getParameterBundle("config", schemaPrefix, "procedure", "samplerSampleTemplate", null);  
-
+            Boolean getSampleInfo=false;
+            Boolean getInvestigationInfo=false;
             switch (endPoint){
                 case QUERY_SAMPLING_HISTORY: 
+                    getSampleInfo=true;
+                    getInvestigationInfo=false;
+                    break;
+                case QUERY_READING_OUT_OF_RANGE:
+                    getSampleInfo=true;
+                    getInvestigationInfo=false;
+                    filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SPEC_EVAL.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()};
+                    filterFieldValue=new Object[]{"IN"};
                     break;
                 case QUERY_SAMPLER_SAMPLING_HISTORY: 
+                    getSampleInfo=true;
+                    getInvestigationInfo=false;
                     filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()};
                     filterFieldValue=new Object[]{samplerSmpTemplate};
                     break;
                 case KPI_PRODUCTION_LOT_SAMPLES: 
+                    getSampleInfo=true;
+                    getInvestigationInfo=false;
                     prodLotName=argValues[0].toString();
                     filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_PRODUCTION_LOT.getName()};
                     filterFieldValue=new Object[]{prodLotName};
@@ -227,7 +259,15 @@ public class EnvMonAPIStats extends HttpServlet {
                         jObjMainObject.put(TblsEnvMonitData.ProductionLot.TBL.getName(), jObj);
                     }
                     break; 
+                case QUERY_INVESTIGATION:
+                    getSampleInfo=false;
+                    getInvestigationInfo=true;                    
+                    //filterFieldName=new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SPEC_EVAL.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause()};
+                    //filterFieldValue=new Object[]{"IN"};                    
+                    break;
                 case KPIS: 
+                    getSampleInfo=true;                    
+                    getInvestigationInfo=false;
                     jObjMainObject=new JSONObject();
                     String[] objGroupName = LPNulls.replaceNull(argValues[0]).toString().split("\\/");
                     String[] tblCategory=argValues[1].toString().split("\\/");
@@ -241,161 +281,237 @@ public class EnvMonAPIStats extends HttpServlet {
                         fldToRetrieve, dataGrouped);
                     LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);
             }
-            String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);                    
-            String[] sampleFieldToRetrieveArr=new String[0];
-            if ((sampleFieldToRetrieve!=null) && (sampleFieldToRetrieve.length()>0))
-                if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
-                else sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
-            if (sampleFieldToRetrieve==null)
-                sampleFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
             JSONObject jObj=new JSONObject();
+            Object[][] sampleInfo=new Object[0][0];
+            if (getSampleInfo){
+                String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);                    
+                String[] sampleFieldToRetrieveArr=new String[0];
+                if ((sampleFieldToRetrieve!=null) && (sampleFieldToRetrieve.length()>0))
+                    if ("ALL".equalsIgnoreCase(sampleFieldToRetrieve)) sampleFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
+                    else sampleFieldToRetrieveArr=sampleFieldToRetrieve.split("\\|");
+                if (sampleFieldToRetrieve==null)
+                    sampleFieldToRetrieveArr=TblsData.ViewSampleAnalysisResultWithSpecLimits.getAllFieldNames();
 
-            String samplingDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START);
-            String samplingDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END);
-            Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLING_DATE.getName(), samplingDayStart, samplingDayEnd);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
-            if (buildDateRangeFromStrings.length>=2){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
-            }
-            if (buildDateRangeFromStrings.length==4)
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
+                String samplingDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START);
+                String samplingDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END);
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLING_DATE.getName(), samplingDayStart, samplingDayEnd);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (buildDateRangeFromStrings.length>=2){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
+                }
+                if (buildDateRangeFromStrings.length==4)
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
 
-            String loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
-            String loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
-            buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOGGED_ON.getName(), loginDayStart, loginDayEnd);
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
-                LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
-            if (buildDateRangeFromStrings.length>=2){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
-            }
-            if (buildDateRangeFromStrings.length==4)
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
+                String loginDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_START);
+                String loginDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_LOGIN_DAY_END);
+                buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOGGED_ON.getName(), loginDayStart, loginDayEnd);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (buildDateRangeFromStrings.length>=2){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
+                }
+                if (buildDateRangeFromStrings.length==4)
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
 
-            String includeSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-            if (includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,smpTemplate);
-            }
-            String excludeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-            if (excludeSamplerSamples!=null && excludeSamplerSamples.length()>0 && Boolean.valueOf(excludeSamplerSamples)){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
-            }
-
-            String samplerName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER);
-            if (samplerName!=null && samplerName.length()>0){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLER.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerName);
-            }
-            String samplerArea = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA);
-            if (samplerArea!=null && samplerArea.length()>0){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLER_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerArea);
-            }
-            String readingEqual = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL);
-            if (readingEqual!=null && readingEqual.length()>0){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,readingEqual);
-            }
-            String readingMin = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_MIN);
-            if (readingMin!=null && readingMin.length()>0){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,Integer.valueOf(readingMin));
-            }
-            String readingMax = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_MAX);
-            if (readingMax!=null && readingMax.length()>0){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,Integer.valueOf(readingMax));
-            }
-            String excludeReadingNotEntered = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED);
-            if (excludeReadingNotEntered!=null && excludeReadingNotEntered.length()>0 && Boolean.valueOf(excludeReadingNotEntered)){
-                filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,"");                
-            }
-            String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
-            if (includeSamplerSamples!=null && includeSamplerSamples.length()>0 && Boolean.valueOf(includeSamplerSamples)){
-                if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)))
-                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
-                filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
-            }            
-            String includeMicroOrganisms = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS);
-//            if (includeMicroOrganisms!=null && includeMicroOrganisms.length()>0 && Boolean.valueOf(includeMicroOrganisms)){
-//            }
-            String microOrganismsToFind = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND);
-            if (microOrganismsToFind!=null && microOrganismsToFind.length()>0){
-                includeMicroOrganisms=Boolean.TRUE.toString();
-                if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples))){
+                String includeSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
+                if (includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,smpTemplate);
+                }
+                String excludeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
+                if (excludeSamplerSamples!=null && excludeSamplerSamples.length()>0 && Boolean.valueOf(excludeSamplerSamples)){
                     filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
                     filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
                 }
+
+                String samplerName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER);
+                if (samplerName!=null && samplerName.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLER.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerName);
+                }
+                String samplerArea = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA);
+                if (samplerArea!=null && samplerArea.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLER_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerArea);
+                }
+                String readingEqual = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL);
+                if (readingEqual!=null && readingEqual.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,readingEqual);
+                }
+                String readingMin = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_MIN);
+                if (readingMin!=null && readingMin.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.GREATER_THAN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,Integer.valueOf(readingMin));
+                }
+                String readingMax = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_READING_MAX);
+                if (readingMax!=null && readingMax.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE_NUM.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.LESS_THAN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,Integer.valueOf(readingMax));
+                }
+                String excludeReadingNotEntered = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED);
+                if (excludeReadingNotEntered!=null && excludeReadingNotEntered.length()>0 && Boolean.valueOf(excludeReadingNotEntered)){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_RAW_VALUE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,"");                
+                }
+                String includeSamplerSamples = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES);
+                if (includeSamplerSamples!=null && includeSamplerSamples.length()>0 && Boolean.valueOf(includeSamplerSamples)){
+                    if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples)))
+                        filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
+                }            
+                String includeMicroOrganisms = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS);
+    //            if (includeMicroOrganisms!=null && includeMicroOrganisms.length()>0 && Boolean.valueOf(includeMicroOrganisms)){
+    //            }
+                String microOrganismsToFind = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND);
+                if (microOrganismsToFind!=null && microOrganismsToFind.length()>0){
+                    includeMicroOrganisms=Boolean.TRUE.toString();
+                    if (!(includeSamples!=null && includeSamples.length()>0 && Boolean.valueOf(includeSamples))){
+                        filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_CONFIG_CODE.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.NOT_IN.getSqlClause());
+                        filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
+                    }
+                }
+
+                sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                         filterFieldName, filterFieldValue,
+                         sampleFieldToRetrieveArr , new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName()+" desc"} ); 
+                jObj=new JSONObject();
+                JSONArray sampleJsonArr = new JSONArray();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
+                    jObj= noRecordsInTableMessage();                    
+                }else{                       
+                    for (Object[] curRec: sampleInfo){
+                        jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
+                        if (Boolean.valueOf(includeMicroOrganisms)){
+                            Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName())].toString());
+                            Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
+                                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()}, new Object[]{curSampleId},
+                                new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()+" desc"} ); 
+                            String microOrgList="";
+                            if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString())){
+                                for (Object[] curMicroOrg: sampleMicroOrgInfo){
+                                    if (microOrgList.length()>0)microOrgList=microOrgList+", ";
+                                    microOrgList=microOrgList+curMicroOrg[0].toString();
+                                }
+                                jObj.put(TblsEnvMonitData.SampleMicroorganism.TBL.getName(), microOrgList);
+                            }
+                            if (microOrganismsToFind!=null && microOrganismsToFind.length()>0 && microOrgList!=null && microOrgList.length()>0){                            
+                                Integer findNumber=0;
+                                for (String curMicroOrgToFind: microOrganismsToFind.split("\\|")){
+                                    if (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleMicroOrgInfo, 0), curMicroOrgToFind)) findNumber=findNumber+1;
+                                }
+                                if (findNumber==microOrganismsToFind.split("\\|").length){
+                            //    if (microOrgList.toUpperCase().contains(microOrganismsToFind.toUpperCase())){
+                                    sampleJsonArr.add(jObj);
+                                }
+                            }
+                        }else
+                            sampleJsonArr.add(jObj);
+                    }
+                }    
+
+                jObjMainObject.put("datatable", sampleJsonArr);
             }
             
-            Object[][] sampleInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
-                     filterFieldName, filterFieldValue,
-                     sampleFieldToRetrieveArr , new String[]{TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName()+" desc"} ); 
-            jObj=new JSONObject();
-            JSONArray sampleJsonArr = new JSONArray();
-            if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
-                jObj= noRecordsInTableMessage();                    
-            }else{                       
-                for (Object[] curRec: sampleInfo){
-                    jObj= LPJson.convertArrayRowToJSONObject(sampleFieldToRetrieveArr, curRec);
-                    if (Boolean.valueOf(includeMicroOrganisms)){
-                        Integer curSampleId = Integer.valueOf(curRec[LPArray.valuePosicInArray(sampleFieldToRetrieveArr, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_SAMPLE_ID.getName())].toString());
-                        Object[][] sampleMicroOrgInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsEnvMonitData.SampleMicroorganism.TBL.getName(), 
-                            new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()}, new Object[]{curSampleId},
-                            new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_MICROORG_NAME.getName()} , new String[]{TblsEnvMonitData.SampleMicroorganism.FLD_SAMPLE_ID.getName()+" desc"} ); 
-                        String microOrgList="";
-                        if (!LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleMicroOrgInfo[0][0].toString())){
-                            for (Object[] curMicroOrg: sampleMicroOrgInfo){
-                                if (microOrgList.length()>0)microOrgList=microOrgList+", ";
-                                microOrgList=microOrgList+curMicroOrg[0].toString();
-                            }
-                            jObj.put(TblsEnvMonitData.SampleMicroorganism.TBL.getName(), microOrgList);
-                        }
-                        if (microOrganismsToFind!=null && microOrganismsToFind.length()>0 && microOrgList!=null && microOrgList.length()>0){                            
-                            Integer findNumber=0;
-                            for (String curMicroOrgToFind: microOrganismsToFind.split("\\|")){
-                                if (LPArray.valueInArray(LPArray.getColumnFromArray2D(sampleMicroOrgInfo, 0), curMicroOrgToFind)) findNumber=findNumber+1;
-                            }
-                            if (findNumber==microOrganismsToFind.split("\\|").length){
-                        //    if (microOrgList.toUpperCase().contains(microOrganismsToFind.toUpperCase())){
-                                sampleJsonArr.add(jObj);
-                            }
-                        }
-                    }else
-                        sampleJsonArr.add(jObj);
+            if (getInvestigationInfo){
+                Object[][] investigationInfo=new Object[0][0];
+                String[] investigationFieldToRetrieveArr = TblsProcedure.Investigation.getAllFieldNames();
+                
+                        
+                String creationDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START);
+                String creationDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_END);
+                Object[] buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CREATED_ON.getName(), creationDayStart, creationDayEnd);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (buildDateRangeFromStrings.length>=2){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
                 }
-            }    
-            
-            jObjMainObject.put(TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), sampleJsonArr);
+                if (buildDateRangeFromStrings.length==4)
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
 
+                String closureDayStart = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_START);
+                String closureDayEnd = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_CLOSURE_DAY_END);
+                buildDateRangeFromStrings = databases.SqlStatement.buildDateRangeFromStrings(TblsProcedure.Investigation.FLD_CLOSED_ON.getName(), closureDayStart, closureDayEnd);
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(buildDateRangeFromStrings[0].toString()))
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, buildDateRangeFromStrings);
+                if (buildDateRangeFromStrings.length>=2){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, buildDateRangeFromStrings[1].toString());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[2]);
+                }
+                if (buildDateRangeFromStrings.length==4)
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,buildDateRangeFromStrings[3]);
+                
+                String excludeNotClosedYet = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_NOT_CLOSED_YET);
+                if (excludeNotClosedYet!=null && excludeNotClosedYet.length()>0 && Boolean.valueOf(excludeNotClosedYet)){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsProcedure.Investigation.FLD_CLOSED_ON.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IS_NOT_NULL.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,samplerSmpTemplate);
+                }            
+                        
+                investigationInfo = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+                         filterFieldName, filterFieldValue,
+                         investigationFieldToRetrieveArr , new String[]{TblsProcedure.Investigation.FLD_ID.getName()+" desc"} ); 
+                jObj=new JSONObject();
+                JSONArray investigationJsonArr = new JSONArray();
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(investigationInfo[0][0].toString())){
+                    jObj= noRecordsInTableMessage();                    
+                }else{                       
+                    for (Object[] curRec: investigationInfo){
+                        jObj= LPJson.convertArrayRowToJSONObject(investigationFieldToRetrieveArr, curRec);
+                            investigationJsonArr.add(jObj);
+                    }
+                }    
+                jObjMainObject.put("datatable", investigationJsonArr);
+            }
             String sampleGroups=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS);
-             if (sampleGroups!=null){
-                 String[] sampleGroupsArr=sampleGroups.split("\\|");
-                 for (String currGroup: sampleGroupsArr){
-                     JSONArray sampleGrouperJsonArr = new JSONArray();
-                     String[] groupInfo = currGroup.split("\\*");
-                     String[] smpGroupFldsArr=groupInfo[0].split(",");
-                     Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
-                             smpGroupFldsArr, filterFieldName, filterFieldValue, 
-                             null);
-                     smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
-                     jObj=new JSONObject();
-                     if (LPPlatform.LAB_FALSE.equalsIgnoreCase(sampleInfo[0][0].toString())){
-                         jObj= noRecordsInTableMessage();                    
-                     }else{                       
-                         for (Object[] curRec: groupedInfo){
-                             jObj= LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
-                             sampleGrouperJsonArr.add(jObj);
-                         }
-                     } 
-                     jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
-                 }
-             }  
+            if (sampleGroups!=null){
+                String[] sampleGroupsArr=sampleGroups.split("\\|");
+                for (String currGroup: sampleGroupsArr){
+                    JSONArray sampleGrouperJsonArr = new JSONArray();
+                    String[] groupInfo = currGroup.split("\\*");
+                    String[] smpGroupFldsArr=groupInfo[0].split(",");
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.ViewSampleAnalysisResultWithSpecLimits.TBL.getName(), 
+                            smpGroupFldsArr, filterFieldName, filterFieldValue, 
+                            null);
+                    smpGroupFldsArr=LPArray.addValueToArray1D(smpGroupFldsArr, "count");
+                    jObj=new JSONObject();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())){
+                        jObj= noRecordsInTableMessage();                    
+                    }else{                       
+                        for (Object[] curRec: groupedInfo){
+                            jObj= LPJson.convertArrayRowToJSONObject(smpGroupFldsArr, curRec);
+                            sampleGrouperJsonArr.add(jObj);
+                        }
+                    } 
+                    jObjMainObject.put(groupInfo[1], sampleGrouperJsonArr);
+                }
+            }  
+            String investigationGroups=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_INVESTIGATION_GROUPS);
+            if (investigationGroups!=null){
+                String[] investigationGroupsArr=investigationGroups.split("\\|");
+                for (String currGroup: investigationGroupsArr){
+                    JSONArray investigationGrouperJsonArr = new JSONArray();
+                    String[] groupInfo = currGroup.split("\\*");
+                    String[] invGroupFldsArr=groupInfo[0].split(",");
+                    Object[][] groupedInfo = Rdbms.getGrouper(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.Investigation.TBL.getName(), 
+                            invGroupFldsArr, filterFieldName, filterFieldValue, 
+                            null);
+                    invGroupFldsArr=LPArray.addValueToArray1D(invGroupFldsArr, "count");
+                    jObj=new JSONObject();
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(groupedInfo[0][0].toString())){
+                        jObj= noRecordsInTableMessage();                    
+                    }else{                       
+                        for (Object[] curRec: groupedInfo){
+                            jObj= LPJson.convertArrayRowToJSONObject(invGroupFldsArr, curRec);
+                            investigationGrouperJsonArr.add(jObj);
+                        }
+                    } 
+                    jObjMainObject.put(groupInfo[1], investigationGrouperJsonArr);
+                }
+            }              
             String outputIsFile = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE);
             if (!(outputIsFile!=null && outputIsFile.length()>0 && Boolean.valueOf(outputIsFile))){
                 LPFrontEnd.servletReturnSuccess(request, response, jObjMainObject);

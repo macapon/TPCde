@@ -252,23 +252,16 @@
         <servlet-name>InvestigationAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.InvestigationAPIfrontend</servlet-class>
     </servlet>
-    
-    
-<servlet>
-    <description>This servlet sends file to client</description>
-    <display-name>DownloadFileServlet</display-name>
-    <servlet-name>DownloadFileServlet</servlet-name>
-    <servlet-class>net.codejava.DownloadFileServlet</servlet-class>
-</servlet>
- 
-<servlet-mapping>
-    <servlet-name>DownloadFileServlet</servlet-name>
-    <url-pattern>/DownloadFileServlet</url-pattern>
-</servlet-mapping>      
-    
-    
-    
-    
+    <servlet>
+        <description>This servlet sends file to client</description>
+        <display-name>DownloadFileServlet</display-name>
+        <servlet-name>DownloadFileServlet</servlet-name>
+        <servlet-class>net.codejava.DownloadFileServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>DownloadFileServlet</servlet-name>
+        <url-pattern>/DownloadFileServlet</url-pattern>
+    </servlet-mapping>
     <servlet-mapping>
         <servlet-name>DBActions</servlet-name>
         <url-pattern>/testing/platform/DBActions</url-pattern>
@@ -280,6 +273,10 @@
     <!--/ testing for the Config. End    
 // testing for the Data. Begin -->
     <!--/// testing for the Data. End   -->
+    <servlet>
+        <servlet-name>SavedQueries</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.SavedQueriesAPI</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>TestingUOMConversionTable</servlet-name>
         <url-pattern>/testing/config/UOMConversionTable</url-pattern>
@@ -507,6 +504,10 @@
     <servlet-mapping>
         <servlet-name>InvestigationAPIfrontend</servlet-name>
         <url-pattern>/frontend/InvestigationAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SavedQueries</servlet-name>
+        <url-pattern>/app/SavedQueriesAPI</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
