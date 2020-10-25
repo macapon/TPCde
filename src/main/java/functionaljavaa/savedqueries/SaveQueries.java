@@ -5,11 +5,17 @@
  */
 package functionaljavaa.savedqueries;
 
+import com.labplanet.servicios.app.SavedQueriesAPIfrontend;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPPlatform;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
 
 /**
  *
@@ -32,6 +38,13 @@ enum SavedQueriesAPIErrorMessages{
 }
 
     public static Object[] newSavedQuery(Token token, String schemaPrefix, String name, String definition, String[] fldNames, Object[] fldValues){ 
+        try {
+            JSONParser parser = new JSONParser(); 
+            JSONObject json = (JSONObject) parser.parse(definition.toString());
+        } catch (ParseException ex) {
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "Definition field not recognized as Json object, error: <*1*>. Field value: <*2*>",new Object[]{ex.toString(), definition});
+        }
+        
         String[] updFieldName=new String[]{TblsData.SavedQueries.FLD_NAME.getName(), TblsData.SavedQueries.FLD_DEFINITION.getName(), TblsData.SavedQueries.FLD_OWNER.getName()};
         Object[] updFieldValue=new Object[]{name, definition, token.getPersonName()};
         

@@ -277,6 +277,10 @@
         <servlet-name>SavedQueries</servlet-name>
         <servlet-class>com.labplanet.servicios.app.SavedQueriesAPI</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>SavedQueriesAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.SavedQueriesAPIfrontend</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>TestingUOMConversionTable</servlet-name>
         <url-pattern>/testing/config/UOMConversionTable</url-pattern>
@@ -508,6 +512,10 @@
     <servlet-mapping>
         <servlet-name>SavedQueries</servlet-name>
         <url-pattern>/app/SavedQueriesAPI</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>SavedQueriesAPIfrontend</servlet-name>
+        <url-pattern>/frontend/SavedQueriesAPIfrontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>
