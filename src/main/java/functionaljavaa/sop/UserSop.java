@@ -25,70 +25,42 @@ import java.util.Arrays;
 public class UserSop {
     String classVersion = "0.1";
 
-    /**
-     *
-     */
-    public static final String SOP_ENABLE_CODE="SOP_ENABLE";
-
-    /**
-     *
-     */
-    public static final String SOP_ENABLE_CODE_ICON="xf272@FontAwesome";
-
-    /**
-     *
-     */
-    public static final String SOP_DISABLE_CODE="SOP_DISABLE";
-
-    /**
-     *
-     */
-    public static final String SOP_DISABLE_CODE_ICON="xf133@FontAwesome";
-
-    /**
-     *
-     */
-    public static final String SOP_CERTIF_EXPIRED_CODE="SOP_CERTIF_EXPIRED";
-
-    /**
-     *
-     */
-    public static final String SOP_CERTIF_EXPIRED_CODE_ICON="xf06a@FontAwesome";
-
-    /**
-     *
-     */
-    public static final String SOP_PASS_CODE="PASS";
-
-    /**
-     *
-     */
-    public static final String SOP_PASS_CODE_ICON="xf046@FontAwesome";
-
-    /**
-     *
-     */
-    public static final String SOP_PASS_LIGHT_CODE="GREEN";
-
-    /**
-     *
-     */
-    public static final String SOP_NOTPASS_CODE="NOTPASS";
-
-    /**
-     *
-     */
-    public static final String SOP_NOTPASS_CODE_ICON="xf05e@FontAwesome";
-
-    /**
-     *
-     */
-    public static final String SOP_NOT_PASS_LIGHT_CODE="RED";
-
-    private static final String ERROR_TRAPING_SOP_MARKEDASCOMPLETED_NOT_PENDING="sopMarkedAsCompletedNotPending";
-     private static final String ERROR_TRAPING_SOP_NOT_ASSIGNED_TO_THIS_USER="UserSop_SopNotAssignedToThisUser";
-
     private static final String DIAGNOSES_ERROR_CODE="ERROR";
+    
+    public enum userSopStatuses{PASS("PASS", "GREEN"), NOTPASS("NOTPASS", "RED")
+        ;
+        private userSopStatuses(String valor, String light){
+            this.code=valor;
+            this.lightCode=light;
+        }
+        public String getCode(){
+            return this.code;
+        }
+        public String getLightCode(){
+            return this.lightCode;
+        }
+        private final String code;
+        private final String lightCode;
+    }
+    
+    public enum userSopErrorTrapping{ 
+        MARKEDASCOMPLETED_NOT_PENDING("sopMarkedAsCompletedNotPending", "", ""),
+        NOT_ASSIGNED_TO_THIS_USER("UserSop_SopNotAssignedToThisUser", "", ""),
+        USER_WITHNOROLE_FORGIVENSCHEMA("UserSop_UserWithNoRolesForThisGivenSchema", "", "")
+        ;
+        private userSopErrorTrapping(String errCode, String defaultTextEn, String defaultTextEs){
+            this.errorCode=errCode;
+            this.defaultTextWhenNotInPropertiesFileEn=defaultTextEn;
+            this.defaultTextWhenNotInPropertiesFileEs=defaultTextEs;
+        }
+        public String getErrorCode(){return this.errorCode;}
+        public String getDefaultTextEn(){return this.defaultTextWhenNotInPropertiesFileEn;}
+        public String getDefaultTextEs(){return this.defaultTextWhenNotInPropertiesFileEs;}
+    
+        private final String errorCode;
+        private final String defaultTextWhenNotInPropertiesFileEn;
+        private final String defaultTextWhenNotInPropertiesFileEs;
+    }
     
     /**
      *
@@ -109,7 +81,7 @@ public class UserSop {
         Object[] filterFieldValue =new Object[]{sopName, userName};        
         Object[][] getUserProfileFieldValues = getUserProfileFieldValues(filterFieldName, filterFieldValue, fieldsToReturn, new String[]{schemaPrefix});   
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_SOP_NOT_ASSIGNED_TO_THIS_USER, new Object[]{sopName, userName, schemaPrefix});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopName, userName, schemaPrefix});
             return LPArray.array1dTo2d(diagnoses, diagnoses.length);
         }        
         return getUserProfileFieldValues;
@@ -150,8 +122,7 @@ public class UserSop {
             if (us.equalsIgnoreCase(schemaPrefixName)){schemaIsCorrect=true;break;}            
         }
         if (!schemaIsCorrect){
-            String errorCode = "UserSop_UserWithNoRolesForThisGivenSchema";
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, errorCode, new Object[]{userInfoId, schemaPrefixName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.USER_WITHNOROLE_FORGIVENSCHEMA.getErrorCode(), new Object[]{userInfoId, schemaPrefixName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_ERROR"));
             return diagnoses;
@@ -178,21 +149,21 @@ public class UserSop {
             return diagnoses;
         }
         if (getUserProfileFieldValues.length<=0){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_SOP_NOT_ASSIGNED_TO_THIS_USER, new Object[]{sopIdFieldValue, userInfoId, schemaPrefixName});
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), new Object[]{sopIdFieldValue, userInfoId, schemaPrefixName});
             diagnoses = LPArray.addValueToArray1D(diagnoses, DIAGNOSES_ERROR_CODE);
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_NotAssigned"));
             return diagnoses;
         }
-        if (getUserProfileFieldValues[0][3].toString().contains(SOP_PASS_LIGHT_CODE)){
-            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, ERROR_TRAPING_SOP_NOT_ASSIGNED_TO_THIS_USER, 
+        if (getUserProfileFieldValues[0][3].toString().contains(userSopStatuses.PASS.getLightCode())){
+            Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_TRUE, userSopErrorTrapping.NOT_ASSIGNED_TO_THIS_USER.getErrorCode(), 
                     new Object[]{userInfoId, sopIdFieldValue, schemaPrefixName, "current status is "+getUserProfileFieldValues[0][2].toString()+" and the light is "+getUserProfileFieldValues[0][3].toString()});
-            diagnoses = LPArray.addValueToArray1D(diagnoses, SOP_PASS_CODE);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.PASS.getCode());
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_Certified"));
             return diagnoses;
         }
         else{
             Object[] diagnoses = LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "UserSop_UserNotCertifiedForSop", new Object[]{userInfoId, sopIdFieldValue, schemaPrefixName});
-            diagnoses = LPArray.addValueToArray1D(diagnoses, SOP_NOTPASS_CODE);
+            diagnoses = LPArray.addValueToArray1D(diagnoses, userSopStatuses.NOTPASS.getCode());
             diagnoses = LPArray.addValueToArray1D(diagnoses, Parameter.getParameterBundle(schemaConfigName, "userSopCertificationLevelImage_NotCertified"));
             return diagnoses;
         }               
@@ -226,7 +197,7 @@ public class UserSop {
         filterFieldName[0]=TblsData.UserSop.FLD_USER_ID.getName();
         filterFieldValue[0]=userInfoId;
         filterFieldName[1]=TblsData.UserSop.FLD_LIGHT.getName();
-        filterFieldValue[1]=SOP_NOT_PASS_LIGHT_CODE;
+        filterFieldValue[1]=userSopStatuses.NOTPASS.getLightCode();
         if (fieldsToRetrieve!=null){            
             for (String fv: fieldsToRetrieve){
                 fieldsToReturn = LPArray.addValueToArray1D(fieldsToReturn, fv);
@@ -370,6 +341,9 @@ public class UserSop {
         String userSopInitialStatus = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialStatus");
         String userSopInitialLight = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+LPPlatform.CONFIG_PROC_FILE_NAME, "userSopInitialLight");
         
+        if (userSopInitialStatus.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getCode();
+        if (userSopInitialLight.length()==0) userSopInitialStatus=userSopStatuses.NOTPASS.getLightCode();
+        
         String[] insertFieldNames=new String[]{TblsData.UserSop.FLD_USER_ID.getName(), sopIdFieldName, TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()};
         Object[] insertFieldValues=new Object[]{personName, sopIdFieldValue, userSopInitialStatus, userSopInitialLight};
         if ( (TblsCnfg.SopMetaData.FLD_SOP_NAME.getName().equalsIgnoreCase(sopIdFieldName)) && (!LPArray.valueInArray(insertFieldNames, TblsCnfg.SopMetaData.FLD_SOP_NAME.getName())) ){
@@ -415,11 +389,11 @@ public class UserSop {
         String schemaName = LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA);
         Object[][] sopInfo = getUserSop(schemaPrefix, userName, sopName);
         if(LPPlatform.LAB_FALSE.equalsIgnoreCase(sopInfo[0][0].toString())){return LPArray.array2dTo1d(sopInfo);}
-        if (SOP_PASS_LIGHT_CODE.equalsIgnoreCase(sopInfo[0][3].toString())){
-            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, ERROR_TRAPING_SOP_MARKEDASCOMPLETED_NOT_PENDING, new Object[]{sopName, schemaPrefix});
+        if (userSopStatuses.PASS.getLightCode().equalsIgnoreCase(sopInfo[0][3].toString())){
+            return LPPlatform.trapMessage(LPPlatform.LAB_FALSE, userSopErrorTrapping.MARKEDASCOMPLETED_NOT_PENDING.getErrorCode(), new Object[]{sopName, schemaPrefix});
         }
         Object[] userSopDiagnostic=Rdbms.updateRecordFieldsByFilter(schemaName, TblsData.UserSop.TBL.getName(), 
-                new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}, new Object[]{true, SOP_PASS_CODE, SOP_PASS_LIGHT_CODE},
+                new String[]{TblsData.UserSop.FLD_READ_COMPLETED.getName(), TblsData.UserSop.FLD_STATUS.getName(), TblsData.UserSop.FLD_LIGHT.getName()}, new Object[]{true, userSopStatuses.PASS.getCode(), userSopStatuses.PASS.getLightCode()},
                 new String[]{TblsData.UserSop.FLD_SOP_NAME.getName(), TblsData.UserSop.FLD_USER_NAME.getName()}, new Object[]{sopName, userName} );
         if (LPPlatform.LAB_TRUE.equalsIgnoreCase(userSopDiagnostic[0].toString())){
             userSopDiagnostic[userSopDiagnostic.length-1]="Sop assigned";

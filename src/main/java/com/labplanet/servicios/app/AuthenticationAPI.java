@@ -236,6 +236,41 @@ public class AuthenticationAPI extends HttpServlet {
                     rObj.killInstance();
                     LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
                     return;      
+                case USER_CHANGE_PSWD_SEND_MAIL:     
+//                    lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+//                        null, null, new String[]{"d:/FE Refactoring LP.xlsx", "D:/LP-Documentacion/hexagon-white-blue-light.jpg"});
+lbplanet.utilities.LPMailing.sendMailViaSSL("prueba SSL", "SSL esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
+        null, null, new String[]{"d:/FE Refactoring LP.xlsx"});
+                    
+                    return;
+                case USER_CHANGE_PSWD_BY_MAIL:     
+                    finalToken = argValues[0].toString();
+                    newPassword = argValues[1].toString();
+                    userToCheck = argValues[2].toString();
+                    passwordToCheck = argValues[3].toString();
+                    token = new Token(finalToken);
+                    newPwDiagn=setUserNewPassword(token.getUserName(), newPassword);
+                    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(newPwDiagn[0].toString()))
+                        LPFrontEnd.servletReturnResponseError(request, response, AuthenticationAPIParams.ERROR_API_ERRORTRAPING_PROPERTY_USER_NEW_PSSWD_NOT_SET, new Object[]{token.getUserName()}, language);              
+                    appStartedDate=null;
+                    if (token.getAppSessionStartedDate()!=null) appStartedDate=token.getAppSessionStartedDate().toString();
+                    newToken= new Token("");
+                    myNewToken=newToken.createToken(token.getUserName(), 
+                            newPassword, 
+                            token.getPersonName(), 
+                            token.getUserRole(), 
+                            token.getAppSessionId(), 
+                            appStartedDate, 
+                            token.geteSign());
+                    Rdbms.closeRdbms();  
+                    rObj=RelatedObjects.getInstance();
+                    rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Users.TBL.getName(), TblsApp.Users.TBL.getName(), token.getUserName());
+                    jsonObj = new JSONObject();
+                    jsonObj = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[0], rObj.getRelatedObject());                
+                    jsonObj.put(AuthenticationAPIParams.RESPONSE_JSON_TAG_FINAL_TOKEN, myNewToken);
+                    rObj.killInstance();
+                    LPFrontEnd.servletReturnSuccess(request, response, jsonObj);
+                    return;      
                 case USER_CHANGE_ESIGN:     
                     finalToken = argValues[0].toString();
                     String newEsign = argValues[1].toString();

@@ -6,6 +6,7 @@
 package com.labplanet.servicios.moduleenvmonit;
 
 import databases.Token;
+import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import java.util.HashMap;
 import java.util.logging.Level;
@@ -25,7 +26,7 @@ public class ClassEnvMonSampleController {
     private JSONArray functionRelatedObjects=new JSONArray();
     private Boolean functionFound=false;
     
-    public ClassEnvMonSampleController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs) {
+    public ClassEnvMonSampleController(HttpServletRequest request, Token token, String schemaPrefix, String actionName, Object[][] testingContent, Integer iLines, Integer table1NumArgs, AuditAndUserValidation auditAndUsrValid) {
         
         Object[] argsForLogFiles=new Object[0];
         EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint = null;
@@ -39,7 +40,7 @@ public class ClassEnvMonSampleController {
             }
             this.functionFound=true;
             this.rowArgsRows=this.rowArgsRows.append(LPTestingOutFormat.rowAddFields(argsForLogFiles));
-            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
+            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint, auditAndUsrValid);
             this.functionDiagn=clss.getDiagnostic();
             this.functionRelatedObjects=clss.getRelatedObj().getRelatedObject();  
         } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);

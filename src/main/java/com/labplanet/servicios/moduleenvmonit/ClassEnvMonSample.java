@@ -9,6 +9,7 @@ import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
+import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
@@ -65,7 +66,7 @@ public class ClassEnvMonSample {
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     
-    public ClassEnvMonSample(HttpServletRequest request, Token token, String schemaPrefix, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
+    public ClassEnvMonSample(HttpServletRequest request, Token token, String schemaPrefix, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint, AuditAndUserValidation auditAndUsrValid){
         Object[] dynamicDataObjects=new Object[]{};        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         RelatedObjects rObj=RelatedObjects.getInstance();
@@ -137,7 +138,7 @@ public class ClassEnvMonSample {
                         if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
                     }
                     actionDiagnoses=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion
-                            , sampleId, positionRow, positionCol, positionOverride);
+                            , sampleId, positionRow, positionCol, positionOverride, auditAndUsrValid);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
@@ -159,7 +160,7 @@ public class ClassEnvMonSample {
                         String positionOverrideStr=argValues[6].toString();
                         if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
                     }                   
-                    actionDiagnoses=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, positionRow, positionCol, positionOverride);
+                    actionDiagnoses=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, positionRow, positionCol, positionOverride, auditAndUsrValid);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
@@ -171,7 +172,7 @@ public class ClassEnvMonSample {
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     sampleId = (Integer) argValues[3];
-                    actionDiagnoses=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId);
+                    actionDiagnoses=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, auditAndUsrValid);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};

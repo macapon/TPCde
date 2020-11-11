@@ -29,12 +29,12 @@ public class IncubBatchAudit {
  * @param action String - Action being performed
  * @param tableName String - table where the action was performed into the Sample structure
      * @param batchName given batch
-     * @param tableId table in batch structure
      * @param auditlog audit event log
      * @param parentAuditId when sub-record then the parent audit id
      * @return  
  */    
-    public static Object[] incubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId) {
+    public static Object[] incubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId,
+            AuditAndUserValidation auditAndUsrValid) {
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
@@ -57,19 +57,6 @@ public class IncubBatchAudit {
         fieldValues = LPArray.addValueToArray1D(fieldValues, tableName);
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_TABLE_ID.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, batchName);
-/*        if (sampleId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_SAMPLE_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, sampleId);
-        }    
-        if (testId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_TEST_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, testId);
-        }    
-        if (resultId!=null){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_RESULT_ID.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, resultId);
-        }    
-*/        
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_FIELDS_UPDATED.getName());
         fieldValues = LPArray.addValueToArray1D(fieldValues, Arrays.toString(auditlog));
         fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_USER_ROLE.getName());
@@ -80,7 +67,6 @@ public class IncubBatchAudit {
         if (token.getAppSessionId()!=null){
             Object[] appSession = LPSession.addProcessSession( LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), Integer.valueOf(token.getAppSessionId()), new String[]{TblsApp.AppSession.FLD_DATE_STARTED.getName()});
        
-    //        Object[] appSession = labSession.getAppSession(appSessionId, new String[]{"date_started"});
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(appSession[0].toString())){
                 return appSession;
             }else{
@@ -95,18 +81,12 @@ public class IncubBatchAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
+        if (parentAuditId!=null){
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_REASON.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
+        }    
         
-/*        String jsonString = null;
-        jsonString = sampleJsonString(schemaPrefix+"-data", sampleId);
-        if ((jsonString!=null)){
-        //if (!jsonString.isEmpty()){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
-            fieldValues = LPArray.addValueToArray1D(fieldValues, jsonString);            
-        }
-*/        
-//        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
-//        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-
+        
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsEnvMonitDataAudit.IncubBatch.TBL.getName(), 
                 fieldNames, fieldValues);
     }    

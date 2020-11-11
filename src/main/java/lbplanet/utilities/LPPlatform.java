@@ -111,7 +111,7 @@ public class LPPlatform {
     /**
      *
      */
-    public static final String API_ERRORTRAPING_MANDATORY_PARAMS_MISSING="missingManatoryParametersInRequest";
+    public static final String API_ERRORTRAPING_MANDATORY_PARAMS_MISSING="MissingMandatoryParametersInRequest";
 
     /**
      *
@@ -306,7 +306,7 @@ public class LPPlatform {
             errorCode = "verifyUserRequired_enabled";
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);               
+            return trapMessage(LAB_TRUE+auditReasonType(schemaPrefix, actionName), errorCode, errorDetailVariables);               
         }    
     }    
 
@@ -342,11 +342,19 @@ public class LPPlatform {
             return trapMessage(LAB_FALSE, errorCode, errorDetailVariables);            
         }else{
             errorCode = "eSignRequired_enabled";
+            
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, schemaPrefix);
             errorDetailVariables = LPArray.addValueToArray1D(errorDetailVariables, actionName);
-            return trapMessage(LAB_TRUE, errorCode, errorDetailVariables);               
+            return trapMessage(LAB_TRUE+auditReasonType(schemaPrefix, actionName), errorCode, errorDetailVariables);               
         }    
     }    
+    private static String auditReasonType(String schemaPrefix, String actionName){
+        String auditReasonType = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhase");        
+        if (auditReasonType.length()==0)return "TEXT";
+        if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("DISABLE"))return "";
+        if (auditReasonType.length()>0 && auditReasonType.equalsIgnoreCase("NO"))return "";
+        return auditReasonType;
+    }
     /**
      *
      * @param schemaName

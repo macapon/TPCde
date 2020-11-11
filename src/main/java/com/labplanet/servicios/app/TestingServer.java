@@ -79,20 +79,24 @@ public class TestingServer extends HttpServlet {
             out.println("<h1>Servlet testingServer at " + request.getContextPath() + "</h1>");
             out.println("</body>");
             out.println("</html>");
-        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+//        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
+//        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
             Object[][] lblContent = new Object[][]{{"TEXT", "Ejemplo", 1, 1, 14}, {"BARCODE39", "123", 1, 1, 14, 1, 1}};
             ZPL.zplLabel("", 5, lblContent);            
-Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable("proc-deploy", "procedure", DataSampleRevisionTestingGroup.TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());            
+//Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable("proc-deploy", "procedure", DataSampleRevisionTestingGroup.TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());            
         //String tblCreateScript2=TblsData.SampleRevisionTestingGroup.createTableScript("proc-deploy", new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
-EndPointsToRequirements.EndpointDefinition();
+//EndPointsToRequirements.EndpointDefinition();
 //        String tblCreateScript2=TblsCnfgAudit.Spec.createTableScript("proc-deploy", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
 //        String tblCreateScript2=TblsCnfg.zzzDbErrorLog.createTableScript("config", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+
+        String tblCreateScript2=TblsApp.VideoTutorial.createTableScript(new String[]{""});
+        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+
 if  (1==1)      return;
 
         
@@ -413,15 +417,15 @@ String holidaysCalendar="España Comunidad X 2019";
     //out.println("batchAddSample"+Arrays.toString(diagn));
     //diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 102, 5, 5, false);
     //out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 101);
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 101, null);
     out.println("batchRemoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 101, 5, 5, false);
+    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 101, 5, 5, false, null);
     out.println("batchMoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 103, 3, 3, true);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 103, 3, 3, true, null);
     out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 104, 2, 3, true);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 104, 2, 3, true, null);
     out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 104, 3, 3, true);
+    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 104, 3, 3, true, null);
     out.println("batchMoveSample"+Arrays.toString(diagn));
 
 //Structured Batches. End

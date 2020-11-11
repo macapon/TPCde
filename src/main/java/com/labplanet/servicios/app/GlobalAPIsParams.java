@@ -104,7 +104,8 @@ public class GlobalAPIsParams extends HttpServlet {
      *
      */
     public static final String REQUEST_PARAM_ESIGN_TO_CHECK = "esignPhraseToCheck"; 
-
+    public static final String REQUEST_PARAM_AUDIT_REASON_PHRASE = "auditReasonPhrase"; 
+    
     /**
      *
      */

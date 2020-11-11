@@ -12,6 +12,7 @@ import lbplanet.utilities.LPPlatform;
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Rdbms;
 import databases.Token;
+import functionaljavaa.audit.AuditAndUserValidation;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -224,23 +225,13 @@ public class EnvMonAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
                 return;                             
         }
-        mandatoryParams = null;                        
-
-        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
-        }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
-        }        
         
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
-
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}        
+        AuditAndUserValidation auditAndUsrValid=new AuditAndUserValidation(request, response, language);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+            return;          
+        }             
+        
         if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}
       
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
@@ -272,7 +263,7 @@ public class EnvMonAPI extends HttpServlet {
                 return ;                           
             }                        
 
-            ClassEnvMon clss=new ClassEnvMon(request, token, schemaPrefix, endPoint);
+            ClassEnvMon clss=new ClassEnvMon(request, token, schemaPrefix, endPoint, auditAndUsrValid);
             Object[] diagnostic=clss.getDiagnostic();
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  
 /*                Rdbms.rollbackWithSavePoint();
@@ -301,6 +292,7 @@ public class EnvMonAPI extends HttpServlet {
             // release database resources
             try {
                 //con.close();
+                auditAndUsrValid=null;
                 Rdbms.closeRdbms();   
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }

@@ -1465,7 +1465,7 @@ public class TblsData {
         /**
          *
          */
-        FLD_ASSIGNED_BY("assigned_by", LPDatabase.stringNotNull())
+        FLD_ASSIGNED_BY("assigned_by", LPDatabase.string())
         ,
 
         /**

@@ -38,6 +38,8 @@ public class SpecFrontEndUtilities {
             new String[]{TblsCnfg.Spec.FLD_CODE.getName(), TblsCnfg.Spec.FLD_CONFIG_VERSION.getName()}, 
             new Object[]{code, configVersion}, 
             fieldsName, sortFields);
+    if (LPPlatform.LAB_FALSE.equalsIgnoreCase(records[0][0].toString()))
+        return new JSONObject();
     JSONObject jObj=LPJson.convertArrayRowToJSONObject(fieldsName, records[0]);
     Integer posicInArr=LPArray.valuePosicInArray(fieldsName, TblsCnfg.Spec.FLD_ANALYSES.getName());
     if (posicInArr>-1){

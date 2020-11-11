@@ -10,6 +10,7 @@ import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import databases.Rdbms;
 import databases.Token;
+import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
@@ -85,11 +86,17 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
                 
+                AuditAndUserValidation auditAndUsrValid=new AuditAndUserValidation(request, response, "en");
+                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
+                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+                    return;          
+                }                  
+                
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
-                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs);
+                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, auditAndUsrValid);
                 if (clssEnvMonSampleController.getFunctionFound()){
                     functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();

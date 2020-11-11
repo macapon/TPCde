@@ -158,7 +158,9 @@ public class TblsEnvMonitDataAudit {
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
+        FLD_REASON("reason", LPDatabase.string())
+        
         ;
         private IncubBatch(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

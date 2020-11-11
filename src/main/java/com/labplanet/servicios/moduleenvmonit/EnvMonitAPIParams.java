@@ -22,6 +22,7 @@ public class EnvMonitAPIParams extends HttpServlet {
     public static final String SERVLET_API_URL="/frontend/SampleAPIfrontEnd";  
     public static final String SERVLET_FRONTEND_URL="/frontend/SampleAPIfrontEnd";
     
+    public static final String REQUEST_PARAM_AREA = "area";
     public static final String REQUEST_PARAM_INCUBATOR_NAME = "incubatorName";
     public static final String REQUEST_PARAM_BATCH_NAME = "batchName";
     public static final String REQUEST_PARAM_LOT_NAME = "lotName";

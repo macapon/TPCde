@@ -15,6 +15,7 @@ import com.labplanet.servicios.modulesample.SampleAPI;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.Token;
+import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.audit.SampleAudit;
 import static functionaljavaa.audit.SampleAudit.sampleAuditRevisionPassByAction;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
@@ -185,16 +186,14 @@ public class EnvMonSampleAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_INVALID_TOKEN, null, language);              
                 return;                             
         }
-        mandatoryParams = null;                        
-        Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
-        }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
-        }  
+        mandatoryParams = null; 
+        
+        AuditAndUserValidation auditAndUsrValid=new AuditAndUserValidation(request, response, language);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+            return;          
+        }             
+        
         String sampleIdStr=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_ID);
         Integer sampleId=0;
         if (sampleIdStr!=null && sampleIdStr.length()>0) sampleId=Integer.valueOf(sampleIdStr);
@@ -221,13 +220,6 @@ public class EnvMonSampleAPI extends HttpServlet {
                return;                   
             }     
         }
-        
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
-
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}        
-      
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
  /*       if (con==null){
              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
@@ -294,7 +286,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }                            
-            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
+            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint, auditAndUsrValid);
             if (clss.getEndpointExists()){
                 Object[] diagnostic=clss.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  

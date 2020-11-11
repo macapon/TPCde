@@ -54,6 +54,8 @@ public class EnvMonAPIStats extends HttpServlet {
         QUERY_SAMPLING_HISTORY("QUERY_SAMPLING_HISTORY", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_SAMPLES, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 10),
@@ -74,41 +76,10 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
                 new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 12),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 14),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MIN, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 15),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MAX, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 16),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 17),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 18),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
-                }),        
-        QUERY_READING_OUT_OF_RANGE("QUERY_READING_OUT_OF_RANGE", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 12),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 13),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 14),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MIN, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 15),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MAX, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 16),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 17),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 18),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
-                }),
-        KPI_PRODUCTION_LOT_SAMPLES("KPI_PRODUCTION_LOT_SAMPLES", new LPAPIArguments[]{
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
-                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
-                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
-                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 11),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 12),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 14),
@@ -118,6 +89,43 @@ public class EnvMonAPIStats extends HttpServlet {
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
+                }),        
+        QUERY_READING_OUT_OF_RANGE("QUERY_READING_OUT_OF_RANGE", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLER_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 12),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 14),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 15),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MIN, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 16),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MAX, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 17),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 18),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 19),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
+                }),
+        KPI_PRODUCTION_LOT_SAMPLES("KPI_PRODUCTION_LOT_SAMPLES", new LPAPIArguments[]{
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_LOT_NAME, LPAPIArguments.ArgumentType.STRING.toString(), true, 6),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROGRAM_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 7),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_AREA, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME, LPAPIArguments.ArgumentType.STRING.toString(), false, 8),
+                new LPAPIArguments(EnvMonitAPIParams.REQUEST_PARAM_PROD_LOT_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 9),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRING.toString(), false, 10),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_GROUPS, LPAPIArguments.ArgumentType.STRING.toString(), false, 11),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_SAMPLER_SAMPLES, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 12),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 13),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SAMPLING_DAY_END, LPAPIArguments.ArgumentType.STRING.toString(), false, 14),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_EXCLUDE_READING_NOT_ENTERED, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 15),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_EQUAL, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 16),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MIN, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 17),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_READING_MAX, LPAPIArguments.ArgumentType.INTEGER.toString(), false, 18),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_INCLUDE_MICROORGANISMS, LPAPIArguments.ArgumentType.BOOLEAN.toString(), false, 19),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_MICROORGANISMS_TO_FIND, LPAPIArguments.ArgumentType.STRING.toString(), false, 20),
+                new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_OUTPUT_IS_FILE, LPAPIArguments.ArgumentType.STRING.toString(), false, 21),
                 }),        
         QUERY_INVESTIGATION("QUERY_INVESTIGATION", new LPAPIArguments[]{
                 new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_CREATION_DAY_START, LPAPIArguments.ArgumentType.STRING.toString(), false, 6),
@@ -284,6 +292,16 @@ public class EnvMonAPIStats extends HttpServlet {
             JSONObject jObj=new JSONObject();
             Object[][] sampleInfo=new Object[0][0];
             if (getSampleInfo){
+                String areaName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_AREA);
+                if (areaName!=null && areaName.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_AREA.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,areaName);
+                }
+                String locName = request.getParameter(EnvMonitAPIParams.REQUEST_PARAM_LOCATION_NAME);
+                if (locName!=null && locName.length()>0){
+                    filterFieldName=LPArray.addValueToArray1D(filterFieldName, TblsData.ViewSampleAnalysisResultWithSpecLimits.FLD_LOCATION_NAME.getName()+" "+SqlStatement.WHERECLAUSE_TYPES.IN.getSqlClause());
+                    filterFieldValue=LPArray.addValueToArray1D(filterFieldValue,locName);
+                }
                 String sampleFieldToRetrieve = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SAMPLE_FIELD_TO_RETRIEVE);                    
                 String[] sampleFieldToRetrieveArr=new String[0];
                 if ((sampleFieldToRetrieve!=null) && (sampleFieldToRetrieve.length()>0))

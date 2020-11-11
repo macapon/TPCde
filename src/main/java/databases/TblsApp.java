@@ -572,4 +572,90 @@ public class TblsApp {
         private final String dbObjTypePostgres;                     
     }    
     
+    public enum VideoTutorial{
+        /**
+         *
+         */
+        FLD_ID("id", "bigint NOT NULL DEFAULT nextval(' #SCHEMA.#TBL_#FLD_ID_seq'::regclass)"),
+        TBL("video_tutorial", LPDatabase.createSequence(FLD_ID.getName())
+                + "ALTER SEQUENCE #SCHEMA.#TBL_#FLD_ID_seq OWNER TO #OWNER;"
+                +  LPDatabase.createTable() + " (#FLDS ,  CONSTRAINT #TBL_pkey PRIMARY KEY (#FLD_ID) ) "
+                + LPDatabase.POSTGRESQL_OIDS+" "+LPDatabase.createTableSpace() + "ALTER TABLE #SCHEMA.#TBL" + LPDatabase.POSTGRESQL_TABLE_OWNERSHIP+";")    
+        ,
+        FLD_DATE_CREATION("date_creation", LPDatabase.dateTime()),
+        FLD_SOURCE("source", LPDatabase.string()),
+        FLD_ACTIVE("active", LPDatabase.booleanFld()),
+        FLD_INDEX_LEVEL("index_level", LPDatabase.string()),                
+        FLD_ORDER_NUMBER("order_number", LPDatabase.integer()),
+        FLD_PARENT_ID("parent_id", LPDatabase.integer()),
+        FLD_LABEL_EN("label_en", LPDatabase.string()),
+        FLD_LABEL_ES("label_es", LPDatabase.string()),
+        FLD_SUMMARY_EN("summary_en", LPDatabase.string()),
+        FLD_SUMMARY_ES("summary_es", LPDatabase.string()),
+        FLD_ENTITY_TYPE("entity_type", LPDatabase.string()),
+        FLD_ENTITY_NAME("entity_name", LPDatabase.string()),
+        ;
+        private VideoTutorial(String dbObjName, String dbObjType){
+            this.dbObjName=dbObjName;
+            this.dbObjTypePostgres=dbObjType;
+        }
+
+        /**
+         *
+         * @return
+         */
+        public String getName(){
+            return this.dbObjName;
+        }
+        private String[] getDbFieldDefinitionPostgres(){
+            return new String[]{this.dbObjName, this.dbObjTypePostgres};
+        }
+
+        /**
+         *
+         * @param fields
+         * @return
+         */
+        public static String createTableScript(String[] fields){
+            return createTableScriptPostgres(fields);
+        }
+        private static String createTableScriptPostgres(String[] fields){
+            StringBuilder tblCreateScript=new StringBuilder(0);
+            String[] tblObj = VideoTutorial.TBL.getDbFieldDefinitionPostgres();
+            tblCreateScript.append(tblObj[1]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, SCHEMATAG, LPPlatform.SCHEMA_APP);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLETAG, tblObj[0]);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, OWNERTAG, DbObjects.POSTGRES_DB_OWNER);
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, TABLESPACETAG, DbObjects.POSTGRES_DB_TABLESPACE);            
+            StringBuilder fieldsScript=new StringBuilder(0);
+            for (VideoTutorial obj: VideoTutorial.values()){
+                String[] currField = obj.getDbFieldDefinitionPostgres();
+                String objName = obj.name();
+                if ( (!"TBL".equalsIgnoreCase(objName)) && (fields!=null && (fields[0].length()==0 || (fields[0].length()>0 && LPArray.valueInArray(fields, currField[0]))) ) ){
+                        if (fieldsScript.length()>0)fieldsScript.append(", ");
+                        StringBuilder currFieldDefBuilder = new StringBuilder(currField[1]);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, SCHEMATAG, LPPlatform.SCHEMA_APP);
+                        currFieldDefBuilder=LPPlatform.replaceStringBuilderByStringAllReferences(currFieldDefBuilder, TABLETAG, tblObj[0]);                        
+                        fieldsScript.append(currField[0]).append(" ").append(currFieldDefBuilder);
+                        tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, "#"+obj.name(), currField[0]);
+                }
+            }
+            tblCreateScript=LPPlatform.replaceStringBuilderByStringAllReferences(tblCreateScript, FIELDSTAG, fieldsScript.toString());
+            return tblCreateScript.toString();
+        }             
+        
+        public static String[] getAllFieldNames(){
+            String[] tableFields=new String[0];
+            for (VideoTutorial obj: VideoTutorial.values()){
+                String objName = obj.name();
+                if (!"TBL".equalsIgnoreCase(objName)){
+                    tableFields=LPArray.addValueToArray1D(tableFields, obj.getName());
+                }
+            }           
+            return tableFields;
+        }             
+        
+        private final String dbObjName;             
+        private final String dbObjTypePostgres;                     
+    }    
 }
