@@ -188,7 +188,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         }
         mandatoryParams = null; 
         
-        AuditAndUserValidation auditAndUsrValid=new AuditAndUserValidation(request, response, language);
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
             return;          
@@ -333,7 +333,8 @@ public class EnvMonSampleAPI extends HttpServlet {
                 Logger.getLogger(sampleAPI.class.getName()).log(Level.SEVERE, null, ex);
             }
 */            
-            Rdbms.closeRdbms();                   
+            Rdbms.closeRdbms();  
+            auditAndUsrValid.killInstance();
             errObject = new String[]{e.getMessage()};
             Object[] errMsg = LPFrontEnd.responseError(errObject, language, null);
             response.sendError((int) errMsg[0], (String) errMsg[1]);           
@@ -341,7 +342,8 @@ public class EnvMonSampleAPI extends HttpServlet {
             // release database resources
             try {
 //                con.close();
-                Rdbms.closeRdbms();   
+                Rdbms.closeRdbms();  
+                auditAndUsrValid.killInstance();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                

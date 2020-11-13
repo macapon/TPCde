@@ -138,7 +138,7 @@ public class ClassEnvMonSample {
                         if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
                     }
                     actionDiagnoses=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion
-                            , sampleId, positionRow, positionCol, positionOverride, auditAndUsrValid);
+                            , sampleId, positionRow, positionCol, positionOverride);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
@@ -160,7 +160,7 @@ public class ClassEnvMonSample {
                         String positionOverrideStr=argValues[6].toString();
                         if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
                     }                   
-                    actionDiagnoses=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, positionRow, positionCol, positionOverride, auditAndUsrValid);
+                    actionDiagnoses=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, positionRow, positionCol, positionOverride);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};
@@ -172,7 +172,7 @@ public class ClassEnvMonSample {
                     batchTemplateId = (Integer) argValues[1];
                     batchTemplateVersion = (Integer) argValues[2];
                     sampleId = (Integer) argValues[3];
-                    actionDiagnoses=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, auditAndUsrValid);
+                    actionDiagnoses=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))
                         actionDiagnoses=LPPlatform.trapMessage(LPPlatform.LAB_TRUE, endPoint.getSuccessMessageCode(), new Object[]{sampleId, batchName, schemaPrefix});                                        
                     dynamicDataObjects=new Object[]{sampleId, batchName};

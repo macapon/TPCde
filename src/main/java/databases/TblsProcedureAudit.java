@@ -155,7 +155,8 @@ public class TblsProcedureAudit {
          */
         FLD_NOTE("note", LPDatabase.string()),
         FLD_STATUS("status", LPDatabase.string()),
-        
+        FLD_REASON("reason", LPDatabase.string()),
+
         ;
         private Investigation(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

@@ -128,7 +128,8 @@ public class TblsCnfgAudit {
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
+        FLD_REASON("reason", LPDatabase.string()),
         ;
         private Analysis(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -290,7 +291,8 @@ public class TblsCnfgAudit {
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
+        FLD_REASON("reason", LPDatabase.string()),
         ;
         private Spec(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

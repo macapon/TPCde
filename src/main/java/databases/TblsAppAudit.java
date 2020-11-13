@@ -155,7 +155,7 @@ public class TblsAppAudit {
          */
         FLD_NOTE("note", LPDatabase.string()),
         FLD_STATUS("status", LPDatabase.string()),
-        
+        FLD_REASON("reason", LPDatabase.string()),
         ;
         private Incident(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

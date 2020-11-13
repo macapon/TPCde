@@ -86,7 +86,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
                 
-                AuditAndUserValidation auditAndUsrValid=new AuditAndUserValidation(request, response, "en");
+                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, "en");
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
                     LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
                     return;          

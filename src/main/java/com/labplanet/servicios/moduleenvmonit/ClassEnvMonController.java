@@ -39,7 +39,7 @@ public class ClassEnvMonController {
             for (int inumArg=argsForLogFiles.length+4;inumArg<table1NumArgs;inumArg++){
                 argsForLogFiles=LPArray.addValueToArray1D(argsForLogFiles, "");
             }
-            AuditAndUserValidation checkUserVal=new AuditAndUserValidation(request, null, "en");
+            AuditAndUserValidation checkUserVal=AuditAndUserValidation.getInstance(null, null, null);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(checkUserVal.getCheckUserValidationPassesDiag()[0].toString())){
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, null, checkUserVal.getCheckUserValidationPassesDiag());              
                 return;          

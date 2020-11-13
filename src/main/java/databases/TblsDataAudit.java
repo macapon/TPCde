@@ -314,7 +314,8 @@ public enum OtherEnumClass {
         /**
          *
          */
-        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer())        
+        FLD_PARENT_AUDIT_ID("parent_audit_id", LPDatabase.integer()),
+        FLD_REASON("reason", LPDatabase.string()),        
         ;
         private Sample(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

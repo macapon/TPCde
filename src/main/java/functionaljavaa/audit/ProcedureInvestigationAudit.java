@@ -5,6 +5,7 @@
  */
 package functionaljavaa.audit;
 
+import com.labplanet.servicios.moduleenvmonit.TblsEnvMonitDataAudit;
 import databases.Rdbms;
 import databases.TblsApp;
 import databases.TblsProcedureAudit;
@@ -83,18 +84,11 @@ public class ProcedureInvestigationAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        
-/*        String jsonString = null;
-        jsonString = sampleJsonString(schemaPrefix+"-data", sampleId);
-        if ((jsonString!=null)){
-        //if (!jsonString.isEmpty()){
-            fieldNames = LPArray.addValueToArray1D(fieldNames, "picture_after");
-            fieldValues = LPArray.addValueToArray1D(fieldValues, jsonString);            
-        }
-*/        
-//        fieldNames = LPArray.addValueToArray1D(fieldNames, "user");
-//        fieldValues = LPArray.addValueToArray1D(fieldValues, userName);        
-
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
+        if (auditAndUsrValid.getAuditReasonPhrase()!=null){
+            fieldNames = LPArray.addValueToArray1D(fieldNames, TblsProcedureAudit.Investigation.FLD_REASON.getName());
+            fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
+        }    
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_PROCEDURE_AUDIT), TblsProcedureAudit.Investigation.TBL.getName(), 
                 fieldNames, fieldValues);
     }    

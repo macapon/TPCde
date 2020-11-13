@@ -7,12 +7,14 @@ package functionaljavaa.audit;
 
 import com.labplanet.servicios.app.GlobalAPIsParams;
 import databases.Token;
+import functionaljavaa.parameter.Parameter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import lbplanet.utilities.LPArray;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import lbplanet.utilities.LPPlatform;
+import static lbplanet.utilities.LPPlatform.CONFIG_PROC_FILE_NAME;
 
     
 
@@ -21,8 +23,21 @@ import lbplanet.utilities.LPPlatform;
  * @author User
  */
 public class AuditAndUserValidation {
+    private static AuditAndUserValidation auditUserVal;
 
-    /**
+     public static AuditAndUserValidation getInstance(HttpServletRequest request, HttpServletResponse response, String language) { 
+        if (auditUserVal == null) {
+            if (request==null) return null;
+            auditUserVal = new AuditAndUserValidation(request, response, language);
+            return auditUserVal;
+        } else {
+         return auditUserVal;
+        }  
+    }
+    public void killInstance(){
+        auditUserVal=null;
+    }     
+       /**
      * @return the auditReasonPhrase
      */
     public String getAuditReasonPhrase() {
@@ -39,7 +54,7 @@ public class AuditAndUserValidation {
     private String auditReasonPhrase="";
     private Object[] checkUserValidationPassesDiag;
     
-    public AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language){
+    private AuditAndUserValidation(HttpServletRequest request, HttpServletResponse response, String language){
         String[] mandatoryParams = new String[]{};
         String schemaPrefix = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_SCHEMA_PREFIX);            
         String actionName = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME);
@@ -70,8 +85,10 @@ public class AuditAndUserValidation {
             return;
         }
 
-        if (LPArray.valueInArray(mandatoryParams , GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE))
+        if (LPArray.valueInArray(mandatoryParams , GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE)){
             this.auditReasonPhrase=request.getParameter(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE); 
+            if (!isValidAuditPhrase(schemaPrefix, actionName, this.auditReasonPhrase)) return;                
+        }
 
         if ( (procActionRequiresUserConfirmation[0].toString().contains(LPPlatform.LAB_TRUE)) &&     
              (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){
@@ -86,5 +103,14 @@ public class AuditAndUserValidation {
         }
     
         this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_TRUE, "", null);
+    }
+    private Boolean isValidAuditPhrase(String schemaPrefix, String actionName, String auditReasonPhrase){
+        
+        String[] actionAuditReasonInfo = Parameter.getParameterBundle(schemaPrefix.replace("\"", "")+CONFIG_PROC_FILE_NAME, actionName+"AuditReasonPhase").split("\\|");
+        if ( ("LIST".equalsIgnoreCase(actionAuditReasonInfo[0])) && (!LPArray.valueInArray(actionAuditReasonInfo, auditReasonPhrase)) ){
+            this.checkUserValidationPassesDiag= LPPlatform.trapMessage(LPPlatform.LAB_FALSE, "wrongAuditReasonPhrase", null);
+            return false;
+        }
+        return true;
     }
 }

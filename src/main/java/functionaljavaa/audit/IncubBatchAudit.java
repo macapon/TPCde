@@ -33,8 +33,7 @@ public class IncubBatchAudit {
      * @param parentAuditId when sub-record then the parent audit id
      * @return  
  */    
-    public static Object[] incubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId,
-            AuditAndUserValidation auditAndUsrValid) {
+    public static Object[] incubBatchAuditAdd(String schemaPrefix, Token token, String action, String tableName, String batchName, Object[] auditlog, Integer parentAuditId) {
         
 //if (1==1) return new Object[]{LPPlatform.LAB_FALSE};
 
@@ -81,11 +80,11 @@ public class IncubBatchAudit {
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_PARENT_AUDIT_ID.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
-        if (parentAuditId!=null){
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
+        if (auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_REASON.getName());
-            fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
+            fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    
-        
         
         return Rdbms.insertRecordInTable(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA_AUDIT), TblsEnvMonitDataAudit.IncubBatch.TBL.getName(), 
                 fieldNames, fieldValues);

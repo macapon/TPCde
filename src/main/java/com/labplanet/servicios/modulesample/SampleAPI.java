@@ -14,6 +14,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.Token;
+import functionaljavaa.audit.AuditAndUserValidation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.util.logging.Level;
@@ -72,15 +73,6 @@ public class SampleAPI extends HttpServlet {
         }
         mandatoryParams = null;                        
 
-         Object[] procActionRequiresUserConfirmation = LPPlatform.procActionRequiresUserConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())){     
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_USER_TO_CHECK);    
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_PSWD_TO_CHECK);    
-        }
-        Object[] procActionRequiresEsignConfirmation = LPPlatform.procActionRequiresEsignConfirmation(schemaPrefix, actionName);
-        if (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())){                                                      
-            mandatoryParams = LPArray.addValueToArray1D(mandatoryParams, GlobalAPIsParams.REQUEST_PARAM_ESIGN_TO_CHECK);    
-        }        
         if (mandatoryParams!=null){
             areMandatoryParamsInResponse = LPHttp.areAPIMandatoryParamsInApiRequest(request, mandatoryParams);
             if (LPPlatform.LAB_FALSE.equalsIgnoreCase(areMandatoryParamsInResponse[0].toString())){
@@ -89,13 +81,11 @@ public class SampleAPI extends HttpServlet {
                 return;                  
             }     
         }
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresUserConfirmation[0].toString())) &&     
-             (!LPFrontEnd.servletUserToVerify(request, response, token.getUserName(), token.getUsrPw())) ){return;}
-
-        if ( (LPPlatform.LAB_TRUE.equalsIgnoreCase(procActionRequiresEsignConfirmation[0].toString())) &&    
-             (!LPFrontEnd.servletEsignToVerify(request, response, token.geteSign())) ){return;}
-        if (!LPFrontEnd.servletStablishDBConection(request, response)){return;}     
-        
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, language);
+        if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
+            LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
+            return;          
+        }     
 //        Connection con = Rdbms.createTransactionWithSavePoint();        
  /*       if (con==null){
              response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "The Transaction cannot be created, the action should be aborted");
@@ -161,6 +151,7 @@ public class SampleAPI extends HttpServlet {
             }            
             
         }catch(Exception e){   
+            auditAndUsrValid.killInstance();
             LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_EXCEPTION_RAISED, new Object[]{e.getMessage(), this.getServletName()}, language);                   
  /*           try {
                 con.rollback();
@@ -174,6 +165,7 @@ public class SampleAPI extends HttpServlet {
             try {
 //                con.close();
                 Rdbms.closeRdbms();   
+                auditAndUsrValid.killInstance();
             } catch (Exception ex) {Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, null, ex);
             }
         }                                       

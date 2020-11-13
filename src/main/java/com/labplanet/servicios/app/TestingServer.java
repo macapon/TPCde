@@ -417,15 +417,15 @@ String holidaysCalendar="España Comunidad X 2019";
     //out.println("batchAddSample"+Arrays.toString(diagn));
     //diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 102, 5, 5, false);
     //out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 101, null);
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 101);
     out.println("batchRemoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 101, 5, 5, false, null);
+    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 101, 5, 5, false);
     out.println("batchMoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 103, 3, 3, true, null);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 103, 3, 3, true);
     out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 104, 2, 3, true, null);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 104, 2, 3, true);
     out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 104, 3, 3, true, null);
+    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 104, 3, 3, true);
     out.println("batchMoveSample"+Arrays.toString(diagn));
 
 //Structured Batches. End
