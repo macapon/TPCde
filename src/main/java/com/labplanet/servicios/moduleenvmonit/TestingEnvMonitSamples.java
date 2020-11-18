@@ -85,18 +85,16 @@ public class TestingEnvMonitSamples extends HttpServlet {
             for ( Integer iLines =numHeaderLines;iLines<testingContent.length;iLines++){
                 tstAssertSummary.increaseTotalTests();                    
                 TestingAssert tstAssert = new TestingAssert(testingContent[iLines], numEvaluationArguments);                
-                
-                AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, "en");
-                if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
-                    LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
-                    return;          
-                }                  
-                
+
                 Object actionName = LPNulls.replaceNull(testingContent[iLines][5]).toString();
+                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_ACTION_NAME, actionName);
+                if (tstOut.getAuditReasonPosic()!=-1)
+                    request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, LPNulls.replaceNull(testingContent[iLines][tstOut.getAuditReasonPosic()]).toString());
+
                 fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(
                     new Object[]{iLines-numHeaderLines+1, "actionName"+":"+LPNulls.replaceNull(testingContent[iLines][5]).toString()}));                     
 
-                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, auditAndUsrValid);
+                ClassEnvMonSampleController clssEnvMonSampleController=new ClassEnvMonSampleController(request, token, schemaPrefix.toString(), actionName.toString(), testingContent, iLines, table1NumArgs, tstOut.getAuditReasonPosic());
                 if (clssEnvMonSampleController.getFunctionFound()){
                     functionRelatedObjects=clssEnvMonSampleController.getFunctionRelatedObjects();
                     functionEvaluation=(Object[]) clssEnvMonSampleController.getFunctionDiagn();
@@ -147,8 +145,6 @@ public class TestingEnvMonitSamples extends HttpServlet {
                         }
                     }
                 }
-                
-                
                 if (testingContent[iLines][0]==null){tstAssertSummary.increasetotalLabPlanetBooleanUndefined();}
                 if (testingContent[iLines][1]==null){tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();}
                                     
@@ -164,7 +160,7 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
-                    Integer stepId=Integer.valueOf(testingContent[iLines][testingContent[0].length-2].toString());
+                    Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
                 }

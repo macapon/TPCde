@@ -54,7 +54,8 @@ public class LPTestingOutFormat {
     private StringBuilder htmlStyleHeader = new StringBuilder(0);
     private Integer numEvaluationArguments = 0;
     private Integer actionNamePosic = 0;
-    
+    private Integer auditReasonPosic = 0;
+    private Integer stepIdPosic = 0;
     
     public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
         String csvPathName ="";
@@ -66,6 +67,14 @@ public class LPTestingOutFormat {
         StringBuilder htmlStyleHdr = new StringBuilder(0);
         HashMap<String, Object> headerTags = new HashMap();   
         Integer actionNamePosic=numEvalArgs+1;
+        String[] fieldsName=new String[]{TblsTesting.ScriptSteps.FLD_EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.FLD_ESIGN_TO_CHECK.getName(),
+            TblsTesting.ScriptSteps.FLD_CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.FLD_CONFIRMUSER_PW_TO_CHECK.getName(),
+            TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_02.getName(),
+            TblsTesting.ScriptSteps.FLD_ARGUMENT_03.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_04.getName(),
+            TblsTesting.ScriptSteps.FLD_ARGUMENT_05.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_06.getName(),
+            TblsTesting.ScriptSteps.FLD_ARGUMENT_07.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_08.getName(),
+            TblsTesting.ScriptSteps.FLD_ARGUMENT_09.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_10.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName(),
+            TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName()};
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
@@ -74,13 +83,7 @@ public class LPTestingOutFormat {
             String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
             csvFileContent = Rdbms.getRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
                     new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName(), TblsTesting.ScriptSteps.FLD_ACTIVE.getName()}, new Object[]{scriptId, true}, 
-                    new String[]{TblsTesting.ScriptSteps.FLD_EXPECTED_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EXPECTED_CODE.getName(), TblsTesting.ScriptSteps.FLD_ESIGN_TO_CHECK.getName(),
-                        TblsTesting.ScriptSteps.FLD_CONFIRMUSER_USER_TO_CHECK.getName(), TblsTesting.ScriptSteps.FLD_CONFIRMUSER_PW_TO_CHECK.getName(),
-                        TblsTesting.ScriptSteps.FLD_ARGUMENT_01.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_02.getName(),
-                        TblsTesting.ScriptSteps.FLD_ARGUMENT_03.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_04.getName(),
-                        TblsTesting.ScriptSteps.FLD_ARGUMENT_05.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_06.getName(),
-                        TblsTesting.ScriptSteps.FLD_ARGUMENT_07.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_08.getName(),
-                        TblsTesting.ScriptSteps.FLD_ARGUMENT_09.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_10.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName()},
+                    fieldsName,
                     new String[]{TblsTesting.ScriptSteps.FLD_STEP_ID.getName()});
             headerTags.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, 0);   
             headerTags.put(FILEHEADER_NUM_TABLES_TAG_NAME, "-");  
@@ -112,6 +115,8 @@ public class LPTestingOutFormat {
         this.htmlStyleHeader=htmlStyleHdr;
         this.numEvaluationArguments=numEvalArgs;
         this.actionNamePosic=actionNamePosic;
+        this.auditReasonPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName());
+        this.stepIdPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STEP_ID.getName());
     }
     
     public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
@@ -236,6 +241,7 @@ public class LPTestingOutFormat {
      *
      */
     public static final String FILEHEADER_NUM_EVALUATION_ARGUMENTS="NUMEVALUATIONARGUMENTS";
+    public static final String FILEHEADER_TOKEN="TOKEN";
 
     /**
      *
@@ -537,6 +543,7 @@ public class LPTestingOutFormat {
         fieldsRequired.put(FILEHEADER_NUM_HEADER_LINES_TAG_NAME, "");   fieldsRequired.put(FILEHEADER_NUM_TABLES_TAG_NAME, ""); 
         fieldsRequired.put(FILEHEADER_TESTER_NAME_TAG_NAME, ""); 
         fieldsRequired.put(FILEHEADER_NUM_EVALUATION_ARGUMENTS, "");   
+        fieldsRequired.put(FILEHEADER_TOKEN, "");
         return getCSVHeaderManager(fieldsRequired, csvContent);
     }    
     
@@ -756,8 +763,8 @@ public class LPTestingOutFormat {
             JsonObject jsonObject = LPJson.convertToJsonObjectStringedObject(value.toString());
             int stepNumber = jsonObject.get("step").getAsInt();        
             String stepObjectType = jsonObject.get("object_type").getAsString(); 
-            int stepObjectPosic=getStepObjectPosic(jsonObject);
-            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-2), stepNumber);
+            int stepObjectPosic=getStepObjectPosic(jsonObject); 
+            Integer stepPosic=LPArray.valuePosicInArray(LPArray.getColumnFromArray2D(scriptSteps, scriptSteps[0].length-3), stepNumber);
             if (stepPosic==-1) return "";
 
             JsonArray jsonArr=LPJson.convertToJsonArrayStringedObject(scriptSteps[stepPosic][scriptSteps[0].length-1].toString());
@@ -805,6 +812,14 @@ public class LPTestingOutFormat {
     public Integer getActionNamePosic() {
         return actionNamePosic;
     }
+    public Integer getAuditReasonPosic() {
+        return auditReasonPosic;
+    }  
+    public Integer getStepIdPosic() {
+        return stepIdPosic;
+    }  
+
+    
 
     /**
      * @return the htmlStyleHeader

@@ -36,7 +36,7 @@ import org.json.simple.JSONArray;
  *
  * @author Administrator
  */
-public class DbTestingimitAndResult extends HttpServlet {
+public class DbTestingLimitAndResult extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -197,7 +197,7 @@ public class DbTestingimitAndResult extends HttpServlet {
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, resSpecEvaluation);
 //                    if (specRule.getMinControl()==null){
-                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][testingContent[0].length-1]).toString());
+                    Integer stepId=Integer.valueOf(LPNulls.replaceNull(testingContent[iLines][testingContent[0].length-2]).toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, resSpecEvaluation, new JSONArray(), tstAssert));
 
                         fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate)).append(LPTestingOutFormat.rowEnd());
@@ -248,7 +248,7 @@ public class DbTestingimitAndResult extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(DbTestingimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbTestingLimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 
@@ -263,7 +263,7 @@ public class DbTestingimitAndResult extends HttpServlet {
         try {
             processRequest(request, response);
         } catch (ServletException | IOException ex) {
-            Logger.getLogger(DbTestingimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(DbTestingLimitAndResult.class.getName()).log(Level.SEVERE, null, ex);
         }
     }
 

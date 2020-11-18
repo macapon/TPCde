@@ -141,8 +141,8 @@
         <servlet-class>com.labplanet.servicios.requirements.ProcedureDefinitionToInstance</servlet-class>
     </servlet>
     <servlet>
-        <servlet-name>DbTestingimitAndResult</servlet-name>
-        <servlet-class>com.labplanet.servicios.testing.config.db.DbTestingimitAndResult</servlet-class>
+        <servlet-name>DbTestingLimitAndResult</servlet-name>
+        <servlet-class>com.labplanet.servicios.testing.config.db.DbTestingLimitAndResult</servlet-class>
     </servlet>
     <servlet>
         <servlet-name>EnvMonSampleAPI</servlet-name>
@@ -318,8 +318,8 @@
         <url-pattern>/ProcedureDefinitionToInstance</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
-        <servlet-name>DbTestingimitAndResult</servlet-name>
-        <url-pattern>/testing/config/db/DbTestingimitAndResult</url-pattern>
+        <servlet-name>DbTestingLimitAndResult</servlet-name>
+        <url-pattern>/testing/config/db/DbTestingLimitAndResult</url-pattern>
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>TestingConfigSamplingPlanStructure</servlet-name>

@@ -156,7 +156,9 @@ public class TblsTesting {
         FLD_ESIGN_TO_CHECK("esign_to_check", LPDatabase.string()),   
         FLD_CONFIRMUSER_USER_TO_CHECK("confirmuser_user_to_check", LPDatabase.string()),   
         FLD_CONFIRMUSER_PW_TO_CHECK("confirmuser_pw_to_check", LPDatabase.string()),   
-        FLD_ACTIVE("active", LPDatabase.booleanFld(true)),  
+        FLD_ACTIVE("active", LPDatabase.booleanFld(true)), 
+        FLD_AUDIT_REASON("audit_reason", LPDatabase.string()),   
+        
         ;
         private ScriptSteps(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

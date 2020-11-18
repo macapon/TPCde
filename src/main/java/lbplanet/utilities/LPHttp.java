@@ -78,6 +78,7 @@ public class LPHttp {
             for (String curParam: paramNames){
                 Boolean notPresent = false;
                 String curParamValue = request.getParameter(curParam);
+                if (curParamValue==null)curParamValue = LPNulls.replaceNull(request.getAttribute(curParam)).toString();
                 if (curParamValue==null){notPresent=true;}
                 if ("undefined".equals(curParamValue)){notPresent=true;}
                 if ("".equals(curParamValue)){notPresent=true;}
@@ -102,6 +103,7 @@ public class LPHttp {
             for (String curParam: paramNames){
                 Boolean notPresent = false;
                 String curParamValue = request.getParameter(curParam);
+                if (curParamValue==null)curParamValue = LPNulls.replaceNull(request.getAttribute(curParam)).toString();
                 if (curParamValue==null){notPresent=true;}
                 if ("undefined".equals(curParamValue)){notPresent=true;}
                 if ("".equals(curParamValue)){notPresent=true;}

@@ -6,7 +6,9 @@
 package com.labplanet.servicios.app;
 
 import com.oreilly.servlet.MultipartRequest;
+import databases.Token;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
+import static functionaljavaa.testingscripts.LPTestingOutFormat.FILEHEADER_TOKEN;
 import functionaljavaa.testingscripts.LPTestingParams;
 import functionaljavaa.testingscripts.LPTestingParams.TestingServletsConfig;
 import java.io.IOException;
@@ -55,10 +57,24 @@ public class TesterFromUploadFile extends HttpServlet {
                 if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
                     fileContentBuilder.append("There are missing tags in the file header: ").append(csvHeaderTags.get(LPPlatform.LAB_FALSE));
                     Logger.getLogger(fileContentBuilder.toString()); 
+                    PrintWriter out = response.getWriter();
+                    out.println(fileContentBuilder);                     
                     return;
                 }                        
                 String testerName = (String) csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TESTER_NAME_TAG_NAME);                           
-                
+                String tokenStr = (String) csvHeaderTags.get(LPTestingOutFormat.FILEHEADER_TOKEN);                           
+                if (tokenStr.length()==0){
+                    PrintWriter out = response.getWriter();
+                    out.println("No Token"); 
+                    return;
+                }
+                Token token=new Token(tokenStr);
+                String validateToken = token.validateToken(tokenStr);
+                if (!"TRUE".equalsIgnoreCase(validateToken)){
+                    PrintWriter out = response.getWriter();
+                    out.println("Token provided is invalid"); 
+                    return;
+                }
                 request.setAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_PATH, saveDirectory+"\\");
                 request.setAttribute(LPTestingParams.UPLOAD_FILE_PARAM_FILE_NAME, fullFileName);
                 request.setAttribute(LPTestingParams.TESTING_SOURCE, "FILE");

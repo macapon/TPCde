@@ -180,6 +180,7 @@ public class EnvMonIncubBatchAPIfrontend extends HttpServlet {
             String[] batchContent1D=batchValues[LPArray.valuePosicInArray(batchFields, TblsEnvMonitData.IncubBatch.FLD_STRUCT_CONTENT.getName())].toString().split(BATCHCONTENTSEPARATORSTRUCTUREDBATCH);
             String[][] batchContent2D=LPArray.array1dTo2d(batchContent1D, totalCols);
 
+            if (batchContent2D.length==0) return new Object[]{new JSONArray(), ""};  
             JSONArray jbatchSamplesArr = new JSONArray();
             for (int x=0;x<totalRows;x++){
                 for (int y=0;y<totalCols;y++){

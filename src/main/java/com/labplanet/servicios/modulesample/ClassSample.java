@@ -97,11 +97,13 @@ public class ClassSample {
                 if (fieldName!=null) fieldNames = fieldName.split("\\|");
                 if (fieldValue!=null) fieldValues = LPArray.convertStringWithDataTypeToObjectArray(fieldValue.split("\\|"));
                 
-                Integer numSamplesToLog=(Integer) argValues[4];
+//                String numSmplsToLogStr = argValues[7].toString();
+//                Integer numSamplesToLog=(Integer) argValues[7];
                 
-                if (numSamplesToLog==null){
+                if (argValues[6]==null){
                     diagn = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues);
                 }else{
+                    Integer numSamplesToLog=(Integer) argValues[6];
                     diagn = smp.logSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, numSamplesToLog);
                 }
                 Object[] dynamicDataObjects = new Object[]{diagn[diagn.length-1]};

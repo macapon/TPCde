@@ -9,7 +9,6 @@ import com.labplanet.servicios.modulesample.SampleAPIParams;
 import databases.Rdbms;
 import databases.TblsData;
 import databases.Token;
-import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.batch.incubator.DataBatchIncubator;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSample;
 import functionaljavaa.moduleenvironmentalmonitoring.DataProgramSampleAnalysis;
@@ -66,7 +65,7 @@ public class ClassEnvMonSample {
     private Boolean endpointExists=true;
     private Object[] diagnostic=new Object[0];
     
-    public ClassEnvMonSample(HttpServletRequest request, Token token, String schemaPrefix, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint, AuditAndUserValidation auditAndUsrValid){
+    public ClassEnvMonSample(HttpServletRequest request, Token token, String schemaPrefix, EnvMonSampleAPI.EnvMonSampleAPIEndpoints endPoint){
         Object[] dynamicDataObjects=new Object[]{};        
         Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());
         RelatedObjects rObj=RelatedObjects.getInstance();

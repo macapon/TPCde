@@ -16,7 +16,6 @@ import com.labplanet.servicios.modulesample.SampleAPIParams.SampleAPIEndpoints;
 import databases.Rdbms;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
-import functionaljavaa.audit.SampleAudit;
 import static functionaljavaa.audit.SampleAudit.sampleAuditRevisionPassByAction;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.io.IOException;
@@ -89,13 +88,15 @@ public class EnvMonSampleAPI extends HttpServlet {
             
         } 
 
-        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex){  
+        public  HashMap<HttpServletRequest, Object[]> testingSetAttributesAndBuildArgsArray(HttpServletRequest request, Object[][] contentLine, Integer lineIndex, Integer auditReasonPosic){  
             HashMap<HttpServletRequest, Object[]> hm = new HashMap();
             Object[] argValues=new Object[0];
             for (LPAPIArguments curArg: this.arguments){
                 argValues=LPArray.addValueToArray1D(argValues, curArg.getName()+":"+getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
                 request.setAttribute(curArg.getName(), getAttributeValue(contentLine[lineIndex][curArg.getTestingArgPosic()], contentLine));
             }  
+            if (auditReasonPosic!=-1)
+                request.setAttribute(GlobalAPIsParams.REQUEST_PARAM_AUDIT_REASON_PHRASE, getAttributeValue(contentLine[lineIndex][auditReasonPosic], contentLine));
             hm.put(request, argValues);            
             return hm;
         }
@@ -188,7 +189,7 @@ public class EnvMonSampleAPI extends HttpServlet {
         }
         mandatoryParams = null; 
         
-        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
+        AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(request, response, "en");
         if (LPPlatform.LAB_FALSE.equalsIgnoreCase(auditAndUsrValid.getCheckUserValidationPassesDiag()[0].toString())){
             LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, auditAndUsrValid.getCheckUserValidationPassesDiag());              
             return;          
@@ -286,7 +287,7 @@ public class EnvMonSampleAPI extends HttpServlet {
                         LPPlatform.API_ERRORTRAPING_MANDATORY_PARAMS_MISSING, new Object[]{areMandatoryParamsInResponse[1].toString()}, language);
                 return;
             }                            
-            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint, auditAndUsrValid);
+            ClassEnvMonSample clss=new ClassEnvMonSample(request, token, schemaPrefix, endPoint);
             if (clss.getEndpointExists()){
                 Object[] diagnostic=clss.getDiagnostic();
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(diagnostic[0].toString())){  

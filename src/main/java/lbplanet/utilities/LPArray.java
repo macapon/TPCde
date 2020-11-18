@@ -420,7 +420,7 @@ public class  LPArray {
  * @return String[][]
  */    
     public static String[][] array1dTo2d(String[] array1d, Integer numColumns){
-        
+        if (array1d.length==0 || array1d==null || (array1d.length==1 && array1d[0].length()==0) ) return new String[0][0];
         Integer numLines = array1d.length/numColumns;
         String[][] array2d = new String[numLines][numColumns];        
         int inumLines = 0;    
