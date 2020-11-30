@@ -72,6 +72,9 @@ public class TestingRegressionUAT extends HttpServlet {
             Logger.getLogger("Script "+scriptId.toString()+" Not found"); 
             return;
         }
+        
+        LPTestingOutFormat.cleanLastRun(schemaPrefix, scriptId);
+        
         String testerName = scriptTblInfo[0][0].toString();
         Integer numEvalArgs = 0;
         if (scriptTblInfo[0][1]!=null && scriptTblInfo[0][1].toString().length()>0) numEvalArgs=Integer.valueOf(scriptTblInfo[0][1].toString());

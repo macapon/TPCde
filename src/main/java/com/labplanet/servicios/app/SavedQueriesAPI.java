@@ -9,7 +9,7 @@ import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
-import databases.TblsApp;
+import databases.TblsData;
 import databases.Token;
 import functionaljavaa.responserelatedobjects.RelatedObjects;
 import functionaljavaa.savedqueries.SaveQueries;
@@ -226,20 +226,20 @@ public class SavedQueriesAPI extends HttpServlet {
                 return;
             }                
             Object[] argValues=LPAPIArguments.buildAPIArgsumentsArgsValues(request, endPoint.getArguments());  
-            Integer incId=null;
+            Integer svqQryId=null;
             switch (endPoint){
                 case CREATE_SAVED_QUERY:                    
                     actionDiagnoses = SaveQueries.newSavedQuery(token, schemaPrefix, argValues[0].toString(), argValues[1].toString(), argValues[2].toString().split(("\\|")), LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split(("\\|"))));
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        String investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
-                        if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
+                        String savedQueryIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                        if (savedQueryIdStr!=null && savedQueryIdStr.length()>0) svqQryId=Integer.valueOf(savedQueryIdStr);
                     }
                     break;
                 case UPDATE_SAVED_QUERY:
                     //actionDiagnoses = Investigation.addInvestObjects(token, schemaPrefix, Integer.valueOf(argValues[0].toString()), argValues[1].toString(), null);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString())){
-                        String investigationIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
-                        if (investigationIdStr!=null && investigationIdStr.length()>0) incId=Integer.valueOf(investigationIdStr);
+                        String savedQueryIdStr=actionDiagnoses[actionDiagnoses.length-1].toString();
+                        if (savedQueryIdStr!=null && savedQueryIdStr.length()>0) svqQryId=Integer.valueOf(savedQueryIdStr);
                     }
                     break;
             }    
@@ -247,8 +247,8 @@ public class SavedQueriesAPI extends HttpServlet {
                 LPFrontEnd.servletReturnResponseErrorLPFalseDiagnostic(request, response, actionDiagnoses);   
             }else{
                 RelatedObjects rObj=RelatedObjects.getInstance();
-                rObj.addSimpleNode(LPPlatform.SCHEMA_APP, TblsApp.Incident.TBL.getName(), "investigation", incId);                
-                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{incId}, rObj.getRelatedObject());
+                rObj.addSimpleNode(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_DATA), TblsData.SavedQueries.TBL.getName(), TblsData.SavedQueries.TBL.getName(), svqQryId);                
+                JSONObject dataSampleJSONMsg = LPFrontEnd.responseJSONDiagnosticLPTrue(this.getClass().getSimpleName(), endPoint.getSuccessMessageCode(), new Object[]{svqQryId}, rObj.getRelatedObject());
                 rObj.killInstance();
                 LPFrontEnd.servletReturnSuccess(request, response, dataSampleJSONMsg);
             }           

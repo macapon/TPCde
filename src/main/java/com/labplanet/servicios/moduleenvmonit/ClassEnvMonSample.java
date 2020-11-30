@@ -25,6 +25,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import lbplanet.utilities.LPAPIArguments;
 import lbplanet.utilities.LPArray;
+import lbplanet.utilities.LPNulls;
 import lbplanet.utilities.LPPlatform;
 
 /**
@@ -80,12 +81,18 @@ public class ClassEnvMonSample {
             Integer resultId = null;
             switch (endPoint){
                 case LOGSAMPLE:
+                    String[] fieldNames=null;
+                    Object[] fieldValues=null;
+                    if (LPNulls.replaceNull(argValues[2]).toString().length()>0){
+                        fieldNames=(String[]) argValues[2].toString().split("\\|");
+                        fieldValues=(Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|"));
+                    }
                     if (argValues[5]==null){
-                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], (String[]) argValues[2].toString().split("\\|"), 
-                                (Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|")), (String) argValues[4], (String) argValues[5]);
+                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], 
+                            fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                     }else{
-                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], (String[]) argValues[2].toString().split("\\|"), 
-                                (Object[]) LPArray.convertStringWithDataTypeToObjectArray(argValues[3].toString().split("\\|")), (String) argValues[4], (String) argValues[5]);
+                        actionDiagnoses = prgSmp.logProgramSample(schemaPrefix, token, (String) argValues[0], (Integer) argValues[1], 
+                            fieldNames, fieldValues, (String) argValues[4], (String) argValues[5]);
                     }
                     //logProgramSamplerSample(schemaPrefix, token, sampleTemplate, sampleTemplateVersion, fieldNames, fieldValues, programName, programLocation);
                     dynamicDataObjects=new Object[]{actionDiagnoses[actionDiagnoses.length-1]};
@@ -156,8 +163,8 @@ public class ClassEnvMonSample {
                     
                     positionOverride=false;
                     if (argValues.length>=7) {
-                        String positionOverrideStr=argValues[6].toString();
-                        if (positionOverrideStr!=null && positionOverrideStr.length()>0) positionOverride=Boolean.valueOf(positionOverrideStr);
+                        Object positionOverrideStr=argValues[6];
+                        if (positionOverrideStr!=null && LPNulls.replaceNull(positionOverrideStr).toString().length()>0) positionOverride=Boolean.valueOf(positionOverrideStr.toString());
                     }                   
                     actionDiagnoses=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplateId, batchTemplateVersion, sampleId, positionRow, positionCol, positionOverride);
                     if (LPPlatform.LAB_TRUE.equalsIgnoreCase(actionDiagnoses[0].toString()))

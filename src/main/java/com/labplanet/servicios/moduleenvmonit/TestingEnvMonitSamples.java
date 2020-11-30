@@ -9,6 +9,7 @@ import com.labplanet.servicios.app.GlobalAPIsParams;
 import com.labplanet.servicios.app.TestingRegressionUAT;
 import com.labplanet.servicios.modulesample.ClassSampleController;
 import databases.Rdbms;
+import databases.TblsTesting;
 import databases.Token;
 import functionaljavaa.audit.AuditAndUserValidation;
 import functionaljavaa.testingscripts.LPTestingOutFormat;
@@ -69,6 +70,8 @@ public class TestingEnvMonitSamples extends HttpServlet {
         fileContentBuilder.append(tstOut.getHtmlStyleHeader());
         Object[][]  testingContent =tstOut.getTestingContent();
         testingContent=LPArray.addColumnToArray2D(testingContent, new JSONArray());
+        
+        String stopPhrase=null;
         
         try (PrintWriter out = response.getWriter()) {
             if (csvHeaderTags.containsKey(LPPlatform.LAB_FALSE)){
@@ -160,14 +163,33 @@ public class TestingEnvMonitSamples extends HttpServlet {
                 }                                
                 if (numEvaluationArguments>0){                    
                     Object[] evaluate = tstAssert.evaluate(numEvaluationArguments, tstAssertSummary, functionEvaluation);   
+                        
                     Integer stepId=Integer.valueOf(testingContent[iLines][tstOut.getStepIdPosic()].toString());
                     fileContentTable1Builder.append(tstOut.publishEvalStep(request, stepId, functionEvaluation, functionRelatedObjects, tstAssert));
                     fileContentTable1Builder.append(LPTestingOutFormat.rowAddFields(evaluate));                        
+                    if ( tstOut.getStopSyntaxisUnmatchPosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisUnmatchPosic()]).toString()) &&
+                            !TestingAssert.EvalCodes.MATCH.toString().equalsIgnoreCase(tstAssert.getEvalSyntaxisDiagnostic()) ){
+                        out.println(fileContentBuilder.toString()); 
+                        stopPhrase="Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length;
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+//                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation not matching in step "+(iLines+1)+" of "+testingContent.length}, 
+//                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
+                        break;      
+                    }
+                }
+                if (tstOut.getStopSyntaxisFalsePosic()>-1 && Boolean.valueOf(LPNulls.replaceNull(testingContent[iLines][tstOut.getStopSyntaxisFalsePosic()]).toString())
+                    && LPPlatform.LAB_FALSE.equalsIgnoreCase(functionEvaluation[0].toString())){
+                        out.println(fileContentBuilder.toString()); 
+                        stopPhrase="Interrupted by evaluation returning false in step "+(iLines+1)+" of "+testingContent.length;
+//                        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix.toString(), LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+//                                new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName()}, new Object[]{"Interrupted by evaluation returning false "+(iLines+1)+" of "+testingContent.length}, 
+//                                new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{6}); //testingContent[iLines][tstOut.getScriptIdPosic()]});
+                    break;
                 }
                 fileContentTable1Builder.append(LPTestingOutFormat.rowEnd());                                                
             }    
             fileContentTable1Builder.append(LPTestingOutFormat.tableEnd());
-            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary)).append("<br>");
+            fileContentBuilder.append(tstOut.publishEvalSummary(request, tstAssertSummary, stopPhrase)).append("<br>");
             fileContentBuilder.append(fileContentTable1Builder).append(LPTestingOutFormat.bodyEnd()).append(LPTestingOutFormat.htmlEnd());
 
             out.println(fileContentBuilder.toString());            

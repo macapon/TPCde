@@ -81,7 +81,7 @@ public class IncubBatchAudit {
             fieldValues = LPArray.addValueToArray1D(fieldValues, parentAuditId);
         }    
         AuditAndUserValidation auditAndUsrValid=AuditAndUserValidation.getInstance(null, null, null);
-        if (auditAndUsrValid.getAuditReasonPhrase()!=null){
+        if (auditAndUsrValid!=null && auditAndUsrValid.getAuditReasonPhrase()!=null){
             fieldNames = LPArray.addValueToArray1D(fieldNames, TblsEnvMonitDataAudit.IncubBatch.FLD_REASON.getName());
             fieldValues = LPArray.addValueToArray1D(fieldValues, auditAndUsrValid.getAuditReasonPhrase());
         }    

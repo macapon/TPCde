@@ -52,10 +52,12 @@ public class LPTestingOutFormat {
     private String fileName="";
     private HashMap<String, Object> csvHeaderTags=null;
     private StringBuilder htmlStyleHeader = new StringBuilder(0);
-    private Integer numEvaluationArguments = 0;
-    private Integer actionNamePosic = 0;
-    private Integer auditReasonPosic = 0;
-    private Integer stepIdPosic = 0;
+    private Integer numEvaluationArguments = -1;
+    private Integer actionNamePosic = -1;
+    private Integer auditReasonPosic = -1;
+    private Integer stepIdPosic = -1;
+    private Integer stopSyntaxisUnmatchPosic = -1;
+    private Integer stopSyntaxisFalsePosic = -1;
     
     public LPTestingOutFormat(HttpServletRequest request, String testerFileName){
         String csvPathName ="";
@@ -74,7 +76,9 @@ public class LPTestingOutFormat {
             TblsTesting.ScriptSteps.FLD_ARGUMENT_05.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_06.getName(),
             TblsTesting.ScriptSteps.FLD_ARGUMENT_07.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_08.getName(),
             TblsTesting.ScriptSteps.FLD_ARGUMENT_09.getName(), TblsTesting.ScriptSteps.FLD_ARGUMENT_10.getName(), TblsTesting.ScriptSteps.FLD_STEP_ID.getName(),
-            TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName()};
+            TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName(),
+            TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName(), TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName()
+        };
         if (testingSource!=null && testingSource=="DB"){
             csvPathName ="";
             csvFileName ="";
@@ -117,6 +121,8 @@ public class LPTestingOutFormat {
         this.actionNamePosic=actionNamePosic;
         this.auditReasonPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_AUDIT_REASON.getName());
         this.stepIdPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STEP_ID.getName());
+        this.stopSyntaxisUnmatchPosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_UNMATCH.getName());
+        this.stopSyntaxisFalsePosic=LPArray.valuePosicInArray(fieldsName, TblsTesting.ScriptSteps.FLD_STOP_WHEN_SYNTAXIS_FALSE.getName());                    
     }
     
     public StringBuilder publishEvalStep(HttpServletRequest request, Integer stepId, Object[] evaluate, JSONArray functionRelatedObjects, TestingAssert tstAssert){
@@ -143,6 +149,9 @@ public class LPTestingOutFormat {
     }   
     
     public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary){
+        return publishEvalSummary(request, tstAssertSummary, null);
+    }
+    public StringBuilder publishEvalSummary(HttpServletRequest request, TestingAssertSummary tstAssertSummary, String summaryPhrase){
         StringBuilder fileContentBuilder = new StringBuilder(0);  
         tstAssertSummary.notifyResults();
         String[] updFldNames=new String[]{TblsTesting.Script.FLD_DATE_EXECUTION.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName()};
@@ -151,6 +160,18 @@ public class LPTestingOutFormat {
             String fileContentSummary = LPTestingOutFormat.createSummaryTable(tstAssertSummary, numEvaluationArguments);
             fileContentBuilder.append(fileContentSummary);            
             if ("DB".equals(this.inputMode)){
+                if (summaryPhrase==null){
+                    if (numEvaluationArguments==0) summaryPhrase="COMPLETED ALL STEPS";
+                    else{
+                        if (tstAssertSummary.getTotalSyntaxisMatch()==testingContent.length)
+                            summaryPhrase="COMPLETED SUCCESSFULLY";
+                        else{
+                            summaryPhrase="COMPLETED WITH UNEXPECTED RESULTS. ";
+                            if (tstAssertSummary.getTotalSyntaxisUnMatch()>0) summaryPhrase=summaryPhrase+"Unmatched="+tstAssertSummary.getTotalSyntaxisUnMatch()+". ";
+                            if (tstAssertSummary.getTotalSyntaxisUndefined()>0) summaryPhrase=summaryPhrase+"Undefined="+tstAssertSummary.getTotalSyntaxisUndefined()+". ";
+                        }
+                    }   
+                }
                 if (!LPFrontEnd.servletStablishDBConection(request, null)){return fileContentBuilder;}          
                 Integer scriptId = Integer.valueOf(LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCRIPT_ID).toString()));
                 String schemaPrefix=LPNulls.replaceNull(request.getAttribute(LPTestingParams.SCHEMA_PREFIX)).toString();
@@ -162,6 +183,8 @@ public class LPTestingOutFormat {
                                 TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName()});
                     updFldValues=LPArray.addValueToArray1D(updFldValues, new Object[]{tstAssertSummary.getTotalCodeMatch(), tstAssertSummary.getTotalCodeUndefined(), tstAssertSummary.getTotalCodeUnMatch()});                    
                 }
+                updFldNames=LPArray.addValueToArray1D(updFldNames,TblsTesting.Script.FLD_RUN_SUMMARY.getName());
+                updFldValues=LPArray.addValueToArray1D(updFldValues, summaryPhrase);
                 Object[] updateRecordFieldsByFilter = Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(),                         
                         updFldNames, updFldValues,
                         new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});            
@@ -818,8 +841,12 @@ public class LPTestingOutFormat {
     public Integer getStepIdPosic() {
         return stepIdPosic;
     }  
-
-    
+    public Integer getStopSyntaxisUnmatchPosic() {
+        return stopSyntaxisUnmatchPosic;
+    }  
+    public Integer getStopSyntaxisFalsePosic() {
+        return stopSyntaxisFalsePosic;
+    }  
 
     /**
      * @return the htmlStyleHeader
@@ -835,5 +862,14 @@ public class LPTestingOutFormat {
         return numEvaluationArguments;
     }
                 
-    
+    public static void cleanLastRun(String schemaPrefix, Integer scriptId){
+        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.Script.TBL.getName(), 
+            new String[]{TblsTesting.Script.FLD_RUN_SUMMARY.getName(), TblsTesting.Script.FLD_EVAL_TOTAL_TESTS.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_MATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_SYNTAXIS_UNDEFINED.getName(), TblsTesting.Script.FLD_EVAL_CODE_MATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNMATCH.getName(), TblsTesting.Script.FLD_EVAL_CODE_UNDEFINED.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()}, 
+            new Object[]{"NULL>>>STRING","NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER", "NULL>>>INTEGER","NULL>>>DATETIME"},
+            new String[]{TblsTesting.Script.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
+        Rdbms.updateRecordFieldsByFilter(LPPlatform.buildSchemaName(schemaPrefix, LPPlatform.SCHEMA_TESTING), TblsTesting.ScriptSteps.TBL.getName(), 
+            new String[]{TblsTesting.ScriptSteps.FLD_FUNCTION_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_FUNCTION_CODE.getName(), TblsTesting.ScriptSteps.FLD_EVAL_SYNTAXIS.getName(), TblsTesting.ScriptSteps.FLD_EVAL_CODE.getName(), TblsTesting.ScriptSteps.FLD_DATE_EXECUTION.getName()}, 
+            new Object[]{"NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING", "NULL>>>STRING","NULL>>>DATETIME"},
+            new String[]{TblsTesting.ScriptSteps.FLD_SCRIPT_ID.getName()}, new Object[]{scriptId});        
+    }
 }

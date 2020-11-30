@@ -21,6 +21,7 @@ public class TestingAssert {
     private String evalSyntaxisDiagnostic="";  
     private String evalCodeDiagnostic="";  
     
+    public enum EvalCodes{MATCH, UNMATCH, UNDEFINED};
     /**
      *
      * @param line
@@ -53,16 +54,16 @@ public class TestingAssert {
             if ( (this.getEvalSyntaxis()==null) || (this.getEvalSyntaxis().length()==0) ||("".equals(this.getEvalSyntaxis())) ){
                 tstAssertSummary.increasetotalLabPlanetBooleanUndefined();
                 sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNDEFINED;
-                this.evalSyntaxisDiagnostic="UNDEFINED";
+                this.evalSyntaxisDiagnostic=EvalCodes.UNDEFINED.toString();
             }else{
                 if (this.getEvalSyntaxis().equalsIgnoreCase(diagnoses[0].toString())){
                     tstAssertSummary.increasetotalLabPlanetBooleanMatch(); 
                     sintaxisIcon=LPTestingOutFormat.TST_BOOLEANMATCH;
-                    this.evalSyntaxisDiagnostic="MATCH";
+                    this.evalSyntaxisDiagnostic=EvalCodes.MATCH.toString();
                 }else{
                     tstAssertSummary.increasetotalLabPlanetBooleanUnMatch(); 
                     sintaxisIcon=LPTestingOutFormat.TST_BOOLEANUNMATCH;
-                    this.evalSyntaxisDiagnostic="UNMATCH";
+                    this.evalSyntaxisDiagnostic=EvalCodes.UNMATCH.toString();
                 }
             }
         }else{
@@ -72,16 +73,16 @@ public class TestingAssert {
             if ( (this.getEvalCode()==null) || (this.getEvalCode().length()==0) ||("".equals(this.getEvalCode())) ){
                 tstAssertSummary.increasetotalLabPlanetErrorCodeUndefined();
                 codeIcon=LPTestingOutFormat.TST_ERRORCODEUNDEFINED;
-                this.evalCodeDiagnostic="UNDEFINED";
+                this.evalCodeDiagnostic=EvalCodes.UNDEFINED.toString();
             }else{
                 if (this.getEvalCode().equalsIgnoreCase(diagnoses[4].toString())){
                     tstAssertSummary.increasetotalLabPlanetErrorCodeMatch(); 
                     codeIcon=LPTestingOutFormat.TST_ERRORCODEMATCH;
-                    this.evalCodeDiagnostic="MATCH";
+                    this.evalCodeDiagnostic=EvalCodes.MATCH.toString();
                 }else{
                     tstAssertSummary.increasetotalLabPlanetErrorCodeUnMatch(); 
                     codeIcon=LPTestingOutFormat.TST_ERRORCODEUNMATCH;
-                    this.evalCodeDiagnostic="UNMATCH";
+                    this.evalCodeDiagnostic=EvalCodes.UNMATCH.toString();
                 }
             }    
         }else{

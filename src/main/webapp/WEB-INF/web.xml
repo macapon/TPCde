@@ -262,6 +262,10 @@
         <servlet-name>VideoTutorialAPIfrontend</servlet-name>
         <servlet-class>com.labplanet.servicios.app.VideoTutorialAPIfrontend</servlet-class>
     </servlet>
+    <servlet>
+        <servlet-name>UserSessionAPIfrontend</servlet-name>
+        <servlet-class>com.labplanet.servicios.app.UserSessionAPIfrontend</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>DownloadFileServlet</servlet-name>
         <url-pattern>/DownloadFileServlet</url-pattern>
@@ -524,6 +528,10 @@
     <servlet-mapping>
         <servlet-name>VideoTutorialAPIfrontend</servlet-name>
         <url-pattern>/frontend/VideoTutorialAPIfrontend</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>UserSessionAPIfrontend</servlet-name>
+        <url-pattern>/frontend/UserSessionAPIfrontend</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

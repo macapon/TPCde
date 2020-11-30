@@ -62,6 +62,10 @@ public class TblsTesting {
         FLD_EVAL_CODE_UNMATCH("eval_code_unmatch", LPDatabase.integer()),
         FLD_EVAL_CODE_UNDEFINED("eval_code_undefined", LPDatabase.integer()),
         
+        FLD_AUDIT_IDS_TO_GET("audit_ids_to_get", LPDatabase.string()),
+        FLD_AUDIT_IDS_VALUES("audit_ids_values", LPDatabase.string()),
+        FLD_RUN_SUMMARY("run_summary", LPDatabase.string()),
+        
         ;
         private Script(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;
@@ -158,7 +162,8 @@ public class TblsTesting {
         FLD_CONFIRMUSER_PW_TO_CHECK("confirmuser_pw_to_check", LPDatabase.string()),   
         FLD_ACTIVE("active", LPDatabase.booleanFld(true)), 
         FLD_AUDIT_REASON("audit_reason", LPDatabase.string()),   
-        
+        FLD_STOP_WHEN_SYNTAXIS_UNMATCH("stop_when_syntaxis_unmatch", LPDatabase.booleanFld()),   
+        FLD_STOP_WHEN_SYNTAXIS_FALSE("stop_when_function_syntaxis_returns_false", LPDatabase.booleanFld()),   
         ;
         private ScriptSteps(String dbObjName, String dbObjType){
             this.dbObjName=dbObjName;

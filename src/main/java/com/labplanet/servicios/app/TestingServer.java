@@ -82,8 +82,8 @@ public class TestingServer extends HttpServlet {
 //        String tblCreateScript2=TblsProcedureAudit.Investigation.createTableScript("em-demo-a", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
-            Object[][] lblContent = new Object[][]{{"TEXT", "Ejemplo", 1, 1, 14}, {"BARCODE39", "123", 1, 1, 14, 1, 1}};
-            ZPL.zplLabel("", 5, lblContent);            
+//            Object[][] lblContent = new Object[][]{{"TEXT", "Ejemplo", 1, 1, 14}, {"BARCODE39", "123", 1, 1, 14, 1, 1}};
+//            ZPL.zplLabel("", 5, lblContent);            
 //Object[] isReviewByTestingGroupEnable=LPPlatform.isProcedureBusinessRuleEnable("proc-deploy", "procedure", DataSampleRevisionTestingGroup.TestingGroupFileProperties.sampleTestingByGroup_ReviewByTestingGroup.toString());            
         //String tblCreateScript2=TblsData.SampleRevisionTestingGroup.createTableScript("proc-deploy", new String[]{""});
         //Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
@@ -94,10 +94,10 @@ public class TestingServer extends HttpServlet {
 //        String tblCreateScript2=TblsCnfg.zzzDbErrorLog.createTableScript("config", new String[]{""});
 //        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
-        String tblCreateScript2=TblsApp.VideoTutorial.createTableScript(new String[]{""});
-        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
+//        String tblCreateScript2=TblsApp.VideoTutorial.createTableScript(new String[]{""});
+//        Rdbms.prepRdQuery(tblCreateScript2, new Object[]{});
 
-if  (1==1)      return;
+//if  (1==1)      return;
 
         
 //lbplanet.utilities.LPMailing.sendMailViaTLS("prueba", "esto es una prueba", new String[]{"info.fran.gomez@gmail.com"}, 
@@ -108,14 +108,16 @@ if  (1==1)      return;
 //LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
 //LPFilesTools.toCsvFromArray("D:\\LP\\Postgresql Backups\\toCsvFromArray.csv", new String[]{"bien bien", "bien"});
 //TblsReqs.ProcedureUserRequirements.
-            List<String[]> fromCsvToArray = LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
-Rdbms.stablishDBConectionTester();
-insertRecordInTableFromTable(true, TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
-        LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
-        new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
-        new Object[]{"proc-deploy", 1, "proc-deploy"},
-        LPPlatform.buildSchemaName("proc-deploy", LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
-            if (1==1) return;            
+
+//            List<String[]> fromCsvToArray = LPFilesTools.fromCsvToArray("D:\\LP\\testingRepository-20200203\\spec_limits.csv", '.');
+//Rdbms.stablishDBConectionTester();
+//insertRecordInTableFromTable(true, TblsReqs.ProcedureUserRequirementsEvents.getAllFieldNames(),
+//        LPPlatform.SCHEMA_REQUIREMENTS, TblsReqs.ProcedureUserRequirementsEvents.TBL.getName(), 
+//        new String[]{TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_NAME.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_PROCEDURE_VERSION.getName(), TblsReqs.ProcedureUserRequirementsEvents.FLD_SCHEMA_PREFIX.getName()},
+//        new Object[]{"proc-deploy", 1, "proc-deploy"},
+//        LPPlatform.buildSchemaName("proc-deploy", LPPlatform.SCHEMA_PROCEDURE), TblsProcedure.ProcedureEvents.TBL.getName(), TblsProcedure.ProcedureEvents.getAllFieldNames());
+
+//            if (1==1) return;            
 //            out.println(SomeEnumClass.getCell(1));
 //            out.println(OtherEnumClass.getCell(1));
 //            MyEnum m = null;            
@@ -249,14 +251,14 @@ out.println(Rdbms.dbViewExists("em-demo-a", "data", "pr_scheduled_locations")[0]
 out.println(Rdbms.dbViewExists("requirements", "", "pr_scheduled_locations")[0].toString());
 out.println(Rdbms.dbViewExists("em-demo-a", "data", "padsasr_scheduled_locationssss")[0].toString());
 out.println("Bye");
-if (1==1) return;
+//if (1==1) return;
 
             if ((Boolean) isConnected[0]){out.println("Connected to the db !:)");
             }else{out.println("NOT Connected to the db :( "+ Arrays.toString(isConnected));}
-            Token token = new Token("eyJ1c2VyREIiOiJsYWJwbGFuZXQiLCJlU2lnbiI6Im1hbG90YSIsInVzZXJEQlBhc3N3b3JkIjoibGFzbGVjaHVnYXMiLCJ0eXAiOiJKV1QiLCJhcHBTZXNzaW9uSWQiOiIyOCIsImFwcFNlc3Npb25TdGFydGVkRGF0ZSI6IlNhdCBBdWcgMTcgMDE6NTU6NTUgQ0VTVCAyMDE5IiwidXNlclJvbGUiOiJjb29yZGluYXRvciIsImFsZyI6IkhTMjU2IiwiaW50ZXJuYWxVc2VySUQiOiIxIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.TYIUehSPitkr4p7_fSYCNCcF8PzoxC24qsYg5V4rxQw");
+            Token token = new Token("eyJ1c2VyREIiOiJtYXJjIiwiZVNpZ24iOiJ2YWxlZSIsInVzZXJEQlBhc3N3b3JkIjoiYXVsaW4iLCJ1c2VyX3Byb2NlZHVyZXMiOiJbZW0tZGVtby1hXSIsInR5cCI6IkpXVCIsImFwcFNlc3Npb25JZCI6IjExNTQxIiwiYXBwU2Vzc2lvblN0YXJ0ZWREYXRlIjoiVHVlIFNlcCAwOCAyMjoyNDoxNyBDRVNUIDIwMjAiLCJ1c2VyUm9sZSI6ImNvb3JkaW5hdG9yIiwiYWxnIjoiSFMyNTYiLCJpbnRlcm5hbFVzZXJJRCI6IjEyIn0.eyJpc3MiOiJMYWJQTEFORVRkZXN0cmFuZ2lzSW5UaGVOaWdodCJ9.IOclIuaUZ-OhyTif3Mmmt4r9m8F9PYC2ECZ4coX3Jno");
             out.println("Today in Date format: "+LPDate.getTimeStampLocalDate().toString());
             //out.println("Today in DateTime format: "+LPDate.getDateTimeLocalDate().toString());
-            
+/*            
             sampleId=138;
 
             
@@ -323,7 +325,7 @@ if (1==1) return;
             out.println("Info from "+schemaPrefixSampleInfo+".sample "+selSample.toString()+": "+Arrays.toString(sampleInfo[0]));
         
         JSONObject jsonObj = new JSONObject();
-
+*/
 /*
         String schemaNamePrefix="em-demo-a";
         tblCreateScript=TblsEnvMonitConfig.InstrIncubator.createTableScript(schemaNamePrefix, new String[]{""});
@@ -363,7 +365,8 @@ if (1==1) return;
 //            Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
 //            tblCreateScript=TblsEnvMonitConfig.ProgramCalendarRecursiveEntries.createTableScript(schemaNamePrefix, new String[]{""});
 //            Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
-procName="LlenadoVialesFA2018";
+
+/*String procName="LlenadoVialesFA2018";
 Integer calendarId=5;
 String locationName="E01";
 String[] fieldName=new String[]{"day_of_week"};
@@ -380,7 +383,7 @@ addRecDiag=ConfigProgramCalendar.addRecursiveScheduleForLocation(schemaNamePrefi
  //       fieldName, fieldValue);
 out.println("Adding recursive schedule for location E01 on FRIDAYS: "+Arrays.toString(addRecDiag));
 String holidaysCalendar="España Comunidad X 2019";
-
+*/
 //Object[] addHolidayCal=ConfigProgramCalendar.importHolidaysCalendarSchedule(schemaNamePrefix, procName, calendarId, holidaysCalendar);
 //out.println("Adding holidays calendar for "+holidaysCalendar+": "+Arrays.toString(addHolidayCal));
             //ProcedureDefinitionToInstance.createDBProcessSchemas("samples");
@@ -396,37 +399,56 @@ String holidaysCalendar="España Comunidad X 2019";
 //            Rdbms.prepRdQuery(tblCreateScript, new Object[]{});
 
 //Structured Batches. Begin
+    Object[] diagn=new Object[0];
     out.println("Start testing for Structured Batches");
     schemaPrefix="em-demo-a";
-    String batchName="Testeo Estructurada3";
-    Object[] diagn=new Object[0];
-    //diagn=DataBatchIncubator.createBatch(schemaPrefix, token, batchName, 2, 1, null, null);
-    //out.println("createBatch"+Arrays.toString(diagn));
-    //diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 69);
-    //out.println("batchRemoveSample"+Arrays.toString(diagn));
-    //diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 71);
-    //out.println("batchRemoveSample"+Arrays.toString(diagn));
-    /*diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 73);
-    out.println("batchRemoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 74);
-    out.println("batchRemoveSample"+Arrays.toString(diagn));*/
+    String previousBatchName="Testeo Estructurada10";
+    String batchName="Testeo Estructurada12";
+    Integer batchTemplate=2;
+    Integer batchTemplateVersion=1;
+    Integer[] smpls = new Integer[]{1000, 1001,1002, 1003, 1009, 1011, 1012, 1013, 1014};
+/*
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, previousBatchName, batchTemplate, 1, smpls[8]);
+    out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);    
+    
+    for (Integer curSmp: smpls){
+        diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, previousBatchName, batchTemplate, 1, curSmp);
+        out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
+    }
+*/    
+//    diagn=DataBatchIncubator.removeBatch(schemaPrefix, token, batchName);
+//    out.println("removeBatch"+diagn[0]+diagn[diagn.length-1]);
+    
+    diagn=DataBatchIncubator.createBatch(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, null, null);
+    out.println("createBatch"+diagn[0]+diagn[diagn.length-1]);
 
-    //diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 99, 2, 1, true);
-    //out.println("batchAddSample"+Arrays.toString(diagn));
-    //diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 101, 1, 2, false);
-    //out.println("batchAddSample"+Arrays.toString(diagn));
-    //diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 102, 5, 5, false);
-    //out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, 2, 1, 101);
-    out.println("batchRemoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 101, 5, 5, false);
-    out.println("batchMoveSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 103, 3, 3, true);
-    out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, 2, 1, 104, 2, 3, true);
-    out.println("batchAddSample"+Arrays.toString(diagn));
-    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, 2, 1, 104, 3, 3, true);
-    out.println("batchMoveSample"+Arrays.toString(diagn));
+/*    
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[0]);
+    out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[1]);
+    out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[2]);
+    out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[3]);
+    out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
+*/
+
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[4], 2, 1, true);
+    out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[5], 1, 2, false);
+    out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[6], 5, 5, false);
+    out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchRemoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[5]);
+    out.println("batchRemoveSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[5], 5, 5, false);
+    out.println("batchMoveSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[7], 3, 3, true);
+    out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchAddSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[8], 2, 3, true);
+    out.println("batchAddSample"+diagn[0]+diagn[diagn.length-1]);
+    diagn=DataBatchIncubator.batchMoveSample(schemaPrefix, token, batchName, batchTemplate, batchTemplateVersion, smpls[8], 3, 3, true);
+    out.println("batchMoveSample"+diagn[0]+diagn[diagn.length-1]);
 
 //Structured Batches. End
             

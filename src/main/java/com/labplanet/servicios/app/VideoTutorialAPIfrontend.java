@@ -5,7 +5,6 @@
  */
 package com.labplanet.servicios.app;
 
-import databases.SqlStatement;
 
 import lbplanet.utilities.LPPlatform;
 import lbplanet.utilities.LPArray;
@@ -13,27 +12,20 @@ import lbplanet.utilities.LPFrontEnd;
 import lbplanet.utilities.LPHttp;
 import databases.Rdbms;
 import databases.TblsApp;
-import databases.TblsCnfg;
-import databases.TblsData;
 import databases.Token;
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.Arrays;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import functionaljavaa.user.UserProfile;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
-import functionaljavaa.sop.UserSop;
 import static functionaljavaa.testingscripts.LPTestingOutFormat.getAttributeValue;
 import java.util.HashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import lbplanet.utilities.LPAPIArguments;
-import static lbplanet.utilities.LPFrontEnd.noRecordsInTableMessage;
-import lbplanet.utilities.LPJson;
 import org.json.simple.parser.JSONParser;
 
 /**
@@ -148,14 +140,12 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
      */
     public static final String JSON_TAG_VALUE_WINDOWS_URL_HOME="Modulo1/home.js";
      
-    public enum SopUserAPIfrontendEndpoints{
+    public enum VideoTutorialAPIfrontendEndpoints{
         ALL_ACTIVE_VIDEO_TUTORIALS("ALL_ACTIVE_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY("ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        ALL_USER_VIDEO_TUTORIALS("ALL_USER_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        PROCEDURE_SOPS("PROCEDURE_SOPS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
-        SOP_TREE_LIST_ELEMENT("SOP_TREE_LIST_ELEMENT", "",new LPAPIArguments[]{ }),
+//        ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY("ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
+//        ALL_USER_VIDEO_TUTORIALS("ALL_USER_VIDEO_TUTORIALS", "",new LPAPIArguments[]{ new LPAPIArguments(GlobalAPIsParams.REQUEST_PARAM_SOP_FIELDS_TO_RETRIEVE, LPAPIArguments.ArgumentType.STRINGARR.toString(), true, 6 )}),
         ; 
-        private SopUserAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
+        private VideoTutorialAPIfrontendEndpoints(String name, String successMessageCode, LPAPIArguments[] argums){
             this.name=name;
             this.successMessageCode=successMessageCode;
             this.arguments=argums;  
@@ -215,9 +205,9 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
             String finalToken = request.getParameter(GlobalAPIsParams.REQUEST_PARAM_FINAL_TOKEN);
             
             Token token = new Token(finalToken);
-            SopUserAPIfrontendEndpoints endPoint = null;
+            VideoTutorialAPIfrontendEndpoints endPoint = null;
             try{
-                endPoint = SopUserAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
+                endPoint = VideoTutorialAPIfrontendEndpoints.valueOf(actionName.toUpperCase());
             }catch(Exception e){
                 LPFrontEnd.servletReturnResponseError(request, response, LPPlatform.API_ERRORTRAPING_PROPERTY_ENDPOINT_NOT_FOUND, new Object[]{actionName, this.getServletName()}, language);              
                 return;                   
@@ -238,18 +228,17 @@ public class VideoTutorialAPIfrontend extends HttpServlet {
                     LPArray.getUniquesArray(LPArray.getColumnFromArray2D(array, Integer.SIZE));
                     jObj.put(TblsApp.VideoTutorial.FLD_ENTITY_TYPE.getName(), json);
                 }*/
-                jObj.put(TblsApp.VideoTutorial.TBL.getName(), json);
-                jArr.add(jObj);
-                LPFrontEnd.servletReturnSuccess(request, response, jArr);
+                LPFrontEnd.servletReturnSuccess(request, response, json);
                 return;
-            case ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY:
-/*                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.SCHEMA_APP, TblsApp.VideoTutorial.TBL.getName(), 
+/*            case ALL_ACTIVE_VIDEO_TUTORIALS_BY_ENTITY:
+                String allActiveVideoTutorialsJson = Rdbms.getRecordFieldsByFilterJSON(LPPlatform.SCHEMA_APP, TblsApp.VideoTutorial.TBL.getName(), 
                         new String[]{TblsApp.VideoTutorial.FLD_ACTIVE.getName()}, new Object[]{true},
                         TblsApp.VideoTutorial.getAllFieldNames(), new String[]{TblsApp.VideoTutorial.FLD_ID.getName(), TblsApp.VideoTutorial.FLD_PARENT_ID.getName(), TblsApp.VideoTutorial.FLD_ORDER_NUMBER.getName()});
-*/
+
                 return;
             case ALL_USER_VIDEO_TUTORIALS:
                 return;
+*/                
 /*                UserProfile usProf = new UserProfile();
                 String[] allUserProcedurePrefix = LPArray.convertObjectArrayToStringArray(usProf.getAllUserProcedurePrefix(token.getUserName()));
                 if (LPPlatform.LAB_FALSE.equalsIgnoreCase(allUserProcedurePrefix[0])){
